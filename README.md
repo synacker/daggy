@@ -1,6 +1,7 @@
 # Short description #
 
-Data aggregation utility is a program for extracting information from multiple remote servers via ssh simultaneously.
+DataAgregator - utility that can run and save output from multiple ssh commands 
+on multiple servers simultaneously.
 
 Your can collect any remote server ssh output.
 
@@ -12,13 +13,7 @@ Your can collect any remote server ssh output.
 
 ## Getting started ##
 
-### Download ###
-
-For windows - https://bitbucket.org/milovidov/dataagregatorproject/downloads/DataAgregator-0.9.4-Win32.7z
-
-For other operatrion systems you can compile from source.
-
-### Or compile from source ###
+### Compile from source ###
 1. `git clone https://github.com/milovidov/dataagregator.git`
 2. `cd dataagregatorproject`
 3. `qmake` or `qmake CONFIG+=UseSystemBotan`
