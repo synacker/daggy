@@ -32,7 +32,7 @@ UseSystemBotan {
 LIBS += -L$$DESTDIR
 
 isEmpty(VERSION) {
-    VERSION = $$system(hg parents --template '{latesttag}')
+    VERSION = $$system(git describe --abbrev=0 --tags)
 }
 
 DEFINES += DATAAGREGATOR_VERSION=\\\"$$VERSION\\\" PROGRAM_NAME=\\\"$$TARGET\\\"

@@ -19,8 +19,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include "IDataSourcesSender.h"
 
-#include <QSshLib/sshremoteprocess.h>
-#include <QSshLib/sshconnection.h>
+#include <ssh/sshremoteprocess.h>
+#include <ssh/sshconnection.h>
 
 class CSourceServerAuthorization;
 
