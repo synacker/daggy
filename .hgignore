@@ -1,0 +1,3 @@
+syntax: glob
+DataAgregatorProject.pro.user
+*.json
