@@ -11,12 +11,18 @@ Your can collect any remote server ssh output.
 * Each standard output from bash command is writing to the separate file
 
 
-## Getting started ##
+# Getting started #
 
-### Compile from source ###
+## Compile from source ##
+
+### Dependencies ###
+1. Qt 5.5 or above
+2. libbotan-2.7-devel for Linux
+
+### Compilation steps ###
 1. `git clone https://github.com/milovidov/dataagregator.git`
 2. `cd dataagregatorproject`
-3. `qmake` or `qmake CONFIG+=UseSystemBotan`
+3. `qmake`
 4. `make` or `nmake`
 5. `cd Release`
 6. `DataAgregator -h`
@@ -76,10 +82,6 @@ For execution DataAgregator with tihs environment type next:
 `DataAgregator testEnvironment.json`
 
 For stopping data extraction type `CTRL+C`.
-
-## Dependencies ##
-Qt 5.5 or above
-libbotan-2.7
 
 ## Troubleshooting ##
 The latests version of ssh-keygen utility generate new type of keys that contains next lines
