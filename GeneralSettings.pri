@@ -4,7 +4,7 @@ INCLUDEPATH += $$PWD
 
 
 unix: {
-    INCLUDEPATH += usr/include/botan-2
+    INCLUDEPATH += /usr/include/botan-2
 }
 
 win32: {
