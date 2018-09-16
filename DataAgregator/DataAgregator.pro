@@ -1,4 +1,4 @@
-TARGET = DataAgregator
+TARGET = dataagregator
 CONFIG += console
 CONFIG -= app_bundle
 
