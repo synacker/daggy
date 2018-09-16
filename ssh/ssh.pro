@@ -10,7 +10,9 @@ include(../GeneralSettings.pri)
 
 SOURCES = $$PWD/*.cpp
 
-HEADERS = $$PWD/*.h
+HEADERS = $$PWD/*.h \
+
+HEADERS -= Precompiled.h
 
 unix: {
     CONFIG += link_pkgconfig
@@ -19,5 +21,6 @@ unix: {
 }
 
 win32: {
+    INCLUDEPATH += $$PWD/../3rd-party/win/botan2/include/botan-2
     LIBS += -ladvapi32 -luser32 -lws2_32
 }
