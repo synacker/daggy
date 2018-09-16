@@ -2,16 +2,19 @@ PRECOMPILED_HEADER = Precompiled.h
 
 INCLUDEPATH += $$PWD
 
+
+unix: {
+    INCLUDEPATH += usr/include/botan-2
+}
+
+win32: {
+    LIBS += -L$$PWD/3rd-party/win/botan2/lib/
+    INCLUDEPATH += $$PWD/3rd-party/win/botan2/include/botan-2
+}
+
+
 CONFIG += c++14
 
-equals(TEMPLATE, "lib") {
-        !contains(CONFIG, staticlib) {
-            win32 {
-                    TARGET_EXT = .dll
-            }
-        }
-}
-DEFINES += STATICLINK
 
 isEmpty(DESTDIR) {
         CONFIG(debug, debug|release) {
@@ -33,5 +36,5 @@ DEFINES += DATAAGREGATOR_VERSION=\\\"$$VERSION\\\" PROGRAM_NAME=\\\"$$TARGET\\\"
 
 QMAKE_TARGET_COMPANY = "Mikhail Milovidov"
 QMAKE_TARGET_PRODUCT = $$TARGET
-QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2016 Milovidov, Inc"
+QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2016-2018 Milovidov, Inc"
 

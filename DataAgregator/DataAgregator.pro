@@ -23,11 +23,11 @@ HEADERS += \
     CFileDataSourcesReciever.h
 
 
-LIBS += -lDataAgregatorCore -lqssh
+LIBS += -lDataAgregatorCore
 
 win32: {
     SOURCES += ISystemSignalsHandlerWin32.cpp
-    LIBS += -ladvapi32 -luser32 -L$$PWD/../3rd-party/win/botan2/lib/ -lbotan
+    LIBS += -ladvapi32 -luser32 -lbotan
 }
 unix: {
 
