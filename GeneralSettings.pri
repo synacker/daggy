@@ -23,12 +23,6 @@ isEmpty(DESTDIR) {
         }
 }
 
-UseSystemBotan {
-    DEFINES += USE_SYSTEM_BOTAN
-    CONFIG += link_pkgconfig
-    PKGCONFIG += botan-1.10
-}
-
 LIBS += -L$$DESTDIR
 
 isEmpty(VERSION) {

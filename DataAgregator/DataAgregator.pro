@@ -28,9 +28,6 @@ win32: {
 }
 unix: {
     SOURCES += ISystemSignalsHandlerUnix.cpp
-    !UseSystemBotan {
-        LIBS += -lrt $$QMAKE_LIBS_DYNLOAD
-    }
 
     target.path = $$PREFIX/bin/
     INSTALLS += target
