@@ -11,7 +11,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "Precompiled.h"
 #include "CDataAgregator.h"
 
-#include <QSshLib/sshconnection.h>
+#include <ssh/sshconnection.h>
 
 
 #include "CDataSources.h"

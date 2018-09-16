@@ -36,10 +36,10 @@ unix: {
     INSTALLS += target
 }
 
-LIBS += -lDataAgregatorCore -lQSshLib
+LIBS += -lDataAgregatorCore -lqssh -lbotan-2
 
 DEPENDPATH += $$PWD/../DataAgregatorCore
-DEPENDPATH += $$PWD/../QSshLib
+DEPENDPATH += $$PWD/../ssh
 
 
 

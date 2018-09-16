@@ -3,6 +3,6 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS += \
-    QSshLib \
+    ssh \
     DataAgregatorCore \
     DataAgregator

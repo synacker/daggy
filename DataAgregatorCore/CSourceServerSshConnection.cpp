@@ -11,7 +11,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "Precompiled.h"
 #include "CSourceServerSshConnection.h"
 
-#include <QSshLib/sshconnection.h>
+#include <ssh/sshconnection.h>
 
 #include "CSourceServerAuthorization.h"
 
@@ -147,16 +147,16 @@ void CSourceServerSshConnection::startRemoteProcess(const QString& commandId)
 SshConnectionParameters CSourceServerSshConnection::convertToSshConnectionParameters(const CSourceServerAuthorization& sourceServersAuthorization) const
 {
     SshConnectionParameters result;
-    result.host = sourceServersAuthorization.host();
-    result.userName = sourceServersAuthorization.login();
+    result.setHost(sourceServersAuthorization.host());
+    result.setUserName(sourceServersAuthorization.login());
     if (sourceServersAuthorization.authorizationByKey()) {
         result.authenticationType = SshConnectionParameters::AuthenticationTypePublicKey;
         result.privateKeyFile = sourceServersAuthorization.keyFile();
     } else {
         result.authenticationType = SshConnectionParameters::AuthenticationTypePassword;
-        result.password = sourceServersAuthorization.password();
+        result.setPassword(sourceServersAuthorization.password());
     }
-    result.port = 22;
+    result.setPort(22);
     result.timeout = m_connectionTimeout;
     result.options = SshConnectionOption::SshIgnoreDefaultProxy;
     return result;

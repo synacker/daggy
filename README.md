@@ -78,7 +78,18 @@ For execution DataAgregator with tihs environment type next:
 For stopping data extraction type `CTRL+C`.
 
 ## Dependencies ##
-
 Qt 5.5 or above
+libbotan-2.7
 
-libbotan-1.10 for compilation with `qmake CONFIG+=UseSystemBotan`
+## Troubleshooting ##
+The latests version of ssh-keygen utility generate new type of keys that contains next lines
+```
+BEGIN OPENSSH PRIVATE KEY
+...
+END OPENSSH PRIVATE KEY
+```
+This keys are not supported, and you can generate keys by the folowing commands:
+```bash
+openssl genrsa -out ~/.ssh/id_rsa 2048
+ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
+```

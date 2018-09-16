@@ -36,4 +36,4 @@ HEADERS +=\
     DataSourcesTypes.h \
     CSourceServerAuthorization.h
 
-DEPENDPATH += $$PWD/../QSshLib
+DEPENDPATH += $$PWD/../ssh
