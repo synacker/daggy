@@ -28,7 +28,8 @@ public:
   enum ConsoleMessageType {StdError, ConnStatus, CommStatus};
 
   CFileDataSourcesReciever(const CApplicationSettings& applicationSettings, QObject* pParent = nullptr);
-  ~CFileDataSourcesReciever();
+  virtual ~CFileDataSourcesReciever() override;
+
 public slots:
 
   void onConnectedToHost(QString serverId) override;
@@ -39,7 +40,7 @@ public slots:
   void onNewErrorStreamData(QString serverId, QString commandId, QByteArray data) override;
 
   void onCommandStarted(QString serverId, QString commandId, QString outputExtension) override;
-  void onCommandWasExit(QString serverId, QString commandId, DataSourcesRemoteProcessExitStatus exitStatus, int exitCode) override;
+  void onCommandWasExit(QString serverId, QString commandId, RemoteCommandExitStatus exitStatus, int exitCode) override;
 
 private:
   void printServerMessage(const ConsoleMessageType& messageType, const QString& serverId, const QString& serverMessage);

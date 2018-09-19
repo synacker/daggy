@@ -14,7 +14,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <QMap>
 
-#include "dataagregatorcore_global.h"
 #include "CSourceServerCommand.h"
 
 #include "IDataSourcesSender.h"
@@ -24,7 +23,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 class CSourceServerAuthorization;
 
-class DATAAGREGATORCORESHARED_EXPORT CSourceServerSshConnection : public QObject, public IDataSourcesSender
+class CSourceServerSshConnection : public QObject, public IDataSourcesSender
 {
   Q_OBJECT
   Q_ENUMS(RemoteProcessExitStatus)
@@ -36,7 +35,7 @@ public:
                              const QMap<QString, CSourceServerCommand>& commands,
                              const int connectionTimeout,
                              QObject* pParent = nullptr);
-  ~CSourceServerSshConnection();
+  virtual ~CSourceServerSshConnection() override;
 
   void connectToHost();
 
@@ -55,7 +54,7 @@ signals:
   void newErrorStreamData(QString serverId, QString commandId, QByteArray data) override;
 
   void commandStarted(QString serverId, QString commandId, QString outputExtension) override;
-  void commandWasExit(QString serverId, QString commandId, DataSourcesRemoteProcessExitStatus exitStatus, int exitCode) override;
+  void commandWasExit(QString serverId, QString commandId, RemoteCommandExitStatus exitStatus, int exitCode) override;
 
 private slots:
   void onHostConnected();

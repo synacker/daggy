@@ -11,12 +11,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #ifndef CSOURCESERVERCOMMAND_H
 #define CSOURCESERVERCOMMAND_H
 
-#include "dataagregatorcore_global.h"
-
 #include <QString>
 #include <QVariantMap>
 
-class DATAAGREGATORCORESHARED_EXPORT CSourceServerCommand
+class CSourceServerCommand
 {
 public:
   CSourceServerCommand();

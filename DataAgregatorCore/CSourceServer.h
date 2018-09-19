@@ -25,7 +25,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 class CSourceServerCommand;
 class CSourceServerAuthorization;
 
-class DATAAGREGATORCORESHARED_EXPORT CSourceServer
+class CSourceServer
 {
 public:
   CSourceServer(const QVariantMap& sourceServerMap);

@@ -12,9 +12,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #define IDATASOURCESRECIEVER_H
 
 #include <QObject>
-
 #include "DataSourcesTypes.h"
-
 #include "dataagregatorcore_global.h"
 
 class DATAAGREGATORCORESHARED_EXPORT IDataSourcesReciever : public QObject
@@ -22,7 +20,7 @@ class DATAAGREGATORCORESHARED_EXPORT IDataSourcesReciever : public QObject
   Q_OBJECT
 public:
   IDataSourcesReciever(QObject* pParent = nullptr);
-  virtual ~IDataSourcesReciever();
+  virtual ~IDataSourcesReciever() = default;
 
 //slots:
   virtual void onConnectedToHost(QString serverId) = 0;
@@ -33,7 +31,7 @@ public:
   virtual void onNewErrorStreamData(QString serverId, QString commandId, QByteArray data) = 0;
 
   virtual void onCommandStarted(QString serverId, QString commandId, QString outputExtension) = 0;
-  virtual void onCommandWasExit(QString serverId, QString commandId, DataSourcesRemoteProcessExitStatus exitStatus, int exitCode) = 0;
+  virtual void onCommandWasExit(QString serverId, QString commandId, RemoteCommandExitStatus exitStatus, int exitCode) = 0;
 };
 
 

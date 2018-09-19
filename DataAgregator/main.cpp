@@ -9,9 +9,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 #include "Precompiled.h"
-#include <ssh/sshconnection.h>
 #include "CApplicationSettings.h"
-
 #include "CConsoleDataAgregator.h"
 
 void myCategoryFilter(QLoggingCategory* pCategory)

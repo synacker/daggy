@@ -11,6 +11,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #ifndef DATASOURCESTYPES_H
 #define DATASOURCESTYPES_H
 
-enum DataSourcesRemoteProcessExitStatus {FailedToStart, CrashExit, NormalExit};
+enum class RemoteCommandExitStatus {FailedToStart, CrashExit, NormalExit};
 
 #endif // DATASOURCESTYPES_H

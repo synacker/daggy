@@ -114,7 +114,7 @@ void CSourceServerSshConnection::onCommandWasExit(int exitStatus)
 {
     const QString& commandId = sender()->objectName();
     const QSharedPointer<QSsh::SshRemoteProcess>& pSshRemoteProcess = m_remoteProcesses[commandId];
-    emit commandWasExit(m_serverId, commandId, (DataSourcesRemoteProcessExitStatus)exitStatus, pSshRemoteProcess->exitCode());
+    emit commandWasExit(m_serverId, commandId, (RemoteCommandExitStatus)exitStatus, pSshRemoteProcess->exitCode());
     m_remoteProcesses.remove(commandId);
     if (m_remoteProcesses.isEmpty())
         closeConnection();

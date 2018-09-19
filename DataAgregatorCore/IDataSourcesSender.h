@@ -19,8 +19,8 @@ class IDataSourcesSender
 {
 public:
 
-  IDataSourcesSender(){}
-  virtual ~IDataSourcesSender(){}
+  IDataSourcesSender() = default;
+  virtual ~IDataSourcesSender() = default;
 
 //signals
   virtual void connectedToHost(QString serverId) = 0;
@@ -31,7 +31,7 @@ public:
   virtual void newErrorStreamData(QString serverId, QString commandId, QByteArray data) = 0;
 
   virtual void commandStarted(QString serverId, QString commandId, QString outputExtension) = 0;
-  virtual void commandWasExit(QString serverId, QString commandId, DataSourcesRemoteProcessExitStatus exitStatus, int exitCode) = 0;
+  virtual void commandWasExit(QString serverId, QString commandId, RemoteCommandExitStatus exitStatus, int exitCode) = 0;
 
 };
 

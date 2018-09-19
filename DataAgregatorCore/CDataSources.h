@@ -26,9 +26,7 @@ public:
   CDataSources(const QVariantMap& dataSourcesMap = QVariantMap());
   ~CDataSources();
 
-  void setSourceServer(const QString& serverId, CSourceServer* pSourceServer);
   CSourceServer* sourceServer(const QString &serverId) const;
-  void removeSourceServer(const QString& serverId);
 
 
   QStringList sourceServers() const;
@@ -39,6 +37,8 @@ public:
 
 private:
   void initialize(const QVariantMap& sourceServersMap);
+  void setSourceServer(const QString& serverId, CSourceServer* pSourceServer);
+  void removeSourceServer(const QString& serverId);
 
   QMap<QString, CSourceServer*> m_sourceServers;
 

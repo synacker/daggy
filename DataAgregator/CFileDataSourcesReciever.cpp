@@ -67,19 +67,17 @@ void CFileDataSourcesReciever::onCommandStarted(QString serverId, QString comman
   createOutputFile(serverId, commandId, outputExtension);
 }
 
-void CFileDataSourcesReciever::onCommandWasExit(QString serverId, QString commandId, DataSourcesRemoteProcessExitStatus exitStatus, int exitCode)
+void CFileDataSourcesReciever::onCommandWasExit(QString serverId, QString commandId, RemoteCommandExitStatus exitStatus, int exitCode)
 {
   switch (exitStatus) {
-  case FailedToStart:
+  case RemoteCommandExitStatus::FailedToStart:
     printCommandMessage(CommStatus, serverId, commandId, "Cann't start command");
     break;
-  case CrashExit:
+  case RemoteCommandExitStatus::CrashExit:
     printCommandMessage(CommStatus, serverId, commandId, "Command was crashed");
     break;
-  case NormalExit:
+  case RemoteCommandExitStatus::NormalExit:
     printCommandMessage(CommStatus, serverId, commandId, QString("Command was finished with code %2").arg(exitCode));
-  default:
-    break;
   }
 
   closeOutputFile(serverId, commandId);

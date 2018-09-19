@@ -32,7 +32,6 @@ HEADERS +=\
     CSourceServerSshConnection.h \
     IDataSourcesReciever.h \
     IDataSourcesSender.h \
-    DataSourcesTypes.h \
     CSourceServerAuthorization.h
 
 DEPENDPATH += $$PWD/../ssh

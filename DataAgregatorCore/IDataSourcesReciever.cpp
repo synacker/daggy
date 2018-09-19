@@ -16,8 +16,3 @@ IDataSourcesReciever::IDataSourcesReciever(QObject* pParent)
   : QObject(pParent)
 {
 }
-
-IDataSourcesReciever::~IDataSourcesReciever()
-{
-}
-

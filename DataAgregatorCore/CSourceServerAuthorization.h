@@ -11,12 +11,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #ifndef CSOURCESERVERAUTHORIZATION_H
 #define CSOURCESERVERAUTHORIZATION_H
 
-#include "dataagregatorcore_global.h"
 
 #include <QString>
 #include <QVariantMap>
 
-class DATAAGREGATORCORESHARED_EXPORT CSourceServerAuthorization
+class CSourceServerAuthorization
 {
 
 public:

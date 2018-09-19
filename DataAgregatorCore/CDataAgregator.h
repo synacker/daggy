@@ -24,8 +24,6 @@ namespace QSsh {
 class SshConnection;
 }
 
-#include "CSourceServerSshConnection.h"
-
 class CSourceServerSshConnection;
 class CSourceServerAuthorization;
 class CDataSources;
@@ -36,7 +34,7 @@ class DATAAGREGATORCORESHARED_EXPORT CDataAgregator : public QObject, public IDa
     Q_OBJECT
 public:
     explicit CDataAgregator(const bool isReconnectionMode, const int connectionTimeout, QObject *pParent = nullptr);
-    ~CDataAgregator();
+    virtual ~CDataAgregator() override;
 
     void start(const CDataSources& dataSources);
     void stop();
@@ -55,7 +53,7 @@ signals:
     void newErrorStreamData(QString serverId, QString commandId, QByteArray data) override;
 
     void commandStarted(QString serverId, QString commandId, QString outputExtension) override;
-    void commandWasExit(QString serverId, QString commandId, DataSourcesRemoteProcessExitStatus exitStatus, int exitCode) override;
+    void commandWasExit(QString serverId, QString commandId, RemoteCommandExitStatus exitStatus, int exitCode) override;
 
     void stopped();
 
@@ -65,7 +63,6 @@ private slots:
 private:
     int getActiveConnectionsCount() const;
     void closeConnections();
-
 
     const bool m_isRecconnectionMode;
     const int m_connectionTimeout;
