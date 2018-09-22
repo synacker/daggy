@@ -60,8 +60,9 @@ public:
 
     void startCommands();
 
-    virtual void connect() = 0;
+    virtual void connectToServer() = 0;
     virtual void startCommand(const QString& commandName) = 0;
+    virtual void stop() = 0;
 
 signals:
     void connectionStatusChanged(QString serverId, ConnectionStatus status, QString message);

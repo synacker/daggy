@@ -42,7 +42,7 @@ void IRemoteServer::setRemoteCommandStatus(QString commandName, IRemoteServer::R
 
 void IRemoteServer::setNewRemoteCommandStream(const QString& commandName, const QByteArray& data, const IRemoteServer::RemoteCommand::Stream::Type type)
 {
-    const RemoteCommand& command = remoteCommand(commandName);
+    const RemoteCommand& command = getRemoteCommand(commandName);
     emit newRemoteCommandStream(m_serverName, {commandName, command.outputExtension, data, type});
 }
 
@@ -72,7 +72,7 @@ IRemoteServer::RemoteCommand::Status IRemoteServer::commandStatus(const QString&
     return m_commandsStatus.value(commandName, RemoteCommand::Status::NotStarted);
 }
 
-IRemoteServer::RemoteCommand IRemoteServer::remoteCommand(const QString& commandName) const
+IRemoteServer::RemoteCommand IRemoteServer::getRemoteCommand(const QString& commandName) const
 {
     return m_remoteCommands.value(commandName);
 }

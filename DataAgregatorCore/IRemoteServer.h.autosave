@@ -56,12 +56,13 @@ public:
     QString connectionType() const;
     ConnectionStatus connectionStatus() const;
     RemoteCommand::Status commandStatus(const QString& commandName) const;
-    RemoteCommand remoteCommand(const QString& commandName) const;
+    RemoteCommand getRemoteCommand(const QString& commandName) const;
 
     void startCommands();
 
     virtual void connectToServer() = 0;
     virtual void startCommand(const QString& commandName) = 0;
+    virtual void stop() = 0;
 
 signals:
     void connectionStatusChanged(QString serverId, ConnectionStatus status, QString message);

@@ -10,6 +10,7 @@
 namespace QSsh {
     class SshConnectionParameters;
     class SshConnection;
+    class SshRemoteProcess;
 };
 
 
@@ -19,21 +20,33 @@ class CSshRemoteServer : public IRemoteServer
 public:
     CSshRemoteServer(const QString& serverName,
                      const QVector<RemoteCommand>& commands,
-                     const QVariantMap& authorizationParameters,
+                     const QVariantMap& connectionParameters,
                      QObject* pParent = nullptr);
-    virtual ~CSshRemoteServer() override = default;
+    ~CSshRemoteServer() override;
+
     // IRemoteServer interface
-public:
-    void connect() override;
+    void connectToServer() override;
     void startCommand(const QString& commandName) override;
+    void stop() override;
+
 
 private slots:
     void onHostConnected();
     void onHostDisconnected();
     void onHostError();
 
+    void onNewStandardStreamData();
+    void onNewErrorStreamData();
+
+    void onCommandStarted();
+    void onCommandWasExit(int exitStatus);
 private:
+    void killConnection();
+    void closeConnection();
+
     QSsh::SshConnection* const m_pSshConnection;
+    const bool m_isForceKill;
+    QSharedPointer<QSsh::SshRemoteProcess> m_pKillChildsProcess;
 };
 
 #endif // CSSHREMOTESERVER_H
