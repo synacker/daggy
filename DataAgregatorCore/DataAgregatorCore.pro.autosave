@@ -20,11 +20,7 @@ SOURCES += \
     CDataAgregator.cpp \
     CSourceServerSshConnection.cpp \
     IDataSourcesReciever.cpp \
-    CSourceServerAuthorization.cpp \
-    IServerconnectionFabric.cpp \
-    CRemoteCommand.cpp \
-    IRemoteServer.cpp \
-    CSshRemoteServer.cpp
+    CSourceServerAuthorization.cpp
 
 HEADERS +=\
         dataagregatorcore_global.h \
@@ -36,11 +32,7 @@ HEADERS +=\
     CSourceServerSshConnection.h \
     IDataSourcesReciever.h \
     IDataSourcesSender.h \
-    CSourceServerAuthorization.h \
-    IServerConnectionFabric.h \
-    CRemoteCommand.h \
-    IRemoteServer.h \
-    CSshRemoteServer.h
+    CSourceServerAuthorization.h
 
 DEPENDPATH += $$PWD/../ssh
 LIBS += -lqssh
@@ -48,6 +40,8 @@ LIBS += -lqssh
 unix: {
     CONFIG += link_pkgconfig
     PKGCONFIG += botan-2
+
+    
 }
 
 win32: {
