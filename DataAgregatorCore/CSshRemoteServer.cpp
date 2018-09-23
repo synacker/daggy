@@ -6,18 +6,17 @@
 
 using namespace QSsh;
 
-namespace  {
-constexpr const char* g_connectionType = "ssh";
+namespace {
 
 const QString g_hostField("host");
 const QString g_loginField("login");
 const QString g_passwordField("password");
 const QString g_keyField("keyFile");
 const QString g_forceKill("forceKill");
-
 }
 
-QSsh::SshConnectionParameters getConnectionParameters(const QVariantMap& authorizationParameters);
+SshConnectionParameters getConnectionParameters(const QVariantMap& authorizationParameters);
+RemoteCommand::Status convertStatus(const SshRemoteProcess::ExitStatus exitStatus);
 
 CSshRemoteServer::CSshRemoteServer(const QString& serverName,
                                    const QVector<RemoteCommand>& commands,
@@ -42,11 +41,9 @@ void CSshRemoteServer::connectToServer()
     m_pSshConnection->connectToHost();
 }
 
-void CSshRemoteServer::startCommand(const QString& commandName)
+void CSshRemoteServer::startRemoteSshProcess(const QString& commandName, const QString& command)
 {
-    const RemoteCommand& remoteCommand = getRemoteCommand(commandName);
-
-    QSharedPointer<SshRemoteProcess> remoteProcess = m_pSshConnection->createRemoteProcess(qPrintable(remoteCommand.command));
+    QSharedPointer<SshRemoteProcess> remoteProcess = m_pSshConnection->createRemoteProcess(qPrintable(command));
     remoteProcess->setObjectName(commandName);
     remoteProcess->setParent(this);
 
@@ -55,7 +52,16 @@ void CSshRemoteServer::startCommand(const QString& commandName)
     connect(remoteProcess.data(), &SshRemoteProcess::readyReadStandardError, this, &CSshRemoteServer::onNewErrorStreamData);
     connect(remoteProcess.data(), &SshRemoteProcess::closed, this, &CSshRemoteServer::onCommandWasExit);
 
+    remoteProcess->start();
+}
 
+void CSshRemoteServer::startCommand(const QString& commandName)
+{
+    const RemoteCommand* const pRemoteCommand = getRemoteCommand(commandName);
+
+    if (pRemoteCommand) {
+        startRemoteSshProcess(commandName, pRemoteCommand->command);
+    }
 }
 
 void CSshRemoteServer::stop()
@@ -64,6 +70,18 @@ void CSshRemoteServer::stop()
         killConnection();
     else
         closeConnection();
+}
+
+size_t CSshRemoteServer::runingRemoteCommandsCount() const
+{
+    size_t result = 0;
+
+    for (SshRemoteProcess* pRemoteProcess : sshRemoteProcesses()) {
+        if (pRemoteProcess->isRunning())
+            result++;
+    }
+
+    return result;
 }
 
 void CSshRemoteServer::onHostConnected()
@@ -81,9 +99,48 @@ void CSshRemoteServer::onHostError()
     setConnectionStatus(ConnectionStatus::ConnectionError, m_pSshConnection->errorString());
 }
 
+void CSshRemoteServer::onNewStandardStreamData()
+{
+    const QString& commandName = sender()->objectName();
+    SshRemoteProcess* const pSshRemoteProcess = getSshRemoteProcess(commandName);
+    if (pSshRemoteProcess) {
+        setNewRemoteCommandStream(commandName, pSshRemoteProcess->readAllStandardOutput(), RemoteCommand::Stream::Type::Standard);
+    }
+}
+
+void CSshRemoteServer::onNewErrorStreamData()
+{
+    const QString& commandName = sender()->objectName();
+    SshRemoteProcess* const pSshRemoteProcess = getSshRemoteProcess(commandName);
+    if (pSshRemoteProcess) {
+        setNewRemoteCommandStream(commandName, pSshRemoteProcess->readAllStandardError(), RemoteCommand::Stream::Type::Error);
+    }
+}
+
+void CSshRemoteServer::onCommandStarted()
+{
+    const QString& commandName = sender()->objectName();
+    setRemoteCommandStatus(commandName, RemoteCommand::Status::Started);
+}
+
+void CSshRemoteServer::onCommandWasExit(int exitStatus)
+{
+    const QString& commandName = sender()->objectName();
+    SshRemoteProcess* const pSshRemoteProcess = getSshRemoteProcess(commandName);
+    if (pSshRemoteProcess) {
+        const SshRemoteProcess::ExitStatus status = static_cast<SshRemoteProcess::ExitStatus>(exitStatus);
+        setRemoteCommandStatus(commandName, convertStatus(status), pSshRemoteProcess->exitCode());
+    }
+
+    if (!isExistsRunningRemoteCommands())
+        m_pSshConnection->disconnectFromHost();
+}
+
 void CSshRemoteServer::killConnection()
 {
-    if (m_pSshConnection->state() == SshConnection::Connected) {
+    if (m_pSshConnection->state() == SshConnection::Connected &&
+       (!m_pKillChildsProcess || !m_pKillChildsProcess->isRunning()))
+    {
         m_pKillChildsProcess = m_pSshConnection->createRemoteProcess("pids=$(pstree -p $PPID | grep -oP \"\\d+\" | grep -v $PPID | grep -v $$ | tac);"
                                                                      "for pid in $pids; do "
                                                                         "while kill -0 $pid; do "
@@ -100,10 +157,24 @@ void CSshRemoteServer::killConnection()
 void CSshRemoteServer::closeConnection()
 {
     if (m_pSshConnection->state() == SshConnection::Connected) {
-        m_pSshConnection->closeAllChannels();
-        //m_remoteProcesses.clear();
-        m_pSshConnection->disconnectFromHost();
+        for (SshRemoteProcess* pRemoteProcess : sshRemoteProcesses()) {
+            if (pRemoteProcess->isRunning())
+                pRemoteProcess->close();
+        }
+
+        if (!isExistsRunningRemoteCommands())
+            m_pSshConnection->disconnectFromHost();
     }
+}
+
+QList<SshRemoteProcess*> CSshRemoteServer::sshRemoteProcesses() const
+{
+    return findChildren<SshRemoteProcess*>();
+}
+
+SshRemoteProcess* CSshRemoteServer::getSshRemoteProcess(const QString& commandName) const
+{
+    return findChild<SshRemoteProcess*>(commandName);
 }
 
 QSsh::SshConnectionParameters getConnectionParameters(const QVariantMap& authorizationParameters)
@@ -122,4 +193,22 @@ QSsh::SshConnectionParameters getConnectionParameters(const QVariantMap& authori
     result.authenticationType = keyFile.isEmpty() ? SshConnectionParameters::AuthenticationTypePassword : SshConnectionParameters::AuthenticationTypePublicKey;
 
     return result;
+}
+
+RemoteCommand::Status convertStatus(const SshRemoteProcess::ExitStatus exitStatus)
+{
+    RemoteCommand::Status remoteCommandStatus;
+    switch (exitStatus) {
+    case SshRemoteProcess::FailedToStart:
+        remoteCommandStatus = RemoteCommand::Status::FailedToStart;
+        break;
+    case SshRemoteProcess::CrashExit:
+        remoteCommandStatus = RemoteCommand::Status::CrashExit;
+        break;
+    case SshRemoteProcess::NormalExit:
+        remoteCommandStatus = RemoteCommand::Status::NormalExit;
+        break;
+    }
+
+    return remoteCommandStatus;
 }

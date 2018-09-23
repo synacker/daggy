@@ -21,10 +21,12 @@ SOURCES += \
     CSourceServerSshConnection.cpp \
     IDataSourcesReciever.cpp \
     CSourceServerAuthorization.cpp \
-    IServerconnectionFabric.cpp \
-    CRemoteCommand.cpp \
     IRemoteServer.cpp \
-    CSshRemoteServer.cpp
+    CSshRemoteServer.cpp \
+    IRemoteServersFabric.cpp \
+    CSshServersFabric.cpp \
+    DataSource.cpp \
+    RemoteCommand.cpp
 
 HEADERS +=\
         dataagregatorcore_global.h \
@@ -37,10 +39,12 @@ HEADERS +=\
     IDataSourcesReciever.h \
     IDataSourcesSender.h \
     CSourceServerAuthorization.h \
-    IServerConnectionFabric.h \
-    CRemoteCommand.h \
     IRemoteServer.h \
-    CSshRemoteServer.h
+    CSshRemoteServer.h \
+    IRemoteServersFabric.h \
+    CSshServersFabric.h \
+    DataSource.h \
+    RemoteCommand.h
 
 DEPENDPATH += $$PWD/../ssh
 LIBS += -lqssh

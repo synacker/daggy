@@ -28,7 +28,9 @@ public:
     void connectToServer() override;
     void startCommand(const QString& commandName) override;
     void stop() override;
+    size_t runingRemoteCommandsCount() const override;
 
+    static constexpr const char* g_connectionType = "ssh";
 
 private slots:
     void onHostConnected();
@@ -44,9 +46,13 @@ private:
     void killConnection();
     void closeConnection();
 
+    QList<QSsh::SshRemoteProcess*> sshRemoteProcesses() const;
+    QSsh::SshRemoteProcess* getSshRemoteProcess(const QString& commandName) const;
+
     QSsh::SshConnection* const m_pSshConnection;
     const bool m_isForceKill;
-    QSharedPointer<QSsh::SshRemoteProcess> m_pKillChildsProcess;
+    QSharedPointer<QSsh::SshRemoteProcess> m_pKillChildsProcess = nullptr;
+    void startRemoteSshProcess(const QString& commandName, const QString& command);
 };
 
 #endif // CSSHREMOTESERVER_H
