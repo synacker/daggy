@@ -11,7 +11,7 @@ public:
     virtual ~IRemoteServersFabric() = default;
 
     virtual IRemoteServer* createRemoteServer(const QString& serverName,
-                                              const QVector<RemoteCommand>& remoteCommands,
+                                              const std::vector<RemoteCommand>& remoteCommands,
                                               const QVariantMap& connectionParameters,
                                               QObject* pParent) = 0;
     QString connectionType() const;

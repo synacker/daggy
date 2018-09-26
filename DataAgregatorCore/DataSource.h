@@ -2,19 +2,20 @@
 #define DATASOURCE_H
 
 #include <QString>
-#include <QVector>
 #include <QVariantMap>
+#include <vector>
+
 #include "RemoteCommand.h"
 
 struct DataSource {
     const QString serverName;
     const QString connectionType;
-    const QVector<RemoteCommand> remoteCommands;
+    const std::vector<RemoteCommand> remoteCommands;
     const QVariantMap connectionParameters;
 };
 
 
-using DataSources = QVector<DataSource>;
+using DataSources = std::vector<DataSource>;
 
 DataSources convertDataSources(const QVariantMap& dataSources);
 

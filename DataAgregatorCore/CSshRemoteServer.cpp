@@ -19,7 +19,7 @@ SshConnectionParameters getConnectionParameters(const QVariantMap& authorization
 RemoteCommand::Status convertStatus(const SshRemoteProcess::ExitStatus exitStatus);
 
 CSshRemoteServer::CSshRemoteServer(const QString& serverName,
-                                   const QVector<RemoteCommand>& commands,
+                                   const std::vector<RemoteCommand>& commands,
                                    const QVariantMap& connectionParameters,
                                    QObject* pParent)
     : IRemoteServer(serverName, g_connectionType, commands, pParent)
@@ -36,7 +36,7 @@ CSshRemoteServer::~CSshRemoteServer()
     closeConnection();
 }
 
-void CSshRemoteServer::connectToServer()
+void CSshRemoteServer::startAgregator()
 {
     m_pSshConnection->connectToHost();
 }
@@ -55,16 +55,13 @@ void CSshRemoteServer::startRemoteSshProcess(const QString& commandName, const Q
     remoteProcess->start();
 }
 
-void CSshRemoteServer::startCommand(const QString& commandName)
+void CSshRemoteServer::restartCommand(const QString& commandName)
 {
-    const RemoteCommand* const pRemoteCommand = getRemoteCommand(commandName);
-
-    if (pRemoteCommand) {
-        startRemoteSshProcess(commandName, pRemoteCommand->command);
-    }
+    const RemoteCommand& remoteCommand = getRemoteCommand(commandName);
+    startRemoteSshProcess(commandName, remoteCommand.command);
 }
 
-void CSshRemoteServer::stop()
+void CSshRemoteServer::stopAgregator()
 {
     if (m_isForceKill)
         killConnection();

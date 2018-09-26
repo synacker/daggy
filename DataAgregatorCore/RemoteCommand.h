@@ -27,6 +27,7 @@ struct RemoteCommand {
     const QString commandName;
     const QString command;
     const QString outputExtension;
+    const bool restart;
 };
 
 

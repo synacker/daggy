@@ -26,7 +26,8 @@ SOURCES += \
     IRemoteServersFabric.cpp \
     CSshServersFabric.cpp \
     DataSource.cpp \
-    RemoteCommand.cpp
+    RemoteCommand.cpp \
+    IRemoteAgregator.cpp
 
 HEADERS +=\
         dataagregatorcore_global.h \
@@ -44,7 +45,8 @@ HEADERS +=\
     IRemoteServersFabric.h \
     CSshServersFabric.h \
     DataSource.h \
-    RemoteCommand.h
+    RemoteCommand.h \
+    IRemoteAgregator.h
 
 DEPENDPATH += $$PWD/../ssh
 LIBS += -lqssh

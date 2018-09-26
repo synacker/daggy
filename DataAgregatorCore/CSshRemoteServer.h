@@ -19,15 +19,15 @@ class CSshRemoteServer : public IRemoteServer
     Q_OBJECT
 public:
     CSshRemoteServer(const QString& serverName,
-                     const QVector<RemoteCommand>& commands,
+                     const std::vector<RemoteCommand>& commands,
                      const QVariantMap& connectionParameters,
                      QObject* pParent = nullptr);
     ~CSshRemoteServer() override;
 
     // IRemoteServer interface
-    void connectToServer() override;
-    void startCommand(const QString& commandName) override;
-    void stop() override;
+    void startAgregator() override;
+    void stopAgregator() override;
+    void restartCommand(const QString& commandName) override;
     size_t runingRemoteCommandsCount() const override;
 
     static constexpr const char* g_connectionType = "ssh";
