@@ -90,7 +90,7 @@ void CSshRemoteServer::restartCommand(const QString& command_name)
 
 void CSshRemoteServer::stopAgregator()
 {
-    if (isForceKill())
+    if (isForceKill() && isExistsRunningRemoteCommands())
         killConnection();
     else
         closeConnection();
@@ -209,7 +209,7 @@ QSsh::SshConnectionParameters getConnectionParameters(const QVariantMap& connect
 
 RemoteCommand::Status convertStatus(const SshRemoteProcess::ExitStatus exitStatus)
 {
-    RemoteCommand::Status remoteCommandStatus;
+    RemoteCommand::Status remoteCommandStatus = RemoteCommand::Status::NotStarted;
     switch (exitStatus) {
     case SshRemoteProcess::FailedToStart:
         remoteCommandStatus = RemoteCommand::Status::FailedToStart;
