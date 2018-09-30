@@ -8,7 +8,7 @@ IRemoteAgregator* CDefaultRemoteServersFabric::createRemoteServer(const DataSour
 {
     IRemoteServer* result = nullptr;
 
-    if (data_source.connection_type == CSshRemoteServer::connection_type_global)
+    if (data_source.connection_type.isEmpty() || data_source.connection_type == CSshRemoteServer::connection_type_global)
         result = new CSshRemoteServer(data_source, parent_ptr);
     else if (data_source.connection_type == CLocalRemoteServer::connection_type_global)
         result = new CLocalRemoteServer(data_source, parent_ptr);

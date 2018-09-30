@@ -28,5 +28,5 @@ int main(int argc, char *argv[])
                                                applicationSettings.outputFolder());
     consoleDataAgregator.start();
 
-    return application.exec();
+    return consoleDataAgregator.stopped() ? 0 : application.exec();
 }

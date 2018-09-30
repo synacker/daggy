@@ -32,6 +32,8 @@ public:
 
   void start();
 
+  bool stopped() const;
+
 signals:
   void interrupted();
 
@@ -46,6 +48,7 @@ private:
 
   CFileDataSourcesReciever file_remote_agregator_reciever_;
   CDataAgregator data_agregator_;
+  bool stopped_;
 };
 
 #endif // CCONSOLEDATAAGREGATOR_H

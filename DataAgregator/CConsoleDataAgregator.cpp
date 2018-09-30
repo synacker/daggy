@@ -20,6 +20,7 @@ CConsoleDataAgregator::CConsoleDataAgregator(const DataSources& data_sources,
     : QObject(parent_ptr)
     , file_remote_agregator_reciever_(output_folder)
     , data_agregator_(data_sources)
+    , stopped_(false)
 {
     data_agregator_.connectRemoteAgregatorReciever(&file_remote_agregator_reciever_);
 
@@ -51,6 +52,13 @@ void CConsoleDataAgregator::handleInterruption()
 
 void CConsoleDataAgregator::onDataAgregatorStateChange(const IRemoteAgregator::State state)
 {
-    if (state == IRemoteAgregator::State::Stopped)
+    if (state == IRemoteAgregator::State::Stopped) {
+        stopped_ = true;
         qApp->quit();
+    }
+}
+
+bool CConsoleDataAgregator::stopped() const
+{
+    return stopped_;
 }

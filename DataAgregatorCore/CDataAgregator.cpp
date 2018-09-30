@@ -58,8 +58,12 @@ void CDataAgregator::startAgregator()
         }
     }
 
-    for (IRemoteAgregator* const remote_server_ptr : remoteAgregators())
+    const QList<IRemoteAgregator*>& remote_agregators = remoteAgregators();
+    for (IRemoteAgregator* const remote_server_ptr : remote_agregators)
         remote_server_ptr->start();
+
+    if (remote_agregators.size() == 0)
+        setStopped();
 }
 
 void CDataAgregator::stopAgregator()

@@ -174,6 +174,7 @@ void CSshRemoteServer::closeConnection()
             ssh_connection_pointer_->disconnectFromHost();
         }
     } else {
+        ssh_connection_pointer_->disconnectFromHost();
         onHostDisconnected();
     }
 }
