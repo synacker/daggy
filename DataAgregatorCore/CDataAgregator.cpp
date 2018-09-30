@@ -42,6 +42,14 @@ void CDataAgregator::dicsonnectRemoteAgregatorReciever(IRemoteAgregator* const r
     disconnect(remote_agregator_ptr);
 }
 
+size_t CDataAgregator::runingRemoteCommandsCount() const
+{
+    size_t result = 0;
+    for (const IRemoteAgregator* const remote_agregator_ptr : remoteAgregators())
+        result += remote_agregator_ptr->runingRemoteCommandsCount();
+    return result;
+}
+
 void CDataAgregator::startAgregator()
 {
     for (const DataSource& data_source : data_sources_) {

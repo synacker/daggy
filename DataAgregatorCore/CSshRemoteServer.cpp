@@ -19,6 +19,7 @@ constexpr const char* force_kill_global("forceKill");
 constexpr int timeout_default_global = 2;
 
 constexpr int invalid_signal_global = -1;
+constexpr int default_kill_signal_global = 15;
 
 constexpr const char* kill_command_global = "pids=$(pstree -p $PPID | grep -oP \"\\d+\" | grep -v $PPID | grep -v $$ | tac);"
                                             "for pid in $pids; do "
@@ -38,7 +39,7 @@ CSshRemoteServer::CSshRemoteServer(const DataSource& data_source,
                                    QObject* parent_pointer)
     : IRemoteServer(data_source, parent_pointer)
     , ssh_connection_pointer_(new SshConnection(getConnectionParameters(data_source.connection_parameters), this))
-    , force_kill_(data_source.connection_parameters.value(force_kill_global, invalid_signal_global).toInt())
+    , force_kill_(data_source.connection_parameters.value(force_kill_global, default_kill_signal_global).toInt())
 {
     connect(ssh_connection_pointer_, &SshConnection::connected, this, &CSshRemoteServer::onHostConnected);
     connect(ssh_connection_pointer_, &SshConnection::disconnected, this, &CSshRemoteServer::onHostDisconnected);
@@ -71,6 +72,7 @@ void CSshRemoteServer::startRemoteSshProcess(const QString& command_name, const 
     connect(remote_process_pointer.data(), &SshRemoteProcess::readyReadStandardError, this, &CSshRemoteServer::onNewErrorStreamData);
     connect(remote_process_pointer.data(), &SshRemoteProcess::closed, this, &CSshRemoteServer::onCommandWasExit);
 
+    setRemoteCommandStatus(command_name, RemoteCommand::Status::Started);
     remote_process_pointer->start();
 }
 

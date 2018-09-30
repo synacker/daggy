@@ -31,6 +31,8 @@ public:
 
     bool isExistsRestartCommand() const;
 
+    size_t runingRemoteCommandsCount() const override final;
+
 protected:
     virtual void restartCommand(const QString& commandName) = 0;
     virtual void reconnect() = 0;
@@ -47,7 +49,7 @@ private:
     const DataSource data_source_;
     const std::map<QString, RemoteCommand> remote_commands_;
     const bool exists_restart_commands_;
-    QMap<QString, RemoteCommand::Status> m_commandsStatus;
+    QMap<QString, RemoteCommand::Status> commands_status_;
 
     RemoteConnectionStatus connection_status_ = RemoteConnectionStatus::NotConnected;
 };

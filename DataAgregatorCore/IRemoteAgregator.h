@@ -22,7 +22,7 @@ public:
 
     bool isExistsRunningRemoteCommands() const;
 
-    size_t runingRemoteCommandsCount() const;
+    virtual size_t runingRemoteCommandsCount() const = 0;
 
     void start();
     void stop();
@@ -46,9 +46,6 @@ protected:
     virtual void stopAgregator() = 0;
 
     void setStopped();
-
-private slots:
-    void onRemoteCommandStatusChanged(QString, QString, const RemoteCommand::Status status, int);
 
 private:
     void setState(const State state);

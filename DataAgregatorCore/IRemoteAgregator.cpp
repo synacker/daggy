@@ -42,15 +42,6 @@ void IRemoteAgregator::setState(const IRemoteAgregator::State state)
     }
 }
 
-void IRemoteAgregator::onRemoteCommandStatusChanged(QString, QString, const RemoteCommand::Status status, int)
-{
-    if (status == RemoteCommand::Status::Started) {
-        running_remote_command_count_++;
-    } else {
-        running_remote_command_count_--;
-    }
-}
-
 IRemoteAgregator::State IRemoteAgregator::state() const
 {
     return state_;

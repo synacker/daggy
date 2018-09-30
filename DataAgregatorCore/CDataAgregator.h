@@ -42,6 +42,8 @@ public:
     void connectRemoteAgregatorReciever(IRemoteAgregatorReciever* const remote_agregator_ptr);
     void dicsonnectRemoteAgregatorReciever(IRemoteAgregator* const remote_agregator_ptr);
 
+    size_t runingRemoteCommandsCount() const override final;
+
 private:
     void startAgregator() override final;
     void stopAgregator() override final;

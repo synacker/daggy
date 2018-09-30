@@ -49,7 +49,8 @@ void CLocalRemoteServer::restartCommand(const QString& command_name)
     connect(process_ptr, &QProcess::stateChanged,
             this, &CLocalRemoteServer::onProcessStateChanged);
 
-    process_ptr->start(remote_command.command);
+    setRemoteCommandStatus(command_name, RemoteCommand::Status::Started);
+    process_ptr->start(remote_command.command, QIODevice::ReadOnly);
 }
 
 void CLocalRemoteServer::reconnect()
