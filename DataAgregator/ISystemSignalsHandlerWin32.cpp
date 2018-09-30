@@ -16,16 +16,16 @@ int WIN32_physicalToLogical(DWORD);
 DWORD WIN32_logicalToPhysical(int);
 std::set<int> g_registry;
 
-ISystemSignalHandler* g_handler(NULL);
+ISystemSignalHandler* handler_global_pointer(NULL);
 
 
 ISystemSignalHandler::ISystemSignalHandler(int mask)
   : m_mask(mask)
 {
-  assert(g_handler == NULL);
-  g_handler = this;
+  assert(handler_global_pointer == NULL);
+  handler_global_pointer = this;
   SetConsoleCtrlHandler(WIN32_handleFunc, TRUE);
-  for (int i = 0; i < numSignals; i++)
+  for (int i = 0; i < num_signals; i++)
   {
     int logical = 0x1 << i;
     if (m_mask & logical)
@@ -81,7 +81,7 @@ int WIN32_physicalToLogical(DWORD signal)
 BOOL WINAPI WIN32_handleFunc(DWORD signal)
 {
   BOOL result = FALSE;
-  if (g_handler)
+  if (handler_global_pointer)
   {
     const int signo = WIN32_physicalToLogical(signal);
     // The std::set is thread-safe in const reading access and we never
@@ -90,7 +90,7 @@ BOOL WINAPI WIN32_handleFunc(DWORD signal)
     std::set<int>::const_iterator found = g_registry.find(signo);
     if (signo != -1 && found != g_registry.end())
     {
-      result = g_handler->handleSystemSignal(signo) ? TRUE : FALSE;
+      result = handler_global_pointer->handleSystemSignal(signo) ? TRUE : FALSE;
     }
   }
   return result;

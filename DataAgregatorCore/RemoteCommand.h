@@ -18,15 +18,15 @@ struct RemoteCommand {
             Error
         };
 
-        const QString commandName;
-        const QString outputExtension;
+        const QString command_name;
+        const QString output_extension;
         const QByteArray data;
         const Type type;
     };
 
-    const QString commandName;
+    const QString command_name;
     const QString command;
-    const QString outputExtension;
+    const QString output_extension;
     const bool restart;
 };
 

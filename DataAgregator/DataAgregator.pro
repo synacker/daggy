@@ -43,6 +43,6 @@ DEPENDPATH += $$PWD/../DataAgregatorCore
 DEPENDPATH += $$PWD/../ssh
 
 
-QMAKE_TARGET_DESCRIPTION = "Console application for data agregation"
+QMAKE_TARGET_DESCRIPTION = "DataAgregator - utility that can run and save output from multiple ssh commands on multiple servers simultaneously."
 
 

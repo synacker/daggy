@@ -9,42 +9,47 @@
 #include <QMap>
 
 #include "IRemoteAgregator.h"
+#include "DataSource.h"
 
 class DATAAGREGATORCORESHARED_EXPORT IRemoteServer : public IRemoteAgregator
 {
     Q_OBJECT
 public:
-
-    IRemoteServer(const QString& serverName,
-                  const QString& connectionType,
-                  const std::vector<RemoteCommand>& commands,
-                  QObject* pParent = nullptr);
+    IRemoteServer(const DataSource& data_source,
+                  QObject* parent_ptr = nullptr);
     ~IRemoteServer() override;
 
-    QString serverName() const;
-    QString connectionType() const;
-    ConnectionStatus connectionStatus() const;
+    const QString& serverName() const;
+    const QString& connectionType() const;
+    const QVariantMap& connectionParameters() const;
+
+    const DataSource& dataSource() const;
+
+    RemoteConnectionStatus connectionStatus() const;
     RemoteCommand::Status commandStatus(const QString& commandName) const;
     const RemoteCommand& getRemoteCommand(const QString& commandName) const;
 
+    bool isExistsRestartCommand() const;
+
 protected:
     virtual void restartCommand(const QString& commandName) = 0;
+    virtual void reconnect() = 0;
 
-    void setConnectionStatus(const ConnectionStatus status, const QString& message = QString());
-    void setRemoteCommandStatus(const QString& commandName, RemoteCommand::Status commandStatus, const int exitCode = 0);
+    void setConnectionStatus(const RemoteConnectionStatus status, const QString& message = QString());
+    void setRemoteCommandStatus(const QString& commandName, const RemoteCommand::Status commandStatus, const int exit_code = 0);
     void setNewRemoteCommandStream(const QString& commandName, const QByteArray& data, const RemoteCommand::Stream::Type type);
 
 private:
     void startCommands();
-
+    bool isExistsRestartCommand(const std::vector<RemoteCommand>& commands) const;
     std::map<QString, RemoteCommand> convertRemoteCommands(const std::vector<RemoteCommand>& remoteCommands) const;
 
-    const QString m_serverName;
-    const QString m_connectionType;
-    const std::map<QString, RemoteCommand> m_remoteCommands;
+    const DataSource data_source_;
+    const std::map<QString, RemoteCommand> remote_commands_;
+    const bool exists_restart_commands_;
     QMap<QString, RemoteCommand::Status> m_commandsStatus;
 
-    ConnectionStatus m_connectionStatus = ConnectionStatus::NotConnected;
+    RemoteConnectionStatus connection_status_ = RemoteConnectionStatus::NotConnected;
 };
 
 #endif // ISERVERCONNECTION_H

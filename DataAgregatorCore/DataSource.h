@@ -6,18 +6,29 @@
 #include <vector>
 
 #include "RemoteCommand.h"
+#include "dataagregatorcore_global.h"
 
-struct DataSource {
-    const QString serverName;
-    const QString connectionType;
-    const std::vector<RemoteCommand> remoteCommands;
-    const QVariantMap connectionParameters;
+struct DataSource;
+using DataSources = std::vector<DataSource>;
+
+struct DATAAGREGATORCORESHARED_EXPORT DataSource {
+    const QString server_name;
+    const QString connection_type;
+    const std::vector<RemoteCommand> remote_commands;
+    const QVariantMap connection_parameters;
+    const bool reconnect;
+
+    static DataSources convertDataSources(const QVariantMap& data_sources);
+
+private:
+    static bool ValidateField(const bool isOk, const QString& errorMessage);
+    static QString errorMessage(const QString& serverName, const QString& error);
+    static std::vector<RemoteCommand> getCommands(const QVariantMap& commands, const QString& serverName);
 };
 
 
-using DataSources = std::vector<DataSource>;
 
-DataSources convertDataSources(const QVariantMap& dataSources);
+
 
 
 #endif // DATASOURCE_H

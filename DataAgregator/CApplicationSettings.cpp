@@ -11,58 +11,45 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "Precompiled.h"
 #include "CApplicationSettings.h"
 
-CApplicationSettings::CApplicationSettings(QCoreApplication *pApplication)
-    : m_connectionTimeout(2)
+CApplicationSettings::CApplicationSettings()
 {
-    pApplication->setApplicationVersion(DATAAGREGATOR_VERSION);
-    pApplication->setApplicationName(PROGRAM_NAME);
+    qApp->setApplicationVersion(DATAAGREGATOR_VERSION);
+    qApp->setApplicationName(PROGRAM_NAME);
 
     QCommandLineParser commandLineParser;
     commandLineParser.addVersionOption();
     const QCommandLineOption outputFolderOption({"o", "output"}, "Set output folder", "folder", "");
-    const QCommandLineOption reconnectionModeOption({"r", "reconnect"}, "Enable reconnection mode");
-    const QCommandLineOption connectionTimeoutOption({"t", "timeout"}, "Connection timeout", "seconds", QString::number(m_connectionTimeout));
 
     commandLineParser.addOption(outputFolderOption);
-    commandLineParser.addOption(reconnectionModeOption);
-    commandLineParser.addOption(connectionTimeoutOption);
 
     commandLineParser.setApplicationDescription("Data agregation utility is a program for extracting information from multiple remote servers via ssh simultaneously.");
     const QCommandLineOption helpOption = commandLineParser.addHelpOption();
 
     commandLineParser.addPositionalArgument("sources", "Data sources", "sourceFile1 [sourceFile2 ...]");
 
-    commandLineParser.process(*pApplication);
+    commandLineParser.process(*qApp);
 
-    m_dataSourcesFiles = commandLineParser.positionalArguments();
+    data_sources_files_ = commandLineParser.positionalArguments();
 
-    m_outputFolder = commandLineParser.value(outputFolderOption);
-    m_isReconnectionMode = commandLineParser.isSet(reconnectionModeOption);
+    output_folder_ = commandLineParser.value(outputFolderOption);
 
-    m_connectionTimeout = commandLineParser.value(connectionTimeoutOption).toInt();
-
-    if (m_outputFolder.isEmpty())
-      m_outputFolder = getOutputFolderPath(m_dataSourcesFiles);
+    if (output_folder_.isEmpty())
+      output_folder_ = getOutputFolderPath(data_sources_files_);
 }
 
 const QStringList& CApplicationSettings::dataSourcesFiles() const
 {
-    return m_dataSourcesFiles;
+    return data_sources_files_;
 }
 
 const QString& CApplicationSettings::outputFolder() const
 {
-    return m_outputFolder;
+    return output_folder_;
 }
 
-bool CApplicationSettings::isReconnectionMode() const
+DataSources CApplicationSettings::dataSources() const
 {
-    return m_isReconnectionMode;
-}
-
-int CApplicationSettings::connectionTimeout() const
-{
-    return m_connectionTimeout;
+    return DataSource::convertDataSources(getDataSourcesMap(data_sources_files_));
 }
 
 QString CApplicationSettings::getOutputFolderPath(const QStringList& dataSourcesFiles) const
@@ -73,4 +60,46 @@ QString CApplicationSettings::getOutputFolderPath(const QStringList& dataSources
         dataSourcesEnvironmentName += "-" + QFileInfo(dataSourcesFilePath).baseName();
     }
     return currentDate + dataSourcesEnvironmentName;
+}
+
+QVariantMap CApplicationSettings::getDataSourcesMap(const QStringList& data_sources_file_paths) const
+{
+    QVariantMap result;
+
+    for (const QString& dataSources_file_path : data_sources_file_paths) {
+        const QVariantMap& data_sources_map = getDataSourcesMap(dataSources_file_path);
+        for (const QString& serverId : data_sources_map.keys()) {
+            result[serverId] = data_sources_map[serverId];
+        }
+    }
+
+    return result;
+}
+
+
+QVariantMap CApplicationSettings::getDataSourcesMap(QString data_sources_file_path) const
+{
+    QString task_json;
+    if (!QFileInfo(data_sources_file_path).exists()) {
+        data_sources_file_path = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/" + data_sources_file_path;
+    }
+    QFile task_file(data_sources_file_path);
+    if (task_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        task_json = task_file.readAll();
+    } else {
+        qFatal("Cann't open %s file for read: %s", qPrintable(data_sources_file_path), qPrintable(task_file.errorString()));
+    }
+
+    QJsonParseError json_parse_error;
+    QJsonDocument task_document = QJsonDocument::fromJson(task_json.toUtf8(), &json_parse_error);
+
+    if (json_parse_error.error != QJsonParseError::NoError)
+        qFatal("Cann't parse %s json file: %s", qPrintable(data_sources_file_path), qPrintable(json_parse_error.errorString()));
+
+    QVariantMap data_sources_map = task_document.toVariant().toMap();
+
+    if (data_sources_map.isEmpty())
+        qFatal("Cann't recognize in %s json file any data sources", qPrintable(data_sources_file_path));
+
+    return data_sources_map;
 }

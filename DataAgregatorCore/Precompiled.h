@@ -23,6 +23,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <QCoreApplication>
 
+#include <QProcess>
+
+#include <QDebug>
+
 #include <stdexcept>
 
 #endif // PRECOMPILED_H

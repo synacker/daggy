@@ -1,23 +1,17 @@
 #ifndef ISERVERCONNECTIONFABRIC_H
 #define ISERVERCONNECTIONFABRIC_H
 
-#include "dataagregatorcore_global.h"
-#include "IRemoteServer.h"
+#include "DataSource.h"
 
-class DATAAGREGATORCORESHARED_EXPORT IRemoteServersFabric
+class IRemoteAgregator;
+
+class IRemoteServersFabric
 {
 public:
-    IRemoteServersFabric(const QString& connectionType);
     virtual ~IRemoteServersFabric() = default;
 
-    virtual IRemoteServer* createRemoteServer(const QString& serverName,
-                                              const std::vector<RemoteCommand>& remoteCommands,
-                                              const QVariantMap& connectionParameters,
-                                              QObject* pParent) = 0;
-    QString connectionType() const;
-
-private:
-    const QString m_connectionType;
+    virtual IRemoteAgregator* createRemoteServer(const DataSource& data_source,
+                                                 QObject* pParent) = 0;
 
 };
 

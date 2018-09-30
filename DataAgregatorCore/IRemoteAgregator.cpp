@@ -3,7 +3,8 @@
 
 IRemoteAgregator::IRemoteAgregator(QObject* pParent)
     : QObject(pParent)
-    , m_state(State::Stopped)
+    , state_(State::Stopped)
+    , running_remote_command_count_(0)
 {
 }
 
@@ -12,9 +13,14 @@ bool IRemoteAgregator::isExistsRunningRemoteCommands() const
     return runingRemoteCommandsCount() > 0;
 }
 
+size_t IRemoteAgregator::runingRemoteCommandsCount() const
+{
+    return running_remote_command_count_;
+}
+
 void IRemoteAgregator::start()
 {
-    if (m_state == State::Stopped) {
+    if (state_ == State::Stopped) {
         setState(State::Run);
         startAgregator();
     }
@@ -22,7 +28,7 @@ void IRemoteAgregator::start()
 
 void IRemoteAgregator::stop()
 {
-    if (m_state == State::Run) {
+    if (state_ == State::Run) {
         setState(State::Stopping);
         stopAgregator();
     }
@@ -30,18 +36,27 @@ void IRemoteAgregator::stop()
 
 void IRemoteAgregator::setState(const IRemoteAgregator::State state)
 {
-    if (m_state != state) {
-        m_state = state;
+    if (state_ != state) {
+        state_ = state;
         emit stateChanged(state);
+    }
+}
+
+void IRemoteAgregator::onRemoteCommandStatusChanged(QString, QString, const RemoteCommand::Status status, int)
+{
+    if (status == RemoteCommand::Status::Started) {
+        running_remote_command_count_++;
+    } else {
+        running_remote_command_count_--;
     }
 }
 
 IRemoteAgregator::State IRemoteAgregator::state() const
 {
-    return m_state;
+    return state_;
 }
 
-bool IRemoteAgregator::isStoping() const
+void IRemoteAgregator::setStopped()
 {
-    return m_isStoping;
+    setState(State::Stopped);
 }

@@ -18,19 +18,13 @@ class CSshRemoteServer : public IRemoteServer
 {
     Q_OBJECT
 public:
-    CSshRemoteServer(const QString& serverName,
-                     const std::vector<RemoteCommand>& commands,
-                     const QVariantMap& connectionParameters,
-                     QObject* pParent = nullptr);
+    CSshRemoteServer(const DataSource& data_source,
+                     QObject* parent_pointer = nullptr);
     ~CSshRemoteServer() override;
 
-    // IRemoteServer interface
-    void startAgregator() override;
-    void stopAgregator() override;
-    void restartCommand(const QString& commandName) override;
-    size_t runingRemoteCommandsCount() const override;
+    bool isForceKill() const;
 
-    static constexpr const char* g_connectionType = "ssh";
+    static constexpr const char* connection_type_global = "ssh";
 
 private slots:
     void onHostConnected();
@@ -42,17 +36,26 @@ private slots:
 
     void onCommandStarted();
     void onCommandWasExit(int exitStatus);
+
 private:
+    // IRemoteServer interface
+    void startAgregator() override final;
+    void stopAgregator() override final;
+    void reconnect() override final;
+
+    void restartCommand(const QString& command_name) override final;
+
     void killConnection();
     void closeConnection();
 
-    QList<QSsh::SshRemoteProcess*> sshRemoteProcesses() const;
-    QSsh::SshRemoteProcess* getSshRemoteProcess(const QString& commandName) const;
+    void startRemoteSshProcess(const QString& command_name, const QString& command);
+    QSharedPointer<QSsh::SshRemoteProcess> getSshRemoteProcess(const QString& command_name) const;
 
-    QSsh::SshConnection* const m_pSshConnection;
-    const bool m_isForceKill;
-    QSharedPointer<QSsh::SshRemoteProcess> m_pKillChildsProcess = nullptr;
-    void startRemoteSshProcess(const QString& commandName, const QString& command);
+    QSsh::SshConnection* const ssh_connection_pointer_;
+    const int force_kill_;
+
+    QMap<QString, QSharedPointer<QSsh::SshRemoteProcess>> ssh_processes_;
+    QSharedPointer<QSsh::SshRemoteProcess> kill_childs_process_pointer_ = nullptr;
 };
 
 #endif // CSSHREMOTESERVER_H

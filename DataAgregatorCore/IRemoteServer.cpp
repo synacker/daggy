@@ -1,16 +1,17 @@
 #include "Precompiled.h"
 #include "IRemoteServer.h"
 
-IRemoteServer::IRemoteServer(const QString& serverName,
-                             const QString& connectionType,
-                             const std::vector<RemoteCommand>& commands, QObject* pParent)
-    : IRemoteAgregator(pParent)
-    , m_serverName(serverName)
-    , m_connectionType(connectionType)
-    , m_remoteCommands(convertRemoteCommands(commands))
+#include "DataSource.h"
+
+IRemoteServer::IRemoteServer(const DataSource& data_source,
+                             QObject* parent_ptr)
+    : IRemoteAgregator(parent_ptr)
+    , data_source_(data_source)
+    , remote_commands_(convertRemoteCommands(data_source.remote_commands))
+    , exists_restart_commands_(isExistsRestartCommand(data_source.remote_commands))
 {
-    setObjectName(serverName);
-    for (const auto& pair : m_remoteCommands) {
+    setObjectName(data_source.server_name);
+    for (const auto& pair : remote_commands_) {
         m_commandsStatus[pair.first] = RemoteCommand::Status::NotStarted;
     }
 }
@@ -19,47 +20,70 @@ IRemoteServer::~IRemoteServer()
 {
 }
 
-QString IRemoteServer::serverName() const
+const QString& IRemoteServer::serverName() const
 {
-    return m_serverName;
+    return data_source_.server_name;
 }
 
 void IRemoteServer::startCommands()
 {
-    for (const auto& pair : m_remoteCommands) {
+    for (const auto& pair : remote_commands_) {
         const QString& commandName = pair.first;
         if (commandStatus(commandName) != RemoteCommand::Status::Started)
             restartCommand(commandName);
     }
 }
 
-void IRemoteServer::setConnectionStatus(const IRemoteServer::ConnectionStatus status, const QString& message)
+bool IRemoteServer::isExistsRestartCommand(const std::vector<RemoteCommand>& commands) const
 {
-    m_connectionStatus = status;
-    emit connectionStatusChanged(m_serverName, status, message);
-    if (status == ConnectionStatus::Connected)
-        startCommands();
-    else
-        setState(State::Stopped);
+    bool result = false;
+    size_t index = 0;
+    while (!result && index < commands.size()) {
+        result = commands.at(index).restart;
+        index++;
+    }
+    return result;
 }
 
-void IRemoteServer::setRemoteCommandStatus(const QString& commandName, RemoteCommand::Status commandStatus, const int exitCode)
+void IRemoteServer::setConnectionStatus(const RemoteConnectionStatus status, const QString& message)
 {
-    m_commandsStatus[commandName] = commandStatus;
-    emit remoteCommandStatusChanged(m_serverName, commandName, commandStatus, exitCode);
-    const RemoteCommand& remoteCommand = getRemoteCommand(commandName);
+    connection_status_ = status;
+    emit connectionStatusChanged(data_source_.server_name, status, message);
+    if (status != RemoteConnectionStatus::Connected) {
+        if (data_source_.reconnect && state() == State::Run)
+            reconnect();
+        else {
+            setStopped();
+        }
+    } else {
+        startCommands();
+    }
+}
+
+void IRemoteServer::setRemoteCommandStatus(const QString& command_name,
+                                           const RemoteCommand::Status command_status,
+                                           const int exit_code)
+{
+    m_commandsStatus[command_name] = command_status;
+    const RemoteCommand& remote_command = getRemoteCommand(command_name);
+    emit remoteCommandStatusChanged(data_source_.server_name,
+                                    remote_command,
+                                    command_status,
+                                    exit_code);
     if (state() == State::Run &&
-        commandStatus != RemoteCommand::Status::Started &&
-        remoteCommand.restart)
+        command_status != RemoteCommand::Status::Started)
     {
-        restartCommand(commandName);
+        if (remote_command.restart)
+            restartCommand(command_name);
+        else if (!isExistsRestartCommand() && !isExistsRunningRemoteCommands())
+            stopAgregator();
     }
 }
 
 void IRemoteServer::setNewRemoteCommandStream(const QString& commandName, const QByteArray& data, const RemoteCommand::Stream::Type type)
 {
     const RemoteCommand& pRemoteCommand = getRemoteCommand(commandName);
-    emit newRemoteCommandStream(m_serverName, {commandName, pRemoteCommand.outputExtension, data, type});
+    emit newRemoteCommandStream(data_source_.server_name, {commandName, pRemoteCommand.output_extension, data, type});
 }
 
 std::map<QString, RemoteCommand> IRemoteServer::convertRemoteCommands(const std::vector<RemoteCommand>& remoteCommands) const
@@ -67,20 +91,30 @@ std::map<QString, RemoteCommand> IRemoteServer::convertRemoteCommands(const std:
     std::map<QString, RemoteCommand> result;
 
     for (const RemoteCommand& remoteCommand : remoteCommands) {
-        result.insert({remoteCommand.commandName, remoteCommand});
+        result.insert({remoteCommand.command_name, remoteCommand});
     }
 
     return result;
 }
 
-QString IRemoteServer::connectionType() const
+const QString& IRemoteServer::connectionType() const
 {
-    return m_connectionType;
+    return data_source_.connection_type;
 }
 
-IRemoteServer::ConnectionStatus IRemoteServer::connectionStatus() const
+const QVariantMap&IRemoteServer::connectionParameters() const
 {
-    return m_connectionStatus;
+    return data_source_.connection_parameters;
+}
+
+const DataSource&IRemoteServer::dataSource() const
+{
+    return data_source_;
+}
+
+RemoteConnectionStatus IRemoteServer::connectionStatus() const
+{
+    return connection_status_;
 }
 
 RemoteCommand::Status IRemoteServer::commandStatus(const QString& commandName) const
@@ -90,5 +124,10 @@ RemoteCommand::Status IRemoteServer::commandStatus(const QString& commandName) c
 
 const RemoteCommand& IRemoteServer::getRemoteCommand(const QString& commandName) const
 {
-    return m_remoteCommands.at(commandName);
+    return remote_commands_.at(commandName);
+}
+
+bool IRemoteServer::isExistsRestartCommand() const
+{
+    return exists_restart_commands_;
 }
