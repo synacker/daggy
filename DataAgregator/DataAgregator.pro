@@ -28,6 +28,9 @@ LIBS += -lDataAgregatorCore
 win32: {
     SOURCES += ISystemSignalsHandlerWin32.cpp
     LIBS += -ladvapi32 -luser32 -lbotan
+
+    RC_ICONS = dataagregator.ico
+    QMAKE_TARGET_DESCRIPTION = "DataAgregator - utility that can run and save output from multiple ssh or local commands on multiple servers simultaneously."
 }
 unix: {
 
@@ -42,10 +45,5 @@ unix: {
 DEPENDPATH += $$PWD/../DataAgregatorCore
 DEPENDPATH += $$PWD/../ssh
 
-RC_ICONS = dataagregator.ico
-RC_FILES = dataagregator.rc
-
-
-QMAKE_TARGET_DESCRIPTION = "DataAgregator - utility that can run and save output from multiple ssh or local commands on multiple servers simultaneously."
 
 
