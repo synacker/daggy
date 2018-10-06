@@ -16,9 +16,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "CDefaultRemoteServersFabric.h"
 #include "IRemoteAgregatorReciever.h"
 
+using namespace dataagregatorcore;
+
 CDataAgregator::CDataAgregator(const DataSources& data_sources,
                                IRemoteServersFabric* const remote_servers_fabric,
-                               QObject* pParent)
+                               QObject* const pParent)
     : IRemoteAgregator(pParent)
     , data_sources_(data_sources)
     , remote_servers_fabric_(remote_servers_fabric == nullptr ? new CDefaultRemoteServersFabric : remote_servers_fabric)

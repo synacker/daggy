@@ -14,6 +14,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <DataAgregatorCore/CDataAgregator.h>
 
+using namespace dataagregatorcore;
+
 CConsoleDataAgregator::CConsoleDataAgregator(const DataSources& data_sources,
                                              const QString& output_folder,
                                              QObject* parent_ptr)

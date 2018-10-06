@@ -26,7 +26,7 @@ class CConsoleDataAgregator : public QObject, public ISystemSignalHandler
 {
   Q_OBJECT
 public:
-  CConsoleDataAgregator(const DataSources& data_sources,
+  CConsoleDataAgregator(const dataagregatorcore::DataSources& data_sources,
                         const QString& output_folder,
                         QObject* parent_ptr = nullptr);
 
@@ -42,12 +42,12 @@ protected:
 
 private slots:
   void handleInterruption();
-  void onDataAgregatorStateChange(const IRemoteAgregator::State state);
+  void onDataAgregatorStateChange(const dataagregatorcore::IRemoteAgregator::State state);
 
 private:
 
   CFileDataSourcesReciever file_remote_agregator_reciever_;
-  CDataAgregator data_agregator_;
+  dataagregatorcore::CDataAgregator data_agregator_;
   bool stopped_;
 };
 

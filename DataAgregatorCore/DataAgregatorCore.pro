@@ -18,10 +18,8 @@ SOURCES += \
     IRemoteServer.cpp \
     CSshRemoteServer.cpp \
     DataSource.cpp \
-    RemoteCommand.cpp \
     IRemoteAgregator.cpp \
     CDefaultRemoteServersFabric.cpp \
-    IRemoteAgregatorReciever.cpp \
     CLocalRemoteServer.cpp
 
 HEADERS +=\

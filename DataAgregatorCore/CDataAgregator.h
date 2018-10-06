@@ -18,16 +18,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <QByteArray>
 #include <QMap>
 
+#include "IRemoteAgregator.h"
+#include "DataSource.h"
+
 namespace QSsh {
 class SshConnection;
 }
 
+namespace dataagregatorcore {
+
 class IRemoteServersFabric;
-
-#include "IRemoteAgregator.h"
-
-#include "DataSource.h"
-
 class IRemoteAgregatorReciever;
 
 class DATAAGREGATORCORESHARED_EXPORT CDataAgregator : public IRemoteAgregator
@@ -36,7 +36,7 @@ class DATAAGREGATORCORESHARED_EXPORT CDataAgregator : public IRemoteAgregator
 public:
     explicit CDataAgregator(const DataSources& data_sources,
                             IRemoteServersFabric* const remote_servers_fabric = nullptr,
-                            QObject *pParent = nullptr);
+                            QObject* const pParent = nullptr);
     virtual ~CDataAgregator() override;
 
     void connectRemoteAgregatorReciever(IRemoteAgregatorReciever* const remote_agregator_ptr);
@@ -65,5 +65,6 @@ private:
     IRemoteServersFabric* const remote_servers_fabric_;
 
 };
+}
 
 #endif // CDATAAGREGATOR_H

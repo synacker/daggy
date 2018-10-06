@@ -20,7 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 class CApplicationSettings;
 class QFile;
 
-class CFileDataSourcesReciever : public IRemoteAgregatorReciever
+class CFileDataSourcesReciever : public dataagregatorcore::IRemoteAgregatorReciever
 {
   Q_OBJECT
   Q_ENUMS(ConsoleMessageType)
@@ -33,14 +33,14 @@ public:
 
 private slots:
   void onConnectionStatusChanged(const QString server_name,
-                                 const RemoteConnectionStatus status,
+                                 const dataagregatorcore::RemoteConnectionStatus status,
                                  const QString message) override final;
   void onRemoteCommandStatusChanged(const QString server_name,
-                                    const RemoteCommand remote_command,
-                                    const RemoteCommand::Status status,
+                                    const dataagregatorcore::RemoteCommand remote_command,
+                                    const dataagregatorcore::RemoteCommand::Status status,
                                     const int exit_code) override final;
   void onNewRemoteCommandStream(const QString server_name,
-                                const RemoteCommand::Stream stream) override final;
+                                const dataagregatorcore::RemoteCommand::Stream stream) override final;
 
 
 private:

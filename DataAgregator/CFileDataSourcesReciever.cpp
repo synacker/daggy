@@ -12,12 +12,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "CFileDataSourcesReciever.h"
 #include "CApplicationSettings.h"
 
+using namespace dataagregatorcore;
 
 CFileDataSourcesReciever::CFileDataSourcesReciever(const QString& output_folder, QObject* parent_ptr)
     : IRemoteAgregatorReciever(parent_ptr)
     , output_folder_path_(createOutputFolder(output_folder))
 {
-    const QMetaObject* const pThisMetaObject = metaObject();
+    const QMetaObject* const pThisMetaObject = QObject::metaObject();
     console_message_type_ = pThisMetaObject->enumerator(pThisMetaObject->indexOfEnumerator("ConsoleMessageType"));
 }
 

@@ -26,7 +26,7 @@ public:
     const QStringList& dataSourcesFiles() const;
     const QString& outputFolder() const;
 
-    DataSources dataSources() const;
+    dataagregatorcore::DataSources dataSources() const;
 
 private:
     QString getOutputFolderPath(const QStringList& dataSourcesFiles) const;
@@ -35,6 +35,8 @@ private:
 
     QStringList data_sources_files_;
     QString output_folder_;
+    bool input_stream_;
+    QVariantMap getDataSourcesFromText(const QString& sources_json) const;
 };
 
 #endif // CAPPLICATIONSETTINGS_H
