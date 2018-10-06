@@ -15,46 +15,50 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <QMap>
 #include <QMetaEnum>
 
-#include <DataAgregatorCore/IDataSourcesReciever.h>
+#include <DataAgregatorCore/IRemoteAgregatorReciever.h>
 
 class CApplicationSettings;
 class QFile;
 
-class CFileDataSourcesReciever : public IDataSourcesReciever
+class CFileDataSourcesReciever : public dataagregatorcore::IRemoteAgregatorReciever
 {
   Q_OBJECT
   Q_ENUMS(ConsoleMessageType)
 public:
   enum ConsoleMessageType {StdError, ConnStatus, CommStatus};
 
-  CFileDataSourcesReciever(const CApplicationSettings& applicationSettings, QObject* pParent = nullptr);
+  CFileDataSourcesReciever(const QString& output_folder,
+                           QObject* parent_ptr = nullptr);
   virtual ~CFileDataSourcesReciever() override;
 
-public slots:
+private slots:
+  void onConnectionStatusChanged(const QString server_name,
+                                 const dataagregatorcore::RemoteConnectionStatus status,
+                                 const QString message) override final;
+  void onRemoteCommandStatusChanged(const QString server_name,
+                                    const dataagregatorcore::RemoteCommand remote_command,
+                                    const dataagregatorcore::RemoteCommand::Status status,
+                                    const int exit_code) override final;
+  void onNewRemoteCommandStream(const QString server_name,
+                                const dataagregatorcore::RemoteCommand::Stream stream) override final;
 
-  void onConnectedToHost(QString serverId) override;
-  void onDisconnectedFromHost(QString serverId) override;
-  void onHostError(QString serverId, QString errorString) override;
-
-  void onNewStandardStreamData(QString serverId, QString commandId, QByteArray data) override;
-  void onNewErrorStreamData(QString serverId, QString commandId, QByteArray data) override;
-
-  void onCommandStarted(QString serverId, QString commandId, QString outputExtension) override;
-  void onCommandWasExit(QString serverId, QString commandId, RemoteCommandExitStatus exitStatus, int exitCode) override;
 
 private:
-  void printServerMessage(const ConsoleMessageType& messageType, const QString& serverId, const QString& serverMessage);
-  void printCommandMessage(const ConsoleMessageType& messageType, const QString& serverId, const QString& commandId, const QString& commandMessage);
+  void writeToFile(const QString server_name, QString command_name, const QByteArray& data);
+  void printServerMessage(const ConsoleMessageType& message_type, const QString& server_id, const QString& server_message);
+  void printCommandMessage(const ConsoleMessageType& message_type, const QString& server_name, const QString& command_name, const QString& command_message);
   QString currentConsoleTime() const;
 
   QString createOutputFolder(const QString& outputFolderPath) const;
   QString getOutputFilePath(const QString& serverId, const QString& commandId, const QString& outputExtension) const;
-  void createOutputFile(QString serverId, QString commandId, QString outputExtension);
-  void closeOutputFile(const QString& serverId, const QString& commandId);
+  void createOutputFile(const QString& server_name, const QString& command_name, const QString& output_extension);
+  void closeOutputFile(const QString& server_name, const QString& command_name);
 
-  const QString m_outputFolderPath;
-  QMap<QString, QMap<QString, QFile*>> m_outputFiles;
-  QMetaEnum m_consoleMessageType;
+  const QString output_folder_path_;
+  QMap<QString, QMap<QString, QFile*>> output_files_;
+  QMetaEnum console_message_type_;
+
+  // IRemoteAgregatorReciever interface
 };
 
 #endif // CFILEDATASOURCESRECIEVER_H

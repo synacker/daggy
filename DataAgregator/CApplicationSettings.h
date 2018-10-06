@@ -12,27 +12,31 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #define CAPPLICATIONSETTINGS_H
 
 #include <QStringList>
+#include <QVariantMap>
+
+#include <DataAgregatorCore/DataSource.h>
 
 class QCoreApplication;
 
 class CApplicationSettings
 {
 public:
-    CApplicationSettings(QCoreApplication* pApplication);
+    CApplicationSettings();
 
     const QStringList& dataSourcesFiles() const;
     const QString& outputFolder() const;
-    bool isReconnectionMode() const;
-    int connectionTimeout() const;
+
+    dataagregatorcore::DataSources dataSources() const;
 
 private:
     QString getOutputFolderPath(const QStringList& dataSourcesFiles) const;
+    QVariantMap getDataSourcesMap(const QStringList& data_sources_file_paths) const;
+    QVariantMap getDataSourcesMap(QString data_sources_file_path) const;
 
-    QStringList m_dataSourcesFiles;
-    QString m_outputFolder;
-    int m_connectionTimeout;
-
-    bool m_isReconnectionMode;
+    QStringList data_sources_files_;
+    QString output_folder_;
+    bool input_stream_;
+    QVariantMap getDataSourcesFromText(const QString& sources_json) const;
 };
 
 #endif // CAPPLICATIONSETTINGS_H

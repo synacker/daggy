@@ -18,56 +18,53 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <QByteArray>
 #include <QMap>
 
-#include "IDataSourcesSender.h"
+#include "IRemoteAgregator.h"
+#include "DataSource.h"
 
 namespace QSsh {
 class SshConnection;
 }
 
-class CSourceServerSshConnection;
-class CSourceServerAuthorization;
-class CDataSources;
-class IDataSourcesReciever;
+namespace dataagregatorcore {
 
-class DATAAGREGATORCORESHARED_EXPORT CDataAgregator : public QObject, public IDataSourcesSender
+class IRemoteServersFabric;
+class IRemoteAgregatorReciever;
+
+class DATAAGREGATORCORESHARED_EXPORT CDataAgregator : public IRemoteAgregator
 {
     Q_OBJECT
 public:
-    explicit CDataAgregator(const bool isReconnectionMode, const int connectionTimeout, QObject *pParent = nullptr);
+    explicit CDataAgregator(const DataSources& data_sources,
+                            IRemoteServersFabric* const remote_servers_fabric = nullptr,
+                            QObject* const pParent = nullptr);
     virtual ~CDataAgregator() override;
 
-    void start(const CDataSources& dataSources);
-    void stop();
+    void connectRemoteAgregatorReciever(IRemoteAgregatorReciever* const remote_agregator_ptr);
+    void dicsonnectRemoteAgregatorReciever(IRemoteAgregator* const remote_agregator_ptr);
 
-    bool isStarted() const;
-
-    void addDataSourcesReciever(IDataSourcesReciever* pDataSourcesReciever);
-    void removeDataSourcesReciever(IDataSourcesReciever* pDataSourcesReciever);
-
-signals:
-    void connectedToHost(QString serverId) override;
-    void disconnectedFromHost(QString serverId) override;
-    void hostError(QString serverId, QString errorString) override;
-
-    void newStandardStreamData(QString serverId, QString commandId, QByteArray data) override;
-    void newErrorStreamData(QString serverId, QString commandId, QByteArray data) override;
-
-    void commandStarted(QString serverId, QString commandId, QString outputExtension) override;
-    void commandWasExit(QString serverId, QString commandId, RemoteCommandExitStatus exitStatus, int exitCode) override;
-
-    void stopped();
-
-private slots:
-    void onServerDisconnected(QString serverId);
+    size_t runingRemoteCommandsCount() const override final;
 
 private:
-    int getActiveConnectionsCount() const;
+    void startAgregator() override final;
+    void stopAgregator() override final;
+
+    QList<IRemoteAgregator*> remoteAgregators() const;
+
+    void createRemoteServer(const DataSource& data_source);
+
+    IRemoteAgregator* getRemoteServer(const QString& server_name) const;
+    bool isExistsRemoteServer(const QString& server_name) const;
+
     void closeConnections();
 
-    const bool m_isRecconnectionMode;
-    const int m_connectionTimeout;
-    bool m_isReconnectSshConnections;
-    QMap<QString, CSourceServerSshConnection*> m_sshConnections;
+    size_t notStoppedRemoteAgregatorsCount() const;
+
+    void onRemoteAgregatorStateChanged(const State agregator_state);
+
+    const DataSources data_sources_;
+    IRemoteServersFabric* const remote_servers_fabric_;
+
 };
+}
 
 #endif // CDATAAGREGATOR_H

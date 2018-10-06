@@ -12,25 +12,28 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "CConsoleDataAgregator.h"
 #include "CApplicationSettings.h"
 
-#include <DataAgregatorCore/CDataSources.h>
+#include <DataAgregatorCore/CDataAgregator.h>
 
-CConsoleDataAgregator::CConsoleDataAgregator(const CApplicationSettings& applicationSettings, QObject* pParent)
-    : QObject(pParent)
-    , m_fileDataSourcesReciever(applicationSettings)
-    , m_dataAgregator(applicationSettings.isReconnectionMode(), applicationSettings.connectionTimeout())
+using namespace dataagregatorcore;
+
+CConsoleDataAgregator::CConsoleDataAgregator(const DataSources& data_sources,
+                                             const QString& output_folder,
+                                             QObject* parent_ptr)
+    : QObject(parent_ptr)
+    , file_remote_agregator_reciever_(output_folder)
+    , data_agregator_(data_sources)
+    , stopped_(false)
 {
-    m_dataAgregator.addDataSourcesReciever(&m_fileDataSourcesReciever);
+    data_agregator_.connectRemoteAgregatorReciever(&file_remote_agregator_reciever_);
 
     connect(this, &CConsoleDataAgregator::interrupted, this, &CConsoleDataAgregator::handleInterruption);
-    connect(&m_dataAgregator, &CDataAgregator::stopped, qApp, &QCoreApplication::quit);
+    connect(&data_agregator_, &CDataAgregator::stateChanged, this, &CConsoleDataAgregator::onDataAgregatorStateChange);
 }
 
-void CConsoleDataAgregator::start(QStringList taskFilePath)
+void CConsoleDataAgregator::start()
 {
     qInfo() << "Start sessions";
-    if (taskFilePath.isEmpty())
-        taskFilePath << "DataSources.json";
-    m_dataAgregator.start(CDataSources(getDataSourcesMap(taskFilePath)));
+    data_agregator_.start();
 }
 
 bool CConsoleDataAgregator::handleSystemSignal(const int signal)
@@ -46,46 +49,18 @@ bool CConsoleDataAgregator::handleSystemSignal(const int signal)
 void CConsoleDataAgregator::handleInterruption()
 {
     qInfo() << "Closing open sessions";
-    m_dataAgregator.stop();
+    data_agregator_.stop();
 }
 
-QVariantMap CConsoleDataAgregator::getDataSourcesMap(QString dataSourcesFilePath) const
+void CConsoleDataAgregator::onDataAgregatorStateChange(const IRemoteAgregator::State state)
 {
-    QString taskJson;
-    if (!QFileInfo(dataSourcesFilePath).exists()) {
-        dataSourcesFilePath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/" + dataSourcesFilePath;
+    if (state == IRemoteAgregator::State::Stopped) {
+        stopped_ = true;
+        qApp->quit();
     }
-    QFile taskFile(dataSourcesFilePath);
-    if (taskFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        taskJson = taskFile.readAll();
-    } else {
-        qFatal("Cann't open %s file for read: %s", qPrintable(dataSourcesFilePath), qPrintable(taskFile.errorString()));
-    }
-
-    QJsonParseError jsonParseError;
-    QJsonDocument taskDocument = QJsonDocument::fromJson(taskJson.toUtf8(), &jsonParseError);
-
-    if (jsonParseError.error != QJsonParseError::NoError)
-        qFatal("Cann't parse %s json file: %s", qPrintable(dataSourcesFilePath), qPrintable(jsonParseError.errorString()));
-
-    QVariantMap dataSourcesMap = taskDocument.toVariant().toMap();
-
-    if (dataSourcesMap.isEmpty())
-        qFatal("Cann't recognize in %s json file any data sources", qPrintable(dataSourcesFilePath));
-
-    return dataSourcesMap;
 }
 
-QVariantMap CConsoleDataAgregator::getDataSourcesMap(const QStringList& dataSourcesFilePaths) const
+bool CConsoleDataAgregator::stopped() const
 {
-    QVariantMap result;
-
-    for (const QString& dataSourcesFilePath : dataSourcesFilePaths) {
-        const QVariantMap& dataSourcesMap = getDataSourcesMap(dataSourcesFilePath);
-        for (const QString& serverId : dataSourcesMap.keys()) {
-            result[serverId] = dataSourcesMap[serverId];
-        }
-    }
-
-    return result;
+    return stopped_;
 }

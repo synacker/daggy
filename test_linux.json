@@ -1,0 +1,16 @@
+{
+    "localhost" : {
+        "type" : "local",
+        "commands" : {
+            "journalTail" : {
+                "command" : "journalctl -f",
+                "outputExtension" : "log"
+            },
+            "journalLast" : {
+                "command" : "journalctl -n 100",
+                "outputExtension" : "log",
+                "restart" : false
+            }
+        }
+    }
+}

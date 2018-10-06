@@ -21,16 +21,18 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <DataAgregatorCore/CDataAgregator.h>
 
-class CApplicationSettings;
-
 
 class CConsoleDataAgregator : public QObject, public ISystemSignalHandler
 {
   Q_OBJECT
 public:
-  CConsoleDataAgregator(const CApplicationSettings& applicationSettings, QObject* pParent = nullptr);
+  CConsoleDataAgregator(const dataagregatorcore::DataSources& data_sources,
+                        const QString& output_folder,
+                        QObject* parent_ptr = nullptr);
 
-  void start(QStringList taskFilePath);
+  void start();
+
+  bool stopped() const;
 
 signals:
   void interrupted();
@@ -40,13 +42,13 @@ protected:
 
 private slots:
   void handleInterruption();
+  void onDataAgregatorStateChange(const dataagregatorcore::IRemoteAgregator::State state);
 
 private:
-  QVariantMap getDataSourcesMap(const QStringList& dataSourcesFilePaths) const;
 
-  CFileDataSourcesReciever m_fileDataSourcesReciever;
-  CDataAgregator m_dataAgregator;
-  QVariantMap getDataSourcesMap(QString dataSourcesFilePath) const;
+  CFileDataSourcesReciever file_remote_agregator_reciever_;
+  dataagregatorcore::CDataAgregator data_agregator_;
+  bool stopped_;
 };
 
 #endif // CCONSOLEDATAAGREGATOR_H

@@ -8,8 +8,11 @@ unix: {
 }
 
 win32: {
-    LIBS += -L$$PWD/3rd-party/win/botan2/lib/
-    INCLUDEPATH += $$PWD/3rd-party/win/botan2/include/botan-2
+    LIBS += -L$$PWD/3rd-party/msvc17_64x/botan2/lib/
+    INCLUDEPATH += $$PWD/3rd-party/include/
+}
+
+macos: {
 }
 
 

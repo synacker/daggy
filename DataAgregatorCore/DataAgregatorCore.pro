@@ -14,25 +14,28 @@ include(../GeneralSettings.pri)
 DEFINES += DATAAGREGATORCORE_LIBRARY
 
 SOURCES += \
-    CDataSources.cpp \
-    CSourceServer.cpp \
-    CSourceServerCommand.cpp \
     CDataAgregator.cpp \
-    CSourceServerSshConnection.cpp \
-    IDataSourcesReciever.cpp \
-    CSourceServerAuthorization.cpp
+    IRemoteServer.cpp \
+    CSshRemoteServer.cpp \
+    DataSource.cpp \
+    IRemoteAgregator.cpp \
+    CDefaultRemoteServersFabric.cpp \
+    CLocalRemoteServer.cpp
 
 HEADERS +=\
         dataagregatorcore_global.h \
     Precompiled.h \
     CDataAgregator.h \
-    CDataSources.h \
-    CSourceServer.h \
-    CSourceServerCommand.h \
-    CSourceServerSshConnection.h \
-    IDataSourcesReciever.h \
-    IDataSourcesSender.h \
-    CSourceServerAuthorization.h
+    IRemoteServer.h \
+    CSshRemoteServer.h \
+    IRemoteServersFabric.h \
+    DataSource.h \
+    RemoteCommand.h \
+    IRemoteAgregator.h \
+    CDefaultRemoteServersFabric.h \
+    IRemoteAgregatorReciever.h \
+    RemoteConnectionStatus.h \
+    CLocalRemoteServer.h
 
 DEPENDPATH += $$PWD/../ssh
 LIBS += -lqssh
@@ -46,3 +49,4 @@ win32: {
     LIBS += -ladvapi32 -luser32 -lws2_32 -lbotan
 }
 
+QMAKE_TARGET_DESCRIPTION = "DataAgregatorCore - lib for runing multiple ssh commands on multiple servers simultaneously."

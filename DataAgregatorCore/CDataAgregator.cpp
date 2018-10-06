@@ -13,119 +13,109 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <ssh/sshconnection.h>
 
+#include "CDefaultRemoteServersFabric.h"
+#include "IRemoteAgregatorReciever.h"
 
-#include "CDataSources.h"
-#include "CSourceServer.h"
-#include "CSourceServerSshConnection.h"
-#include "IDataSourcesReciever.h"
+using namespace dataagregatorcore;
 
-using namespace QSsh;
-
-
-
-CDataAgregator::CDataAgregator(const bool isReconnectionMode, const int connectionTimeout, QObject* pParent)
-    : QObject(pParent)
-    , m_isRecconnectionMode(isReconnectionMode)
-    , m_connectionTimeout(connectionTimeout)
+CDataAgregator::CDataAgregator(const DataSources& data_sources,
+                               IRemoteServersFabric* const remote_servers_fabric,
+                               QObject* const pParent)
+    : IRemoteAgregator(pParent)
+    , data_sources_(data_sources)
+    , remote_servers_fabric_(remote_servers_fabric == nullptr ? new CDefaultRemoteServersFabric : remote_servers_fabric)
 {
-    connect(this, &CDataAgregator::disconnectedFromHost, this, &CDataAgregator::onServerDisconnected);
 }
 
 CDataAgregator::~CDataAgregator()
 {
-    qDeleteAll(m_sshConnections);
+    delete remote_servers_fabric_;
 }
 
-void CDataAgregator::start(const CDataSources& dataSources)
+void CDataAgregator::connectRemoteAgregatorReciever(IRemoteAgregatorReciever* const remote_agregator_ptr)
 {
-    if (!isStarted()) {
-        m_isReconnectSshConnections = m_isRecconnectionMode;
-
-        for (const QString& sourceServerId : dataSources.sourceServers()) {
-            CSourceServer* pSourceServer = dataSources.sourceServer(sourceServerId);
-
-            CSourceServerSshConnection* pSourceServerSshConnection = new CSourceServerSshConnection(sourceServerId,
-                                                                                                    pSourceServer->sourceServerAuthorization(),
-                                                                                                    pSourceServer->sourceServerCommands(),
-                                                                                                    m_connectionTimeout,
-                                                                                                    this);
-            pSourceServerSshConnection->setObjectName(sourceServerId);
-
-            connect(pSourceServerSshConnection, &CSourceServerSshConnection::connectedToHost, this, &CDataAgregator::connectedToHost);
-            connect(pSourceServerSshConnection, &CSourceServerSshConnection::disconnectedFromHost, this, &CDataAgregator::disconnectedFromHost);
-            connect(pSourceServerSshConnection, &CSourceServerSshConnection::hostError, this, &CDataAgregator::hostError);
-
-            connect(pSourceServerSshConnection, &CSourceServerSshConnection::newStandardStreamData, this, &CDataAgregator::newStandardStreamData);
-            connect(pSourceServerSshConnection, &CSourceServerSshConnection::newErrorStreamData, this, &CDataAgregator::newErrorStreamData);
-
-            connect(pSourceServerSshConnection, &CSourceServerSshConnection::commandStarted, this, &CDataAgregator::commandStarted);
-            connect(pSourceServerSshConnection, &CSourceServerSshConnection::commandWasExit, this, &CDataAgregator::commandWasExit);
-
-            pSourceServerSshConnection->connectToHost();
-
-            m_sshConnections[sourceServerId] = pSourceServerSshConnection;
-        }
-    }
+    connect(this, &IRemoteAgregator::connectionStatusChanged, remote_agregator_ptr, &IRemoteAgregatorReciever::onConnectionStatusChanged);
+    connect(this, &IRemoteAgregator::remoteCommandStatusChanged, remote_agregator_ptr, &IRemoteAgregatorReciever::onRemoteCommandStatusChanged);
+    connect(this, &IRemoteAgregator::newRemoteCommandStream, remote_agregator_ptr, &IRemoteAgregatorReciever::onNewRemoteCommandStream);
 }
 
-void CDataAgregator::stop()
+void CDataAgregator::dicsonnectRemoteAgregatorReciever(IRemoteAgregator* const remote_agregator_ptr)
 {
-    m_isReconnectSshConnections = false;
-    if (getActiveConnectionsCount() == 0)
-        emit stopped();
-    else
-        closeConnections();
+    disconnect(remote_agregator_ptr);
 }
 
-bool CDataAgregator::isStarted() const
+size_t CDataAgregator::runingRemoteCommandsCount() const
 {
-    return !m_sshConnections.isEmpty();
-}
-
-void CDataAgregator::addDataSourcesReciever(IDataSourcesReciever* pDataSourcesReciever)
-{
-    connect(this, &CDataAgregator::connectedToHost, pDataSourcesReciever, &IDataSourcesReciever::onConnectedToHost);
-    connect(this, &CDataAgregator::disconnectedFromHost, pDataSourcesReciever, &IDataSourcesReciever::onDisconnectedFromHost);
-    connect(this, &CDataAgregator::hostError, pDataSourcesReciever, &IDataSourcesReciever::onHostError);
-
-    connect(this, &CDataAgregator::newStandardStreamData, pDataSourcesReciever, &IDataSourcesReciever::onNewStandardStreamData);
-    connect(this, &CDataAgregator::newErrorStreamData, pDataSourcesReciever, &IDataSourcesReciever::onNewErrorStreamData);
-
-    connect(this, &CDataAgregator::commandStarted, pDataSourcesReciever, &IDataSourcesReciever::onCommandStarted);
-    connect(this, &CDataAgregator::commandWasExit, pDataSourcesReciever, &IDataSourcesReciever::onCommandWasExit);
-}
-
-void CDataAgregator::removeDataSourcesReciever(IDataSourcesReciever* pDataSourcesReciever)
-{
-    disconnect(pDataSourcesReciever);
-}
-
-void CDataAgregator::onServerDisconnected(QString serverId)
-{
-    CSourceServerSshConnection* pSourceServerSshConnection = m_sshConnections[serverId];
-    if (m_isReconnectSshConnections)
-        pSourceServerSshConnection->connectToHost();
-    else {
-        delete pSourceServerSshConnection;
-        m_sshConnections.remove(serverId);
-    }
-
-    if (getActiveConnectionsCount() == 0)
-        emit stopped();
-}
-
-int CDataAgregator::getActiveConnectionsCount() const
-{
-    int result = 0;
-    for (CSourceServerSshConnection* pSshConnection : m_sshConnections.values())
-        if (pSshConnection->isConnected())
-            result++;
+    size_t result = 0;
+    for (const IRemoteAgregator* const remote_agregator_ptr : remoteAgregators())
+        result += remote_agregator_ptr->runingRemoteCommandsCount();
     return result;
 }
 
-void CDataAgregator::closeConnections()
+void CDataAgregator::startAgregator()
 {
-    for (CSourceServerSshConnection* pSshConnection : m_sshConnections.values()) {
-        pSshConnection->killConnection();
+    for (const DataSource& data_source : data_sources_) {
+        if (!isExistsRemoteServer(data_source.server_name)) {
+            createRemoteServer(data_source);
+        }
+    }
+
+    const QList<IRemoteAgregator*>& remote_agregators = remoteAgregators();
+    for (IRemoteAgregator* const remote_server_ptr : remote_agregators)
+        remote_server_ptr->start();
+
+    if (remote_agregators.size() == 0)
+        setStopped();
+}
+
+void CDataAgregator::stopAgregator()
+{
+    for (IRemoteAgregator* const remote_server_ptr : remoteAgregators())
+        remote_server_ptr->stop();
+}
+
+QList<IRemoteAgregator*> CDataAgregator::remoteAgregators() const
+{
+    return findChildren<IRemoteAgregator*>();
+}
+
+void CDataAgregator::createRemoteServer(const DataSource& data_source)
+{
+    IRemoteAgregator* const remote_server_ptr = remote_servers_fabric_->createRemoteServer(data_source, this);
+    if (remote_server_ptr) {
+        remote_server_ptr->setObjectName(data_source.server_name);
+
+        connect(remote_server_ptr, &IRemoteAgregator::connectionStatusChanged, this, &IRemoteAgregator::connectionStatusChanged);
+        connect(remote_server_ptr, &IRemoteAgregator::remoteCommandStatusChanged, this, &IRemoteAgregator::remoteCommandStatusChanged);
+        connect(remote_server_ptr, &IRemoteAgregator::newRemoteCommandStream, this, &IRemoteAgregator::newRemoteCommandStream);
+
+        connect(remote_server_ptr, &IRemoteAgregator::stateChanged, this, &CDataAgregator::onRemoteAgregatorStateChanged);
+    }
+}
+
+IRemoteAgregator* CDataAgregator::getRemoteServer(const QString& server_name) const
+{
+    return findChild<IRemoteAgregator*>(server_name);
+}
+
+bool CDataAgregator::isExistsRemoteServer(const QString& server_name) const
+{
+    return getRemoteServer(server_name) != nullptr;
+}
+
+size_t CDataAgregator::notStoppedRemoteAgregatorsCount() const
+{
+    size_t result = 0;
+    for (const IRemoteAgregator* remote_agregator_ptr : remoteAgregators()) {
+        if (remote_agregator_ptr->state() != State::Stopped)
+            result++;
+    }
+    return result;
+}
+
+void CDataAgregator::onRemoteAgregatorStateChanged(const IRemoteAgregator::State agregator_state)
+{
+    if (agregator_state == State::Stopped && notStoppedRemoteAgregatorsCount() == 0) {
+        setStopped();
     }
 }

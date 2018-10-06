@@ -15,14 +15,15 @@ void POSIX_handleFunc(int);
 int POSIX_physicalToLogical(int);
 int POSIX_logicalToPhysical(int);
 
-ISystemSignalHandler* g_handler(NULL);
+namespace  {
+ISystemSignalHandler* handler_global_pointer(nullptr);
+}
 
-ISystemSignalHandler::ISystemSignalHandler(int mask) : m_mask(mask)
+ISystemSignalHandler::ISystemSignalHandler(const int mask) : m_mask(mask)
 {
-  assert(g_handler == NULL);
-  g_handler = this;
+  handler_global_pointer = this;
 
-  for (int i = 0; i < numSignals; i++)
+  for (int i = 0; i < num_signals; i++)
   {
     int logical = 0x1 << i;
     if (m_mask & logical)
@@ -37,7 +38,7 @@ ISystemSignalHandler::ISystemSignalHandler(int mask) : m_mask(mask)
 
 ISystemSignalHandler::~ISystemSignalHandler()
 {
-  for (int i=0;i<numSignals;i++)
+  for (int i=0;i<num_signals;i++)
   {
     int logical = 0x1 << i;
     if (m_mask & logical)
@@ -58,8 +59,6 @@ int POSIX_logicalToPhysical(int signal)
   case ISystemSignalHandler::SIG_TERM:
     result = SIGTERM;
     break;
-    // In case the client asks for a SIG_CLOSE handler, accept and
-    // bind it to a SIGTERM. Anyway the signal will never be raised
   case ISystemSignalHandler::SIG_CLOSE:
     result = SIGTERM;
     break;
@@ -92,9 +91,9 @@ int POSIX_physicalToLogical(int signal)
 
 void POSIX_handleFunc(int signal)
 {
-  if (g_handler)
+  if (handler_global_pointer)
   {
     const int signo = POSIX_physicalToLogical(signal);
-    g_handler->handleSystemSignal(signo);
+    handler_global_pointer->handleSystemSignal(signo);
   }
 }

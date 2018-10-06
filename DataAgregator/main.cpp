@@ -12,22 +12,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "CApplicationSettings.h"
 #include "CConsoleDataAgregator.h"
 
-void myCategoryFilter(QLoggingCategory* pCategory)
+void myCategoryFilter(QLoggingCategory* category_ptr)
 {
-    if (qstrcmp(pCategory->categoryName(), "qtc.ssh") == 0)
-        pCategory->setEnabled(QtDebugMsg, false);
+    if (qstrcmp(category_ptr->categoryName(), "qtc.ssh") == 0)
+        category_ptr->setEnabled(QtDebugMsg, false);
 }
 
 int main(int argc, char *argv[])
 {
     QLoggingCategory::installFilter(myCategoryFilter);
     QCoreApplication application(argc, argv);
-    application.setApplicationName("DataAgregator");
 
-    CApplicationSettings applicationSettings(&application);
+    CApplicationSettings applicationSettings;
+    CConsoleDataAgregator consoleDataAgregator(applicationSettings.dataSources(),
+                                               applicationSettings.outputFolder());
+    consoleDataAgregator.start();
 
-    CConsoleDataAgregator consoleDataAgregator(applicationSettings);
-    consoleDataAgregator.start(applicationSettings.dataSourcesFiles());
-
-    return application.exec();
+    return consoleDataAgregator.stopped() ? 0 : application.exec();
 }

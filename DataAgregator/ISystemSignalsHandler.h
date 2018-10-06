@@ -15,7 +15,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 class ISystemSignalHandler
 {
 public:
-    ISystemSignalHandler(int mask = DEFAULT_SIGNALS);
+    ISystemSignalHandler(const int mask = DEFAULT_SIGNALS);
     virtual ~ISystemSignalHandler();
 
     enum SIGNALS
@@ -28,7 +28,7 @@ public:
         SIG_RELOAD      = 16,   // Reload the configuration [Linux only, physical signal is SIGHUP; on Windows it maps to SIG_NOOP]
         DEFAULT_SIGNALS = SIG_INT | SIG_TERM | SIG_CLOSE,
     };
-    static const int numSignals = 6;
+    static constexpr int num_signals = 6;
 
     virtual bool handleSystemSignal(const int signal) = 0;
 
