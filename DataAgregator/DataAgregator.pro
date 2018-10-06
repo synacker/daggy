@@ -42,7 +42,10 @@ unix: {
 DEPENDPATH += $$PWD/../DataAgregatorCore
 DEPENDPATH += $$PWD/../ssh
 
+RC_ICONS = dataagregator.ico
+RC_FILES = dataagregator.rc
 
-QMAKE_TARGET_DESCRIPTION = "DataAgregator - utility that can run and save output from multiple ssh commands on multiple servers simultaneously."
+
+QMAKE_TARGET_DESCRIPTION = "DataAgregator - utility that can run and save output from multiple ssh or local commands on multiple servers simultaneously."
 
 
