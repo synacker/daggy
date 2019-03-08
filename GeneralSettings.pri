@@ -4,7 +4,8 @@ INCLUDEPATH += $$PWD
 
 
 unix: {
-    INCLUDEPATH += /usr/include/botan-2
+    CONFIG += link_pkgconfig
+    PKGCONFIG += botan-2
 }
 
 win32: {
@@ -16,7 +17,7 @@ win32: {
     QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2019 Milovidov Mikhail"
 }
 
-macos: {
+macx: {
 }
 
 

@@ -26,6 +26,7 @@ using DataSources = std::vector<DataSource>;
 struct DATAAGREGATORCORESHARED_EXPORT DataSource {
     const QString server_name;
     const QString connection_type;
+    const QString host;
     const std::vector<RemoteCommand> remote_commands;
     const QVariantMap connection_parameters;
     const bool reconnect;

@@ -17,6 +17,7 @@ namespace {
 
 constexpr const char* g_typeField = "type";
 constexpr const char* g_authorizationField = "authorization";
+constexpr const char* g_hostField = "host";
 constexpr const char* g_passwordAuthorizationField = "passwordAuthorization";
 constexpr const char* g_commandsField = "commands";
 constexpr const char* g_reconnectField = "reconnect";
@@ -36,6 +37,7 @@ DataSources DataSource::convertDataSources(const QVariantMap& data_sources)
         ValidateField(!dataSource.isEmpty(), errorMessage(serverName, "invalidate parameters format"));
 
         const QString& connectionType = dataSource[g_typeField].toString();
+        const QString& host = dataSource[g_hostField].toString();
 
         QVariantMap connection = dataSource[g_authorizationField].toMap();
         if (connection.isEmpty())
@@ -48,7 +50,7 @@ DataSources DataSource::convertDataSources(const QVariantMap& data_sources)
 
         const std::vector<RemoteCommand>& remoteCommands = getCommands(commands, serverName);
 
-        result.push_back({serverName, connectionType, remoteCommands, connection, reconnect});
+        result.push_back({serverName, connectionType, host, remoteCommands, connection, reconnect});
     }
 
     return result;

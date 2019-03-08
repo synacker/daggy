@@ -33,8 +33,6 @@ win32: {
     QMAKE_TARGET_DESCRIPTION = "DataAgregator - utility that can run and save output from multiple ssh or local commands on multiple servers simultaneously."
 }
 unix: {
-
-    LIBS += -lbotan-2
     SOURCES += ISystemSignalsHandlerUnix.cpp
 
     target.path = $$PREFIX/bin/

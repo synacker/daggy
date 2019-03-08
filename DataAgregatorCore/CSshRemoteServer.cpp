@@ -43,13 +43,13 @@ constexpr const char* kill_command_global = "pids=$(pstree -p $PPID | grep -oP \
 
 }
 
-SshConnectionParameters getConnectionParameters(const QVariantMap& connection_parameters);
+SshConnectionParameters getConnectionParameters(const DataSource &data_source);
 RemoteCommand::Status convertStatus(const SshRemoteProcess::ExitStatus exitStatus);
 
 CSshRemoteServer::CSshRemoteServer(const DataSource& data_source,
                                    QObject* parent_pointer)
     : IRemoteServer(data_source, parent_pointer)
-    , ssh_connection_pointer_(new SshConnection(getConnectionParameters(data_source.connection_parameters), this))
+    , ssh_connection_pointer_(new SshConnection(getConnectionParameters(data_source), this))
     , force_kill_(data_source.connection_parameters.value(force_kill_global, default_kill_signal_global).toInt())
 {
     connect(ssh_connection_pointer_, &SshConnection::connected, this, &CSshRemoteServer::onHostConnected);
@@ -195,11 +195,12 @@ QSharedPointer<SshRemoteProcess> CSshRemoteServer::getSshRemoteProcess(const QSt
     return ssh_processes_.value(command_name, nullptr);
 }
 
-QSsh::SshConnectionParameters getConnectionParameters(const QVariantMap& connection_parameters)
+QSsh::SshConnectionParameters getConnectionParameters(const DataSource& data_source)
 {
     SshConnectionParameters result;
+    const QVariantMap& connection_parameters = data_source.connection_parameters;
 
-    const QString& host = connection_parameters[host_field_global].toString();
+    const QString& host = data_source.host.isEmpty() ? connection_parameters[host_field_global].toString() : data_source.host;
     const QString& login = connection_parameters[login_field_global].toString();
     const QString& password = connection_parameters[password_field_global].toString();
     const QString& key_file = connection_parameters[key_field_global].toString();

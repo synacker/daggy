@@ -40,11 +40,6 @@ HEADERS +=\
 DEPENDPATH += $$PWD/../ssh
 LIBS += -lqssh
 
-unix: {
-    CONFIG += link_pkgconfig
-    PKGCONFIG += botan-2
-}
-
 win32: {
     LIBS += -ladvapi32 -luser32 -lws2_32 -lbotan
 }
