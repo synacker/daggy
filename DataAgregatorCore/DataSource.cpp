@@ -16,8 +16,8 @@ using namespace dataagregatorcore;
 namespace {
 
 constexpr const char* g_typeField = "type";
-constexpr const char* g_authorizationField = "authorization";
 constexpr const char* g_hostField = "host";
+constexpr const char* g_authorizationField = "authorization";
 constexpr const char* g_passwordAuthorizationField = "passwordAuthorization";
 constexpr const char* g_commandsField = "commands";
 constexpr const char* g_reconnectField = "reconnect";

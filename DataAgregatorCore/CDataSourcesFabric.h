@@ -1,5 +1,5 @@
 /*
-Copyright 2017-2018 Mikhail Milovidov <milovidovmikhail@gmail.com>
+Copyright 2016-2019 Mikhail Milovidov <milovidovmikhail@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -10,32 +10,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
-#include <QString>
-#include <QVariantMap>
-#include <vector>
-
-#include "RemoteCommand.h"
-#include "dataagregatorcore_global.h"
+#include "DataSource.h"
 
 namespace dataagregatorcore {
 
-struct DataSource;
-using DataSources = std::vector<DataSource>;
+class CDataSourcesFabric
+{
+public:
+    enum InputTypes {Json, Yaml};
 
-struct DATAAGREGATORCORESHARED_EXPORT DataSource {
-    const QString server_name;
-    const QString connection_type;
-    const QString host;
-    const std::vector<RemoteCommand> remote_commands;
-    const QVariantMap connection_parameters;
-    const bool reconnect;
+    CDataSourcesFabric();
 
-    static DataSources convertDataSources(const QVariantMap& data_sources);
+    DataSources getDataSources(const InputTypes input_type, const QByteArray& input) const;
 
 private:
-    static bool ValidateField(const bool isOk, const QString& errorMessage);
-    static QString errorMessage(const QString& serverName, const QString& error);
-    static std::vector<RemoteCommand> getCommands(const QVariantMap& commands, const QString& serverName);
+    DataSources getFromJson(const QByteArray& json) const;
+
 };
 
 }
