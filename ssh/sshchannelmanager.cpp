@@ -25,8 +25,6 @@
 
 #include "sshchannelmanager_p.h"
 
-#include "sftpchannel.h"
-#include "sftpchannel_p.h"
 #include "sshdirecttcpiptunnel.h"
 #include "sshdirecttcpiptunnel_p.h"
 #include "sshforwardedtcpiptunnel.h"
@@ -240,12 +238,7 @@ QSsh::SshRemoteProcess::Ptr SshChannelManager::createRemoteShell()
     return proc;
 }
 
-QSsh::SftpChannel::Ptr SshChannelManager::createSftpChannel()
-{
-    SftpChannel::Ptr sftp(new SftpChannel(m_nextLocalChannelId++, m_sendFacility));
-    insertChannel(sftp->d, sftp);
-    return sftp;
-}
+
 
 SshDirectTcpIpTunnel::Ptr SshChannelManager::createDirectTunnel(const QString &originatingHost,
         quint16 originatingPort, const QString &remoteHost, quint16 remotePort)

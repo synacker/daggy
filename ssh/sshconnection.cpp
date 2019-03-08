@@ -26,7 +26,6 @@
 #include "sshconnection.h"
 #include "sshconnection_p.h"
 
-#include "sftpchannel.h"
 #include "sshagent_p.h"
 #include "sshcapabilities_p.h"
 #include "sshchannelmanager_p.h"
@@ -92,9 +91,6 @@ SshConnection::SshConnection(const SshConnectionParameters &serverInfo, QObject 
     : QObject(parent)
 {
     qRegisterMetaType<QSsh::SshError>("QSsh::SshError");
-    qRegisterMetaType<QSsh::SftpJobId>("QSsh::SftpJobId");
-    qRegisterMetaType<QSsh::SftpFileInfo>("QSsh::SftpFileInfo");
-    qRegisterMetaType<QList <QSsh::SftpFileInfo> >("QList<QSsh::SftpFileInfo>");
 
     d = new Internal::SshConnectionPrivate(this, serverInfo);
     connect(d, &Internal::SshConnectionPrivate::connected, this, &SshConnection::connected,
@@ -164,18 +160,6 @@ QSharedPointer<SshRemoteProcess> SshConnection::createRemoteProcess(const QByteA
 {
     QSSH_ASSERT_AND_RETURN_VALUE(state() == Connected, QSharedPointer<SshRemoteProcess>());
     return d->createRemoteProcess(command);
-}
-
-QSharedPointer<SshRemoteProcess> SshConnection::createRemoteShell()
-{
-    QSSH_ASSERT_AND_RETURN_VALUE(state() == Connected, QSharedPointer<SshRemoteProcess>());
-    return d->createRemoteShell();
-}
-
-QSharedPointer<SftpChannel> SshConnection::createSftpChannel()
-{
-    QSSH_ASSERT_AND_RETURN_VALUE(state() == Connected, QSharedPointer<SftpChannel>());
-    return d->createSftpChannel();
 }
 
 SshDirectTcpIpTunnel::Ptr SshConnection::createDirectTunnel(const QString &originatingHost,
@@ -979,16 +963,6 @@ void SshConnectionPrivate::createPrivateKey()
 QSharedPointer<SshRemoteProcess> SshConnectionPrivate::createRemoteProcess(const QByteArray &command)
 {
     return m_channelManager->createRemoteProcess(command);
-}
-
-QSharedPointer<SshRemoteProcess> SshConnectionPrivate::createRemoteShell()
-{
-    return m_channelManager->createRemoteShell();
-}
-
-QSharedPointer<SftpChannel> SshConnectionPrivate::createSftpChannel()
-{
-    return m_channelManager->createSftpChannel();
 }
 
 SshDirectTcpIpTunnel::Ptr SshConnectionPrivate::createDirectTunnel(const QString &originatingHost,

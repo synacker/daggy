@@ -49,7 +49,6 @@ public:
 
     QSharedPointer<SshRemoteProcess> createRemoteProcess(const QByteArray &command);
     QSharedPointer<SshRemoteProcess> createRemoteShell();
-    QSharedPointer<SftpChannel> createSftpChannel();
     QSharedPointer<SshDirectTcpIpTunnel> createDirectTunnel(const QString &originatingHost,
             quint16 originatingPort, const QString &remoteHost, quint16 remotePort);
     QSharedPointer<SshTcpIpForwardServer> createForwardServer(const QString &remoteHost,

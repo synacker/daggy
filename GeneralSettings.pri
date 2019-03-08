@@ -13,7 +13,7 @@ win32: {
 
     QMAKE_TARGET_COMPANY = "Mikhail Milovidov <milovidovmikhail@gmail.com>"
     QMAKE_TARGET_PRODUCT = $$TARGET
-    QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2016-2018 Milovidov Mikhail"
+    QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2019 Milovidov Mikhail"
 }
 
 macos: {
@@ -37,7 +37,7 @@ LIBS += -L$$DESTDIR
 isEmpty(VERSION) {
     VERSION = $$system(git describe --abbrev=0 --tags)
     BUILD_NUMBER=$$system(git rev-list tag.. --count)
-    isEmpty($$VERSION) {
+    isEmpty(VERSION) {
         VERSION = 0.0.0
     }
     isEmpty($$BUILD_NUMBER) {
