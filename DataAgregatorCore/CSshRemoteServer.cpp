@@ -22,7 +22,7 @@ namespace {
 constexpr const char* host_field_global("host");
 constexpr const char* login_field_global("login");
 constexpr const char* password_field_global("password");
-constexpr const char* key_field_global("keyFile");
+constexpr const char* key_field_global("key");
 constexpr const char* timeout_field_global("timeout");
 constexpr const char* port_field_global("port");
 constexpr const char* force_kill_global("forceKill");

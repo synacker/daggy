@@ -16,8 +16,8 @@ using namespace dataagregatorcore;
 namespace {
 
 constexpr const char* g_typeField = "type";
-constexpr const char* g_connectionField = "connection";
-constexpr const char* g_connectionOldField = "passwordAuthorization";
+constexpr const char* g_authorizationField = "authorization";
+constexpr const char* g_passwordAuthorizationField = "passwordAuthorization";
 constexpr const char* g_commandsField = "commands";
 constexpr const char* g_reconnectField = "reconnect";
 
@@ -37,9 +37,9 @@ DataSources DataSource::convertDataSources(const QVariantMap& data_sources)
 
         const QString& connectionType = dataSource[g_typeField].toString();
 
-        QVariantMap connection = dataSource[g_connectionField].toMap();
+        QVariantMap connection = dataSource[g_authorizationField].toMap();
         if (connection.isEmpty())
-            connection = dataSource[g_connectionOldField].toMap();
+            connection = dataSource[g_passwordAuthorizationField].toMap();
 
         const QVariantMap& commands = dataSource[g_commandsField].toMap();
         ValidateField(!commands.isEmpty(), errorMessage(serverName, QString("%1 field is absent").arg(g_commandsField)));

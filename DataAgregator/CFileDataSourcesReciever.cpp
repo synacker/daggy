@@ -18,7 +18,7 @@ CFileDataSourcesReciever::CFileDataSourcesReciever(const QString& output_folder,
     : IRemoteAgregatorReciever(parent_ptr)
     , output_folder_path_(createOutputFolder(output_folder))
 {
-    const QMetaObject* const pThisMetaObject = QObject::metaObject();
+    const QMetaObject* const pThisMetaObject = metaObject();
     console_message_type_ = pThisMetaObject->enumerator(pThisMetaObject->indexOfEnumerator("ConsoleMessageType"));
 }
 

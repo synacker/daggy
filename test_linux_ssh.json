@@ -1,0 +1,21 @@
+{
+    "localhost" : {
+        "type" : "ssh",
+        "authorization" : {
+            "host" : "127.0.0.1",
+            "login" : "muxa",
+            "key" : "/home/muxa/.ssh/id_rsa"
+        },
+        "commands" : {
+            "journalTail" : {
+                "command" : "journalctl -f",
+                "outputExtension" : "log"
+            },
+            "journalLast" : {
+                "command" : "journalctl -n 100",
+                "outputExtension" : "log",
+                "restart" : false
+            }
+        }
+    }
+}
