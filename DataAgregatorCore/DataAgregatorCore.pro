@@ -17,7 +17,6 @@ SOURCES += \
     CDataAgregator.cpp \
     IRemoteServer.cpp \
     CSshRemoteServer.cpp \
-    DataSource.cpp \
     IRemoteAgregator.cpp \
     CDefaultRemoteServersFabric.cpp \
     CLocalRemoteServer.cpp \

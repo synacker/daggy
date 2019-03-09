@@ -23,20 +23,17 @@ class CApplicationSettings
 public:
     CApplicationSettings();
 
-    const QStringList& dataSourcesFiles() const;
     const QString& outputFolder() const;
 
     dataagregatorcore::DataSources dataSources() const;
 
 private:
-    QString getOutputFolderPath(const QStringList& dataSourcesFiles) const;
-    QVariantMap getDataSourcesMap(const QStringList& data_sources_file_paths) const;
-    QVariantMap getDataSourcesMap(QString data_sources_file_path) const;
+    QString getOutputFolderPath() const;
+    QString getTextFromFile(QString file_path) const;
 
-    QStringList data_sources_files_;
+    QString data_source_name_;
     QString output_folder_;
     bool input_stream_;
-    QVariantMap getDataSourcesFromText(const QString& sources_json) const;
 };
 
 #endif // CAPPLICATIONSETTINGS_H

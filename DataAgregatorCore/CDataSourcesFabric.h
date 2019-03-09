@@ -11,20 +11,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #pragma once
 
 #include "DataSource.h"
+#include "dataagregatorcore_global.h"
 
 namespace dataagregatorcore {
 
-class CDataSourcesFabric
+class DATAAGREGATORCORESHARED_EXPORT CDataSourcesFabric
 {
 public:
     enum InputTypes {Json, Yaml};
 
-    CDataSourcesFabric();
-
-    DataSources getDataSources(const InputTypes input_type, const QByteArray& input) const;
+    static DataSources getDataSources(const InputTypes input_type, const QString& input);
 
 private:
-    DataSources getFromJson(const QByteArray& json) const;
+    static DataSources getFromJson(const QString& json);
+    static DataSources convertDataSources(const QVariantMap& data_sources);
+    static QString errorMessage(const QString& serverName, const QString& error);
+    static bool ValidateField(const bool isOk, const QString& errorMessage);
+    static std::vector<RemoteCommand> getCommands(const QVariantMap& commands, const QString& serverName);
 
 };
 

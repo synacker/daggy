@@ -10,6 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include "Precompiled.h"
 #include "CApplicationSettings.h"
+#include <DataAgregatorCore/CDataSourcesFabric.h>
 
 using namespace dataagregatorcore;
 
@@ -34,18 +35,21 @@ CApplicationSettings::CApplicationSettings()
     command_line_parser.process(*qApp);
 
     input_stream_ = command_line_parser.isSet(input_stream_option);
-
-    data_sources_files_ = command_line_parser.positionalArguments();
+    if (input_stream_)
+        data_source_name_ = "stdin";
+    else {
+        const QStringList& positional_arguments = command_line_parser.positionalArguments();
+        if (!positional_arguments.isEmpty())
+            data_source_name_ = positional_arguments[0];
+        else {
+           qFatal("You must specify source file name or use -i flag for getting source from stdin stream");
+        }
+    }
 
     output_folder_ = command_line_parser.value(output_folder_option);
 
     if (output_folder_.isEmpty())
-        output_folder_ = getOutputFolderPath(data_sources_files_);
-}
-
-const QStringList& CApplicationSettings::dataSourcesFiles() const
-{
-    return data_sources_files_;
+        output_folder_ = getOutputFolderPath();
 }
 
 const QString& CApplicationSettings::outputFolder() const
@@ -58,65 +62,33 @@ DataSources CApplicationSettings::dataSources() const
     DataSources result;
     if (input_stream_) {
         QTextStream text_stream(stdin);
-        result = DataSource::convertDataSources(getDataSourcesFromText(text_stream.readAll()));
+        result = CDataSourcesFabric::getDataSources(CDataSourcesFabric::Json, text_stream.readAll());
     } else {
-        result = DataSource::convertDataSources(getDataSourcesMap(data_sources_files_));
+        result = CDataSourcesFabric::getDataSources(CDataSourcesFabric::Json, getTextFromFile(data_source_name_));
     }
     return result;
 }
 
-QString CApplicationSettings::getOutputFolderPath(const QStringList& dataSourcesFiles) const
+QString CApplicationSettings::getOutputFolderPath() const
 {
-    const QString& currentDate = QDateTime::currentDateTime().toString("dd-MM-yy_hh-mm-ss");
-    QString dataSourcesEnvironmentName;
-    for (const QString& dataSourcesFilePath : dataSourcesFiles) {
-        dataSourcesEnvironmentName += "-" + QFileInfo(dataSourcesFilePath).baseName();
-    }
-    return currentDate + dataSourcesEnvironmentName;
-}
-
-QVariantMap CApplicationSettings::getDataSourcesMap(const QStringList& data_sources_file_paths) const
-{
-    QVariantMap result;
-
-    for (const QString& dataSources_file_path : data_sources_file_paths) {
-        const QVariantMap& data_sources_map = getDataSourcesMap(dataSources_file_path);
-        for (const QString& serverId : data_sources_map.keys()) {
-            result[serverId] = data_sources_map[serverId];
-        }
-    }
-
+    const QString& current_date = QDateTime::currentDateTime().toString("dd-MM-yy_hh-mm-ss");
+    QString result = current_date + "-" + QFileInfo(data_source_name_).baseName();
     return result;
 }
 
-
-QVariantMap CApplicationSettings::getDataSourcesFromText(const QString& sources_json) const
+QString CApplicationSettings::getTextFromFile(QString file_path) const
 {
-    QJsonParseError json_parse_error;
-    QJsonDocument task_document = QJsonDocument::fromJson(sources_json.toUtf8(), &json_parse_error);
-
-    if (json_parse_error.error != QJsonParseError::NoError)
-        qFatal("Cann't parse json: %s", qPrintable(json_parse_error.errorString()));
-
-    QVariantMap data_sources_map = task_document.toVariant().toMap();
-
-    if (data_sources_map.isEmpty())
-        qFatal("Cann't recognize json");
-    return data_sources_map;
-}
-
-QVariantMap CApplicationSettings::getDataSourcesMap(QString data_sources_file_path) const
-{
-    QString sources_json;
-    if (!QFileInfo(data_sources_file_path).exists()) {
-        data_sources_file_path = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/" + data_sources_file_path;
+    QString result;
+    if (!QFileInfo(file_path).exists()) {
+        file_path = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/" + file_path;
     }
-    QFile sources_file(data_sources_file_path);
-    if (sources_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        sources_json = sources_file.readAll();
+
+    QFile source_file(file_path);
+    if (source_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        result = source_file.readAll();
     } else {
-        qFatal("Cann't open %s file for read: %s", qPrintable(data_sources_file_path), qPrintable(sources_file.errorString()));
+        qFatal("Cann't open %s file for read: %s", qPrintable(file_path), qPrintable(source_file.errorString()));
     }
 
-    return getDataSourcesFromText(sources_json);;
+    return result;
 }
