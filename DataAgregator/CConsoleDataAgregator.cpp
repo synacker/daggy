@@ -32,7 +32,6 @@ CConsoleDataAgregator::CConsoleDataAgregator(const DataSources& data_sources,
 
 void CConsoleDataAgregator::start()
 {
-    qInfo() << "Start sessions";
     data_agregator_.start();
 }
 
@@ -48,7 +47,6 @@ bool CConsoleDataAgregator::handleSystemSignal(const int signal)
 
 void CConsoleDataAgregator::handleInterruption()
 {
-    qInfo() << "Closing open sessions";
     data_agregator_.stop();
 }
 

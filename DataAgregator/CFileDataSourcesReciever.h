@@ -24,7 +24,7 @@ class CFileDataSourcesReciever : public dataagregatorcore::IRemoteAgregatorRecie
 {
   Q_OBJECT
 public:
-  enum ConsoleMessageType {StdError, ConnStatus, CommStatus};
+  enum ConsoleMessageType {StdError, ConnStatus, CommStatus, AppStatus};
   Q_ENUM(ConsoleMessageType)
 
   CFileDataSourcesReciever(const QString& output_folder,
@@ -47,6 +47,7 @@ private:
   void writeToFile(const QString server_name, QString command_name, const QByteArray& data);
   void printServerMessage(const ConsoleMessageType& message_type, const QString& server_id, const QString& server_message);
   void printCommandMessage(const ConsoleMessageType& message_type, const QString& server_name, const QString& command_name, const QString& command_message);
+  void printAppStatus(const QString& message);
   QString currentConsoleTime() const;
 
   QString createOutputFolder(const QString& outputFolderPath) const;
@@ -58,7 +59,6 @@ private:
   QMap<QString, QMap<QString, QFile*>> output_files_;
   QMetaEnum console_message_type_;
 
-  // IRemoteAgregatorReciever interface
 };
 
 #endif // CFILEDATASOURCESRECIEVER_H

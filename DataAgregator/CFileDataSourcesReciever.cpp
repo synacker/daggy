@@ -19,6 +19,7 @@ CFileDataSourcesReciever::CFileDataSourcesReciever(const QString& output_folder,
     , output_folder_path_(createOutputFolder(output_folder))
 {
     console_message_type_ = QMetaEnum::fromType<CFileDataSourcesReciever::ConsoleMessageType>();
+    printAppStatus("Start recivier");
 }
 
 CFileDataSourcesReciever::~CFileDataSourcesReciever()
@@ -26,6 +27,7 @@ CFileDataSourcesReciever::~CFileDataSourcesReciever()
     for (const QString& serverId : output_files_.keys())
         for (const QString& commandId : output_files_[serverId].keys())
             closeOutputFile(serverId, commandId);
+    printAppStatus("Srop recivier");
 }
 
 void CFileDataSourcesReciever::onConnectionStatusChanged(const QString server_name,
@@ -103,6 +105,11 @@ void CFileDataSourcesReciever::writeToFile(const QString server_name, QString co
             pOutputFile->flush();
         }
     }
+}
+
+void CFileDataSourcesReciever::printAppStatus(const QString& message)
+{
+    printServerMessage(CFileDataSourcesReciever::AppStatus, "Application", message);
 }
 
 void CFileDataSourcesReciever::printServerMessage(const CFileDataSourcesReciever::ConsoleMessageType& message_type,
