@@ -1,6 +1,6 @@
 /*
 * Byte Swapping Operations
-* (C) 1999-2011 Jack Lloyd
+* (C) 1999-2011,2018 Jack Lloyd
 * (C) 2007 Yves Jerschow
 *
 * Botan is released under the Simplified BSD License (see license.txt)
@@ -10,7 +10,6 @@
 #define BOTAN_BYTE_SWAP_H_
 
 #include <botan/types.h>
-#include <botan/rotate.h>
 
 #if defined(BOTAN_BUILD_COMPILER_IS_MSVC)
   #include <stdlib.h>
@@ -23,7 +22,11 @@ namespace Botan {
 */
 inline uint16_t reverse_bytes(uint16_t val)
    {
-   return rotl<8>(val);
+#if defined(BOTAN_BUILD_COMPILER_IS_GCC) || defined(BOTAN_BUILD_COMPILER_IS_CLANG) || defined(BOTAN_BUILD_COMPILER_IS_XLC)
+   return __builtin_bswap16(val);
+#else
+   return static_cast<uint16_t>((val << 8) | (val >> 8));
+#endif
    }
 
 /**
@@ -31,7 +34,7 @@ inline uint16_t reverse_bytes(uint16_t val)
 */
 inline uint32_t reverse_bytes(uint32_t val)
    {
-#if defined(BOTAN_BUILD_COMPILER_IS_GCC) || defined(BOTAN_BUILD_COMPILER_IS_CLANG)
+#if defined(BOTAN_BUILD_COMPILER_IS_GCC) || defined(BOTAN_BUILD_COMPILER_IS_CLANG) || defined(BOTAN_BUILD_COMPILER_IS_XLC)
    return __builtin_bswap32(val);
 
 #elif defined(BOTAN_BUILD_COMPILER_IS_MSVC)
@@ -44,10 +47,14 @@ inline uint32_t reverse_bytes(uint32_t val)
    return val;
 
 #else
-
    // Generic implementation
-   return (rotr<8>(val) & 0xFF00FF00) | (rotl<8>(val) & 0x00FF00FF);
+   uint16_t hi = static_cast<uint16_t>(val >> 16);
+   uint16_t lo = static_cast<uint16_t>(val);
 
+   hi = reverse_bytes(hi);
+   lo = reverse_bytes(lo);
+
+   return (static_cast<uint32_t>(lo) << 16) | hi;
 #endif
    }
 
@@ -56,7 +63,7 @@ inline uint32_t reverse_bytes(uint32_t val)
 */
 inline uint64_t reverse_bytes(uint64_t val)
    {
-#if defined(BOTAN_BUILD_COMPILER_IS_GCC) || defined(BOTAN_BUILD_COMPILER_IS_CLANG)
+#if defined(BOTAN_BUILD_COMPILER_IS_GCC) || defined(BOTAN_BUILD_COMPILER_IS_CLANG) || defined(BOTAN_BUILD_COMPILER_IS_XLC)
    return __builtin_bswap64(val);
 
 #elif defined(BOTAN_BUILD_COMPILER_IS_MSVC)

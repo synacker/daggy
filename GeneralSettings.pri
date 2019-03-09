@@ -9,7 +9,7 @@ unix: {
 }
 
 win32: {
-    LIBS += -L$$PWD/3rd-party/msvc17_64x/botan2/lib/
+    LIBS += -L$$PWD/3rd-party/msvc17_64x/botan2/lib/ -L$$PWD/3rd-party/msvc17_64x/yaml-cpp/
     INCLUDEPATH += $$PWD/3rd-party/include/
 
     QMAKE_TARGET_COMPANY = "Mikhail Milovidov <milovidovmikhail@gmail.com>"

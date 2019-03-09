@@ -65,11 +65,25 @@ BOTAN_PUBLIC_API(2,0) void secure_scrub_memory(void* ptr, size_t n);
 * @param x a pointer to an array
 * @param y a pointer to another array
 * @param len the number of Ts in x and y
+* @return 0xFF iff x[i] == y[i] forall i in [0...n) or 0x00 otherwise
+*/
+BOTAN_PUBLIC_API(2,9) uint8_t ct_compare_u8(const uint8_t x[],
+                                            const uint8_t y[],
+                                            size_t len);
+
+/**
+* Memory comparison, input insensitive
+* @param x a pointer to an array
+* @param y a pointer to another array
+* @param len the number of Ts in x and y
 * @return true iff x[i] == y[i] forall i in [0...n)
 */
-BOTAN_PUBLIC_API(2,3) bool constant_time_compare(const uint8_t x[],
-                                     const uint8_t y[],
-                                     size_t len);
+inline bool constant_time_compare(const uint8_t x[],
+                                  const uint8_t y[],
+                                  size_t len)
+   {
+   return ct_compare_u8(x, y, len) == 0xFF;
+   }
 
 /**
 * Zero out some bytes
@@ -111,6 +125,21 @@ template<typename T> inline void copy_mem(T* out, const T* in, size_t n)
       {
       std::memmove(out, in, sizeof(T)*n);
       }
+   }
+
+template<typename T> inline void typecast_copy(uint8_t out[], T in)
+   {
+   std::memcpy(out, &in, sizeof(T));
+   }
+
+template<typename T> inline void typecast_copy(T& out, const uint8_t in[])
+   {
+   std::memcpy(&out, in, sizeof(T));
+   }
+
+template<typename T> inline void typecast_copy(T out[], const uint8_t in[], size_t N)
+   {
+   std::memcpy(out, in, sizeof(T)*N);
    }
 
 /**
@@ -178,15 +207,16 @@ inline void xor_buf(uint8_t out[],
    while(length >= 16)
       {
       uint64_t x0, x1, y0, y1;
-      std::memcpy(&x0, in, 8);
-      std::memcpy(&x1, in + 8, 8);
-      std::memcpy(&y0, out, 8);
-      std::memcpy(&y1, out + 8, 8);
+
+      typecast_copy(x0, in);
+      typecast_copy(x1, in + 8);
+      typecast_copy(y0, out);
+      typecast_copy(y1, out + 8);
 
       y0 ^= x0;
       y1 ^= x1;
-      std::memcpy(out, &y0, 8);
-      std::memcpy(out + 8, &y1, 8);
+      typecast_copy(out, y0);
+      typecast_copy(out + 8, y1);
       out += 16; in += 16; length -= 16;
       }
 
@@ -214,15 +244,15 @@ inline void xor_buf(uint8_t out[],
    while(length >= 16)
       {
       uint64_t x0, x1, y0, y1;
-      std::memcpy(&x0, in, 8);
-      std::memcpy(&x1, in + 8, 8);
-      std::memcpy(&y0, in2, 8);
-      std::memcpy(&y1, in2 + 8, 8);
+      typecast_copy(x0, in);
+      typecast_copy(x1, in + 8);
+      typecast_copy(y0, in2);
+      typecast_copy(y1, in2 + 8);
 
       x0 ^= y0;
       x1 ^= y1;
-      std::memcpy(out, &x0, 8);
-      std::memcpy(out + 8, &x1, 8);
+      typecast_copy(out, x0);
+      typecast_copy(out + 8, x1);
       out += 16; in += 16; in2 += 16; length -= 16;
       }
 

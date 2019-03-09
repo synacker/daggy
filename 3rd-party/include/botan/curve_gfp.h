@@ -49,8 +49,6 @@ class BOTAN_UNSTABLE_API CurveGFp_Repr
       */
       virtual const BigInt& get_1_rep() const = 0;
 
-      virtual void redc_mod_p(BigInt& z, secure_vector<word>& ws) const = 0;
-
       virtual BigInt invert_element(const BigInt& x, secure_vector<word>& ws) const = 0;
 
       virtual void to_curve_rep(BigInt& x, secure_vector<word>& ws) const = 0;
@@ -60,7 +58,7 @@ class BOTAN_UNSTABLE_API CurveGFp_Repr
       void curve_mul(BigInt& z, const BigInt& x, const BigInt& y,
                      secure_vector<word>& ws) const
          {
-         BOTAN_DEBUG_ASSERT(x.sig_words() <= m_p_words);
+         BOTAN_DEBUG_ASSERT(x.sig_words() <= get_p_words());
          curve_mul_words(z, x.data(), x.size(), y, ws);
          }
 
@@ -73,7 +71,7 @@ class BOTAN_UNSTABLE_API CurveGFp_Repr
       void curve_sqr(BigInt& z, const BigInt& x,
                              secure_vector<word>& ws) const
          {
-         BOTAN_DEBUG_ASSERT(x.sig_words() <= m_p_words);
+         BOTAN_DEBUG_ASSERT(x.sig_words() <= get_p_words());
          curve_sqr_words(z, x.data(), x.size(), ws);
          }
 
@@ -171,11 +169,6 @@ class BOTAN_UNSTABLE_API CurveGFp final
 
       // TODO: from_rep taking && ref
 
-      void redc_mod_p(BigInt& z, secure_vector<word>& ws) const
-         {
-         m_repr->redc_mod_p(z, ws);
-         }
-
       void mul(BigInt& z, const BigInt& x, const BigInt& y, secure_vector<word>& ws) const
          {
          m_repr->curve_mul(z, x, y, ws);
@@ -259,7 +252,7 @@ namespace std {
 
 template<> inline
 void swap<Botan::CurveGFp>(Botan::CurveGFp& curve1,
-                           Botan::CurveGFp& curve2) BOTAN_NOEXCEPT
+                           Botan::CurveGFp& curve2) noexcept
    {
    curve1.swap(curve2);
    }
