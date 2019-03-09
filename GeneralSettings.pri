@@ -33,7 +33,7 @@ isEmpty(DESTDIR) {
 LIBS += -L$$DESTDIR
 
 
-VERSION = 0.9.9
+VERSION = $$system(git describe --abbrev=0 --tags)
 BUILD_NUMBER=$$system(git rev-list tag.. --count)
 isEmpty(BUILD_NUMBER) {
     BUILD_NUMBER = 0
