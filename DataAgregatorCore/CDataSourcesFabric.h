@@ -14,6 +14,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "dataagregatorcore_global.h"
 #include <QMetaEnum>
 
+namespace YAML {
+    class Node;
+}
+
 namespace dataagregatorcore {
 
 class DATAAGREGATORCORESHARED_EXPORT CDataSourcesFabric
@@ -37,6 +41,13 @@ public:
 private:
     DataSources getFromJson(const QString& json) const;
     DataSources getFromYaml(const QString& yaml) const;
+
+    QVariantMap getAuthorizationParameters(const YAML::Node& node) const;
+    QVariantMap getCommands(const QString& server_name, const YAML::Node& node) const;
+
+    QVariantMap parseYamlServerSource(const QString& server_name, const YAML::Node& node) const;
+    QVariantMap parseStringYamlNode(const YAML::Node& node) const;
+    QString safeRead(const QString& field, const YAML::Node& node) const;
 
     DataSources convertDataSources(const QVariantMap& data_sources) const;
     QString sourceErrorMessage(const QString& serverName, const QString& error) const;

@@ -13,10 +13,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 using namespace dataagregatorcore;
 
-
 namespace {
 
-constexpr const char* g_typeSources = "sources";
+constexpr const char* g_typeYamlSources = "sources";
+constexpr const char* g_typeYamlCommandName = "name";
 
 constexpr const char* g_typeField = "type";
 constexpr const char* g_hostField = "host";
@@ -30,6 +30,22 @@ constexpr const char* g_outputExtensionField = "outputExtension";
 constexpr const char* g_outputExtensionShortField = "extension";
 constexpr const char* g_restart = "restart";
 
+}
+
+namespace YAML {
+
+// QString
+template<>
+struct convert<QString>
+{
+    static bool decode(const Node& node, QString& result)
+    {
+        if (!node.IsScalar())
+            return false;
+        result = QString::fromStdString(node.Scalar());
+        return true;
+    }
+};
 }
 
 CDataSourcesFabric::CDataSourcesFabric()
@@ -94,21 +110,91 @@ DataSources CDataSourcesFabric::getFromYaml(const QString& yaml) const
     DataSources result;
 
     try {
-        YAML::Node root_node = YAML::LoadFile(yaml.toStdString());
-        QVariantMap result;
+        YAML::Node root_node = YAML::Load(yaml.toStdString());
+        QVariantMap result_map;
 
-        YAML::Node servers_node = root_node[g_typeSources];
+        YAML::Node servers_node = root_node[g_typeYamlSources];
 
         if (servers_node.IsMap()) {
-
+            for (YAML::const_iterator it = servers_node.begin(); it != servers_node.end(); it++) {
+                const QString server_name = QString::fromStdString(it->first.as<std::string>());
+                result_map[server_name] = parseYamlServerSource(server_name, it->second);
+            }
         } else {
-
+            qFatal("Invalid source format. 'Servers' section is not a map or undefined");
         }
-
+        result = convertDataSources(result_map);
     } catch (const YAML::Exception& exception) {
-        qFatal("Cann't parse yaml: %s", exception.msg.c_str());
+        qFatal("Cann't parse yaml: %s (%d, %d)", exception.msg.c_str(), exception.mark.line, exception.mark.column);
     }
 
+    return result;
+}
+
+QVariantMap CDataSourcesFabric::getAuthorizationParameters(const YAML::Node& node) const
+{
+    QVariantMap result;
+    try {
+        result = parseStringYamlNode(node[g_authorizationField]);
+    } catch (const YAML::Exception&) {
+
+    }
+    return result;
+}
+
+QVariantMap CDataSourcesFabric::getCommands(const QString& server_name, const YAML::Node& node) const
+{
+    YAML::Node commands_node;
+
+    try {
+        commands_node = node[g_commandsField];
+    } catch (const YAML::Exception&) {
+
+    }
+    if (!commands_node.IsSequence())
+        sourceErrorMessage(server_name, "Commands aren't defined or incorrect format");
+    QVariantMap result;
+    for (size_t index = 0; index < commands_node.size(); index++) {
+        QVariantMap server_command = parseStringYamlNode(commands_node[index]);
+        result[server_command[g_typeYamlCommandName].toString()] = server_command;
+    }
+
+    return result;
+}
+
+QVariantMap CDataSourcesFabric::parseYamlServerSource(const QString& server_name, const YAML::Node& node) const
+{
+    QVariantMap result;
+    if (node.IsMap()) {
+        result[g_typeField] = safeRead(g_typeField, node);
+        result[g_hostField] = safeRead(g_hostField, node);
+        result[g_authorizationField] = getAuthorizationParameters(node);
+        result[g_commandsField] = getCommands(server_name, node);
+    } else {
+        sourceErrorMessage(server_name, "Server parameters is not a map");
+    }
+    return result;
+}
+
+QVariantMap CDataSourcesFabric::parseStringYamlNode(const YAML::Node& node) const
+{
+    QVariantMap result;
+    if (node.IsMap()) {
+        for (YAML::const_iterator it = node.begin(); it != node.end(); it++) {
+            result[it->first.as<QString>()] = it->second.as<QString>();
+        }
+    }
+    return result;
+}
+
+QString CDataSourcesFabric::safeRead(const QString& field, const YAML::Node& node) const
+{
+    QString result;
+    try {
+        result = node[field].as<QString>();
+    } catch (const YAML::Exception&) {
+
+    }
     return result;
 }
 
@@ -149,7 +235,7 @@ QString CDataSourcesFabric::sourceErrorMessage(const QString& serverName, const 
 bool CDataSourcesFabric::ValidateField(const bool isOk, const QString& errorMessage) const
 {
     if (!isOk)
-        throw std::runtime_error(qPrintable(errorMessage));
+        qFatal("Validation source error: %s", qPrintable(errorMessage));
     return isOk;
 }
 

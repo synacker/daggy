@@ -1,16 +1,18 @@
-journalTail: &journalTail
-    command: journalctl -f
-    extension: log
-    restart: false
+aliases:
+    - &journalTail
+      name: journalTail
+      command: journalctl -f
+      extension: log
+      restart: false
+    - &journalLast
+      name: journalLast
+      command: journalctl -n 100
+      extension: log
+      restart: false
 
-journalLast: &journalLast
-    command: journalctl -n 100
-    extension: log
-    restart: false
-
-credits:
-    login: muxa
-    key: /home/muxa/.ssh/id_rsa
+    - &credits
+      login: muxa
+      key: /home/muxa/.ssh/id_rsa
 
 sources:
     localhost:
@@ -20,6 +22,7 @@ sources:
         commands:
             - *journalTail
             - *journalLast
+
     localhost2:
         type: ssh
         host: 127.0.0.1
@@ -27,8 +30,17 @@ sources:
         commands:
             - *journalTail
             - *journalLast
+
     localhost3:
         type: local
         commands:
             - *journalTail
             - *journalLast
+    
+    localhost4:
+        type: local
+        commands:
+            - name: journalLast
+              command: journalctl -n 100
+              extension: log
+              restart: true

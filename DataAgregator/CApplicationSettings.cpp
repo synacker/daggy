@@ -30,7 +30,7 @@ CApplicationSettings::CApplicationSettings()
     command_line_parser.addOption(input_format_option);
 
     command_line_parser.setApplicationDescription("Data agregation utility is a program for extracting information from multiple remote servers via ssh simultaneously.");
-    const QCommandLineOption helpOption = command_line_parser.addHelpOption();
+    const QCommandLineOption& help_option = command_line_parser.addHelpOption();
 
     command_line_parser.addPositionalArgument("sources", "Data sources", "sourceFile");
 
@@ -41,21 +41,24 @@ CApplicationSettings::CApplicationSettings()
     QString data_sources_text;
     QString data_source_name("stdin");
     const QStringList& positional_arguments = command_line_parser.positionalArguments();
-    if (!positional_arguments.isEmpty()) {
-        const QString source_file_name = positional_arguments[0];
+    const QString& source_file_name = positional_arguments[0];
+    if (!source_file_name.isEmpty()) {
+        const QString& source_file_name = positional_arguments[0];
         data_source_name = QFileInfo(source_file_name).baseName();
         if (!command_line_parser.isSet(input_format_option))
             data_source_type = QFileInfo(source_file_name).suffix();
-        data_sources_text = getTextFromFile(source_file_name);
-    } else {
-       data_sources_text = QTextStream(stdin).readAll();
     }
 
     if (!data_sources_fabric.isSourceTypeSopported(data_source_type))
-        qFatal("Invalid source format: %s. Supported formats: %s", qPrintable(data_source_type), qPrintable(data_sources_fabric.supportedSourceTypes().join(' ')));
+        qFatal("Invalid source format: %s. Supported formats: [%s]", qPrintable(data_source_type), qPrintable(data_sources_fabric.supportedSourceTypes().join(", ")));
+
+    if (positional_arguments.isEmpty()) {
+        data_sources_text = QTextStream(stdin).readAll();
+    } else {
+        data_sources_text = getTextFromFile(source_file_name);
+    }
 
     data_sources_ = data_sources_fabric.getDataSources(data_sources_fabric.sourceTypeValue(data_source_type), data_sources_text);
-
     output_folder_ = command_line_parser.value(output_folder_option);
 
     if (output_folder_.isEmpty())
