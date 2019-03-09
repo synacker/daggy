@@ -5,7 +5,7 @@ INCLUDEPATH += $$PWD
 
 unix: {
     CONFIG += link_pkgconfig
-    PKGCONFIG += botan-2
+    PKGCONFIG += botan-2 yaml-cpp
 }
 
 win32: {
