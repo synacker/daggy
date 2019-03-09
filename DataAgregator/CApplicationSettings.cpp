@@ -19,37 +19,47 @@ CApplicationSettings::CApplicationSettings()
     qApp->setApplicationVersion(DATAAGREGATOR_VERSION);
     qApp->setApplicationName(PROGRAM_NAME);
 
+    CDataSourcesFabric data_sources_fabric;
+
     QCommandLineParser command_line_parser;
     command_line_parser.addVersionOption();
     const QCommandLineOption output_folder_option({"o", "output"}, "Set output folder", "folder", "");
-    const QCommandLineOption input_stream_option({"i", "input"}, "Input stream");
+    const QCommandLineOption input_format_option({"f", "format"}, "Source format", "format", data_sources_fabric.inputTypeName(CDataSourcesFabric::json));
 
     command_line_parser.addOption(output_folder_option);
-    command_line_parser.addOption(input_stream_option);
+    command_line_parser.addOption(input_format_option);
 
     command_line_parser.setApplicationDescription("Data agregation utility is a program for extracting information from multiple remote servers via ssh simultaneously.");
     const QCommandLineOption helpOption = command_line_parser.addHelpOption();
 
-    command_line_parser.addPositionalArgument("sources", "Data sources", "sourceFile1 [sourceFile2 ...]");
+    command_line_parser.addPositionalArgument("sources", "Data sources", "sourceFile");
 
     command_line_parser.process(*qApp);
 
-    input_stream_ = command_line_parser.isSet(input_stream_option);
-    if (input_stream_)
-        data_source_name_ = "stdin";
-    else {
-        const QStringList& positional_arguments = command_line_parser.positionalArguments();
-        if (!positional_arguments.isEmpty())
-            data_source_name_ = positional_arguments[0];
-        else {
-           qFatal("You must specify source file name or use -i flag for getting source from stdin stream");
-        }
+    QString data_source_type = command_line_parser.value(input_format_option);
+
+    QString data_sources_text;
+    QString data_source_name("stdin");
+    const QStringList& positional_arguments = command_line_parser.positionalArguments();
+    if (!positional_arguments.isEmpty()) {
+        const QString source_file_name = positional_arguments[0];
+        data_source_name = QFileInfo(source_file_name).baseName();
+        if (!command_line_parser.isSet(input_format_option))
+            data_source_type = QFileInfo(source_file_name).suffix();
+        data_sources_text = getTextFromFile(source_file_name);
+    } else {
+       data_sources_text = QTextStream(stdin).readAll();
     }
+
+    if (!data_sources_fabric.isSourceTypeSopported(data_source_type))
+        qFatal("Invalid source format: %s. Supported formats: %s", qPrintable(data_source_type), qPrintable(data_sources_fabric.supportedSourceTypes().join(' ')));
+
+    data_sources_ = data_sources_fabric.getDataSources(data_sources_fabric.sourceTypeValue(data_source_type), data_sources_text);
 
     output_folder_ = command_line_parser.value(output_folder_option);
 
     if (output_folder_.isEmpty())
-        output_folder_ = getOutputFolderPath();
+        output_folder_ = getOutputFolderPath(data_source_name);
 }
 
 const QString& CApplicationSettings::outputFolder() const
@@ -57,22 +67,15 @@ const QString& CApplicationSettings::outputFolder() const
     return output_folder_;
 }
 
-DataSources CApplicationSettings::dataSources() const
+const DataSources& CApplicationSettings::dataSources() const
 {
-    DataSources result;
-    if (input_stream_) {
-        QTextStream text_stream(stdin);
-        result = CDataSourcesFabric::getDataSources(CDataSourcesFabric::Json, text_stream.readAll());
-    } else {
-        result = CDataSourcesFabric::getDataSources(CDataSourcesFabric::Json, getTextFromFile(data_source_name_));
-    }
-    return result;
+    return data_sources_;
 }
 
-QString CApplicationSettings::getOutputFolderPath() const
+QString CApplicationSettings::getOutputFolderPath(const QString& data_source_name) const
 {
     const QString& current_date = QDateTime::currentDateTime().toString("dd-MM-yy_hh-mm-ss");
-    QString result = current_date + "-" + QFileInfo(data_source_name_).baseName();
+    QString result = current_date + "-" + data_source_name;
     return result;
 }
 

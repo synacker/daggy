@@ -23,9 +23,9 @@ class QFile;
 class CFileDataSourcesReciever : public dataagregatorcore::IRemoteAgregatorReciever
 {
   Q_OBJECT
-  Q_ENUMS(ConsoleMessageType)
 public:
   enum ConsoleMessageType {StdError, ConnStatus, CommStatus};
+  Q_ENUM(ConsoleMessageType)
 
   CFileDataSourcesReciever(const QString& output_folder,
                            QObject* parent_ptr = nullptr);

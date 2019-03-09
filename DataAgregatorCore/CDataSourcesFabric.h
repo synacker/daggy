@@ -12,23 +12,38 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include "DataSource.h"
 #include "dataagregatorcore_global.h"
+#include <QMetaEnum>
 
 namespace dataagregatorcore {
 
 class DATAAGREGATORCORESHARED_EXPORT CDataSourcesFabric
 {
+    Q_GADGET
 public:
-    enum InputTypes {Json, Yaml};
+    enum DataSourcesType {json, yaml};
+    Q_ENUM(DataSourcesType)
 
-    static DataSources getDataSources(const InputTypes input_type, const QString& input);
+    CDataSourcesFabric();
+
+    DataSources getDataSources(const DataSourcesType input_type, const QString& input) const;
+
+    QStringList supportedSourceTypes() const;
+
+    QString inputTypeName(const DataSourcesType input_type) const;
+    DataSourcesType sourceTypeValue(const QString& input_type_name) const;
+
+    bool isSourceTypeSopported(const QString& input_type) const;
 
 private:
-    static DataSources getFromJson(const QString& json);
-    static DataSources convertDataSources(const QVariantMap& data_sources);
-    static QString errorMessage(const QString& serverName, const QString& error);
-    static bool ValidateField(const bool isOk, const QString& errorMessage);
-    static std::vector<RemoteCommand> getCommands(const QVariantMap& commands, const QString& serverName);
+    DataSources getFromJson(const QString& json) const;
+    DataSources getFromYaml(const QString& yaml) const;
 
+    DataSources convertDataSources(const QVariantMap& data_sources) const;
+    QString sourceErrorMessage(const QString& serverName, const QString& error) const;
+    bool ValidateField(const bool isOk, const QString& sourceErrorMessage) const;
+    std::vector<RemoteCommand> getCommands(const QVariantMap& commands, const QString& serverName) const;
+
+    QMetaEnum data_sources_type_;
 };
 
 }

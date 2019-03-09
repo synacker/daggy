@@ -25,15 +25,17 @@ public:
 
     const QString& outputFolder() const;
 
-    dataagregatorcore::DataSources dataSources() const;
+    const dataagregatorcore::DataSources& dataSources() const;
 
 private:
-    QString getOutputFolderPath() const;
+    QString getOutputFolderPath(const QString& data_source_name) const;
     QString getTextFromFile(QString file_path) const;
+    dataagregatorcore::DataSources dataSources(const QString& data_sources_text) const;
 
-    QString data_source_name_;
+
     QString output_folder_;
-    bool input_stream_;
+
+    dataagregatorcore::DataSources data_sources_;
 };
 
 #endif // CAPPLICATIONSETTINGS_H
