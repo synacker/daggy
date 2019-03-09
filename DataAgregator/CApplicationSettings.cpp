@@ -16,7 +16,9 @@ using namespace dataagregatorcore;
 
 CApplicationSettings::CApplicationSettings()
 {
-    qApp->setApplicationVersion(DATAAGREGATOR_VERSION);
+#ifdef Q_OS_UNIX
+    qApp->setApplicationVersion(QString("%s.%d").arg(DATAAGREGATOR_VERSION).arg(DATAAGREGATOR_BUILD_NUMBER));
+#endif
     qApp->setApplicationName(PROGRAM_NAME);
 
     CDataSourcesFabric data_sources_fabric;

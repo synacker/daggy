@@ -27,7 +27,7 @@ LIBS += -lDataAgregatorCore
 
 win32: {
     SOURCES += ISystemSignalsHandlerWin32.cpp
-    LIBS += -ladvapi32 -luser32 -lbotan
+    LIBS += -ladvapi32 -luser32
 
     RC_ICONS = dataagregator.ico
     QMAKE_TARGET_DESCRIPTION = "DataAgregator - utility that can run and save output from multiple ssh or local commands on multiple servers simultaneously."

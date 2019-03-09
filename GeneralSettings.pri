@@ -17,9 +17,6 @@ win32: {
     QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2019 Milovidov Mikhail"
 }
 
-macx: {
-}
-
 
 CONFIG += c++14 skip_target_version_ext
 
@@ -35,19 +32,18 @@ isEmpty(DESTDIR) {
 
 LIBS += -L$$DESTDIR
 
-isEmpty(VERSION) {
-    VERSION = $$system(git describe --abbrev=0 --tags)
-    BUILD_NUMBER=$$system(git rev-list tag.. --count)
-    isEmpty(VERSION) {
-        VERSION = 0.0.0
-    }
-    isEmpty($$BUILD_NUMBER) {
-        BUILD_NUMBER = 0
-    }
-    win32: {
-        VERSION="$$VERSION"."$$BUILD_NUMBER"
-    }
+
+VERSION = 0.9.9
+BUILD_NUMBER=$$system(git rev-list tag.. --count)
+isEmpty(BUILD_NUMBER) {
+    BUILD_NUMBER = 0
+}
+win32: {
+    VERSION="$$VERSION"."$$BUILD_NUMBER"
 }
 
-DEFINES += DATAAGREGATOR_VERSION=\\\"$$VERSION\\\" PROGRAM_NAME=\\\"$$TARGET\\\" DATAAGREGATOR_BUILD_NUMBER=\\\"$$BUILD_NUMBER\\\"
+
+DEFINES += DATAAGREGATOR_VERSION=\\\"$$VERSION\\\" \
+           PROGRAM_NAME=\\\"$$TARGET\\\" \
+           DATAAGREGATOR_BUILD_NUMBER=\\\"$$BUILD_NUMBER\\\"
 

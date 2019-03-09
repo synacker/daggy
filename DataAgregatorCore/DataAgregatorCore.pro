@@ -42,7 +42,7 @@ DEPENDPATH += $$PWD/../ssh
 LIBS += -lqssh
 
 win32: {
-    LIBS += -ladvapi32 -luser32 -lws2_32 -lbotan
+    LIBS += -ladvapi32 -luser32 -lws2_32 -lbotan -lyaml-cpp
+    QMAKE_TARGET_DESCRIPTION = "DataAgregatorCore - lib for runing multiple ssh commands on multiple servers simultaneously."
 }
 
-QMAKE_TARGET_DESCRIPTION = "DataAgregatorCore - lib for runing multiple ssh commands on multiple servers simultaneously."
