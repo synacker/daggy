@@ -34,10 +34,7 @@ LIBS += -L$$DESTDIR
 
 
 VERSION = $$system(git describe --abbrev=0 --tags)
-BUILD_NUMBER=$$system(git rev-list tag.. --count)
-isEmpty(BUILD_NUMBER) {
-    BUILD_NUMBER = 0
-}
+BUILD_NUMBER=$$system(git rev-list $${VERSION}.. --count)
 win32: {
     VERSION="$$VERSION"."$$BUILD_NUMBER"
 }
