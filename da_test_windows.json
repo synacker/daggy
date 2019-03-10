@@ -2,12 +2,12 @@
     "localhost" : {
         "type" : "local",
         "commands" : {
-            "journalTail" : {
-                "command" : "journalctl -f",
+            "pingYa" : {
+                "command" : "ping ya.ru",
                 "outputExtension" : "log"
             },
-            "journalLast" : {
-                "command" : "journalctl -n 100",
+            "pingYaInfinite" : {
+                "command" : "ping -t ya.ru",
                 "outputExtension" : "log",
                 "restart" : false
             }

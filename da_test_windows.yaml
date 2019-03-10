@@ -1,0 +1,18 @@
+aliases:
+    - &pingYa
+      name: pingYa
+      command: ping ya.ru
+      extension: log
+      restart: false
+    - &pingYaInfinite
+      name: journalLast
+      command: ping -t ya.ru
+      extension: log
+      restart: false
+
+sources:
+    windows_localhost:
+        type: local
+        commands:
+            - *pingYa
+            - *pingYaInfinite

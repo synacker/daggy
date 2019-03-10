@@ -1,0 +1,16 @@
+{
+    "localhost" : {
+        "type" : "local",
+        "commands" : {
+            "pingYa" : {
+                "command" : "ping -n 5 ya.ru",
+                "outputExtension" : "log"
+            },
+            "pingYaInfinite" : {
+                "command" : "ping ya.ru",
+                "outputExtension" : "log",
+                "restart" : false
+            }
+        }
+    }
+}
