@@ -3,9 +3,16 @@ PRECOMPILED_HEADER = Precompiled.h
 INCLUDEPATH += $$PWD
 
 
-unix: {
+unix: !macx {
     CONFIG += link_pkgconfig
     PKGCONFIG += botan-2 yaml-cpp
+}
+
+macx: {
+    INCLUDEPATH += /usr/local/include/botan-2
+    INCLUDEPATH += /usr/local/include/
+
+    LIBS += -L/usr/local/lib -lbotan-2 -lyaml-cpp
 }
 
 win32: {
