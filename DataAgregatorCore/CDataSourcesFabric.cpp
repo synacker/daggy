@@ -113,15 +113,15 @@ DataSources CDataSourcesFabric::getFromYaml(const QString& yaml) const
         YAML::Node root_node = YAML::Load(yaml.toStdString());
         QVariantMap result_map;
 
-        YAML::Node servers_node = root_node[g_typeYamlSources];
+        YAML::Node sources_node = root_node[g_typeYamlSources];
 
-        if (servers_node.IsMap()) {
-            for (YAML::const_iterator it = servers_node.begin(); it != servers_node.end(); it++) {
+        if (sources_node.IsMap()) {
+            for (YAML::const_iterator it = sources_node.begin(); it != sources_node.end(); it++) {
                 const QString server_name = QString::fromStdString(it->first.as<std::string>());
                 result_map[server_name] = parseYamlServerSource(server_name, it->second);
             }
         } else {
-            qFatal("Invalid source format. 'Servers' section is not a map or undefined");
+            qFatal("Invalid source format. 'sources' section is not a map or undefined");
         }
         result = convertDataSources(result_map);
     } catch (const YAML::Exception& exception) {
