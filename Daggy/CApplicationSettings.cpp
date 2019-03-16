@@ -88,7 +88,7 @@ QString CApplicationSettings::getTextFromFile(QString file_path) const
 {
     QString result;
     if (!QFileInfo(file_path).exists()) {
-        file_path = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/" + file_path;
+        file_path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.daggy/" + file_path;
     }
 
     QFile source_file(file_path);

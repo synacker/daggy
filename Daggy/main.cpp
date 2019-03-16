@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 
     CApplicationSettings applicationSettings;
     CConsoleDaggy consoleDaggy(applicationSettings.dataSources(),
-                                               applicationSettings.outputFolder());
+                               applicationSettings.outputFolder());
     consoleDaggy.start();
 
     return consoleDaggy.stopped() ? 0 : application.exec();
