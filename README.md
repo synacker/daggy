@@ -7,15 +7,15 @@
 # Short description #
 Daggy - application that can run multiple commands on remote servers simultaneously and save output locally.
 
-## Simple to use ##
+- **Simple to use.**
 Configure commands and servers via json/yaml config.
 Run command via ssh/bash/powershell 
 
-## Simple to support ##
+- **Simple to support.**
 No installations are required on remote servers.
 Only ssh connection are required for remote servers.
 
-## Simple to search and read ##
+- **Simple to search and read.**
 Each command output saving in separate file at runtime.
 
 # Getting started #
