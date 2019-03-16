@@ -1,23 +1,34 @@
+<p align="center">
+  <img width="256" height="256" src="daggy_logo.svg">
+  <br/>
+  <b>Daggy - Data Aggregation Utility</b>
+</p>
+
 # Short description #
+Daggy - application that can run multiple commands on remote servers simultaneously and save output locally.
 
-DataAgregator - utility that can run and save output from multiple ssh commands 
-on multiple servers simultaneously.
+## Simple to use ##
+Configure commands and servers via json/yaml config.
+Run command via ssh/bash/powershell 
 
-Your can collect any remote server ssh output.
+## Simple to support ##
+No installations are required on remote servers.
+Only ssh connection are required for remote servers.
 
-# Features
-* Simple to use. If you know about json, ssh and bash, your know how to use it!
-* It provides simultaneous aggregating from multiple servers and simultaneous executing multiple bash commands on each server. 
-* Each standard output from bash command is writing to the separate file
-
+## Simple to search and read ##
+Each command output saving in separate file at runtime.
 
 # Getting started #
 
-## Compile from source ##
+## Download and install ##
+See [releases](https://github.com/synacker/daggy/releases) and get installation package for your OS (Windows, Fedora, Ubuntu, Debian, MacOS).
+
+## Or Compile from source ##
 
 ### Dependencies ###
-1. Qt 5.5 or above
-2. libbotan-2.7-devel for Linux
+1. Qt Core and Qt Network >= 5.5
+2. libbotan >= 2.7
+3. yamp-cpp >= 0.6.0
 
 ### Compilation steps ###
 1. `git clone https://github.com/milovidov/dataagregator.git`
@@ -27,59 +38,41 @@ Your can collect any remote server ssh output.
 5. `cd Release`
 6. `DataAgregator -h`
 
-### Configuration ###
+# Servers commands configuration #
 
-For DataAgregator start your need to configure your data sources environment.
+Let's see the next example, test.yaml:
 
-Let's see the next example, testEnvironment.json:
+```yaml
+aliases:
+    - &pingYa
+      name: pingYa
+      command: ping -n 5 ya.ru
+      extension: log
+      restart: false
+    - &pingYaInfinite
+      name: journalLast
+      command: ping ya.ru
+      extension: log
+      restart: false
 
-```json
-{
-    "LinuxServer" : {
-        "passwordAuthorization" : {
-            "host" : "127.0.0.1",
-            "login" : "LinuxUser",
-            "password" : "test1234"
-        },
-        "commands" : {
-            "messagesLog" : {
-                "command" : "tail -f /var/log/messages",
-                "outputExtension" : "log"
-            },
-            "pcapExample" : {
-                "command" : "tcpdump -i eth0 port 80 -w -",
-                "outputExtension" : "pcap"
-            }
-        }
-    },
-    "WindowsServer" : {
-        "authorization" : {
-            "host" : "127.0.0.1",
-            "login" : "WindowsUser",
-            "key" : "~/.ssh/id_rsa"
-        },
-        "commands" : {
-            "tailLog1" : {
-                "command" : "tail -f /cygdrive/c/ExampleLog1.log",
-                "outputExtension" : "log"
-            },
-            "tailLog2" : {
-                "command" : "tail -f /cygdrive/c/ExampleLog1.log",
-                "outputExtension" : "log"
-            },
-            "pcapExample" : {
-                "command" : "\"/cygdrive/c/Program Files/Wireshark/tshark\" -f \"port 80\" -F pcap -w -",
-                "outputExtension" : "pcap"
-            }
-        }
-    }
-}
+sources:
+    linux_localhost:
+        type: local
+        commands:
+            - *pingYa
+            - *pingYaInfinite
+    linux_remote:
+        type: ssh
+        host: 127.0.0.1
+        authorization:
+            login: muxa
+            key: /home/muxa/.ssh/id_rsa
+        commands:
+            - *pingYa
+            - *pingYaInfinite
 ```
 
-There are two servers with several commands each. Each command will collect it output data to separate file with next name template: serverId_commandId.outputExtension
-
-For execution DataAgregator with tihs environment type next:
-`DataAgregator testEnvironment.json`
+`daggy test.yaml`
 
 For stopping data extraction type `CTRL+C`.
 
