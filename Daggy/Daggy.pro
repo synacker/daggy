@@ -25,12 +25,14 @@ HEADERS += \
 
 LIBS += -lDaggyCore
 
+DAGGY_DESCRIPTION = "Daggy - Data Aggregation Utility. Application that can run multiple commands on remote servers simultaneously and save output locally."
+
 win32: {
     SOURCES += ISystemSignalsHandlerWin32.cpp
     LIBS += -ladvapi32 -luser32
 
     RC_ICONS = daggy.ico
-    QMAKE_TARGET_DESCRIPTION = "Daggy - Data Aggregation Utility"
+    QMAKE_TARGET_DESCRIPTION = $$DAGGY_DESCRIPTION
 }
 
 unix: {
@@ -43,6 +45,8 @@ unix: {
 
 DEPENDPATH += $$PWD/../DaggyCore
 DEPENDPATH += $$PWD/../ssh
+
+DEFINES += APP_DESCRIPTION=\"\\\"$${DAGGY_DESCRIPTION}\\\"\"
 
 
 

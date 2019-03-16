@@ -31,7 +31,7 @@ CApplicationSettings::CApplicationSettings()
     command_line_parser.addOption(output_folder_option);
     command_line_parser.addOption(input_format_option);
 
-    command_line_parser.setApplicationDescription("Data agregation utility is a program for extracting information from multiple remote servers via ssh simultaneously.");
+    command_line_parser.setApplicationDescription(APP_DESCRIPTION);
     command_line_parser.addHelpOption();
 
     command_line_parser.addPositionalArgument("sources", "Data sources", "sourceFile");
