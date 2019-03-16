@@ -47,7 +47,7 @@ win32: {
 }
 
 
-DEFINES += DATAAGREGATOR_VERSION=\\\"$$VERSION\\\" \
+DEFINES += DAGGY_VERSION=\\\"$$VERSION\\\" \
            PROGRAM_NAME=\\\"$$TARGET\\\" \
-           DATAAGREGATOR_BUILD_NUMBER=\\\"$$BUILD_NUMBER\\\"
+           DAGGY_BUILD_NUMBER=\\\"$$BUILD_NUMBER\\\"
 

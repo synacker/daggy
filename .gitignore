@@ -4,3 +4,5 @@
 DataAgregatorProject\.pro\.user
 
 test\.json
+
+*.user
