@@ -41,6 +41,16 @@ HEADERS +=\
 DEPENDPATH += $$PWD/../ssh
 LIBS += -lqssh
 
+unix: {
+    isEmpty(LIBDIR) {
+        LIBDIR = $$PREFIX/lib64
+    }
+
+    target.path = $$LIBDIR
+    INSTALLS += target
+}
+
+
 win32: {
     LIBS += -ladvapi32 -luser32 -lws2_32 -lbotan -lyaml-cpp
     QMAKE_TARGET_DESCRIPTION = "DaggyCore - lib for runing multiple ssh commands on multiple servers simultaneously."
