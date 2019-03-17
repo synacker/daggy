@@ -46,7 +46,7 @@ Let's see the next example, test.yaml:
 aliases:
     - &pingYa
       name: pingYa
-      command: ping -n 5 ya.ru
+      command: ping -c 5 ya.ru
       extension: log
       restart: false
     - &pingYaInfinite
