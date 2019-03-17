@@ -41,7 +41,6 @@ LIBS += -L$$DESTDIR
 
 isEmpty(VERSION) {
   VERSION = $$system(git describe --abbrev=0 --tags)
-  BUILD_NUMBER = $$system(git rev-list $${VERSION}.. --count)
 }
 
 isEmpty(BUILD_NUMBER) {
