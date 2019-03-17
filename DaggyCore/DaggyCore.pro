@@ -42,10 +42,6 @@ DEPENDPATH += $$PWD/../ssh
 LIBS += -lqssh
 
 unix: {
-    isEmpty(LIBDIR) {
-        LIBDIR = $$PREFIX/lib64
-    }
-
     target.path = $$LIBDIR
     INSTALLS += target
 }

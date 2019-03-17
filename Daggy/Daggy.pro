@@ -38,7 +38,7 @@ win32: {
 unix: {
     SOURCES += ISystemSignalsHandlerUnix.cpp
 
-    target.path = $$PREFIX/bin/
+    target.path = $$BINDIR
     INSTALLS += target
 }
 

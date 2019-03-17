@@ -2,6 +2,16 @@ PRECOMPILED_HEADER = Precompiled.h
 
 INCLUDEPATH += $$PWD
 
+unix: {
+    isEmpty(LIBDIR) {
+        LIBDIR = $$PREFIX/lib64
+    }
+
+    isEmpty(BINDIR) {
+        BINDIR = $$PREFIX/bin
+    }
+}
+
 
 unix: !macx {
     CONFIG += link_pkgconfig
