@@ -65,11 +65,21 @@ sources:
         type: ssh
         host: 127.0.0.1
         authorization:
-            login: muxa
-            key: /home/muxa/.ssh/id_rsa
+            login: user
+            key: /home/user/.ssh/id_rsa
         commands:
             - *pingYa
             - *pingYaInfinite
+    linux_remote2:
+        type: ssh
+        host: 127.0.0.1
+        authorization:
+            login: user
+            password: qwerty
+        commands:
+            - name: journal
+              command: journalctl -f
+              extension: log
 ```
 
 `daggy test.yaml`
