@@ -39,9 +39,15 @@ isEmpty(DESTDIR) {
 
 LIBS += -L$$DESTDIR
 
+isEmpty(VERSION) {
+  VERSION = $$system(git describe --abbrev=0 --tags)
+  BUILD_NUMBER = $$system(git rev-list $${VERSION}.. --count)
+}
 
-VERSION = $$system(git describe --abbrev=0 --tags)
-BUILD_NUMBER=$$system(git rev-list $${VERSION}.. --count)
+isEmpty(BUILD_NUMBER) {
+  BUILD_NUMBER = $$system(git rev-list $${VERSION}.. --count)
+}
+
 win32: {
     VERSION="$$VERSION"."$$BUILD_NUMBER"
 }
