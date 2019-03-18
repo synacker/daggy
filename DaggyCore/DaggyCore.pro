@@ -7,6 +7,8 @@
 TARGET = DaggyCore
 TEMPLATE = lib
 
+CONFIG += staticlib
+
 QT += core network
 
 include(../GeneralSettings.pri)
@@ -39,16 +41,4 @@ HEADERS +=\
     daggycore_global.h
 
 DEPENDPATH += $$PWD/../ssh
-LIBS += -lqssh
-
-unix: {
-    target.path = $$LIBDIR
-    INSTALLS += target
-}
-
-
-win32: {
-    LIBS += -ladvapi32 -luser32 -lws2_32 -lbotan -lyaml-cpp
-    QMAKE_TARGET_DESCRIPTION = "DaggyCore - lib for runing multiple ssh commands on multiple servers simultaneously."
-}
 

@@ -23,13 +23,13 @@ HEADERS += \
     CFileDataSourcesReciever.h
 
 
-LIBS += -lDaggyCore
+LIBS += -lDaggyCore -lqssh
 
 DAGGY_DESCRIPTION = "Daggy - Data Aggregation Utility. Application that can run multiple commands on remote servers simultaneously and save output locally."
 
 win32: {
     SOURCES += ISystemSignalsHandlerWin32.cpp
-    LIBS += -ladvapi32 -luser32
+    LIBS += -ladvapi32 -luser32 -lws2_32 -lbotan -lyaml-cpp
 
     RC_ICONS = daggy.ico
     QMAKE_TARGET_DESCRIPTION = $$DAGGY_DESCRIPTION
