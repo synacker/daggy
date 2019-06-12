@@ -26,6 +26,8 @@ constexpr const char* key_field_global("key");
 constexpr const char* timeout_field_global("timeout");
 constexpr const char* port_field_global("port");
 constexpr const char* force_kill_global("forceKill");
+constexpr const char* ignore_default_proxy_global("ignoreProxy");
+constexpr const char* enable_strict_conformance_checks_global("strictConformance");
 
 constexpr int timeout_default_global = 2;
 
@@ -198,6 +200,8 @@ QSharedPointer<SshRemoteProcess> CSshRemoteServer::getSshRemoteProcess(const QSt
 QSsh::SshConnectionParameters getConnectionParameters(const DataSource& data_source)
 {
     SshConnectionParameters result;
+    SshConnectionOptions connection_options;
+    connection_options &= 0;
     const QVariantMap& connection_parameters = data_source.connection_parameters;
 
     const QString& host = data_source.host.isEmpty() ? connection_parameters[host_field_global].toString() : data_source.host;
@@ -207,6 +211,13 @@ QSsh::SshConnectionParameters getConnectionParameters(const DataSource& data_sou
 
     const int timeout = connection_parameters.value(timeout_field_global, timeout_default_global).toInt();
     const int port = connection_parameters.value(port_field_global, 22).toInt();
+    const bool ignore_default_proxy = connection_parameters.value(ignore_default_proxy_global, true).toBool();
+    const bool enable_strict_conformance_checks = connection_parameters.value(enable_strict_conformance_checks_global, true).toBool();
+    if (ignore_default_proxy)
+        connection_options |= SshConnectionOption::SshIgnoreDefaultProxy;
+    if (enable_strict_conformance_checks)
+        connection_options = SshConnectionOption::SshEnableStrictConformanceChecks;
+    result.options = connection_options;
 
     result.setHost(host);
     result.setUserName(login);
