@@ -1,0 +1,25 @@
+aliases:
+  - &pingYa
+    name: pingYa
+    command: ping ya.ru
+    extension: log
+  - &pingGoo
+    name: pingGoo
+    command: ping goo.gl
+    extension: log
+
+sources:
+  localhost:
+    type: local
+    commands:
+      - *pingYa
+      - *pingGoo
+  remotehost:
+    type: ssh
+    host: 192.168.1.9
+    authorization:
+      login: muxa
+      key: /home/muxa/.ssh/id_rsa
+    commands:
+      - *pingYa
+      - *pingGoo

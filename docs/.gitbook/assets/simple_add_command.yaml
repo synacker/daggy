@@ -1,0 +1,10 @@
+sources:
+    localhost:
+      type: local
+      commands:
+        - name: pingYa
+          command: ping ya.ru
+          extension: log
+        - name: pingGoo
+          command: ping goo.gl
+          extension: log
