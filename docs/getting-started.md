@@ -1,6 +1,6 @@
 # Getting Started
 
-## AGetting Daggy
+## Getting Daggy
 
 ### For Fedora 28/29/30
 
