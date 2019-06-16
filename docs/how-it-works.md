@@ -41,7 +41,7 @@ By default **daggy** creates output folder with next template - `current_date-so
 
 #### Process control
 
-Each command, taken from local type specification runing and controling by **daggy** application such as separate process in localhost:
+Each command, taken from **local type** specification runing and controling by **daggy** application such as separate process in localhost:
 
 ```yaml
 localhost:

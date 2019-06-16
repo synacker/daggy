@@ -110,14 +110,14 @@ remotehost:
 
 | Connection Parameter | Type | Description | Default value |
 | :--- | :--- | :--- | :--- |
-| login | string | ssh connection login | **daggy** user |
-| password | string | ssh connection password. If empty, **daggy** will expect **key** field |  |
-| key | string | path to private key for ssh connection | `~/.ssh/id_rsa` |
-| port | integer | ssh connection port | 22 |
-| timeout | integer |  limit to establish ssh connection, in seconds | 2 |
-| ignoreProxy | boolean | if true, daggy will ignore default proxy | true |
-| strictConformance | boolean | if true, enable ssh protocol compatibility | true |
-| forceKill | integer | kill signal for remote process before connection close. If -1 no signals will be send  | 15 \(SIGTERM\) |
+| **login** | string | ssh connection login | **daggy** user |
+| **password** | string | ssh connection password. If empty, **daggy** will expect **key** field |  |
+| **key** | string | path to private key for ssh connection | `~/.ssh/id_rsa` |
+| **port** | integer | ssh connection port | 22 |
+| **timeout** | integer |  limit to establish ssh connection, in seconds | 2 |
+| **ignoreProxy** | boolean | if true, daggy will ignore default proxy | true |
+| **strictConformance** | boolean | if true, enable ssh protocol compatibility | true |
+| **forceKill** | integer | kill signal for remote process before connection close. If -1 no signals will be send  | 15 \(SIGTERM\) |
 
 ### Commands
 
