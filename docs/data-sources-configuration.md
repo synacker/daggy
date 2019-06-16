@@ -119,7 +119,7 @@ remotehost:
 | strictConformance | boolean | if true, enable ssh protocol compatibility | true |
 | forceKill | integer | kill signal for remote process before connection close. If -1 no signals will be send  | 15 \(SIGTERM\) |
 
-#### Commands
+### Commands
 
 {% tabs %}
 {% tab title="YAML" %}
