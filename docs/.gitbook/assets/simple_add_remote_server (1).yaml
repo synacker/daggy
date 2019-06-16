@@ -11,7 +11,7 @@ sources:
   remotehost:
     type: ssh
     host: 192.168.1.9
-    connection:
+    authorization:
       login: muxa
       key: /home/muxa/.ssh/id_rsa
     commands:

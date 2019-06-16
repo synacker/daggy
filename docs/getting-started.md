@@ -32,7 +32,7 @@ daggy -h
 
 ## Configuration
 
-### Simple config
+### Simple data sources config
 
 {% code-tabs %}
 {% code-tabs-item title="simple.yaml" %}
@@ -48,7 +48,7 @@ sources:
 {% endcode-tabs-item %}
 {% endcode-tabs %}
 
-{% file src=".gitbook/assets/simple \(1\).yaml" caption="simple.yaml" %}
+{% file src=".gitbook/assets/simple.yaml" caption="simple.yaml" %}
 
 ```bash
 daggy simple.yaml
@@ -149,7 +149,7 @@ sources:
   remotehost:
     type: ssh
     host: 192.168.1.9
-    authorization:
+    connection:
       login: muxa
       key: /home/muxa/.ssh/id_rsa
     commands:
@@ -215,7 +215,7 @@ sources:
   remotehost:
     type: ssh
     host: 192.168.1.9
-    authorization:
+    connection:
       login: muxa
       key: /home/muxa/.ssh/id_rsa
     commands:
@@ -225,7 +225,7 @@ sources:
 {% endcode-tabs-item %}
 {% endcode-tabs %}
 
-{% file src=".gitbook/assets/simple\_group\_commands.yaml" %}
+{% file src=".gitbook/assets/simple\_group\_commands \(1\).yaml" %}
 
 ```bash
 daggy simple_group_commands.yaml 
@@ -271,27 +271,29 @@ sources:
   remotehost:
     host: 192.168.1.9
     type: ssh
-    authorization:
+    connection:
       *ssh_auth
     commands:
       *my_commands
   remotehost2:
     host: 192.168.1.10
     type: ssh
-    authorization:
+    connection:
       *ssh_auth
     commands:
       *my_commands
   remotehost3:
     host: 192.168.1.11
     type: ssh
-    authorization:
+    connection:
       *ssh_auth
     commands:
       *my_commands
 ```
 {% endcode-tabs-item %}
 {% endcode-tabs %}
+
+{% file src=".gitbook/assets/simple\_multiple\_servers.yaml" %}
 
 ```text
 daggy simple_multiple_servers.yaml 
