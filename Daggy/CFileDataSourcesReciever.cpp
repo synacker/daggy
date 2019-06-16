@@ -146,7 +146,9 @@ QString CFileDataSourcesReciever::createOutputFolder(const QString& outputFolder
     result = outputFolder.absolutePath();
     if (!outputFolder.exists() &&
             !outputFolder.mkpath(result)) {
-        qFatal("Cann't create output folder %s", qPrintable(result));
+        throw std::runtime_error(QString("Cann't create output folder %1")
+                                 .arg(result)
+                                 .toStdString());
     }
     return result;
 }
