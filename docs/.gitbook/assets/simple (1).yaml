@@ -1,7 +1,0 @@
-sources:
-    localhost:
-      type: local
-      commands:
-        - name: pingYa
-          command: ping ya.ru
-          extension: log

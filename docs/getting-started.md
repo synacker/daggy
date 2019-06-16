@@ -48,7 +48,7 @@ sources:
 {% endcode-tabs-item %}
 {% endcode-tabs %}
 
-{% file src=".gitbook/assets/simple.yaml" caption="simple.yaml" %}
+{% file src=".gitbook/assets/simple.yaml" %}
 
 ```bash
 daggy simple.yaml
@@ -225,7 +225,7 @@ sources:
 {% endcode-tabs-item %}
 {% endcode-tabs %}
 
-{% file src=".gitbook/assets/simple\_group\_commands \(1\).yaml" %}
+{% file src=".gitbook/assets/simple\_group\_commands.yaml" %}
 
 ```bash
 daggy simple_group_commands.yaml 
