@@ -42,7 +42,7 @@ private:
     DataSources getFromJson(const QString& json) const;
     DataSources getFromYaml(const QString& yaml) const;
 
-    QVariantMap getAuthorizationParameters(const YAML::Node& node) const;
+    QVariantMap getConnectionParameters(const YAML::Node& node) const;
     QVariantMap getCommands(const QString& server_name, const YAML::Node& node) const;
 
     QVariantMap parseYamlServerSource(const QString& server_name, const YAML::Node& node) const;

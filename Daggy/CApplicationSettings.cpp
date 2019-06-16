@@ -51,8 +51,12 @@ CApplicationSettings::CApplicationSettings()
             data_source_type = QFileInfo(source_file_name).suffix();
     }
 
-    if (!data_sources_fabric.isSourceTypeSopported(data_source_type))
-        qFatal("Invalid source format: %s. Supported formats: [%s]", qPrintable(data_source_type), qPrintable(data_sources_fabric.supportedSourceTypes().join(", ")));
+    if (!data_sources_fabric.isSourceTypeSopported(data_source_type)) {
+        throw std::invalid_argument(QString("Invalid source format: %1. Supported formats: [%2]")
+                                            .arg(data_source_type)
+                                            .arg(data_sources_fabric.supportedSourceTypes().join(", "))
+                                            .toStdString());
+    }
 
     if (positional_arguments.isEmpty()) {
         data_sources_text = QTextStream(stdin).readAll();
@@ -95,7 +99,9 @@ QString CApplicationSettings::getTextFromFile(QString file_path) const
     if (source_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         result = source_file.readAll();
     } else {
-        qFatal("Cann't open %s file for read: %s", qPrintable(file_path), qPrintable(source_file.errorString()));
+        throw std::invalid_argument(QString("Cann't open %1 file for read: %2")
+                                    .arg(file_path, source_file.errorString())
+                                    .toStdString());
     }
 
     return result;

@@ -20,6 +20,7 @@ constexpr const char* g_typeYamlCommandName = "name";
 
 constexpr const char* g_typeField = "type";
 constexpr const char* g_hostField = "host";
+constexpr const char* g_connectionField = "connection";
 constexpr const char* g_authorizationField = "authorization";
 constexpr const char* g_passwordAuthorizationField = "passwordAuthorization";
 constexpr const char* g_commandsField = "commands";
@@ -100,59 +101,48 @@ DataSources CDataSourcesFabric::getFromJson(const QString& json) const
     QJsonDocument task_document = QJsonDocument::fromJson(json.toUtf8(), &json_parse_error);
 
     if (json_parse_error.error != QJsonParseError::NoError)
-        qFatal("Cann't parse json: %s", qPrintable(json_parse_error.errorString()));
+        throw std::invalid_argument(QString("Cann't parse json: %1")
+                                 .arg(json_parse_error.errorString())
+                                 .toStdString());
 
     return convertDataSources(task_document.toVariant().toMap());
 }
 
 DataSources CDataSourcesFabric::getFromYaml(const QString& yaml) const
 {
-    DataSources result;
+    YAML::Node root_node = YAML::Load(yaml.toStdString());
+    QVariantMap result_map;
 
-    try {
-        YAML::Node root_node = YAML::Load(yaml.toStdString());
-        QVariantMap result_map;
+    YAML::Node sources_node = root_node[g_typeYamlSources];
 
-        YAML::Node sources_node = root_node[g_typeYamlSources];
-
-        if (sources_node.IsMap()) {
-            for (YAML::const_iterator it = sources_node.begin(); it != sources_node.end(); it++) {
-                const QString server_name = QString::fromStdString(it->first.as<std::string>());
-                result_map[server_name] = parseYamlServerSource(server_name, it->second);
-            }
-        } else {
-            qFatal("Invalid source format. 'sources' section is not a map or undefined");
+    if (sources_node.IsMap()) {
+        for (YAML::const_iterator it = sources_node.begin(); it != sources_node.end(); it++) {
+            const QString server_name = QString::fromStdString(it->first.as<std::string>());
+            result_map[server_name] = parseYamlServerSource(server_name, it->second);
         }
-        result = convertDataSources(result_map);
-    } catch (const YAML::Exception& exception) {
-        qFatal("Cann't parse yaml: %s (%d, %d)", exception.msg.c_str(), exception.mark.line, exception.mark.column);
+    } else {
+        throw std::invalid_argument("Invalid source format. 'sources' section is not a map or undefined");
     }
 
-    return result;
+    return convertDataSources(result_map);
 }
 
-QVariantMap CDataSourcesFabric::getAuthorizationParameters(const YAML::Node& node) const
+QVariantMap CDataSourcesFabric::getConnectionParameters(const YAML::Node& node) const
 {
     QVariantMap result;
-    try {
-        result = parseStringYamlNode(node[g_authorizationField]);
-    } catch (const YAML::Exception&) {
-
-    }
+    const auto& connection_node = node[g_connectionField];
+    if (connection_node)
+        result = parseStringYamlNode(connection_node);
     return result;
 }
 
 QVariantMap CDataSourcesFabric::getCommands(const QString& server_name, const YAML::Node& node) const
 {
-    YAML::Node commands_node;
+    YAML::Node commands_node = node[g_commandsField];
+    if (!commands_node || !commands_node.IsSequence())
+        throw std::runtime_error(sourceErrorMessage(server_name,
+                                                    "Commands aren't defined or incorrect format").toStdString());
 
-    try {
-        commands_node = node[g_commandsField];
-    } catch (const YAML::Exception&) {
-
-    }
-    if (!commands_node.IsSequence())
-        sourceErrorMessage(server_name, "Commands aren't defined or incorrect format");
     QVariantMap result;
     for (size_t index = 0; index < commands_node.size(); index++) {
         QVariantMap server_command = parseStringYamlNode(commands_node[index]);
@@ -168,10 +158,10 @@ QVariantMap CDataSourcesFabric::parseYamlServerSource(const QString& server_name
     if (node.IsMap()) {
         result[g_typeField] = safeRead(g_typeField, node);
         result[g_hostField] = safeRead(g_hostField, node);
-        result[g_authorizationField] = getAuthorizationParameters(node);
+        result[g_connectionField] = getConnectionParameters(node);
         result[g_commandsField] = getCommands(server_name, node);
     } else {
-        sourceErrorMessage(server_name, "Server parameters is not a map");
+        throw std::invalid_argument(sourceErrorMessage(server_name, "Server parameters is not a map").toStdString());
     }
     return result;
 }
@@ -210,9 +200,11 @@ DataSources CDataSourcesFabric::convertDataSources(const QVariantMap& data_sourc
         const QString& connectionType = dataSource[g_typeField].toString();
         const QString& host = dataSource[g_hostField].toString();
 
-        QVariantMap connection = dataSource[g_authorizationField].toMap();
+        QVariantMap connection = dataSource[g_connectionField].toMap();
         if (connection.isEmpty())
             connection = dataSource[g_passwordAuthorizationField].toMap();
+        if (connection.isEmpty())
+            connection = dataSource[g_authorizationField].toMap();
 
         const QVariantMap& commands = dataSource[g_commandsField].toMap();
         ValidateField(!commands.isEmpty(), sourceErrorMessage(serverName, QString("%1 field is absent").arg(g_commandsField)));
@@ -229,13 +221,13 @@ DataSources CDataSourcesFabric::convertDataSources(const QVariantMap& data_sourc
 
 QString CDataSourcesFabric::sourceErrorMessage(const QString& serverName, const QString& error) const
 {
-    return QString("Error for server name %1 - %2").arg(serverName).arg(error);
+    return QString("Error for server name %1 - %2").arg(serverName, error);
 }
 
 bool CDataSourcesFabric::ValidateField(const bool isOk, const QString& errorMessage) const
 {
     if (!isOk)
-        qFatal("Validation source error: %s", qPrintable(errorMessage));
+        throw std::invalid_argument(QString("Validation source error: %1").arg(errorMessage).toStdString());
     return isOk;
 }
 

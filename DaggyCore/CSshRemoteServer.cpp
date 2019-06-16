@@ -29,6 +29,8 @@ constexpr const char* force_kill_global("forceKill");
 constexpr const char* ignore_default_proxy_global("ignoreProxy");
 constexpr const char* enable_strict_conformance_checks_global("strictConformance");
 
+constexpr const char* default_host_global("127.0.0.1");
+
 constexpr int timeout_default_global = 2;
 
 constexpr int invalid_signal_global = -1;
@@ -36,17 +38,19 @@ constexpr int default_kill_signal_global = 15;
 
 constexpr const char* kill_command_global = "pids=$(pstree -p $PPID | grep -oP \"\\d+\" | grep -v $PPID | grep -v $$ | tac);"
                                             "for pid in $pids; do "
-                                               "while kill -0 $pid; do "
-                                                   "kill -%1 $pid;"
-                                                   "sleep 0.1;"
+                                                "while kill -0 $pid; do "
+                                                    "kill -%1 $pid;"
+                                                    "sleep 0.1;"
                                                 "done "
                                             "done ";
 
 
 }
 
-SshConnectionParameters getConnectionParameters(const DataSource &data_source);
+SshConnectionParameters getConnectionParameters(const DataSource& data_source);
 RemoteCommand::Status convertStatus(const SshRemoteProcess::ExitStatus exitStatus);
+QString userName();
+QString privateKeyPath();
 
 CSshRemoteServer::CSshRemoteServer(const DataSource& data_source,
                                    QObject* parent_pointer)
@@ -167,7 +171,7 @@ void CSshRemoteServer::onCommandWasExit(int exitStatus)
 void CSshRemoteServer::killConnection()
 {
     if (ssh_connection_pointer_->state() == SshConnection::Connected &&
-       (!kill_childs_process_pointer_ || !kill_childs_process_pointer_->isRunning()))
+            (!kill_childs_process_pointer_ || !kill_childs_process_pointer_->isRunning()))
     {
         kill_childs_process_pointer_ = ssh_connection_pointer_->createRemoteProcess(qPrintable(QString(kill_command_global).arg(force_kill_)));
         connect(kill_childs_process_pointer_.data(), &SshRemoteProcess::closed, this, &CSshRemoteServer::closeConnection);
@@ -197,6 +201,14 @@ QSharedPointer<SshRemoteProcess> CSshRemoteServer::getSshRemoteProcess(const QSt
     return ssh_processes_.value(command_name, nullptr);
 }
 
+QString userName()
+{
+    QString name = qgetenv("USER");
+    if (name.isEmpty())
+        name = qgetenv("USERNAME");
+    return name;
+}
+
 QSsh::SshConnectionParameters getConnectionParameters(const DataSource& data_source)
 {
     SshConnectionParameters result;
@@ -204,10 +216,18 @@ QSsh::SshConnectionParameters getConnectionParameters(const DataSource& data_sou
     connection_options &= 0;
     const QVariantMap& connection_parameters = data_source.connection_parameters;
 
-    const QString& host = data_source.host.isEmpty() ? connection_parameters[host_field_global].toString() : data_source.host;
-    const QString& login = connection_parameters[login_field_global].toString();
+    QString host = data_source.host;
+    if (host.isEmpty()) {
+        if (connection_parameters.contains(host_field_global)) {
+            host = connection_parameters[host_field_global].toString();
+        } else {
+            host = default_host_global;
+        }
+    }
+
+    const QString& login = connection_parameters.value(login_field_global, userName()).toString();
     const QString& password = connection_parameters[password_field_global].toString();
-    const QString& key_file = connection_parameters[key_field_global].toString();
+    const QString& key_file = password.isEmpty() ? connection_parameters.value(key_field_global, privateKeyPath()).toString() : QString();
 
     const int timeout = connection_parameters.value(timeout_field_global, timeout_default_global).toInt();
     const int port = connection_parameters.value(port_field_global, 22).toInt();
@@ -247,4 +267,9 @@ RemoteCommand::Status convertStatus(const SshRemoteProcess::ExitStatus exitStatu
     }
 
     return remoteCommandStatus;
+}
+
+QString privateKeyPath()
+{
+    return QStandardPaths::displayName(QStandardPaths::HomeLocation) + "/.ssh/id_rsa";
 }
