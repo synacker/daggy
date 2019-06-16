@@ -97,7 +97,7 @@ remotehost:
 
 #### Streaming commands output
 
-Each command, runing remotely or locally, streams its standart output to a separate file in output folder, that **daggy** created at start. Filename for each command forming by next template:
+Each command, runing remotely or locally, streams its standart output to a separate file in output folder - **command output file**, that **daggy** created at start. Filename for each command forming by next template:
 
 ```text
 hostname_commandname.extension
@@ -116,4 +116,10 @@ sources:
 ```
 
 command `pingYa` will streams own standard output to `localhost_pingYa.log` file
+
+#### Command completion
+
+Type `CTRL+C` for interrupt commands execution. If command is not stopped before, SIGTERM signal will be send for each command. 
+
+Daggy quits after the last command is completed.
 
