@@ -20,6 +20,7 @@ constexpr const char* g_typeYamlCommandName = "name";
 
 constexpr const char* g_typeField = "type";
 constexpr const char* g_hostField = "host";
+constexpr const char* g_connectionField = "connection";
 constexpr const char* g_authorizationField = "authorization";
 constexpr const char* g_passwordAuthorizationField = "passwordAuthorization";
 constexpr const char* g_commandsField = "commands";
@@ -133,13 +134,7 @@ DataSources CDataSourcesFabric::getFromYaml(const QString& yaml) const
 
 QVariantMap CDataSourcesFabric::getAuthorizationParameters(const YAML::Node& node) const
 {
-    QVariantMap result;
-    try {
-        result = parseStringYamlNode(node[g_authorizationField]);
-    } catch (const YAML::Exception&) {
-
-    }
-    return result;
+    return parseStringYamlNode(node[g_connectionField]);
 }
 
 QVariantMap CDataSourcesFabric::getCommands(const QString& server_name, const YAML::Node& node) const
@@ -168,7 +163,7 @@ QVariantMap CDataSourcesFabric::parseYamlServerSource(const QString& server_name
     if (node.IsMap()) {
         result[g_typeField] = safeRead(g_typeField, node);
         result[g_hostField] = safeRead(g_hostField, node);
-        result[g_authorizationField] = getAuthorizationParameters(node);
+        result[g_connectionField] = getAuthorizationParameters(node);
         result[g_commandsField] = getCommands(server_name, node);
     } else {
         sourceErrorMessage(server_name, "Server parameters is not a map");
@@ -210,9 +205,11 @@ DataSources CDataSourcesFabric::convertDataSources(const QVariantMap& data_sourc
         const QString& connectionType = dataSource[g_typeField].toString();
         const QString& host = dataSource[g_hostField].toString();
 
-        QVariantMap connection = dataSource[g_authorizationField].toMap();
+        QVariantMap connection = dataSource[g_connectionField].toMap();
         if (connection.isEmpty())
             connection = dataSource[g_passwordAuthorizationField].toMap();
+        if (connection.isEmpty())
+            connection = dataSource[g_authorizationField].toMap();
 
         const QVariantMap& commands = dataSource[g_commandsField].toMap();
         ValidateField(!commands.isEmpty(), sourceErrorMessage(serverName, QString("%1 field is absent").arg(g_commandsField)));

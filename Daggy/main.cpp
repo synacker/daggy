@@ -19,7 +19,7 @@ void myCategoryFilter(QLoggingCategory* category_ptr)
 }
 
 int main(int argc, char *argv[])
-{
+try {
     QLoggingCategory::installFilter(myCategoryFilter);
     QCoreApplication application(argc, argv);
 
@@ -29,4 +29,9 @@ int main(int argc, char *argv[])
     consoleDaggy.start();
 
     return consoleDaggy.stopped() ? 0 : application.exec();
+}
+catch (const std::exception& exception)
+{
+    qDebug() << exception.what();
+    return -1;
 }
