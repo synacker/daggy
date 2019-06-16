@@ -4,13 +4,13 @@ description: How Daggy works
 
 # How it works
 
-### Work schema
+## Work schema
 
 ![Daggy work schema](.gitbook/assets/daggy-scheme.svg)
 
-### Work schema description
+## Work schema description
 
-#### **Set Data Sources.** 
+### **Set Data Sources.** 
 
 **Daggy** accept data sources as argument:
 
@@ -31,7 +31,7 @@ Arguments:
 
 Supported data sources formats are `yaml` and `json`.
 
-#### Create Output Folder
+### Create Output Folder
 
 By default **daggy** creates output folder with next template - `current_date-sourcefilenname` in `PWD` folder, but you can change output folder via **daggy** option:
 
@@ -55,7 +55,7 @@ localhost:
           extension: log
 ```
 
-#### SSH Connection
+### SSH Connection
 
 **Daggy** establish ssh connection with each remote server, specified in config:
 
@@ -95,7 +95,7 @@ remotehost:
         extension: log
 ```
 
-#### Streaming commands output
+### Streaming commands output
 
 Each command, runing remotely or locally, streams its standart output to a separate file in output folder - **command output file**, that **daggy** created at start. Filename for each command forming by next template:
 
@@ -117,7 +117,7 @@ sources:
 
 command `pingYa` will streams own standard output to `localhost_pingYa.log` file
 
-#### Command completion
+### Command completion
 
 Type `CTRL+C` for interrupt commands execution. If command is not stopped before, SIGTERM signal will be send for each command. 
 
