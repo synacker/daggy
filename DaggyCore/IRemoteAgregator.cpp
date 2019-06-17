@@ -38,11 +38,11 @@ void IRemoteAgregator::start()
     }
 }
 
-void IRemoteAgregator::stop()
+void IRemoteAgregator::stop(const bool hard_stop)
 {
     if (state_ == State::Run) {
         setState(State::Stopping);
-        stopAgregator();
+        stopAgregator(hard_stop);
     }
 }
 

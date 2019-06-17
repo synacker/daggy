@@ -23,6 +23,7 @@ CConsoleDaggy::CConsoleDaggy(const DataSources& data_sources,
     , file_remote_agregator_reciever_(output_folder)
     , data_agregator_(data_sources)
     , stopped_(false)
+    , interruption_count_(0)
 {
     data_agregator_.connectRemoteAgregatorReciever(&file_remote_agregator_reciever_);
 
@@ -47,7 +48,8 @@ bool CConsoleDaggy::handleSystemSignal(const int signal)
 
 void CConsoleDaggy::handleInterruption()
 {
-    data_agregator_.stop();
+    interruption_count_++;
+    data_agregator_.stop(interruption_count_ > 1);
 }
 
 void CConsoleDaggy::onDaggyStateChange(const IRemoteAgregator::State state)

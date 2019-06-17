@@ -65,7 +65,7 @@ CSshRemoteServer::CSshRemoteServer(const DataSource& data_source,
 
 CSshRemoteServer::~CSshRemoteServer()
 {
-    stop();
+    stop(true);
 }
 
 bool CSshRemoteServer::isForceKill() const
@@ -105,9 +105,9 @@ void CSshRemoteServer::restartCommand(const QString& command_name)
     }
 }
 
-void CSshRemoteServer::stopAgregator()
+void CSshRemoteServer::stopAgregator(const bool hard_stop)
 {
-    if (isForceKill() && isExistsRunningRemoteCommands())
+    if (isForceKill() && isExistsRunningRemoteCommands() && !hard_stop)
         killConnection();
     else
         closeConnection();

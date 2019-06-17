@@ -68,10 +68,10 @@ void CDaggy::startAgregator()
         setStopped();
 }
 
-void CDaggy::stopAgregator()
+void CDaggy::stopAgregator(const bool hard_stop)
 {
     for (IRemoteAgregator* const remote_server_ptr : remoteAgregators())
-        remote_server_ptr->stop();
+        remote_server_ptr->stop(hard_stop);
 }
 
 QList<IRemoteAgregator*> CDaggy::remoteAgregators() const

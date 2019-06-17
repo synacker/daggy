@@ -37,7 +37,7 @@ public:
     virtual size_t runingRemoteCommandsCount() const = 0;
 
     void start();
-    void stop();
+    void stop(const bool hard_stop);
 
     State state() const;
 
@@ -55,7 +55,7 @@ signals:
 
 protected:
     virtual void startAgregator() = 0;
-    virtual void stopAgregator() = 0;
+    virtual void stopAgregator(const bool hard_stop) = 0;
 
     void setStopped();
 
