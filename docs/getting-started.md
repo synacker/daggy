@@ -25,7 +25,7 @@ Download and install from [releases](https://github.com/synacker/daggy/releases)
 ```bash
 git clone https://github.com/synacker/daggy.git
 cd daggy
-make
+qmake && make
 cd Release
 daggy -h
 ```
