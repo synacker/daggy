@@ -8,12 +8,19 @@ description: How to setup data sources for Daggy
 
 **Daggy** supports `yaml` and `json` formats. In yaml repeated nodes can be grouped by [yaml standard](https://yaml.org/spec/1.2/spec.html#id2785586).
 
-## Minimal valid config
+## Data sources template
 
 {% tabs %}
 {% tab title="YAML" %}
 ```yaml
 sources:
+    host1:
+        #....
+    host2:
+        #....
+    #....
+    hostN:
+        #....
     
 ```
 {% endtab %}
@@ -21,12 +28,72 @@ sources:
 {% tab title="JSON" %}
 ```javascript
 {
+    "host1" : {
+    },
+    "host2" : {
+    },
+    "hostN" : {
+    }
 }
 ```
 {% endtab %}
 {% endtabs %}
 
-## Config parameters
+Each config conatins map of hosts. Host \(data source\) parameters is next:
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align:center">Parameter</th>
+      <th style="text-align:center">Type</th>
+      <th style="text-align:left">Description</th>
+      <th style="text-align:left">Is Requiered</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align:center"><b>type</b>
+      </td>
+      <td style="text-align:center">string</td>
+      <td style="text-align:left">
+        <p></p>
+        <p>Type of connection to host. <b>Daggy</b> supportes <code>local</code> and <code>ssh</code> host
+          connection types</p>
+      </td>
+      <td style="text-align:left">Yes</td>
+    </tr>
+    <tr>
+      <td style="text-align:center"><b>commands</b>
+      </td>
+      <td style="text-align:center">array</td>
+      <td style="text-align:left">Array of commands for simultaneous launch</td>
+      <td style="text-align:left">Yes</td>
+    </tr>
+    <tr>
+      <td style="text-align:center"><b>connection</b>
+      </td>
+      <td style="text-align:center">map</td>
+      <td style="text-align:left">Connection parameters</td>
+      <td style="text-align:left">Required for ssh <b>type</b>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:center"><b>host</b>
+      </td>
+      <td style="text-align:center">string</td>
+      <td style="text-align:left">Host address (ip or url)</td>
+      <td style="text-align:left">Required for ssh <b>type</b>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:center"><b>reconnect</b>
+      </td>
+      <td style="text-align:center">boolean</td>
+      <td style="text-align:left">true, if need reconnect connection</td>
+      <td style="text-align:left">No</td>
+    </tr>
+  </tbody>
+</table>## Data sources types
 
 **Daggy** supportes `local` and `ssh` host connection types.
 
@@ -36,28 +103,29 @@ sources:
 {% tab title="YAML" %}
 ```yaml
 sources:
-    localhost:
-        type: local
-        commands:
-            - name: pingYa
-              command: ping ya.ru
-              extension: log
+  localhost:
+    type: local
+    commands:
+      - name: pingYa
+        command: ping ya.ru
+        extension: log
+        restart: false
 ```
 {% endtab %}
 
 {% tab title="JSON" %}
 ```javascript
-{
-    "localhost": {
-        "type": "local",
-        "commands": {
-            "pingYa": {
-                "command": "ping ya.ru",
-                "extension": "log"
-            }
+  {
+  "localhost": {
+    "type": "local",
+    "commands": {
+        "pingYa": {
+            "command": "ping ya.ru",
+            "extension": "log"
         }
     }
-}
+  }
+  }
 ```
 {% endtab %}
 {% endtabs %}
@@ -70,6 +138,7 @@ sources:
 remotehost:
     type: ssh
     host: 192.168.1.9
+    restart: false
     connection:
       login: muxa
       key: /home/muxa/.ssh/id_rsa
@@ -87,6 +156,8 @@ remotehost:
 {
     "localhost": {
         "type": "ssh",
+        "host": "192.169.1.9",
+        "restart": false,
         "connection": {
             "login": "muxa",
             "key": "/home/muxa/.ssh/id_rsa"
@@ -109,7 +180,7 @@ remotehost:
 * **connection** - map of ssh connection parameters. Includes next parameters
 
 | Connection Parameter | Type | Description | Default value |
-| :--- | :--- | :--- | :--- |
+| :---: | :---: | :--- | :--- |
 | **login** | string | ssh connection login | **daggy** user |
 | **password** | string | ssh connection password. If empty, **daggy** will expect **key** field |  |
 | **key** | string | path to private key for ssh connection | `~/.ssh/id_rsa` |
@@ -128,6 +199,7 @@ commands:
       - name: pingYa
         command: ping ya.ru
         extension: log
+        restart: false
 ```
 {% endtab %}
 
@@ -148,6 +220,7 @@ Each command must contain:
 * **name -** unique within host command identifier, using in **command output file** name template.
 * **command** - shell script
 * **extension** - extension for **command output file**
+* **restart** - restart command if it finished
 
   
 
