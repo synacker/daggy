@@ -67,6 +67,7 @@ private:
 
     QMap<QString, QSharedPointer<QSsh::SshRemoteProcess>> ssh_processes_;
     QSharedPointer<QSsh::SshRemoteProcess> kill_childs_process_pointer_ = nullptr;
+    void closeRunCommands();
 };
 
 }
