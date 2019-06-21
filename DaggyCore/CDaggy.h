@@ -45,7 +45,7 @@ public:
 
 private:
     void startAgregator() override final;
-    void stopAgregator() override final;
+    void stopAgregator(const bool hard_stop) override final;
 
     QList<IRemoteAgregator*> remoteAgregators() const;
 

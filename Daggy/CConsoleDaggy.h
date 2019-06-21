@@ -49,6 +49,7 @@ private:
   CFileDataSourcesReciever file_remote_agregator_reciever_;
   daggycore::CDaggy data_agregator_;
   bool stopped_;
+  int interruption_count_;
 };
 
 #endif // CCONSOLEDATAAGREGATOR_H

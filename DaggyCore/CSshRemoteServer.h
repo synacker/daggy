@@ -51,7 +51,7 @@ private slots:
 private:
     // IRemoteServer interface
     void startAgregator() override final;
-    void stopAgregator() override final;
+    void stopAgregator(const bool hard_stop) override final;
     void reconnect() override final;
 
     void restartCommand(const QString& command_name) override final;
@@ -67,6 +67,7 @@ private:
 
     QMap<QString, QSharedPointer<QSsh::SshRemoteProcess>> ssh_processes_;
     QSharedPointer<QSsh::SshRemoteProcess> kill_childs_process_pointer_ = nullptr;
+    void closeRunCommands();
 };
 
 }

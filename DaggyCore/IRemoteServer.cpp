@@ -88,7 +88,7 @@ void IRemoteServer::setRemoteCommandStatus(const QString& command_name,
             if (remote_command.restart)
                 restartCommand(command_name);
             else if (!isExistsRestartCommand() && !isExistsRunningRemoteCommands())
-                stopAgregator();
+                stopAgregator(true);
         }
     }
 }

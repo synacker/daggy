@@ -30,7 +30,7 @@ public:
     // IRemoteAgregator interface
 protected:
     void startAgregator() override final;
-    void stopAgregator() override final;
+    void stopAgregator(const bool hard_stop) override final;
 
     // IRemoteServer interface
 protected:

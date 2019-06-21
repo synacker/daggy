@@ -25,12 +25,15 @@ void CLocalRemoteServer::startAgregator()
     setConnectionStatus(RemoteConnectionStatus::Connected);
 }
 
-void CLocalRemoteServer::stopAgregator()
+void CLocalRemoteServer::stopAgregator(const bool hard_stop)
 {
-    for (QProcess* process_ptr : processes()) {
-        process_ptr->close();
-        process_ptr->deleteLater();
+    if (!hard_stop) {
+        for (QProcess* process_ptr : processes()) {
+            process_ptr->close();
+            process_ptr->deleteLater();
+        }
     }
+
     setConnectionStatus(RemoteConnectionStatus::Disconnected);
 }
 
