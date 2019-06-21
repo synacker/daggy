@@ -31,6 +31,8 @@ Arguments:
 
 Supported data sources formats are `yaml` and `json`.
 
+If **sourceFile** not exists in current working directory, **daggy** will load it from `~/.daggy` directory.
+
 ### Create Output Folder
 
 By default **daggy** creates output folder with next template - `current_date-sourcefilenname` in `PWD` folder, but you can change output folder via **daggy** option:
