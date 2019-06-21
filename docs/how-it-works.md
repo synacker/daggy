@@ -31,7 +31,7 @@ Arguments:
 
 Supported data sources formats are `yaml` and `json`.
 
-If **sourceFile** not exists in current working directory, **daggy** will load it from `~/.daggy` directory.
+If **sourceFile** is not exists in current working directory, **daggy** will load it from `~/.daggy` directory.
 
 ### Create Output Folder
 
