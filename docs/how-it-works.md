@@ -123,5 +123,7 @@ command `pingYa` will streams own standard output to `localhost_pingYa.log` file
 
 Type `CTRL+C` for interrupt commands execution. If command is not stopped before, SIGTERM signal will be send for each command. 
 
+Type `CTRL+C` twice for interrupt ssh connection without SIGTERM signal.
+
 Daggy quits after the last command is completed.
 
