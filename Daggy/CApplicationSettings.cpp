@@ -27,14 +27,16 @@ CApplicationSettings::CApplicationSettings()
     command_line_parser.addVersionOption();
     const QCommandLineOption output_folder_option({"o", "output"}, "Set output folder", "folder", "");
     const QCommandLineOption input_format_option({"f", "format"}, "Source format", "format", data_sources_fabric.inputTypeName(CDataSourcesFabric::json));
+    const QCommandLineOption input_from_stdin_option({"i", "input"}, "Read data sources from stdin");
 
     command_line_parser.addOption(output_folder_option);
     command_line_parser.addOption(input_format_option);
+    command_line_parser.addOption(input_from_stdin_option);
 
     command_line_parser.setApplicationDescription(APP_DESCRIPTION);
     command_line_parser.addHelpOption();
 
-    command_line_parser.addPositionalArgument("sources", "Data sources", "sourceFile");
+    command_line_parser.addPositionalArgument("sourceFile", "Data sources", "sourceFile");
 
     command_line_parser.process(*qApp);
 
@@ -43,12 +45,16 @@ CApplicationSettings::CApplicationSettings()
     QString data_sources_text;
     QString data_source_name("stdin");
     const QStringList& positional_arguments = command_line_parser.positionalArguments();
-    const QString& source_file_name = positional_arguments[0];
+    const QString& source_file_name = positional_arguments.isEmpty() ? QString() : positional_arguments[0];
     if (!source_file_name.isEmpty()) {
         const QString& source_file_name = positional_arguments[0];
         data_source_name = QFileInfo(source_file_name).baseName();
         if (!command_line_parser.isSet(input_format_option))
             data_source_type = QFileInfo(source_file_name).suffix();
+        data_sources_text = getTextFromFile(source_file_name);
+    } else if (command_line_parser.isSet(input_from_stdin_option)){
+       QTextStream text_stream(stdin);
+       data_sources_text = text_stream.readAll();
     }
 
     if (!data_sources_fabric.isSourceTypeSopported(data_source_type)) {
@@ -58,10 +64,8 @@ CApplicationSettings::CApplicationSettings()
                                             .toStdString());
     }
 
-    if (positional_arguments.isEmpty()) {
-        data_sources_text = QTextStream(stdin).readAll();
-    } else {
-        data_sources_text = getTextFromFile(source_file_name);
+    if (data_sources_text.isEmpty()) {
+        command_line_parser.showHelp(0);
     }
 
     data_sources_ = data_sources_fabric.getDataSources(data_sources_fabric.sourceTypeValue(data_source_type), data_sources_text);
