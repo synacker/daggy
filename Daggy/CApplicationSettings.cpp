@@ -27,7 +27,7 @@ CApplicationSettings::CApplicationSettings()
     command_line_parser.addVersionOption();
     const QCommandLineOption output_folder_option({"o", "output"}, "Set output folder", "folder", "");
     const QCommandLineOption input_format_option({"f", "format"}, "Source format", "format", data_sources_fabric.inputTypeName(CDataSourcesFabric::json));
-    const QCommandLineOption input_from_stdin_option({"i", "input"}, "Read data sources from stdin");
+    const QCommandLineOption input_from_stdin_option({"i", "stdin"}, "Read data sources from stdin");
 
     command_line_parser.addOption(output_folder_option);
     command_line_parser.addOption(input_format_option);
@@ -44,28 +44,24 @@ CApplicationSettings::CApplicationSettings()
 
     QString data_sources_text;
     QString data_source_name("stdin");
-    const QStringList& positional_arguments = command_line_parser.positionalArguments();
-    const QString& source_file_name = positional_arguments.isEmpty() ? QString() : positional_arguments[0];
-    if (!source_file_name.isEmpty()) {
-        const QString& source_file_name = positional_arguments[0];
+    const QStringList positional_arguments = command_line_parser.positionalArguments();
+    if (command_line_parser.isSet(input_from_stdin_option)){
+        data_sources_text = QTextStream(stdin).readAll();
+    } else if (positional_arguments.size() > 0){
+        const QString source_file_name = positional_arguments[0];
         data_source_name = QFileInfo(source_file_name).baseName();
         if (!command_line_parser.isSet(input_format_option))
             data_source_type = QFileInfo(source_file_name).suffix();
         data_sources_text = getTextFromFile(source_file_name);
-    } else if (command_line_parser.isSet(input_from_stdin_option)){
-       QTextStream text_stream(stdin);
-       data_sources_text = text_stream.readAll();
+    } else {
+        command_line_parser.showHelp(0);
     }
 
     if (!data_sources_fabric.isSourceTypeSopported(data_source_type)) {
         throw std::invalid_argument(QString("Invalid source format: %1. Supported formats: [%2]")
-                                            .arg(data_source_type)
-                                            .arg(data_sources_fabric.supportedSourceTypes().join(", "))
-                                            .toStdString());
-    }
-
-    if (data_sources_text.isEmpty()) {
-        command_line_parser.showHelp(0);
+                                    .arg(data_source_type)
+                                    .arg(data_sources_fabric.supportedSourceTypes().join(", "))
+                                    .toStdString());
     }
 
     data_sources_ = data_sources_fabric.getDataSources(data_sources_fabric.sourceTypeValue(data_source_type), data_sources_text);
