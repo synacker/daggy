@@ -12,21 +12,22 @@ description: How Daggy works
 
 ### **Set Data Sources.** 
 
-**Daggy** accept data sources as argument:
+**Daggy** accept data sources as argument or from _stdin:_
 
 ```bash
 daggy -h
-Usage: daggy [options] sourceFile
+Usage: ./daggy [options] sourceFile
 Daggy - Data Aggregation Utility. Application that can run multiple commands on remote servers simultaneously and save output locally.
 
 Options:
   -v, --version          Displays version information.
   -o, --output <folder>  Set output folder
   -f, --format <format>  Source format
+  -i, --stdin            Read data sources from stdin
   -h, --help             Displays this help.
 
 Arguments:
-  sources                Data sources
+  sourceFile             Data sources
 ```
 
 Supported data sources formats are `yaml` and `json`.

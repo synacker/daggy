@@ -52,7 +52,7 @@ sources:
 
 ```bash
 daggy simple.yaml
-23:15:41:005 | AppStatus  | Application     | Start recivier
+23:15:41:005 | AppStatus  | Application     | Start receiver
 23:15:41:005 | ConnStatus | localhost       | Server connected
 23:15:41:006 | CommStatus | localhost       | pingYa          | Command started
 ```
@@ -86,7 +86,7 @@ Type CTRL+C for stop commands execution
 ```bash
 23:16:25:685 | CommStatus | localhost       | pingYa          | Command was crashed
 23:16:25:686 | ConnStatus | localhost       | Server disconnected
-23:16:25:686 | AppStatus  | Application     | Srop recivier
+23:16:25:686 | AppStatus  | Application     | Stop receiver
 ```
 
 ### Add parallel command
@@ -114,7 +114,7 @@ sources:
 
 ```bash
 daggy simple_add_command.yaml 
-21:38:02:154 | AppStatus  | Application     | Start recivier
+21:38:02:154 | AppStatus  | Application     | Start receiver
 21:38:02:154 | ConnStatus | localhost       | Server connected
 21:38:02:154 | CommStatus | localhost       | pingGoo         | Command started
 21:38:02:155 | CommStatus | localhost       | pingYa          | Command started
@@ -169,7 +169,7 @@ sources:
 {% code-tabs-item title="simple\_add\_remote\_server.yaml" %}
 ```yaml
 daggy simple_add_remote_server.yaml 
-22:08:26:093 | AppStatus  | Application     | Start recivier
+22:08:26:093 | AppStatus  | Application     | Start receiver
 22:08:26:093 | ConnStatus | localhost       | Server connected
 22:08:26:093 | CommStatus | localhost       | pingGoo         | Command started
 22:08:26:094 | CommStatus | localhost       | pingYa          | Command started
@@ -229,7 +229,7 @@ sources:
 
 ```bash
 daggy simple_group_commands.yaml 
-22:19:18:690 | AppStatus  | Application     | Start recivier
+22:19:18:690 | AppStatus  | Application     | Start receiver
 22:19:18:691 | ConnStatus | localhost       | Server connected
 22:19:18:691 | CommStatus | localhost       | pingGoo         | Command started
 22:19:18:692 | CommStatus | localhost       | pingYa          | Command started
@@ -297,7 +297,7 @@ sources:
 
 ```text
 daggy simple_multiple_servers.yaml 
-23:24:25:118 | AppStatus  | Application     | Start recivier
+23:24:25:118 | AppStatus  | Application     | Start receiver
 23:24:25:119 | ConnStatus | localhost       | Server connected
 23:24:25:119 | CommStatus | localhost       | pingGoo         | Command started
 23:24:25:120 | CommStatus | localhost       | pingYa          | Command started
