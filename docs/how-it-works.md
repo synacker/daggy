@@ -10,7 +10,7 @@ description: How Daggy works
 
 ## Work schema description
 
-### **Set Data Sources.** 
+### **Set Data Sources**
 
 **Daggy** accept data sources as argument or from _stdin:_
 
@@ -32,7 +32,19 @@ Arguments:
 
 Supported data sources formats are `yaml` and `json`.
 
-If **sourceFile** is not exists in current working directory, **daggy** will load it from `~/.daggy` directory.
+#### Set Data Sources from file
+
+```bash
+daggy simple.yaml
+```
+
+If **sourceFile** \(for example simple.yaml\) is not exists in current working directory, **daggy** will load it from `~/.daggy` directory.
+
+#### From Data Sources from stdin
+
+```bash
+cat simple.yaml | daggy -f yaml -i
+```
 
 ### Create Output Folder
 
