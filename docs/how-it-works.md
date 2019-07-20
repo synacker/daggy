@@ -6,7 +6,7 @@ description: How Daggy works
 
 ## Work schema
 
-![Daggy work schema](.gitbook/assets/daggy-scheme.svg)
+![](.gitbook/assets/daggy_scheme_black.svg)
 
 ## Work schema description
 
