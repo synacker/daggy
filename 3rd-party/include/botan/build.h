@@ -12,13 +12,13 @@
 */
 
 #define BOTAN_VERSION_MAJOR 2
-#define BOTAN_VERSION_MINOR 9
+#define BOTAN_VERSION_MINOR 11
 #define BOTAN_VERSION_PATCH 0
-#define BOTAN_VERSION_DATESTAMP 20190104
+#define BOTAN_VERSION_DATESTAMP 0
 
-#define BOTAN_VERSION_RELEASE_TYPE "release"
+#define BOTAN_VERSION_RELEASE_TYPE "unreleased"
 
-#define BOTAN_VERSION_VC_REVISION "git:a95c67a5a1fd8c9afd9cb69770cb1542f558f163"
+#define BOTAN_VERSION_VC_REVISION "unknown"
 
 #define BOTAN_DISTRIBUTION_INFO "unspecified"
 
@@ -29,8 +29,9 @@
 #define BOTAN_INSTALL_PREFIX R"(c:\Botan)"
 #define BOTAN_INSTALL_HEADER_DIR "include/botan-2"
 #define BOTAN_INSTALL_LIB_DIR "lib"
-#define BOTAN_LIB_LINK "user32.lib ws2_32.lib"
+#define BOTAN_LIB_LINK "crypt32.lib user32.lib ws2_32.lib"
 #define BOTAN_LINK_FLAGS "/MD /bigobj"
+
 
 #ifndef BOTAN_DLL
   #define BOTAN_DLL __declspec(dllimport)
@@ -40,10 +41,10 @@
 
 #define BOTAN_TARGET_OS_IS_WINDOWS
 
+#define BOTAN_TARGET_OS_HAS_CERTIFICATE_STORE
 #define BOTAN_TARGET_OS_HAS_FILESYSTEM
 #define BOTAN_TARGET_OS_HAS_RTLGENRANDOM
 #define BOTAN_TARGET_OS_HAS_RTLSECUREZEROMEMORY
-#define BOTAN_TARGET_OS_HAS_STL_FILESYSTEM_MSVC
 #define BOTAN_TARGET_OS_HAS_THREADS
 #define BOTAN_TARGET_OS_HAS_VIRTUAL_LOCK
 #define BOTAN_TARGET_OS_HAS_WIN32
@@ -91,6 +92,7 @@
 #define BOTAN_HAS_AES_NI 20131128
 #define BOTAN_HAS_AES_SSSE3 20131128
 #define BOTAN_HAS_ANSI_X919_MAC 20131128
+#define BOTAN_HAS_ARGON2 20190527
 #define BOTAN_HAS_ARIA 20170415
 #define BOTAN_HAS_ASN1 20171109
 #define BOTAN_HAS_AUTO_RNG 20161126
@@ -111,7 +113,10 @@
 #define BOTAN_HAS_CAST_256 20171203
 #define BOTAN_HAS_CBC_MAC 20131128
 #define BOTAN_HAS_CECPQ1 20161116
+#define BOTAN_HAS_CERTSTOR_FLATFILE 20190410
 #define BOTAN_HAS_CERTSTOR_SQL 20160818
+#define BOTAN_HAS_CERTSTOR_SYSTEM 20190411
+#define BOTAN_HAS_CERTSTOR_WINDOWS 20190430
 #define BOTAN_HAS_CHACHA 20180807
 #define BOTAN_HAS_CHACHA_AVX2 20180418
 #define BOTAN_HAS_CHACHA_RNG 20170728
@@ -145,6 +150,7 @@
 #define BOTAN_HAS_ED25519 20170607
 #define BOTAN_HAS_ELGAMAL 20131128
 #define BOTAN_HAS_EME_OAEP 20180305
+#define BOTAN_HAS_EME_PKCS1 20190426
 #define BOTAN_HAS_EME_PKCS1v15 20131128
 #define BOTAN_HAS_EME_RAW 20150313
 #define BOTAN_HAS_EMSA1 20131128
@@ -211,6 +217,7 @@
 #define BOTAN_HAS_PBKDF 20180902
 #define BOTAN_HAS_PBKDF1 20131128
 #define BOTAN_HAS_PBKDF2 20180902
+#define BOTAN_HAS_PBKDF_BCRYPT 20190531
 #define BOTAN_HAS_PEM_CODEC 20131128
 #define BOTAN_HAS_PGP_S2K 20170527
 #define BOTAN_HAS_PKCS11 20160219
@@ -252,6 +259,7 @@
 #define BOTAN_HAS_SM3 20170402
 #define BOTAN_HAS_SM4 20170716
 #define BOTAN_HAS_SOCKETS 20171216
+#define BOTAN_HAS_SODIUM_API 20190615
 #define BOTAN_HAS_SP800_108 20160128
 #define BOTAN_HAS_SP800_56A 20170501
 #define BOTAN_HAS_SP800_56C 20160211
@@ -260,7 +268,7 @@
 #define BOTAN_HAS_STREAM_CIPHER 20131128
 #define BOTAN_HAS_STREEBOG 20170623
 #define BOTAN_HAS_SYSTEM_RNG 20141202
-#define BOTAN_HAS_THREAD_UTILS 20180112
+#define BOTAN_HAS_THREAD_UTILS 20190122
 #define BOTAN_HAS_THREEFISH_512 20131224
 #define BOTAN_HAS_THREEFISH_512_AVX2 20160903
 #define BOTAN_HAS_THRESHOLD_SECRET_SHARING 20131128
@@ -279,7 +287,7 @@
 #define BOTAN_HAS_X509 20180911
 #define BOTAN_HAS_X509_CERTIFICATES 20151023
 #define BOTAN_HAS_X942_PRF 20131128
-#define BOTAN_HAS_XMSS 20161008
+#define BOTAN_HAS_XMSS_RFC8391 20190623
 #define BOTAN_HAS_XTEA 20131128
 
 
@@ -305,18 +313,25 @@
 /* How much to allocate for a buffer of no particular size */
 #define BOTAN_DEFAULT_BUFFER_SIZE 1024
 
-/* Minimum and maximum sizes to allocate out of the mlock pool (bytes)
-   Default min is 16 as smaller values are easily bruteforceable and thus
-   likely not cryptographic keys.
-*/
-#define BOTAN_MLOCK_ALLOCATOR_MIN_ALLOCATION 16
-#define BOTAN_MLOCK_ALLOCATOR_MAX_ALLOCATION 128
-
 /*
 * Total maximum amount of RAM (in KiB) we will lock into memory, even
 * if the OS would let us lock more
 */
 #define BOTAN_MLOCK_ALLOCATOR_MAX_LOCKED_KB 512
+
+/*
+* If BOTAN_MEM_POOL_USE_MMU_PROTECTIONS is defined, the Memory_Pool
+* class used for mlock'ed memory will use OS calls to set page
+* permissions so as to prohibit access to pages on the free list, then
+* enable read/write access when the page is set to be used. This will
+* turn (some) use after free bugs into a crash.
+*
+* The additional syscalls have a substantial performance impact, which
+* is why this option is not enabled by default.
+*/
+#if defined(BOTAN_HAS_VALGRIND) || defined(BOTAN_ENABLE_DEBUG_ASSERTS)
+   #define BOTAN_MEM_POOL_USE_MMU_PROTECTIONS
+#endif
 
 /*
 * If enabled uses memset via volatile function pointer to zero memory,
@@ -389,7 +404,10 @@ Each read generates 32 bits of output
 */
 #define BOTAN_ENTROPY_INTEL_RNG_POLLS 32
 
-// According to Intel, RDRAND is guaranteed to generate a random number within 10 retries on a working CPU
+/*
+According to Intel, RDRAND is guaranteed to generate a random
+number within 10 retries on a working CPU
+*/
 #define BOTAN_ENTROPY_RDRAND_RETRIES 10
 
 /*
@@ -429,11 +447,11 @@ Each read generates 32 bits of output
   #elif defined(BOTAN_HAS_SHA1)
     #define BOTAN_AUTO_RNG_HMAC "HMAC(SHA-1)"
   #endif
-  // Otherwise, no hash found: leave BOTAN_AUTO_RNG_HMAC undefined
+  /* Otherwise, no hash found: leave BOTAN_AUTO_RNG_HMAC undefined */
 
 #endif
 
-// Check for a common build problem:
+/* Check for a common build problem */
 
 #if defined(BOTAN_TARGET_ARCH_IS_X86_64) && ((defined(_MSC_VER) && !defined(_WIN64)) || \
                                              (defined(__clang__) && !defined(__x86_64__)) || \
