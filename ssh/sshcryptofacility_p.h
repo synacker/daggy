@@ -32,6 +32,7 @@
 #include <botan/key_filt.h>
 #include <botan/pipe.h>
 #include <botan/pk_keys.h>
+#include <botan/filters.h>
 
 #include <QByteArray>
 #include <QScopedPointer>

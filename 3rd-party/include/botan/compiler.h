@@ -6,7 +6,7 @@
 */
 
 /* This header is included in both C++ and C (via ffi.h) and should only
-   contain macro definitions.
+   contain macro definitions. Avoid C++ style // comments in this file.
 */
 
 #ifndef BOTAN_UTIL_COMPILER_FLAGS_H_
@@ -47,7 +47,7 @@
 /*
 * Define BOTAN_GCC_VERSION
 */
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
   #define BOTAN_GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__ * 10 + __GNUC_PATCHLEVEL__)
 #else
   #define BOTAN_GCC_VERSION 0
@@ -56,7 +56,7 @@
 /*
 * Define BOTAN_CLANG_VERSION
 */
-#ifdef __clang__
+#if defined(__clang__)
   #define BOTAN_CLANG_VERSION (__clang_major__ * 10 + __clang_minor__)
 #else
   #define BOTAN_CLANG_VERSION 0
@@ -83,8 +83,13 @@
 /*
 * Define BOTAN_MALLOC_FN
 */
-#if defined(__GNUG__) || defined(__clang__)
+#if defined(__ibmxl__)
+  // XLC pretends to be both Clang and GCC, but is neither
   #define BOTAN_MALLOC_FN __attribute__ ((malloc))
+#elif defined(__clang__) || (BOTAN_GCC_VERSION >= 500)
+  #define BOTAN_MALLOC_FN __attribute__ ((malloc, returns_nonnull, alloc_size(1,2)))
+#elif defined(__GNUG__)
+  #define BOTAN_MALLOC_FN __attribute__ ((malloc, alloc_size(1,2)))
 #elif defined(_MSC_VER)
   #define BOTAN_MALLOC_FN __declspec(restrict)
 #else
@@ -98,19 +103,26 @@
 
   #if defined(__clang__)
     #define BOTAN_DEPRECATED(msg) __attribute__ ((deprecated))
+    #define BOTAN_DEPRECATED_HEADER(hdr) _Pragma("message \"this header is deprecated\"")
 
   #elif defined(_MSC_VER)
     #define BOTAN_DEPRECATED(msg) __declspec(deprecated(msg))
+    #define BOTAN_DEPRECATED_HEADER(hdr) __pragma("message \"this header is deprecated\"")
 
   #elif defined(__GNUG__)
-    // msg supported since GCC 4.5, earliest we support is 4.8
+    /* msg supported since GCC 4.5, earliest we support is 4.8 */
     #define BOTAN_DEPRECATED(msg) __attribute__ ((deprecated(msg)))
+    #define BOTAN_DEPRECATED_HEADER(hdr) _Pragma("GCC warning \"this header is deprecated\"")
   #endif
 
 #endif
 
 #if !defined(BOTAN_DEPRECATED)
   #define BOTAN_DEPRECATED(msg)
+#endif
+
+#if !defined(BOTAN_DEPRECATED_HEADER)
+  #define BOTAN_DEPRECATED_HEADER(hdr)
 #endif
 
 /*
@@ -128,6 +140,26 @@
     #define BOTAN_NORETURN
   #endif
 
+#endif
+
+/*
+* Define BOTAN_THREAD_LOCAL
+*/
+#if defined(BOTAN_TARGET_OS_HAS_THREADS)
+   #define BOTAN_THREAD_LOCAL thread_local
+#else
+   #define BOTAN_THREAD_LOCAL /**/
+#endif
+
+/*
+* Define BOTAN_IF_CONSTEXPR
+*/
+#if !defined(BOTAN_IF_CONSTEXPR)
+   #if __cplusplus > 201402
+      #define BOTAN_IF_CONSTEXPR if constexpr
+   #else
+      #define BOTAN_IF_CONSTEXPR if
+   #endif
 #endif
 
 /*
