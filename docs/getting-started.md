@@ -2,13 +2,19 @@
 
 ## Getting Daggy
 
-### For Fedora 28/29/30
+### Fedora 29/30/31
 
 ```bash
 $ sudo dnf install daggy
 ```
 
-### For Windows 7/8/10
+### MacOS
+
+```text
+brew install https://raw.githubusercontent.com/synacker/homebrew-core/daggy/Formula/daggy.rb
+```
+
+### Windows 7/8/10
 
 Download and install from [releases](https://github.com/synacker/daggy/releases)
 
