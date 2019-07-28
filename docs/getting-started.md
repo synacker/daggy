@@ -10,7 +10,7 @@ $ sudo dnf install daggy
 
 ### MacOS
 
-```text
+```bash
 brew install https://raw.githubusercontent.com/synacker/homebrew-core/daggy/Formula/daggy.rb
 ```
 
