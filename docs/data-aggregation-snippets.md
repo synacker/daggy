@@ -1,8 +1,14 @@
 ---
-description: Useful command snippets
+description: Data aggregation via command line snippets
 ---
 
-# Command snippets
+# Data Aggregation Snippets
+
+## About Data Aggregation Snippets
+
+Data Aggregation Snippet - tempate that allows aggregate data via command line
+
+## Useful Data Aggregation Snippets
 
 ### Dump entire network traffic for remote host
 

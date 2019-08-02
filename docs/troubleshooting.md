@@ -1,8 +1,8 @@
 ---
-description: Daggy troubleshoting
+description: Daggy Troubleshooting
 ---
 
-# Troubleshoting
+# Troubleshooting
 
 ## OpenSSH key format
 

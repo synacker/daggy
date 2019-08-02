@@ -1,18 +1,18 @@
 ---
-description: How Daggy works
+description: How Daggy aggregate data via command line
 ---
 
 # How it works
 
 ## Work schema
 
-![](.gitbook/assets/daggy_scheme_black.svg)
+![](.gitbook/assets/daggy_scheme_white.svg)
 
 ## Work schema description
 
 ### **Set Data Sources**
 
-**Daggy** accept data sources as argument or from _stdin:_
+**Daggy** accept data aggregation config as argument or from _stdin:_
 
 ```bash
 daggy -h
@@ -30,9 +30,9 @@ Arguments:
   sourceFile             Data sources
 ```
 
-Supported data sources formats are `yaml` and `json`.
+Supported data aggregation config formats are `yaml` and `json`.
 
-#### Set Data Sources from file
+#### Set Data Aggregation Config from file
 
 ```bash
 daggy simple.yaml
@@ -40,7 +40,7 @@ daggy simple.yaml
 
 If **sourceFile** \(for example simple.yaml\) is not exists in current working directory, **daggy** will load it from `~/.daggy` directory.
 
-#### From Data Sources from stdin
+#### From Data Aggregation Config from stdin
 
 ```bash
 cat simple.yaml | daggy -f yaml -i

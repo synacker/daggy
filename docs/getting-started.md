@@ -1,3 +1,7 @@
+---
+description: Getting Started aggregate data via command line
+---
+
 # Getting Started
 
 ## Getting Daggy

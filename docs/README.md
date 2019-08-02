@@ -1,5 +1,5 @@
 ---
-description: Daggy - Data Aggregation Utility. Common description.
+description: Daggy - Data Aggregation Utility. Data aggregation via command line
 ---
 
 # About Daggy
@@ -8,7 +8,7 @@ description: Daggy - Data Aggregation Utility. Common description.
 
 ![Daggy - Data Aggregation Utility ](.gitbook/assets/daggy_logo.png)
 
-**Daggy - Data Aggregation Utilty** - is an IT automation tool. It can run terminal commands on local or remote serveres and aggregate their output locally.  
+**Daggy - Data Aggregation Utilty** - is an IT automation tool. It can aggregate data via command line from local or ssh connection
 
 **Daggy** main goals are simplicity and ease-of-use. If you know about yaml/json, bash/powershell and ssh you know how to use Daggy. 
 
