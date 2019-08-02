@@ -12,6 +12,12 @@ description: Getting Started aggregate data via command line
 $ sudo dnf install daggy
 ```
 
+### Arch Linux
+
+```bash
+yay daggy
+```
+
 ### MacOS
 
 ```bash
