@@ -4,12 +4,20 @@ description: Getting Started aggregate data via command line
 
 # Getting Started
 
-## Getting Daggy
+## Download and Install Daggy
 
 ### Fedora 29/30/31
 
 ```bash
 $ sudo dnf install daggy
+```
+
+### Debian/Ubuntu
+
+```bash
+sudo add-apt-repository ppa:synacker/daggy
+sudo apt-get update
+sudo apt-get install daggy 
 ```
 
 ### Arch Linux
