@@ -4,7 +4,7 @@
   <b>Daggy - Data Aggregation Utility</b>
 </p>
 
-**Short Demo**
+**Short Demo (click to image)**
 
 [![Data aggregation via command line](http://img.youtube.com/vi/tweXV0dvSbc/0.jpg)](http://www.youtube.com/watch?v=tweXV0dvSbc "Daggy - Data Aggregation Utility")
 
