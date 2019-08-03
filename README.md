@@ -4,6 +4,10 @@
   <b>Daggy - Data Aggregation Utility</b>
 </p>
 
+**Short Demo**
+
+[![Data aggregation via command line](http://img.youtube.com/vi/tweXV0dvSbc/0.jpg)](http://www.youtube.com/watch?v=tweXV0dvSbc "Daggy - Data Aggregation Utility")
+
 **Daggy - Data Aggregation Utilty** - is an IT automation tool. Application that aggregates data via command line from local or ssh connection.
 
 **Daggy** main goals are simplicity and ease-of-use. If you know about yaml/json, bash/powershell and ssh you know how to use Daggy. 
