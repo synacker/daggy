@@ -12,7 +12,7 @@ description: How Daggy aggregate data via command line
 
 ### **Set Data Sources**
 
-**Daggy** accept data aggregation config as argument or from _stdin:_
+**Daggy** accept **Data Aggregation Config** as argument or from _stdin:_
 
 ```bash
 daggy -h
@@ -46,15 +46,23 @@ If **sourceFile** \(for example simple.yaml\) is not exists in current working d
 cat simple.yaml | daggy -f yaml -i
 ```
 
+## Data Aggregation Session
+
+At start **Daggy** create **Data Aggregation Session** that include:
+
+1. Create **Data Aggregation Storage**
+2. Run **Data Aggregation Snippets** from **Data Aggregation Config** by **processes execution** or via **ssh connection**
+3. Write **Data Aggregation Streams** at runtime
+
 ### Create Output Folder
 
-By default **daggy** creates output folder with next template - `current_date-sourcefilenname` in `PWD` folder, but you can change output folder via **daggy** option:
+By default **daggy** creates output folder - **Data Aggregation Storage** - with next template - `current_date-sourcefilenname` in `PWD` folder, but you can change output folder via **daggy** option:
 
 ```bash
  -o, --output <folder>  Set output folder
 ```
 
-#### Process control
+### Processes execution
 
 Each command, taken from **local type** specification runing and controling by **daggy** application such as separate process in localhost:
 
@@ -110,9 +118,9 @@ remotehost:
         extension: log
 ```
 
-### Streaming commands output
+### Streaming Data Aggregation Snippets
 
-Each command, runing remotely or locally, streams its standart output to a separate file in output folder - **command output file**, that **daggy** created at start. Filename for each command forming by next template:
+Each command, runing remotely or locally, streams its standart output to a separate file in output folder - **Data Aggregation Snippet** output file, that **daggy** created at start. Filename for each command forming by next template:
 
 ```text
 hostname_commandname.extension
@@ -132,7 +140,7 @@ sources:
 
 command `pingYa` will streams own standard output to `localhost_pingYa.log` file
 
-### Command completion
+## How to stop Data Aggregation Session
 
 Type `CTRL+C` for interrupt commands execution. If command is not stopped before, SIGTERM signal will be send for each command. 
 
