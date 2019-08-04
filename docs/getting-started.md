@@ -56,7 +56,7 @@ daggy -h
 
 ## Configuration
 
-### Simple data aggregation config
+### Simple Data Aggregation Config
 
 {% code-tabs %}
 {% code-tabs-item title="simple.yaml" %}
