@@ -1,37 +1,82 @@
-/*
-Copyright 2017-2018 Mikhail Milovidov <milovidovmikhail@gmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
 #include "Precompiled.h"
-#include "CApplicationSettings.h"
-#include "CConsoleDaggy.h"
 
-void myCategoryFilter(QLoggingCategory* category_ptr)
+/*#include "Ssh2Client.h"
+#include "Ssh2Process.h"
+
+using namespace daggycore;*/
+
+int main(int argc, char** argv) 
 {
-    if (qstrcmp(category_ptr->categoryName(), "qtc.ssh") == 0)
-        category_ptr->setEnabled(QtDebugMsg, false);
-}
+    QCoreApplication app(argc, argv);
 
-int main(int argc, char *argv[])
-try {
-    QLoggingCategory::installFilter(myCategoryFilter);
-    QCoreApplication application(argc, argv);
+    /*Ssh2Settings settings;
+    Ssh2Client ssh2_client(settings);
 
-    CApplicationSettings applicationSettings;
-    CConsoleDaggy consoleDaggy(applicationSettings.dataSources(),
-                               applicationSettings.outputFolder());
-    consoleDaggy.start();
+    QObject::connect(&ssh2_client, &Ssh2Client::channelsCountChanged,
+                     [&](int channels_count){
+        if (channels_count == 0)
+            ssh2_client.disconnectFromHost();
+    });
 
-    return consoleDaggy.stopped() ? 0 : application.exec();
-}
-catch (const std::exception& exception)
-{
-    qDebug() << exception.what();
-    return -1;
+    QObject::connect(&ssh2_client, &Ssh2Client::openChannelsCountChanged,
+                     [&](int channels_count){
+        qDebug() << "Open channels count: " << channels_count;
+    });
+
+    QObject::connect(&ssh2_client, &Ssh2Client::stateChanged,
+                     [&](QAbstractSocket::SocketState state){
+        qDebug() << "Scoket state: " << state;
+    });
+
+    QObject::connect(&ssh2_client, &Ssh2Client::sessionStateChanged,
+                     [&](Ssh2Client::SessionStates state){
+        qDebug() << "Ssh2 state: " << state;
+        if (state == Ssh2Client::Connected) {
+            Ssh2Process* ssh2_process = ssh2_client.createProcess("cat /home/muxa/.ssh/id_rsa");
+            QObject::connect(ssh2_process, &Ssh2Process::channelStateChanged,
+                    [=](Ssh2Channel::ChannelStates state) {
+                switch (state) {
+                case Ssh2Channel::Closed:
+                case Ssh2Channel::FailedToOpen:
+                    ssh2_process->deleteLater();
+                    break;
+                default:;
+                }
+            });
+            QObject::connect(ssh2_process, &Ssh2Process::processStateChanged,
+                    [=](Ssh2Process::ProcessStates state)
+            {
+                qDebug() << "Ssh2 process state: " << state;
+                if (state == Ssh2Process::Finished) {
+                    qDebug() << "Ssh2 process status: " << ssh2_process->exitStatus();
+                    qDebug() << "Ssh2 process exit signal: " << ssh2_process->exitSignal();
+                }
+            }
+            );
+            QObject::connect(ssh2_process, &Ssh2Process::ssh2Error,
+                    [](std::error_code error_code)
+            {
+                qDebug() << "Ssh2 debug process error: " << error_code.message().c_str();
+            }
+            );
+            QObject::connect(ssh2_process, &Ssh2Process::channelReadyRead,
+                    [=](int channel)
+            {
+                ssh2_process->setCurrentReadChannel(channel);
+                qDebug() << "Ssh2 channel " << channel << " :";
+                qDebug() << ssh2_process->readAll();
+            }
+            );
+            ssh2_process->open();
+        }
+    });
+
+    QObject::connect(&ssh2_client, &Ssh2Client::ssh2Error,
+                     [](std::error_code error_code){
+        qDebug() << "Ssh2 debug error: " << error_code.message().c_str();
+    });
+
+    ssh2_client.connectToHost("127.0.0.1", 22);*/
+
+    return app.exec();
 }

@@ -7,3 +7,52 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+#pragma once
+
+#include <QIODevice>
+
+#include "daggycore_export.h"
+#include "Ssh2Channel.h"
+
+namespace daggyssh2 {
+
+class DAGGYCORE_EXPORT Ssh2Process : public Ssh2Channel
+{
+    Q_OBJECT
+    Q_ENUMS(ProcessStates)
+    Q_PROPERTY(ProcessStates processState READ processState NOTIFY processStateChanged)
+public:
+    enum ProcessStates {
+        NotStarted,
+        Starting,
+        Started,
+        FailedToStart,
+        Finishing,
+        Finished
+    };
+
+
+    ProcessStates processState() const;
+    void checkIncomingData() override;
+
+signals:
+    void processStateChanged(ProcessStates processState);
+
+protected:
+    Ssh2Process(const QString& command,
+                Ssh2Client* ssh2_client);
+
+private slots:
+    void onSsh2ChannelStateChanged(const ChannelStates& state);
+
+private:
+    void setSsh2ProcessState(ProcessStates ssh2_process_state);
+    std::error_code execSsh2Process();
+
+    const QString command_;
+    ProcessStates ssh2_process_state_;
+
+    friend class Ssh2Client;
+};
+
+}

@@ -7,3 +7,57 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+#include "Precompiled.h"
+#include "IDataProvider.h"
+
+#include "Common.h"
+
+using namespace daggycore;
+
+IDataProvider::IDataProvider(QObject *parent)
+    : QObject(parent)
+    , last_error_(success)
+    , state_(NotStarted)
+{
+
+}
+
+const IDataProvider::CommandsMap& IDataProvider::commands() const
+{
+    return commands_;
+}
+
+const Command* IDataProvider::getCommand(const QString& id) const
+{
+    const Command* result = nullptr;
+    if (commands_.find(id) != commands_.end())
+        result = &commands_.at(id);
+    return result;
+}
+
+IDataProvider::State IDataProvider::state() const
+{
+    return state_;
+}
+
+void IDataProvider::setState(IDataProvider::State providerState)
+{
+    if (state_ == providerState)
+        return;
+
+    state_ = providerState;
+    emit stateChanged(state_);
+}
+
+void IDataProvider::setLastError(const std::error_code& error_code)
+{
+    if (last_error_ != error_code) {
+        last_error_ = error_code;
+        emit error(last_error_);
+    }
+}
+
+std::error_code IDataProvider::lastError() const
+{
+    return last_error_;
+}
