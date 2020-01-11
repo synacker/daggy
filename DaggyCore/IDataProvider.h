@@ -13,17 +13,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <map>
 
 #include "daggycore_export.h"
+#include "LastError.h"
 #include "Command.h"
 
 namespace daggycore {
 
-class DAGGYCORE_EXPORT IDataProvider : public QObject
+class DAGGYCORE_EXPORT IDataProvider : public QObject, public LastError
 {
     Q_OBJECT
     Q_ENUMS(State)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
 public:
-    using CommandsMap = std::map<QString, Command>;
     enum State {
         NotStarted,
         Starting,
@@ -33,7 +33,8 @@ public:
         Finished
     };
 
-    explicit IDataProvider(QObject *parent = nullptr);
+    explicit IDataProvider(Commands commands,
+                           QObject *parent = nullptr);
     virtual ~IDataProvider() = default;
 
     virtual void start() = 0;
@@ -41,13 +42,11 @@ public:
 
     virtual QString type() const = 0;
 
-
-    const CommandsMap& commands() const;
-    const Command* getCommand(const QString& id) const;
+    const Commands& commands() const;
+    Command getCommand(const QString& id) const;
     State state() const;
 
-    std::error_code lastError() const;
-
+    static QString provider_type;
 signals:
     void stateChanged(State state);
 
@@ -66,7 +65,7 @@ protected:
     void setLastError(const std::error_code& error_code);
 
 private:
-    CommandsMap commands_;
+    const Commands commands_;
     std::error_code last_error_;
 
     State state_;

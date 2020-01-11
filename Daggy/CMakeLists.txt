@@ -4,6 +4,7 @@ find_package(Qt5 COMPONENTS Core Network REQUIRED)
 
 set(SOURCES
     main.cpp
+    CFileDataAggregator.cpp
 )
 
 add_executable(${TARGET} ${SOURCES})

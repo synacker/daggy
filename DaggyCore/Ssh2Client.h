@@ -12,17 +12,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <QList>
 #include <QPointer>
 
-#include "daggycore_export.h"
 #include "Ssh2Types.h"
 
 namespace daggyssh2 {
 class Ssh2Process;
 class Ssh2Channel;
 
-class DAGGYCORE_EXPORT Ssh2Client final : public QTcpSocket
+class Ssh2Client final : public QTcpSocket
 {
     Q_OBJECT
-    Q_ENUMS(SessionStates Ssh2Errors Ssh2AuthMethods)
+    Q_ENUMS(SessionStates Ssh2AuthMethods)
     Q_PROPERTY(SessionStates sessionState READ sessionState NOTIFY sessionStateChanged)
     Q_PROPERTY(int channelsCount READ channelsCount NOTIFY channelsCountChanged)
     Q_PROPERTY(int openChannelsCount READ openChannelsCount NOTIFY openChannelsCountChanged)
@@ -81,11 +80,11 @@ private slots:
 
 private:
     void addChannel(Ssh2Channel* channel);
-
     QList<Ssh2Channel*> getChannels() const;
 
-    std::error_code resetSshObjects();
     void setSsh2SessionState(const SessionStates& new_state);
+    const std::error_code& setSsh2SessionState(const SessionStates& new_state,
+                                               const std::error_code& error_code);
 
     void destroySsh2Objects();
     std::error_code createSsh2Objects();
@@ -106,9 +105,6 @@ private:
 
     QList<Ssh2AuthMethods> ssh2_available_auth_methods_;
     Ssh2AuthMethods ssh2_auth_method_;
-
-    QString host_;
-    quint16 port_;
 
     std::error_code last_error_;
 

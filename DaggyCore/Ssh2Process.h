@@ -11,12 +11,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <QIODevice>
 
-#include "daggycore_export.h"
 #include "Ssh2Channel.h"
 
 namespace daggyssh2 {
 
-class DAGGYCORE_EXPORT Ssh2Process : public Ssh2Channel
+class Ssh2Process : public Ssh2Channel
 {
     Q_OBJECT
     Q_ENUMS(ProcessStates)

@@ -7,51 +7,37 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#include "Precompiled.h"
-#include "IDataProvider.h"
+#pragma once
 
+#include <QObject>
+
+#include "daggycore_export.h"
+#include "DataSource.h"
 #include "Common.h"
+#include "LastError.h"
 
-using namespace daggycore;
+namespace daggycore {
+class IDataProvider;
 
-QString IDataProvider::provider_type = "ssh2";
-
-IDataProvider::IDataProvider(Commands commands,
-                             QObject *parent)
-    : QObject(parent)
-    , commands_(std::move(commands))
-    , last_error_(success)
-    , state_(State::NotStarted)
+class DAGGYCORE_EXPORT IDataProviderFabric : public QObject, public LastError
 {
+    Q_OBJECT
+public:
+    IDataProviderFabric() = default;
+    virtual ~IDataProviderFabric() = default;
 
-}
+    IDataProvider* create(const DataSource& data_source,
+                          QObject* parent);
 
-const Commands& IDataProvider::commands() const
-{
-    return commands_;
-}
+    virtual QString type() const = 0;
+    virtual const QMap<QString, QVariant::Type>& connectionFields() const = 0;
 
-Command IDataProvider::getCommand(const QString& id) const
-{
-    return commands_.value(id);
-}
+protected:
+    virtual IDataProvider* createDataProvider(const DataSource& data_source, QObject* parent) = 0;
 
-IDataProvider::State IDataProvider::state() const
-{
-    return state_;
-}
+private:
+    std::tuple<std::error_code, QString> checkConnectionParameters(const QVariantMap& connection_parameters) const;
+    std::tuple<std::error_code, QString> checkNullCommands(const Commands& commands) const;
+};
 
-void IDataProvider::setState(IDataProvider::State providerState)
-{
-    if (state_ == providerState)
-        return;
-
-    state_ = providerState;
-    emit stateChanged(state_);
-}
-
-void IDataProvider::setLastError(const std::error_code& error_code)
-{
-    if (setError(error_code))
-        emit error(errorCode());
 }

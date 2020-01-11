@@ -9,6 +9,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 #include "IDataProvider.h"
+#include "IDataProviderFabric.h"
 
 #include <QHostAddress>
 
@@ -25,12 +26,12 @@ class DAGGYCORE_EXPORT CSsh2DataProvider : public IDataProvider
     Q_OBJECT
 public:
     CSsh2DataProvider(QHostAddress host,
-                      const quint16 port,
                       const daggyssh2::Ssh2Settings& ssh2_settings,
+                      Commands commands,
                       QObject *parent = nullptr);
 
-    CSsh2DataProvider(const QHostAddress& host,
-                      const quint16 port,
+    CSsh2DataProvider(QHostAddress host,
+                      Commands commands,
                       QObject *parent = nullptr);
 
     ~CSsh2DataProvider();
@@ -41,13 +42,7 @@ public:
     QString type() const override;
 
 private:
-    struct CommandContext {
-        const QString id;
-        daggyssh2::Ssh2Process* ssh2_process;
-        const Command* command;
-    };
-
-    CommandContext getCommandContextFromSender() const;
+    std::tuple<daggyssh2::Ssh2Process*, Command> getCommandContextFromSender() const;
 
     daggyssh2::Ssh2Process* ssh2Process(const QString& id) const;
     QPointer<daggyssh2::Ssh2Process> createProcess(const Command& getCommand);

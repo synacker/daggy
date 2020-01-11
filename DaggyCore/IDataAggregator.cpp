@@ -7,38 +7,13 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#include "Common.h"
+#include "Precompiled.h"
+#include "IDataAggregator.h"
 
 using namespace daggycore;
 
-const std::error_code daggycore::success = std::error_code{};
-
-namespace  {
-class DaggyErrorCategory : public std::error_category
+IDataAggregator::IDataAggregator(QObject *parent)
+    : QObject(parent)
 {
-public:
-    const char* name() const noexcept override
-    {
-        return "DaggyErrors";
-    };
-    std::string message(int ev) const override {
-        switch (static_cast<DaggyErrors>(ev)) {
-        case IncorrectParameterName: return "Incorrect field name";
-        case WrongParameterType: return "Wrong parameter type";
-        case IncorrectProviderType: return "Incorrect provider type";
-        case NotEmptyParent: return "The parent of object is not nullptr";
-        case NotAllowed: return "Operation is not allowed in current state";
-        case DataProviderTypeIsNotSupported: return "Data provider type is not supported";
-        case NullCommand: return "Null command";
-        default: return "Unknown error";
-        }
-    };
 
-} daggy_error_category;
-
-}
-
-std::error_code daggycore::make_error_code(DaggyErrors daggy_error)
-{
-    return std::error_code(static_cast<int>(daggy_error), daggy_error_category);
 }

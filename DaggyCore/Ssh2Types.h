@@ -12,7 +12,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <QString>
 
 #include <system_error>
-#include "daggycore_export.h"
 
 struct _LIBSSH2_SESSION;
 typedef struct _LIBSSH2_SESSION LIBSSH2_SESSION;
@@ -27,12 +26,13 @@ namespace daggyssh2 {
 
 extern const std::error_code ssh2_success;
 
-QString DAGGYCORE_EXPORT defaultUser();
-QString DAGGYCORE_EXPORT defaultKey();
-QString DAGGYCORE_EXPORT defaultKnownHosts();
+QString defaultUser();
+QString defaultKey();
+QString defaultKnownHosts();
 
 struct Ssh2Settings {
     QString user = defaultUser();
+    quint16 port = 22;
     QString passphrase;
     QString key = defaultKey();
     QString known_hosts = defaultKnownHosts();
@@ -41,7 +41,7 @@ struct Ssh2Settings {
 
 enum Ssh2Error {
     ErrorReadKnownHosts,
-    StartupError,
+    SessionStartupError,
     UnexpectedError,
     HostKeyInvalidError,
     HostKeyMismatchError,
@@ -52,7 +52,10 @@ enum Ssh2Error {
     ProcessFailedToStart,
     ChannelReadError,
     ChannelWriteError,
-    TryAgain
+    TryAgain,
+    ConnectionTimeoutError,
+    TcpConnectionError,
+    TcpConnectionRefused
 };
 
 std::error_code make_error_code(Ssh2Error ssh2_error);

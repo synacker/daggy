@@ -17,7 +17,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 namespace daggyssh2 {
 class Ssh2Client;
 
-class DAGGYCORE_EXPORT Ssh2Channel : public QIODevice
+class Ssh2Channel : public QIODevice
 {
     Q_OBJECT
     Q_ENUMS(ChannelStates)

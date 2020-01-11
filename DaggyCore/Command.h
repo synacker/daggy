@@ -9,10 +9,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 
-#include <QString>
 #include <QVariantMap>
 
 namespace daggycore {
+
 
 struct Command {
     enum State {
@@ -40,7 +40,13 @@ struct Command {
     QString exec;
     QVariantMap parameters = {};
     bool restart = false;
-    unsigned int restart_timeout = 0;
+
+    bool isNull() const {
+        return id.isNull() ||
+               extension.isNull() ||
+               exec.isNull();
+    }
 };
 
+using Commands = QMap<QString, Command>;
 }

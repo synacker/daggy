@@ -9,11 +9,31 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 #include <system_error>
+#include <QString>
 
 #include "daggycore_export.h"
 
 namespace daggycore {
 
-extern const std::error_code success;
+DAGGYCORE_EXPORT extern const std::error_code success;
 
+enum DaggyErrors {
+    WrongParameterType,
+    IncorrectParameterName,
+    IncorrectProviderType,
+    NotEmptyParent,
+    NotAllowed,
+    DataProviderTypeIsNotSupported,
+    NullCommand
+};
+
+std::error_code DAGGYCORE_EXPORT make_error_code(DaggyErrors daggy_error);
 }
+
+namespace std
+{
+template <>
+struct is_error_code_enum<daggycore::DaggyErrors> : true_type {};
+}
+
+

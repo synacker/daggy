@@ -25,7 +25,7 @@ public:
     std::string message(int ev) const override {
         switch (static_cast<Ssh2Error>(ev)) {
         case ErrorReadKnownHosts: return "Error in read known hosts file";
-        case StartupError: return "Ssh2 session startup error";
+        case SessionStartupError: return "Ssh2 session startup error";
         case UnexpectedError: return "Unexpected shutdown error";
         case HostKeyInvalidError: return "Host key invalid error";
         case HostKeyMismatchError: return "Host key mismatch error";
@@ -34,6 +34,9 @@ public:
         case FailedToOpenChannel: return "Failed to open channel";
         case FailedToCloseChannel: return "Failed to close channel";
         case ProcessFailedToStart: return "Process failed to start";
+        case ConnectionTimeoutError: return "Connection timeout error";
+        case TcpConnectionError: return "Tcp connection error";
+        case TcpConnectionRefused: return "Tcp connection refused";
         case TryAgain: return "Try again";
         default: return "Unknown error";
         }

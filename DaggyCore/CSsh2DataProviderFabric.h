@@ -7,51 +7,21 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#include "Precompiled.h"
-#include "IDataProvider.h"
+#pragma once
+#include "daggycore_export.h"
+#include "IDataProviderFabric.h"
 
-#include "Common.h"
+namespace daggycore {
+class IDataProvider;
 
-using namespace daggycore;
-
-QString IDataProvider::provider_type = "ssh2";
-
-IDataProvider::IDataProvider(Commands commands,
-                             QObject *parent)
-    : QObject(parent)
-    , commands_(std::move(commands))
-    , last_error_(success)
-    , state_(State::NotStarted)
+class DAGGYCORE_EXPORT CSsh2DataProviderFabric : public IDataProviderFabric
 {
+public:
+    QString type() const override;
+    const QMap<QString, QVariant::Type>& connectionFields() const override;
 
-}
+protected:
+    IDataProvider* createDataProvider(const DataSource& data_source, QObject* parent) override;
+};
 
-const Commands& IDataProvider::commands() const
-{
-    return commands_;
-}
-
-Command IDataProvider::getCommand(const QString& id) const
-{
-    return commands_.value(id);
-}
-
-IDataProvider::State IDataProvider::state() const
-{
-    return state_;
-}
-
-void IDataProvider::setState(IDataProvider::State providerState)
-{
-    if (state_ == providerState)
-        return;
-
-    state_ = providerState;
-    emit stateChanged(state_);
-}
-
-void IDataProvider::setLastError(const std::error_code& error_code)
-{
-    if (setError(error_code))
-        emit error(errorCode());
 }

@@ -16,13 +16,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 using namespace daggycore;
 using namespace daggyssh2;
 
+namespace  {
+    const char* ssh2_type = "ssh2";
+}
+
 CSsh2DataProvider::CSsh2DataProvider(QHostAddress host,
-                                     const quint16 port,
                                      const Ssh2Settings& ssh2_settings,
+                                     Commands commands,
                                      QObject* parent)
-    : IDataProvider(parent)
+    : IDataProvider(std::move(commands), parent)
     , host_(std::move(host))
-    , port_(port)
+    , port_(ssh2_settings.port)
     , ssh2_client_(new Ssh2Client(ssh2_settings, this))
 {
     connect(ssh2_client_, &Ssh2Client::sessionStateChanged, this, &CSsh2DataProvider::onSsh2SessionStateChanged);
@@ -30,12 +34,12 @@ CSsh2DataProvider::CSsh2DataProvider(QHostAddress host,
     connect(ssh2_client_, &Ssh2Client::ssh2Error, this, &CSsh2DataProvider::error);
 }
 
-CSsh2DataProvider::CSsh2DataProvider(const QHostAddress& host,
-                                     const quint16 port,
+CSsh2DataProvider::CSsh2DataProvider(QHostAddress host,
+                                     Commands commands,
                                      QObject* parent)
-    : CSsh2DataProvider(host,
-                        port,
+    : CSsh2DataProvider(std::move(host),
                         Ssh2Settings(),
+                        std::move(commands),
                         parent)
 {
 
@@ -44,7 +48,6 @@ CSsh2DataProvider::CSsh2DataProvider(const QHostAddress& host,
 CSsh2DataProvider::~CSsh2DataProvider()
 {
     stop();
-    ssh2_client_->waitForDisconnected(0);
 }
 
 void CSsh2DataProvider::start()
@@ -59,15 +62,15 @@ void CSsh2DataProvider::stop()
 
 QString CSsh2DataProvider::type() const
 {
-    return "ssh2";
+    return ssh2_type;
 }
 
-CSsh2DataProvider::CommandContext CSsh2DataProvider::getCommandContextFromSender() const
+std::tuple<Ssh2Process*, Command> CSsh2DataProvider::getCommandContextFromSender() const
 {
     Ssh2Process* ssh2_process = qobject_cast<Ssh2Process*>(sender());
     const QString& id = ssh2_process->objectName();
-    const Command* const command = getCommand(id);
-    return {id, ssh2_process, command};
+    Command command = getCommand(id);
+    return std::tie(ssh2_process, command);
 }
 
 daggyssh2::Ssh2Process* CSsh2DataProvider::ssh2Process(const QString& id) const
@@ -95,6 +98,7 @@ void CSsh2DataProvider::onSsh2SessionStateChanged(const int state)
         break;
     case Ssh2Client::Established:
         setState(Started);
+        startCommands();
         break;
     case Ssh2Client::FailedToEstablshed:
         setState(FailedToStart);
@@ -120,7 +124,7 @@ void CSsh2DataProvider::onSsh2ChannelsCountChanged(const int channels_count)
 
 void CSsh2DataProvider::onSsh2ProcessStateChanged(const int process_state)
 {
-    auto command_context = getCommandContextFromSender();
+    auto [ssh2_process, command] = getCommandContextFromSender();
     Command::State command_state = Command::NotStarted;
     int exit_code = 0;
     switch (static_cast<Ssh2Process::ProcessStates>(process_state)) {
@@ -135,30 +139,29 @@ void CSsh2DataProvider::onSsh2ProcessStateChanged(const int process_state)
         break;
     case Ssh2Process::FailedToStart:
         command_state = Command::FailedToStart;
-        delete command_context.ssh2_process;
+        delete ssh2_process;
         break;
     case Ssh2Process::Finishing:
         command_state = Command::Finishing;
         break;
     case Ssh2Process::Finished:
         command_state = Command::Finished;
-        exit_code = command_context.ssh2_process->exitStatus();
-        if (command_context.command->restart && (state() != IDataProvider::Started))
-            QTimer::singleShot(command_context.command->restart_timeout, command_context.ssh2_process, [this, command_context]()
-            {
-                if (ssh2_client_->sessionState() == Ssh2Client::Established)
-                    command_context.ssh2_process->open();
-            });
-        else
-            delete command_context.ssh2_process;
+        exit_code = ssh2_process->exitStatus();
         break;
     }
-    emit commandStateChanged(command_context.id, command_state, exit_code);
+    emit commandStateChanged(command.id, command_state, exit_code);
+
+    if (process_state == Ssh2Process::Finished) {
+        if (command.restart && state() == IDataProvider::Started)
+            ssh2_process->open();
+        else
+            delete ssh2_process;
+    }
 }
 
 void CSsh2DataProvider::onSsh2ProcessNewDataChannel(QByteArray data, const int stream_id)
 {
-    CommandContext command_context = getCommandContextFromSender();
+    auto [ssh2_process, command] = getCommandContextFromSender();
     Command::Stream::Type command_stream_type = Command::Stream::Type::Standard;
     switch (static_cast<Ssh2Channel::ChannelStream>(stream_id)) {
     case Ssh2Channel::Out:
@@ -169,9 +172,9 @@ void CSsh2DataProvider::onSsh2ProcessNewDataChannel(QByteArray data, const int s
         break;
 
     }
-    emit commandStream(command_context.id,
+    emit commandStream(command.id,
                       {
-                           command_context.command->extension,
+                           command.extension,
                            data,
                            command_stream_type
                        });
@@ -184,10 +187,8 @@ void CSsh2DataProvider::onSsh2ProcessError(const std::error_code& error_code)
 
 void CSsh2DataProvider::startCommands()
 {
-    for (const auto& pair : commands()) {
-        const QString& id = pair.first;
-        const Command& command = pair.second;
-        Ssh2Process* ssh2_process = ssh2Process(id);
+    for (const auto& command : commands()) {
+        Ssh2Process* ssh2_process = ssh2Process(command.id);
         if (ssh2_process == nullptr)
             ssh2_process = createProcess(command);
         ssh2_process->open();
