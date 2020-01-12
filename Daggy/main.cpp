@@ -3,6 +3,7 @@
 #include <DaggyCore/CSsh2DataProviderFabric.h>
 
 #include "CFileDataAggregator.h"
+#include "CConsoleDaggy.h"
 
 using namespace daggycore;
 
@@ -10,7 +11,10 @@ using namespace daggycore;
 int main(int argc, char** argv) 
 {
     QCoreApplication app(argc, argv);
-    CSsh2DataProviderFabric* ssh2_fabric = new CSsh2DataProviderFabric;
+    CConsoleDaggy* console_daggy = new CConsoleDaggy(&app);
+
+
+    /*CSsh2DataProviderFabric* ssh2_fabric = new CSsh2DataProviderFabric;
     CFileDataAggregator* file_data_aggregator = new CFileDataAggregator;
 
     DataSources data_sources;
@@ -52,7 +56,7 @@ int main(int argc, char** argv)
     if (!daggy_core->start()) {
         qDebug() << daggy_core->errorCode().message().c_str() << " - " << daggy_core->errorMessage();
         return -1;
-    }
+    }*/
 
     return app.exec();
 }

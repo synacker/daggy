@@ -9,18 +9,44 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+#include <QObject>
 
+#include "ISystemSignalHandler.h"
 
-#include <QDebug>
+class QCoreApplication;
 
-#include <atomic>
+namespace daggycore {
+class DaggyCore;
+}
 
-#include <libssh2.h>
-#include <errno.h>
+class CConsoleDaggy : public QObject,
+                      public ISystemSignalHandler
+{
+    Q_OBJECT
+public:
+    CConsoleDaggy(QCoreApplication* application);
 
-#include <yaml-cpp/yaml.h>
+    void initialize();
+    bool start();
+
+    bool handleSystemSignal(const int signal);
+
+    bool isError() const;
+    const QString& errorMessage() const;
+
+signals:
+    void interrupt(const int signal);
+
+private:
+    std::tuple<QString, QString> parse() const;
+
+    daggycore::DaggyCore* daggyCore() const;
+    QCoreApplication* application() const;
+
+    QString getTextFromFile(QString file_path) const;
+    QString generateOutputFolder(const QString& data_sources_name) const;
+    QString homeFolder() const;
+
+    QString error_message_;
+};
+

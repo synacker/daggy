@@ -9,18 +9,34 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+#include "daggycore_export.h"
+#include "DataSource.h"
 
+namespace daggycore {
 
-#include <QDebug>
+class DAGGYCORE_EXPORT IDataSourcesConvertor
+{
+public:
+    virtual ~IDataSourcesConvertor() = default;
 
-#include <atomic>
+    virtual QString convert(const DataSources& data_sources) const = 0;
+    virtual DataSources convert(const QString& data_sources) const = 0;
 
-#include <libssh2.h>
-#include <errno.h>
+    virtual QString type() const = 0;
 
-#include <yaml-cpp/yaml.h>
+    static const char* Sources;
+
+    static const char* ProviderType;
+    static const char* ProviderHost;
+    static const char* ProviderСonnection;
+    static const char* ProviderСommands;
+    static const char* ProviderReconnect;
+
+    static const char* CommandId;
+    static const char* CommandExec;
+    static const char* CommandExtension;
+    static const char* CommandParameters;
+    static const char* CommandRestart;
+};
+
+}

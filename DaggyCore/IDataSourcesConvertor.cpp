@@ -7,20 +7,21 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#pragma once
+#include "Precompiled.h"
+#include "IDataSourcesConvertor.h"
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+using namespace daggycore;
 
+const char* IDataSourcesConvertor::Sources = "sources";
 
-#include <QDebug>
+const char* IDataSourcesConvertor::ProviderType = "type";
+const char* IDataSourcesConvertor::ProviderHost = "host";
+const char* IDataSourcesConvertor::ProviderСonnection = "connection";
+const char* IDataSourcesConvertor::ProviderСommands = "commands";
+const char* IDataSourcesConvertor::ProviderReconnect = "reconnect";
 
-#include <atomic>
-
-#include <libssh2.h>
-#include <errno.h>
-
-#include <yaml-cpp/yaml.h>
+const char* IDataSourcesConvertor::CommandId = "name";
+const char* IDataSourcesConvertor::CommandExec = "exec";
+const char* IDataSourcesConvertor::CommandExtension = "extension";
+const char* IDataSourcesConvertor::CommandParameters = "parameters";
+const char* IDataSourcesConvertor::CommandRestart = "restart";
