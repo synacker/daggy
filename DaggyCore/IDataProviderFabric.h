@@ -30,13 +30,11 @@ public:
                           QObject* parent);
 
     virtual QString type() const = 0;
-    virtual const QMap<QString, QVariant::Type>& connectionFields() const = 0;
 
 protected:
     virtual IDataProvider* createDataProvider(const DataSource& data_source, QObject* parent) = 0;
 
 private:
-    std::tuple<std::error_code, QString> checkConnectionParameters(const QVariantMap& connection_parameters) const;
     std::tuple<std::error_code, QString> checkNullCommands(const Commands& commands) const;
 };
 

@@ -14,8 +14,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 using namespace daggycore;
 
-QString IDataProvider::provider_type = "ssh2";
-
 IDataProvider::IDataProvider(Commands commands,
                              QObject *parent)
     : QObject(parent)

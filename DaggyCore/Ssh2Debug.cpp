@@ -23,4 +23,3 @@ void daggyssh2::debugSsh2Error(const int ssh2_method_result)
 {
     qDebug() << "Ssh2 error: " << ssh2_method_result;
 }
-

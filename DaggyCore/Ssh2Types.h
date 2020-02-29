@@ -10,6 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #pragma once
 
 #include <QString>
+#include <QMetaType>
 
 #include <system_error>
 
@@ -35,6 +36,7 @@ struct Ssh2Settings {
     quint16 port = 22;
     QString passphrase;
     QString key = defaultKey();
+    QString keyphrase;
     QString known_hosts = defaultKnownHosts();
     unsigned int timeout = 1000;
 };
@@ -60,6 +62,8 @@ enum Ssh2Error {
 
 std::error_code make_error_code(Ssh2Error ssh2_error);
 }
+
+Q_DECLARE_METATYPE(daggyssh2::Ssh2Settings)
 
 namespace std
 {

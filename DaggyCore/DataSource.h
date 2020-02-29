@@ -19,10 +19,13 @@ namespace daggycore {
 struct DataSource {
     QString id;
     QString type;
-    QHostAddress host;
-    QVariantMap connection;
+    QString host;
     Commands commands;
     bool reconnect = false;
+
+    QVariant parameters;
 };
 using DataSources = QMap<QString, DataSource>;
 }
+
+Q_DECLARE_METATYPE(daggycore::DataSource);

@@ -17,65 +17,17 @@ using namespace daggycore;
 using namespace daggyssh2;
 
 namespace  {
-constexpr const char* port_field = "port";
-constexpr const char* user_field = "user";
-constexpr const char* password_field = "password";
-constexpr const char* key_field = "key";
-constexpr const char* known_hosts_field = "known_hosts";
-constexpr const char* timeout_field = "timeout";
-
-const QMap<QString, QVariant::Type> connection_fields =
-{
-    {port_field, QVariant::Int},
-    {user_field, QVariant::String},
-    {password_field, QVariant::String},
-    {key_field, QVariant::String},
-    {known_hosts_field, QVariant::String},
-    {timeout_field, QVariant::Int}
-};
-
-class VariantSettor
-{
-public:
-    VariantSettor(const QVariantMap& map)
-        : map_(map){};
-
-    template<typename T> bool setIfExists(const QString& key, T& value) {
-        return setIfExists(key, value, value);
-    }
-
-    template<typename T> bool setIfExists(const QString& key, T& value, const T& default_value) {
-        if (!map_.contains(key)) {
-            value = default_value;
-            return false;
-        }
-        const QVariant& map_value = map_[key];
-        if (!map_value.canConvert<T>()) {
-            value = default_value;
-            return false;
-        }
-        value = map_value.value<T>();
-        return true;
-    }
-
-private:
-    const QVariantMap& map_;
-};
-
+constexpr const char* provider_type = "ssh2";
 }
 
 IDataProvider* CSsh2DataProviderFabric::createDataProvider(const DataSource& data_source, QObject* parent)
 {
-    Ssh2Settings ssh2_settings;
-    VariantSettor settor(data_source.connection);
-    settor.setIfExists(user_field, ssh2_settings.user);
-    if (settor.setIfExists(password_field, ssh2_settings.passphrase, QString()))
-        settor.setIfExists(key_field, ssh2_settings.key, QString());
-    else
-        settor.setIfExists(key_field, ssh2_settings.key);
-    settor.setIfExists(known_hosts_field, ssh2_settings.known_hosts);
-    settor.setIfExists(timeout_field, ssh2_settings.timeout);
+    if (!data_source.parameters.canConvert<Ssh2Settings>()) {
+        setError(DaggyErrors::WrongConnectionParameter);
+        return nullptr;
+    }
 
+    const Ssh2Settings ssh2_settings = data_source.parameters.value<Ssh2Settings>();
     return new CSsh2DataProvider(QHostAddress(data_source.host),
                                  ssh2_settings,
                                  data_source.commands,
@@ -84,10 +36,5 @@ IDataProvider* CSsh2DataProviderFabric::createDataProvider(const DataSource& dat
 
 QString CSsh2DataProviderFabric::type() const
 {
-    return IDataProvider::provider_type;
-}
-
-const QMap<QString, QVariant::Type>& CSsh2DataProviderFabric::connectionFields() const
-{
-    return connection_fields;
+    return provider_type;
 }

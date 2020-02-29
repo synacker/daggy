@@ -8,7 +8,7 @@ set(CMAKE_AUTOUIC ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}/exports)
 
 include(compiler)
 include(version)

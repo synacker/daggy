@@ -15,20 +15,17 @@ set(SOURCES
     Ssh2Channel.cpp
     Ssh2Types.cpp
     Ssh2Debug.cpp
-    VariantGettor.cpp
     DaggyCore.cpp
     LastError.cpp
-    IDataSourcesConvertor.cpp
-    CYamlDataSourcesConvertor.cpp
 )
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 
 add_library(${TARGET} SHARED ${SOURCES})
-target_link_libraries(${TARGET} Qt5::Core Qt5::Network ssh2 yaml-cpp)
+target_link_libraries(${TARGET} Qt5::Core Qt5::Network ssh2)
 include(precompiled)
 include(GenerateExportHeader)
-generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_CURRENT_SOURCE_DIR}/daggycore_export.h)
+generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/daggycore_export.h)
 
 install(TARGETS ${TARGET} DESTINATION ${LIBRARY_INSTALL_DIR})

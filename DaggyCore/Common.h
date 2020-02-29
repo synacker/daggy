@@ -18,7 +18,7 @@ namespace daggycore {
 DAGGYCORE_EXPORT extern const std::error_code success;
 
 enum DaggyErrors {
-    WrongParameterType,
+    WrongConnectionParameter,
     IncorrectParameterName,
     IncorrectProviderType,
     NotEmptyParent,

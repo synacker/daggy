@@ -374,8 +374,7 @@ Ssh2Client::Ssh2AuthMethods Ssh2Client::getAuthenticationMethod(const QList<Ssh2
     {
         result = Ssh2AuthMethods::PublicKeyAuthentication;
     } else if(available_auth_methods.contains(Ssh2AuthMethods::PasswordAuthentication) &&
-              !ssh2_settings_.passphrase.isNull() &&
-              ssh2_settings_.key.isNull())
+              !ssh2_settings_.passphrase.isNull())
     {
         result = Ssh2AuthMethods::PasswordAuthentication;
     }
@@ -396,7 +395,7 @@ std::error_code Ssh2Client::authenticate()
                     qPrintable(ssh2_settings_.user),
                     nullptr,
                     qPrintable(ssh2_settings_.key),
-                    qPrintable(ssh2_settings_.passphrase));
+                    qPrintable(ssh2_settings_.keyphrase));
         break;
     case Ssh2AuthMethods::PasswordAuthentication:
         ssh2_method_result = libssh2_userauth_password(

@@ -22,5 +22,5 @@ endif()
 
 
 add_executable(${TARGET} ${SOURCES})
-target_link_libraries(${TARGET} DaggyCore Qt5::Core Qt5::Network ssh2)
+target_link_libraries(${TARGET} DaggyCore Qt5::Core Qt5::Network yaml-cpp)
 include(precompiled)

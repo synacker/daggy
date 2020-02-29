@@ -18,7 +18,6 @@ class DAGGYCORE_EXPORT CSsh2DataProviderFabric : public IDataProviderFabric
 {
 public:
     QString type() const override;
-    const QMap<QString, QVariant::Type>& connectionFields() const override;
 
 protected:
     IDataProvider* createDataProvider(const DataSource& data_source, QObject* parent) override;

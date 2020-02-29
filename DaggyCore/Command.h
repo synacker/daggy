@@ -30,9 +30,9 @@ struct Command {
             Error
         };
 
-        const QString extension;
-        const QByteArray data;
-        const Type type;
+        QString extension;
+        QByteArray data;
+        Type type;
     };
 
     QString id;
@@ -50,3 +50,7 @@ struct Command {
 
 using Commands = QMap<QString, Command>;
 }
+
+Q_DECLARE_METATYPE(daggycore::Command::Stream::Type)
+Q_DECLARE_METATYPE(daggycore::Command::Stream)
+Q_DECLARE_METATYPE(daggycore::Command)

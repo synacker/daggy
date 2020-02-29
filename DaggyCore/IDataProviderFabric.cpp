@@ -25,37 +25,13 @@ IDataProvider* IDataProviderFabric::create(const DataSource& data_source, QObjec
         );
         return nullptr;
     }
-    auto [error_code, error_message] = checkConnectionParameters(data_source.connection);
-    if (error_code) {
-        setError(error_code, error_message);
-        return nullptr;
-    }
-    std::tie(error_code, error_message) = checkNullCommands(data_source.commands);
+
+    auto [error_code, error_message] = checkNullCommands(data_source.commands);
     if (error_code) {
         setError(error_code, error_message);
         return nullptr;
     }
     return createDataProvider(data_source, parent);
-}
-
-std::tuple<std::error_code, QString> IDataProviderFabric::checkConnectionParameters(const QVariantMap& connection_parameters) const
-{
-    std::error_code error_code = success;
-    QString error_message;
-    const auto& connection_fields = connectionFields();
-    for (const QString& key : connection_parameters.keys()) {
-        if (!connection_fields.contains(key)) {
-            error_code = DaggyErrors::IncorrectParameterName;
-            error_message = QString("Incorrect field name: %1").arg(key);
-            break;
-        }
-        if (connection_parameters[key].type() != connection_fields[key]) {
-            error_code = DaggyErrors::WrongParameterType;
-            error_message = QString("Incorrect parameter type for %1 field").arg(key);
-            break;
-        }
-    }
-    return {error_code, error_message};
 }
 
 std::tuple<std::error_code, QString> IDataProviderFabric::checkNullCommands(const Commands& commands) const

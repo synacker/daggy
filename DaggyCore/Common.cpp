@@ -24,7 +24,7 @@ public:
     std::string message(int ev) const override {
         switch (static_cast<DaggyErrors>(ev)) {
         case IncorrectParameterName: return "Incorrect field name";
-        case WrongParameterType: return "Wrong parameter type";
+        case WrongConnectionParameter: return "Wrong parameter type";
         case IncorrectProviderType: return "Incorrect provider type";
         case NotEmptyParent: return "The parent of object is not nullptr";
         case NotAllowed: return "Operation is not allowed in current state";

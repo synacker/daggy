@@ -25,7 +25,6 @@ void CConsoleDaggy::initialize()
 {
     const auto [yaml_data_sources, output_folder] = parse();
 
-
 }
 
 bool CConsoleDaggy::handleSystemSignal(const int signal)

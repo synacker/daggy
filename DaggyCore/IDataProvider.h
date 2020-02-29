@@ -46,7 +46,6 @@ public:
     Command getCommand(const QString& id) const;
     State state() const;
 
-    static QString provider_type;
 signals:
     void stateChanged(State state);
 
