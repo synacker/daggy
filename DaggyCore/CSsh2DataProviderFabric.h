@@ -20,7 +20,7 @@ public:
     QString type() const override;
 
 protected:
-    IDataProvider* createDataProvider(const DataSource& data_source, QObject* parent) override;
+    OptionalResult<IDataProvider*> createDataProvider(const DataSource& data_source, QObject* parent) override;
 };
 
 }

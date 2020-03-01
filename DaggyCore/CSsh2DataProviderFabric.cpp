@@ -20,11 +20,10 @@ namespace  {
 constexpr const char* provider_type = "ssh2";
 }
 
-IDataProvider* CSsh2DataProviderFabric::createDataProvider(const DataSource& data_source, QObject* parent)
+OptionalResult<IDataProvider*> CSsh2DataProviderFabric::createDataProvider(const DataSource& data_source, QObject* parent)
 {
     if (!data_source.parameters.canConvert<Ssh2Settings>()) {
-        setError(DaggyErrors::WrongConnectionParameter);
-        return nullptr;
+        return {DaggyErrors::WrongConnectionParameter};
     }
 
     const Ssh2Settings ssh2_settings = data_source.parameters.value<Ssh2Settings>();

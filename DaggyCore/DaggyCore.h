@@ -18,6 +18,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <QMap>
 #include <QObject>
 
+#include "OptionalResult.h"
+
 namespace daggycore {
 class IDataProviderFabric;
 class IDataAggregator;
@@ -91,7 +93,7 @@ private:
     QList<IDataProvider*> getProviders() const;
     IDataProvider* getProvider(const QString& provider_id) const;
 
-    bool createProvider(const DataSource& data_source);
+    daggycore::Result createProvider(const DataSource& data_source);
 
     void setState(State state);
     void destroyDaggyObjects();

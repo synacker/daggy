@@ -204,28 +204,30 @@ IDataProvider* DaggyCore::getProvider(const QString& provider_id) const
     return result;
 }
 
-bool DaggyCore::createProvider(const DataSource& data_source)
+Result DaggyCore::createProvider(const DataSource& data_source)
 {
     IDataProviderFabric* fabric = getFabric(data_source.type);
     if (fabric == nullptr) {
-        setError(DaggyErrors::DataProviderTypeIsNotSupported,
-                 QString("Data provider type %1 is not supported").arg(data_source.type));
-        return false;
+        return
+        {
+            DaggyErrors::DataProviderTypeIsNotSupported,
+            QString("Data provider type %1 is not supported")
+                    .arg(data_source.type).toStdString()
+        };
     }
-    IDataProvider* provider = fabric->create(data_source, this);
-    if (provider == nullptr) {
-        setError(fabric->errorCode(), fabric->errorMessage());
-        return false;
+    auto create_provider = fabric->create(data_source, this);
+    if (!create_provider) {
+        return create_provider.result();
     }
 
-    connect(provider, &IDataProvider::stateChanged, this, &DaggyCore::onDataProviderStateChanged);
-    connect(provider, &IDataProvider::error, this, &DaggyCore::onDataProviderError);
+    connect(create_provider.value(), &IDataProvider::stateChanged, this, &DaggyCore::onDataProviderStateChanged);
+    connect(create_provider.value(), &IDataProvider::error, this, &DaggyCore::onDataProviderError);
 
-    connect(provider, &IDataProvider::commandStateChanged, this, &DaggyCore::onCommandStateChanged);
-    connect(provider, &IDataProvider::commandError, this, &DaggyCore::onCommandError);
-    connect(provider, &IDataProvider::commandStream, this, &DaggyCore::onCommandStream);
+    connect(create_provider.value(), &IDataProvider::commandStateChanged, this, &DaggyCore::onCommandStateChanged);
+    connect(create_provider.value(), &IDataProvider::commandError, this, &DaggyCore::onCommandError);
+    connect(create_provider.value(), &IDataProvider::commandStream, this, &DaggyCore::onCommandStream);
 
-    return true;
+    return create_provider.result();
 }
 
 void DaggyCore::setState(DaggyCore::State state)

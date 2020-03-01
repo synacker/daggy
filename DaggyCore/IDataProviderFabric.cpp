@@ -14,37 +14,39 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 using namespace daggycore;
 
-IDataProvider* IDataProviderFabric::create(const DataSource& data_source, QObject* parent)
+OptionalResult<IDataProvider*> IDataProviderFabric::create(const DataSource& data_source, QObject* parent)
 {
     if (data_source.type != type()) {
-        setError(
+        return
+        {
             DaggyErrors::IncorrectProviderType,
             QString("Provider types dismatch: %1 and %2")
                     .arg(data_source.type)
-                    .arg(type())
-        );
-        return nullptr;
+                    .arg(type()).toStdString()
+        };
     }
 
-    auto [error_code, error_message] = checkNullCommands(data_source.commands);
-    if (error_code) {
-        setError(error_code, error_message);
-        return nullptr;
+    auto check_null_commands_result = checkNullCommands(data_source.commands);
+    if (!check_null_commands_result) {
+        return check_null_commands_result;
     }
     return createDataProvider(data_source, parent);
 }
 
-std::tuple<std::error_code, QString> IDataProviderFabric::checkNullCommands(const Commands& commands) const
+Result IDataProviderFabric::checkNullCommands(const Commands& commands) const
 {
-    std::error_code error_code = success;
+    Result result;
     QString error_message;
     for (const Command& command : commands) {
         if (command.isNull())
         {
-            error_code = DaggyErrors::NullCommand;
-            error_message = QString("Command with id %1 is null").arg(command.id);
+            result =
+            {
+                DaggyErrors::NullCommand,
+                QString("Command with id %1 is null").arg(command.id).toStdString()
+            };
             break;
         }
     }
-    return {error_code, error_message};
+    return result;
 }

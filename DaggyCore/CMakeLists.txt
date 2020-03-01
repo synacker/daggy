@@ -17,6 +17,7 @@ set(SOURCES
     Ssh2Debug.cpp
     DaggyCore.cpp
     LastError.cpp
+    Result.cpp
 )
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)

@@ -15,27 +15,28 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "DataSource.h"
 #include "Common.h"
 #include "LastError.h"
+#include "OptionalResult.h"
 
 namespace daggycore {
 class IDataProvider;
 
-class DAGGYCORE_EXPORT IDataProviderFabric : public QObject, public LastError
+class DAGGYCORE_EXPORT IDataProviderFabric : public QObject
 {
     Q_OBJECT
 public:
     IDataProviderFabric() = default;
     virtual ~IDataProviderFabric() = default;
 
-    IDataProvider* create(const DataSource& data_source,
+    OptionalResult<IDataProvider*> create(const DataSource& data_source,
                           QObject* parent);
 
     virtual QString type() const = 0;
 
 protected:
-    virtual IDataProvider* createDataProvider(const DataSource& data_source, QObject* parent) = 0;
+    virtual OptionalResult<IDataProvider*> createDataProvider(const DataSource& data_source, QObject* parent) = 0;
 
 private:
-    std::tuple<std::error_code, QString> checkNullCommands(const Commands& commands) const;
+    Result checkNullCommands(const Commands& commands) const;
 };
 
 }
