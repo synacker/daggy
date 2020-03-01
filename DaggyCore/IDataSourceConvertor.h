@@ -9,36 +9,46 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 
-#include <QObject>
-
-#include "daggycore_export.h"
 #include "DataSource.h"
-#include "Common.h"
 #include "OptionalResult.h"
 
-namespace daggycore {
-class IDataProvider;
+namespace daggyconv {
 
-class DAGGYCORE_EXPORT IDataProviderFabric : public QObject
+class IDataSourceConvertor
 {
-    Q_OBJECT
 public:
-    IDataProviderFabric(QString type_arg,
-                        QObject* parent = nullptr);
-    virtual ~IDataProviderFabric() = default;
+    IDataSourceConvertor(QString type_arg);
 
-    OptionalResult<IDataProvider*> create
+    virtual ~IDataSourceConvertor() = default;
+    virtual daggycore::OptionalResult<daggycore::DataSources> convert
     (
-            const DataSource& data_source,
-            QObject* parent
-    );
+            const QString& data
+    ) = 0;
 
     const QString type;
-protected:
-    virtual OptionalResult<IDataProvider*> createDataProvider(const DataSource& data_source, QObject* parent) = 0;
 
-private:
-    Result checkNullCommands(const Commands& commands) const;
+
+
+protected:
+    constexpr static const char* g_sourcesField = "sources";
+
+    constexpr static const char* g_typeField = "type";
+    constexpr static const char* g_hostField = "host";
+    constexpr static const char* g_parametersField = "parameters";
+    constexpr static const char* g_commandsField = "commands";
+    constexpr static const char* g_reconnectField = "reconnect";
+
+    constexpr static const char* g_commandField = "exec";
+    constexpr static const char* g_outputExtensionField = "extension";
+    constexpr static const char* g_restart = "restart";
 };
 
+template<const char* type, class Source>
+QVariant convert
+(
+        const Source& source
+)
+{
+    return QVariant(source);
+}
 }

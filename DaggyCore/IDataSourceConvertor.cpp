@@ -7,38 +7,13 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#pragma once
+#include "Precompiled.h"
+#include "IDataSourceConvertor.h"
 
-#include <QObject>
+using namespace daggyconv;
 
-#include "daggycore_export.h"
-#include "DataSource.h"
-#include "Common.h"
-#include "OptionalResult.h"
-
-namespace daggycore {
-class IDataProvider;
-
-class DAGGYCORE_EXPORT IDataProviderFabric : public QObject
+IDataSourceConvertor::IDataSourceConvertor(QString type_arg)
+    : type(std::move(type_arg))
 {
-    Q_OBJECT
-public:
-    IDataProviderFabric(QString type_arg,
-                        QObject* parent = nullptr);
-    virtual ~IDataProviderFabric() = default;
-
-    OptionalResult<IDataProvider*> create
-    (
-            const DataSource& data_source,
-            QObject* parent
-    );
-
-    const QString type;
-protected:
-    virtual OptionalResult<IDataProvider*> createDataProvider(const DataSource& data_source, QObject* parent) = 0;
-
-private:
-    Result checkNullCommands(const Commands& commands) const;
-};
 
 }

@@ -250,7 +250,7 @@ void DaggyCore::setState(DaggyCore::State state)
 Result DaggyCore::addDataProvidersFabric(IDataProviderFabric* new_fabric)
 {
     new_fabric->setParent(this);
-    new_fabric->setObjectName(new_fabric->type());
+    new_fabric->setObjectName(new_fabric->type);
 
     return Result::success;
 }

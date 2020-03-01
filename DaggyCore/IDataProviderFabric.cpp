@@ -14,22 +14,30 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 using namespace daggycore;
 
-IDataProviderFabric::IDataProviderFabric(QString type, QObject* parent)
+IDataProviderFabric::IDataProviderFabric
+(
+        QString type_arg,
+        QObject* parent
+)
     : QObject(parent)
-    , type_(std::move(type))
+    , type(std::move(type_arg))
 {
 
 }
 
-OptionalResult<IDataProvider*> IDataProviderFabric::create(const DataSource& data_source, QObject* parent)
+OptionalResult<IDataProvider*> IDataProviderFabric::create
+(
+        const DataSource& data_source,
+        QObject* parent
+)
 {
-    if (data_source.type != type()) {
+    if (data_source.type != type) {
         return
         {
             DaggyErrors::IncorrectProviderType,
             QString("Provider types dismatch: %1 and %2")
                     .arg(data_source.type)
-                    .arg(type()).toStdString()
+                    .arg(type).toStdString()
         };
     }
 
@@ -38,11 +46,6 @@ OptionalResult<IDataProvider*> IDataProviderFabric::create(const DataSource& dat
         return check_null_commands_result;
     }
     return createDataProvider(data_source, parent);
-}
-
-QString IDataProviderFabric::type() const
-{
-    return type_;
 }
 
 Result IDataProviderFabric::checkNullCommands(const Commands& commands) const
