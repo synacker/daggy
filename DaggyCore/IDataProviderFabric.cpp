@@ -14,6 +14,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 using namespace daggycore;
 
+IDataProviderFabric::IDataProviderFabric(QString type, QObject* parent)
+    : QObject(parent)
+    , type_(std::move(type))
+{
+
+}
+
 OptionalResult<IDataProvider*> IDataProviderFabric::create(const DataSource& data_source, QObject* parent)
 {
     if (data_source.type != type()) {
@@ -31,6 +38,11 @@ OptionalResult<IDataProvider*> IDataProviderFabric::create(const DataSource& dat
         return check_null_commands_result;
     }
     return createDataProvider(data_source, parent);
+}
+
+QString IDataProviderFabric::type() const
+{
+    return type_;
 }
 
 Result IDataProviderFabric::checkNullCommands(const Commands& commands) const

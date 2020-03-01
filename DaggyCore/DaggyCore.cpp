@@ -16,14 +16,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 using namespace daggycore;
 
-DaggyCore::DaggyCore(const QList<IDataProviderFabric*>& fabrics,
-                     const QList<IDataAggregator*>& aggregators,
-                     const DataSources& data_sources,
+DaggyCore::DaggyCore(DataSources data_sources,
                      QObject* parent)
     : QObject(parent)
+    , data_sources_(std::move(data_sources))
     , state_(NotStarted)
 {
-    initialize(fabrics, aggregators, data_sources);
+}
+
+DaggyCore::~DaggyCore()
+{
+    destroyDaggyObjects();
 }
 
 void DaggyCore::destroyDaggyObjects()
@@ -62,22 +65,26 @@ bool DaggyCore::isActiveProvider(const IDataProvider* const provider) const
     return result;
 }
 
-bool DaggyCore::start()
+Result DaggyCore::start()
 {
-    if (errorCode()) {
-        return false;
+    auto data_providers = getProviders();
+    if (data_providers.empty()) {
+        for (const auto& data_source : data_sources_) {
+            auto result = createProvider(data_source);
+            if (!result)
+                return result;
+        }
     }
-
-    const auto data_providers = getProviders();
+    data_providers = getProviders();
     if (data_providers.empty()) {
         setState(Finished);
-        return true;
+        return Result::success;
     }
 
     for (IDataProvider* provider : data_providers)
         provider->start();
 
-    return true;
+    return Result::success;
 }
 
 void DaggyCore::stop()
@@ -155,8 +162,8 @@ void DaggyCore::onCommandError(const QString command_id,
 }
 
 bool DaggyCore::initialize(const QList<IDataProviderFabric*>& fabrics,
-                                    const QList<IDataAggregator*>& aggregators,
-                                    const DataSources& data_sources)
+                           const QList<IDataAggregator*>& aggregators,
+                           const DataSources& data_sources)
 {
     for (auto& fabric : fabrics)
         if (!addDataProvidersFabric(fabric))
@@ -240,25 +247,16 @@ void DaggyCore::setState(DaggyCore::State state)
 }
 
 
-bool DaggyCore::addDataProvidersFabric(IDataProviderFabric* new_fabric)
+Result DaggyCore::addDataProvidersFabric(IDataProviderFabric* new_fabric)
 {
-    if (new_fabric->parent()) {
-        setError(DaggyErrors::NotEmptyParent,
-                 QString("Fabric parent with type %1 is not empty").arg(new_fabric->type()));
-        return false;
-    }
     new_fabric->setParent(this);
     new_fabric->setObjectName(new_fabric->type());
 
-    return true;
+    return Result::success;
 }
 
-bool DaggyCore::addDataAggregator(IDataAggregator* aggregator)
+Result DaggyCore::addDataAggregator(IDataAggregator* aggregator)
 {
-    if (aggregator->parent()) {
-        setError(DaggyErrors::NotEmptyParent);
-        return false;
-    }
     aggregator->setParent(this);
 
     connect(this, &DaggyCore::dataProviderStateChanged, aggregator, &IDataAggregator::onDataProviderStateChanged);
@@ -268,5 +266,5 @@ bool DaggyCore::addDataAggregator(IDataAggregator* aggregator)
     connect(this, &DaggyCore::commandError, aggregator, &IDataAggregator::onCommandError);
     connect(this, &DaggyCore::commandStream, aggregator, &IDataAggregator::onCommandStream);
 
-    return true;
+    return Result::success;
 }

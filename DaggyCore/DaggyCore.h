@@ -9,7 +9,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 
-#include "LastError.h"
 #include "Common.h"
 #include "DataSource.h"
 
@@ -25,7 +24,7 @@ class IDataProviderFabric;
 class IDataAggregator;
 class IDataProvider;
 
-class DAGGYCORE_EXPORT DaggyCore : public QObject, public LastError
+class DAGGYCORE_EXPORT DaggyCore : public QObject
 {
     Q_OBJECT
     Q_ENUMS(State)
@@ -38,12 +37,21 @@ public:
         Finished
     };
 
-    DaggyCore(const QList<IDataProviderFabric*>& fabrics,
-              const QList<IDataAggregator*>& aggregators,
-              const DataSources& data_sources,
+    DaggyCore(DataSources data_sources,
               QObject* parent = nullptr);
+    ~DaggyCore();
 
-    bool start();
+    template<typename Fabric, typename... Args> daggycore::Result createProviderFabric(Args... args) {
+        if (getFabric(Fabric::provider_type))
+            return {DaggyErrors::ProviderTypeAlreadyExists};
+        return addDataProvidersFabric(new Fabric(args...));
+    }
+
+    template<typename Aggregator, typename... Args> daggycore::Result createDataAggregator(Args... args) {
+        return addDataAggregator(new Aggregator(args...));
+    }
+
+    Result start();
     void stop();
 
     State state() const;
@@ -84,8 +92,8 @@ private:
                              const QList<IDataAggregator*>& aggregators,
                              const DataSources& data_sources);
 
-    bool addDataProvidersFabric(IDataProviderFabric* new_fabric);
-    bool addDataAggregator(IDataAggregator* aggregator);
+    Result addDataProvidersFabric(IDataProviderFabric* new_fabric);
+    Result addDataAggregator(IDataAggregator* aggregator);
 
     IDataProviderFabric* getFabric(const QString& type) const;
     QList<IDataAggregator*> getAggregators() const;

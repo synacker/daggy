@@ -16,8 +16,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 using namespace daggycore;
 using namespace daggyssh2;
 
-namespace  {
-constexpr const char* provider_type = "ssh2";
+
+CSsh2DataProviderFabric::CSsh2DataProviderFabric(QObject* parent)
+    : IDataProviderFabric(fabric_type, parent)
+{
+
 }
 
 OptionalResult<IDataProvider*> CSsh2DataProviderFabric::createDataProvider(const DataSource& data_source, QObject* parent)
@@ -31,9 +34,4 @@ OptionalResult<IDataProvider*> CSsh2DataProviderFabric::createDataProvider(const
                                  ssh2_settings,
                                  data_source.commands,
                                  parent);
-}
-
-QString CSsh2DataProviderFabric::type() const
-{
-    return provider_type;
 }

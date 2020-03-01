@@ -13,12 +13,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <map>
 
 #include "daggycore_export.h"
-#include "LastError.h"
 #include "Command.h"
 
 namespace daggycore {
 
-class DAGGYCORE_EXPORT IDataProvider : public QObject, public LastError
+class DAGGYCORE_EXPORT IDataProvider : public QObject
 {
     Q_OBJECT
     Q_ENUMS(State)
@@ -61,12 +60,9 @@ signals:
 
 protected:
     void setState(State state);
-    void setLastError(const std::error_code& error_code);
 
 private:
     const Commands commands_;
-    std::error_code last_error_;
-
     State state_;
 };
 }

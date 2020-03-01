@@ -21,7 +21,7 @@ enum DaggyErrors {
     WrongConnectionParameter,
     IncorrectParameterName,
     IncorrectProviderType,
-    NotEmptyParent,
+    ProviderTypeAlreadyExists,
     NotAllowed,
     DataProviderTypeIsNotSupported,
     NullCommand

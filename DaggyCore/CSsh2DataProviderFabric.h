@@ -16,11 +16,17 @@ class IDataProvider;
 
 class DAGGYCORE_EXPORT CSsh2DataProviderFabric : public IDataProviderFabric
 {
+    Q_OBJECT
 public:
-    QString type() const override;
+    CSsh2DataProviderFabric(QObject* parent = nullptr);
 
+    constexpr static const char* fabric_type = "ssh2";
 protected:
-    OptionalResult<IDataProvider*> createDataProvider(const DataSource& data_source, QObject* parent) override;
+    OptionalResult<IDataProvider*> createDataProvider
+    (
+            const DataSource& data_source,
+            QObject* parent
+    ) override;
 };
 
 }

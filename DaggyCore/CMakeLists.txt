@@ -16,7 +16,6 @@ set(SOURCES
     Ssh2Types.cpp
     Ssh2Debug.cpp
     DaggyCore.cpp
-    LastError.cpp
     Result.cpp
 )
 

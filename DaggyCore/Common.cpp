@@ -26,7 +26,7 @@ public:
         case IncorrectParameterName: return "Incorrect field name";
         case WrongConnectionParameter: return "Wrong parameter type";
         case IncorrectProviderType: return "Incorrect provider type";
-        case NotEmptyParent: return "The parent of object is not nullptr";
+        case ProviderTypeAlreadyExists: return "The parent of object is not nullptr";
         case NotAllowed: return "Operation is not allowed in current state";
         case DataProviderTypeIsNotSupported: return "Data provider type is not supported";
         case NullCommand: return "Null command";

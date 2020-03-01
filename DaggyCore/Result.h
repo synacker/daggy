@@ -20,7 +20,7 @@ public:
     Result();
     Result(std::error_code error_code);
     Result(std::error_code error_code,
-           std::string error_message);
+           std::string detailed_error_message);
 
     Result(const Result& other) = default;
     Result(Result&& other) = default;
@@ -32,10 +32,10 @@ public:
         return *this == success;
     }
 
-    const std::string& error_message() const;
+    const std::string& detailed_error_message() const;
 
 private:
-    std::string error_message_;
+    std::string detailed_error_message_;
 };
 
 }

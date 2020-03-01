@@ -14,7 +14,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "daggycore_export.h"
 #include "DataSource.h"
 #include "Common.h"
-#include "LastError.h"
 #include "OptionalResult.h"
 
 namespace daggycore {
@@ -24,19 +23,24 @@ class DAGGYCORE_EXPORT IDataProviderFabric : public QObject
 {
     Q_OBJECT
 public:
-    IDataProviderFabric() = default;
+    IDataProviderFabric(QString type, QObject* parent = nullptr);
     virtual ~IDataProviderFabric() = default;
 
-    OptionalResult<IDataProvider*> create(const DataSource& data_source,
-                          QObject* parent);
+    OptionalResult<IDataProvider*> create
+    (
+            const DataSource& data_source,
+            QObject* parent
+    );
 
-    virtual QString type() const = 0;
+    QString type() const;
 
 protected:
     virtual OptionalResult<IDataProvider*> createDataProvider(const DataSource& data_source, QObject* parent) = 0;
 
 private:
     Result checkNullCommands(const Commands& commands) const;
+
+    QString type_;
 };
 
 }

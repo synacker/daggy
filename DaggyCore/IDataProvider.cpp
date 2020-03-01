@@ -18,7 +18,6 @@ IDataProvider::IDataProvider(Commands commands,
                              QObject *parent)
     : QObject(parent)
     , commands_(std::move(commands))
-    , last_error_(success)
     , state_(State::NotStarted)
 {
 
@@ -46,10 +45,4 @@ void IDataProvider::setState(IDataProvider::State providerState)
 
     state_ = providerState;
     emit stateChanged(state_);
-}
-
-void IDataProvider::setLastError(const std::error_code& error_code)
-{
-    if (setError(error_code))
-        emit error(errorCode());
 }

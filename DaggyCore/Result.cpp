@@ -29,12 +29,12 @@ Result::Result(std::error_code error_code)
 Result::Result(std::error_code error_code,
                std::string error_message)
     : std::error_code(std::move(error_code))
-    , error_message_(std::move(error_message))
+    , detailed_error_message_(std::move(error_message))
 {
 
 }
 
-const std::string& Result::error_message() const
+const std::string& Result::detailed_error_message() const
 {
-    return error_message_;
+    return detailed_error_message_;
 }
