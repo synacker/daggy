@@ -10,9 +10,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #pragma once
 #include <system_error>
 
+#include "daggycore_export.h"
+
 namespace daggycore {
 
-class Result : public std::error_code
+class DAGGYCORE_EXPORT Result : public std::error_code
 {
 public:
     static const std::error_code success;

@@ -43,12 +43,13 @@ public:
 
     DaggyCore(DataSources data_sources,
               QObject* parent = nullptr);
+    DaggyCore(QObject* parent = nullptr);
 
     ~DaggyCore() = default;
 
     template<typename Fabric, typename... Args> Result createProviderFabric(Args... args) {
-        if (getFabric(Fabric::provider_type))
-            return {DaggyErrors::ProviderTypeAlreadyExists};
+        if (getFabric(Fabric::fabric_type))
+            return Result{DaggyErrors::ProviderTypeAlreadyExists};
         return addDataProvidersFabric(new Fabric(args...));
     }
 

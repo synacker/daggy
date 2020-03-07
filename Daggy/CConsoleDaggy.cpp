@@ -9,22 +9,37 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #include "Precompiled.h"
 #include "CConsoleDaggy.h"
+#include "Common.h"
 
 #include <DaggyCore/DaggyCore.h>
+#include <DaggyCore/CSsh2DataProviderFabric.h>
+#include <DaggyCore/CYamlDataSourcesConvertor.h>
+#include <DaggyCore/CJsonDataSourcesConvertor.h>
 
-#include "Common.h"
+#include "CFileDataAggregator.h"
+
+using namespace daggycore;
+using namespace daggyconv;
 
 CConsoleDaggy::CConsoleDaggy(QCoreApplication* application)
     : QObject(application)
+    , daggy_core_(new daggycore::DaggyCore(this))
 {
     application->setApplicationVersion(FULL_VERSION_STR);
-    initialize();
 }
 
-void CConsoleDaggy::initialize()
+daggycore::Result CConsoleDaggy::initialize()
 {
-    const auto [yaml_data_sources, output_folder] = parse();
+    daggy_core_->createProviderFabric<CSsh2DataProviderFabric>();
 
+    daggy_core_->createConvertor<CYamlDataSourcesConvertor>();
+    daggy_core_->createConvertor<CJsonDataSourcesConvertor>();
+
+    daggy_core_->createDataAggregator<CFileDataAggregator>();
+
+    const auto settings = parse();
+//    const auto [yaml_data_sources, output_folder] = parse();
+    return daggy_core_->setDataSources(settings.data_source_text, settings.data_source_text_type);
 }
 
 bool CConsoleDaggy::handleSystemSignal(const int signal)
@@ -46,23 +61,27 @@ const QString& CConsoleDaggy::errorMessage() const
     return error_message_;
 }
 
-std::tuple<QString, QString> CConsoleDaggy::parse() const
+CConsoleDaggy::Settings CConsoleDaggy::parse() const
 {
-    QString yaml_data_sources;
-    QString output_folder;
+    Settings result;
 
     const QCommandLineOption output_folder_option({"o", "output"},
                                                   "Set output folder",
                                                   "folder", "");
+    const QCommandLineOption input_format_option({"f", "format"},
+                                                 "Source format",
+                                                 QString("%1|%2").arg(CJsonDataSourcesConvertor::convertor_type, CYamlDataSourcesConvertor::convertor_type),
+                                                 CJsonDataSourcesConvertor::convertor_type);
     const QCommandLineOption input_from_stdin_option({"i", "stdin"},
                                                      "Read data sources from stdin");
 
     QCommandLineParser command_line_parser;
     command_line_parser.addOption(output_folder_option);
+    command_line_parser.addOption(input_format_option);
     command_line_parser.addOption(input_from_stdin_option);
     command_line_parser.addHelpOption();
     command_line_parser.addVersionOption();
-    command_line_parser.addPositionalArgument("file", "Data source file", "*.yaml");
+    command_line_parser.addPositionalArgument("file", "Data source file", "*.yaml, *.yml, *.json");
 
     command_line_parser.process(*application());
 
@@ -75,17 +94,28 @@ std::tuple<QString, QString> CConsoleDaggy::parse() const
     const QString& source_file_name = positional_arguments.first();
 
     if (command_line_parser.isSet(input_from_stdin_option))
-        yaml_data_sources = QTextStream(stdin).readAll();
+        result.data_source_text = QTextStream(stdin).readAll();
     else {
-        yaml_data_sources = getTextFromFile(source_file_name);
+        result.data_source_text = getTextFromFile(source_file_name);
     }
 
     if (command_line_parser.isSet(output_folder_option))
-        output_folder = command_line_parser.value(output_folder_option);
+        result.output_folder = command_line_parser.value(output_folder_option);
     else
-        output_folder = generateOutputFolder(QFileInfo(source_file_name).baseName());
+        result.output_folder = generateOutputFolder(QFileInfo(source_file_name).baseName());
 
-    return {yaml_data_sources, output_folder};
+    if (command_line_parser.isSet(input_format_option)) {
+        const QString& format = command_line_parser.value(input_format_option);
+        if (format != CJsonDataSourcesConvertor::convertor_type ||
+            format != CYamlDataSourcesConvertor::convertor_type)
+        {
+            command_line_parser.showHelp(-1);
+        } else {
+            result.data_source_text_type = format;
+        }
+    }
+
+    return result;
 }
 
 daggycore::DaggyCore* CConsoleDaggy::daggyCore() const

@@ -25,6 +25,12 @@ DaggyCore::DaggyCore(DataSources data_sources,
 {
 }
 
+DaggyCore::DaggyCore(QObject* parent)
+    : QObject(parent)
+{
+
+}
+
 void DaggyCore::setDataSources(DataSources data_sources)
 {
     data_sources_ = std::move(data_sources);

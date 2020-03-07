@@ -11,6 +11,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <QObject>
 
+#include <DaggyCore/Result.h>
+
 #include "ISystemSignalHandler.h"
 
 class QCoreApplication;
@@ -26,7 +28,7 @@ class CConsoleDaggy : public QObject,
 public:
     CConsoleDaggy(QCoreApplication* application);
 
-    void initialize();
+    daggycore::Result initialize();
     bool start();
 
     bool handleSystemSignal(const int signal);
@@ -38,7 +40,12 @@ signals:
     void interrupt(const int signal);
 
 private:
-    std::tuple<QString, QString> parse() const;
+    struct Settings {
+        QString data_source_text_type;
+        QString data_source_text;
+        QString output_folder;
+    };
+    Settings parse() const;
 
     daggycore::DaggyCore* daggyCore() const;
     QCoreApplication* application() const;
@@ -46,6 +53,8 @@ private:
     QString getTextFromFile(QString file_path) const;
     QString generateOutputFolder(const QString& data_sources_name) const;
     QString homeFolder() const;
+
+    daggycore::DaggyCore* daggy_core_;
 
     QString error_message_;
 };

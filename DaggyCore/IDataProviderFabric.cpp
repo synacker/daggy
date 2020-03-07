@@ -40,7 +40,6 @@ OptionalResult<IDataProvider*> IDataProviderFabric::create
                     .arg(type).toStdString()
         };
     }
-
     return createDataProvider(data_source, parent);
 }
 

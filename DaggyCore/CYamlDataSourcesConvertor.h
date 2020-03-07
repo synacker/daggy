@@ -13,7 +13,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 namespace daggyconv {
 
-class CYamlDataSourcesConvertor: public IDataSourceConvertor
+class DAGGYCORE_EXPORT CYamlDataSourcesConvertor: public IDataSourceConvertor
 {
 public:
     CYamlDataSourcesConvertor();
