@@ -8,34 +8,22 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #pragma once
-#include <system_error>
-#include <QString>
 
-#include "daggycore_export.h"
+#include "IDataSourceConvertor.h"
 
-namespace daggycore {
+namespace daggyconv {
 
-DAGGYCORE_EXPORT extern const std::error_code success;
+class CYamlDataSourcesConvertor: public IDataSourceConvertor
+{
+public:
+    CYamlDataSourcesConvertor();
 
-enum DaggyErrors {
-    ConvertError,
-    WrongSourceParameter,
-    IncorrectParameterName,
-    IncorrectProviderType,
-    ProviderTypeAlreadyExists,
-    ConvertorTypeAlreadyExists,
-    NotAllowed,
-    DataProviderTypeIsNotSupported,
-    NullCommand
+    constexpr static const char* convertor_type = "yaml";
+
+    daggycore::OptionalResult<daggycore::DataSources> convert
+    (
+        const QString& yaml
+    ) const override;
 };
 
-std::error_code DAGGYCORE_EXPORT make_error_code(DaggyErrors daggy_error);
 }
-
-namespace std
-{
-template <>
-struct is_error_code_enum<daggycore::DaggyErrors> : true_type {};
-}
-
-

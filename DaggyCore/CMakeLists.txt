@@ -17,6 +17,9 @@ set(SOURCES
     Ssh2Debug.cpp
     DaggyCore.cpp
     Result.cpp
+    CJsonDataSourcesConvertor.cpp
+    IDataSourceConvertor.cpp
+    CYamlDataSourcesConvertor.cpp
 )
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)

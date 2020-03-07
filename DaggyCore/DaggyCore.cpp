@@ -13,6 +13,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "IDataProviderFabric.h"
 #include "IDataAggregator.h"
 #include "IDataProvider.h"
+#include "IDataSourceConvertor.h"
 
 using namespace daggycore;
 
@@ -24,21 +25,30 @@ DaggyCore::DaggyCore(DataSources data_sources,
 {
 }
 
-DaggyCore::~DaggyCore()
+void DaggyCore::setDataSources(DataSources data_sources)
 {
-    destroyDaggyObjects();
+    data_sources_ = std::move(data_sources);
 }
 
-void DaggyCore::destroyDaggyObjects()
+Result DaggyCore::setDataSources
+(
+        const QString& data_sources_text,
+        const QString& text_format_type
+)
 {
-    for (const auto& provider : getProviders())
-        delete provider;
+    const auto convertor = getConvertor(text_format_type);
+    if (!convertor)
+        return
+        {
+            DaggyErrors::ConvertError,
+            QString("%1 convertion type is not supported").arg(text_format_type).toStdString()
+        };
+    const auto convertion = convertor->convert(data_sources_text);
+    if (!convertion)
+        return convertion.result();
 
-    for (const auto& fabric : getFabrics())
-        delete fabric;
-
-    for (const auto& aggregator : getAggregators())
-        delete aggregator;
+    data_sources_ = convertion.value();
+    return Result::success;
 }
 
 int DaggyCore::activeDataProvidersCount() const
@@ -161,30 +171,19 @@ void DaggyCore::onCommandError(const QString command_id,
                       error_code);
 }
 
-bool DaggyCore::initialize(const QList<IDataProviderFabric*>& fabrics,
-                           const QList<IDataAggregator*>& aggregators,
-                           const DataSources& data_sources)
-{
-    for (auto& fabric : fabrics)
-        if (!addDataProvidersFabric(fabric))
-            return false;
-
-    for (auto& aggregator : aggregators)
-        if (!addDataAggregator(aggregator))
-            return false;
-
-    for (const auto& data_source : data_sources) {
-        if (!createProvider(data_source))
-            return false;
-    }
-    return true;
-}
-
 IDataProviderFabric* DaggyCore::getFabric(const QString& type) const
 {
     IDataProviderFabric* result = nullptr;
     if (!type.isEmpty())
         result = findChild<IDataProviderFabric*>(type);
+    return result;
+}
+
+daggyconv::IDataSourceConvertor* DaggyCore::getConvertor(const QString& type) const
+{
+    daggyconv::IDataSourceConvertor* result = nullptr;
+    if (!type.isEmpty())
+        result = findChild<daggyconv::IDataSourceConvertor*>(type);
     return result;
 }
 
@@ -201,6 +200,11 @@ QList<IDataProviderFabric*> DaggyCore::getFabrics() const
 QList<IDataProvider*> DaggyCore::getProviders() const
 {
     return findChildren<IDataProvider*>();
+}
+
+QList<daggyconv::IDataSourceConvertor*> DaggyCore::getConvertors() const
+{
+    return findChildren<daggyconv::IDataSourceConvertor*>();
 }
 
 IDataProvider* DaggyCore::getProvider(const QString& provider_id) const
@@ -265,6 +269,14 @@ Result DaggyCore::addDataAggregator(IDataAggregator* aggregator)
     connect(this, &DaggyCore::commandStateChanged, aggregator, &IDataAggregator::onCommandStateChanged);
     connect(this, &DaggyCore::commandError, aggregator, &IDataAggregator::onCommandError);
     connect(this, &DaggyCore::commandStream, aggregator, &IDataAggregator::onCommandStream);
+
+    return Result::success;
+}
+
+Result DaggyCore::addDataSourceConvertor(daggyconv::IDataSourceConvertor* convertor)
+{
+    convertor->setParent(this);
+    convertor->setObjectName(convertor->type);
 
     return Result::success;
 }

@@ -19,6 +19,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include "OptionalResult.h"
 
+namespace daggyconv {
+class IDataSourceConvertor;
+}
+
 namespace daggycore {
 class IDataProviderFabric;
 class IDataAggregator;
@@ -39,17 +43,30 @@ public:
 
     DaggyCore(DataSources data_sources,
               QObject* parent = nullptr);
-    ~DaggyCore();
 
-    template<typename Fabric, typename... Args> daggycore::Result createProviderFabric(Args... args) {
+    ~DaggyCore() = default;
+
+    template<typename Fabric, typename... Args> Result createProviderFabric(Args... args) {
         if (getFabric(Fabric::provider_type))
             return {DaggyErrors::ProviderTypeAlreadyExists};
         return addDataProvidersFabric(new Fabric(args...));
     }
 
-    template<typename Aggregator, typename... Args> daggycore::Result createDataAggregator(Args... args) {
+    template<typename Aggregator, typename... Args> Result createDataAggregator(Args... args) {
         return addDataAggregator(new Aggregator(args...));
     }
+
+    template<typename Convertor, typename... Args> Result createConvertor(Args... args) {
+        if (getConvertor(Convertor::convertor_type))
+            return {DaggyErrors::ConvertorTypeAlreadyExists};
+        return addDataSourceConvertor(new Convertor(args...));
+    }
+
+    void setDataSources(DataSources data_sources);
+    Result setDataSources(
+        const QString& data_sources_text,
+        const QString& text_format_type
+    );
 
     Result start();
     void stop();
@@ -88,28 +105,27 @@ private slots:
                         const std::error_code error_code);
 
 private:
-    bool initialize(const QList<IDataProviderFabric*>& fabrics,
-                             const QList<IDataAggregator*>& aggregators,
-                             const DataSources& data_sources);
-
     Result addDataProvidersFabric(IDataProviderFabric* new_fabric);
     Result addDataAggregator(IDataAggregator* aggregator);
+    Result addDataSourceConvertor(daggyconv::IDataSourceConvertor* convertor);
 
     IDataProviderFabric* getFabric(const QString& type) const;
+    daggyconv::IDataSourceConvertor* getConvertor(const QString& type) const;
+
     QList<IDataAggregator*> getAggregators() const;
     QList<IDataProviderFabric*> getFabrics() const;
     QList<IDataProvider*> getProviders() const;
+    QList<daggyconv::IDataSourceConvertor*> getConvertors() const;
     IDataProvider* getProvider(const QString& provider_id) const;
 
     daggycore::Result createProvider(const DataSource& data_source);
 
     void setState(State state);
-    void destroyDaggyObjects();
 
     int activeDataProvidersCount() const;
     bool isActiveProvider(const IDataProvider* const provider) const;
 
-    const DataSources data_sources_;
+    DataSources data_sources_;
     State state_;
 };
 

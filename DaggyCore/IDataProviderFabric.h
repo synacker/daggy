@@ -34,11 +34,9 @@ public:
     );
 
     const QString type;
+
 protected:
     virtual OptionalResult<IDataProvider*> createDataProvider(const DataSource& data_source, QObject* parent) = 0;
-
-private:
-    Result checkNullCommands(const Commands& commands) const;
 };
 
 }

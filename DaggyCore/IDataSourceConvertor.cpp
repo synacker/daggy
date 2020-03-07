@@ -10,10 +10,27 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "Precompiled.h"
 #include "IDataSourceConvertor.h"
 
+#include "Common.h"
+
+using namespace daggycore;
 using namespace daggyconv;
 
-IDataSourceConvertor::IDataSourceConvertor(QString type_arg)
-    : type(std::move(type_arg))
+const QMap<const char*, QVariant::Type> IDataSourceConvertor::required_source_field =
 {
+    {IDataSourceConvertor::g_hostField, QVariant::String},
+    {IDataSourceConvertor::g_typeField, QVariant::String},
+    {IDataSourceConvertor::g_commandsField, QVariant::Map}
+};
 
+const QMap<const char*, QVariant::Type> IDataSourceConvertor::required_commands_field =
+{
+    {IDataSourceConvertor::g_execField, QVariant::String},
+    {IDataSourceConvertor::g_extensionField, QVariant::String}
+};
+
+IDataSourceConvertor::IDataSourceConvertor(QString type_arg, QObject* parent)
+    : QObject(parent)
+    , type(std::move(type_arg))
+{
+    
 }

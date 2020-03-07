@@ -41,27 +41,6 @@ OptionalResult<IDataProvider*> IDataProviderFabric::create
         };
     }
 
-    auto check_null_commands_result = checkNullCommands(data_source.commands);
-    if (!check_null_commands_result) {
-        return check_null_commands_result;
-    }
     return createDataProvider(data_source, parent);
 }
 
-Result IDataProviderFabric::checkNullCommands(const Commands& commands) const
-{
-    Result result;
-    QString error_message;
-    for (const Command& command : commands) {
-        if (command.isNull())
-        {
-            result =
-            {
-                DaggyErrors::NullCommand,
-                QString("Command with id %1 is null").arg(command.id).toStdString()
-            };
-            break;
-        }
-    }
-    return result;
-}

@@ -16,6 +16,27 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 using namespace daggycore;
 using namespace daggyssh2;
 
+namespace  {
+constexpr const char* g_userField = "user";
+constexpr const char* g_portField = "port";
+constexpr const char* g_passphraseField = "passphrase";
+constexpr const char* g_keyField = "key";
+constexpr const char* g_keyphraseField = "keyphrase";
+constexpr const char* g_knownHostsField = "knownhosts";
+constexpr const char* g_timeoutField = "timeout";
+
+constexpr const std::pair<const char*, QVariant::Type> parameters_field[] =
+{
+    {g_userField, QVariant::String},
+    {g_portField, QVariant::UInt},
+    {g_passphraseField, QVariant::String},
+    {g_keyField, QVariant::String},
+    {g_keyphraseField, QVariant::String},
+    {g_knownHostsField, QVariant::String},
+    {g_timeoutField, QVariant::UInt}
+};
+
+}
 
 CSsh2DataProviderFabric::CSsh2DataProviderFabric(QObject* parent)
     : IDataProviderFabric(fabric_type, parent)
@@ -25,13 +46,50 @@ CSsh2DataProviderFabric::CSsh2DataProviderFabric(QObject* parent)
 
 OptionalResult<IDataProvider*> CSsh2DataProviderFabric::createDataProvider(const DataSource& data_source, QObject* parent)
 {
-    if (!data_source.parameters.canConvert<Ssh2Settings>()) {
-        return {DaggyErrors::WrongConnectionParameter};
+    const auto parameters = convertParameters(data_source.parameters);
+    if (!parameters) {
+        return {DaggyErrors::WrongSourceParameter};
     }
 
-    const Ssh2Settings ssh2_settings = data_source.parameters.value<Ssh2Settings>();
     return new CSsh2DataProvider(QHostAddress(data_source.host),
-                                 ssh2_settings,
+                                 parameters.value(),
                                  data_source.commands,
                                  parent);
+}
+
+OptionalResult<Ssh2Settings> CSsh2DataProviderFabric::convertParameters(const QVariantMap& parameters) const
+{
+    Ssh2Settings result;
+
+    for (const auto& field : parameters_field) {
+        if (parameters.contains(field.first) && parameters[field.first].type() != field.second)
+            return Result
+            {
+                DaggyErrors::ConvertError,
+                "Invalid parameters type"
+            };
+    }
+
+    if (parameters.contains(g_userField))
+        result.user = parameters[g_userField].toString();
+
+    if (parameters.contains(g_portField))
+        result.port = parameters[g_portField].toUInt();
+
+    if (parameters.contains(g_passphraseField))
+        result.passphrase = parameters[g_passphraseField].toString();
+
+    if (parameters.contains(g_keyField))
+        result.key = parameters[g_keyField].toString();
+
+    if (parameters.contains(g_keyphraseField))
+        result.keyphrase = parameters[g_keyphraseField].toString();
+
+    if (parameters.contains(g_knownHostsField))
+        result.known_hosts = parameters[g_knownHostsField].toString();
+
+    if (parameters.contains(g_timeoutField))
+        result.timeout = parameters[g_timeoutField].toUInt();
+
+    return result;
 }

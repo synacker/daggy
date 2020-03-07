@@ -40,12 +40,6 @@ struct Command {
     QString exec;
     QVariantMap parameters = {};
     bool restart = false;
-
-    bool isNull() const {
-        return id.isNull() ||
-               extension.isNull() ||
-               exec.isNull();
-    }
 };
 
 using Commands = QMap<QString, Command>;

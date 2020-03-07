@@ -21,7 +21,7 @@ struct DataSource {
     Commands commands;
     bool reconnect = false;
 
-    QVariant parameters;
+    QVariantMap parameters;
 };
 using DataSources = QMap<QString, DataSource>;
 }

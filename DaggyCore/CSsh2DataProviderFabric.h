@@ -11,6 +11,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "daggycore_export.h"
 #include "IDataProviderFabric.h"
 
+namespace daggyssh2 {
+struct Ssh2Settings;
+}
+
 namespace daggycore {
 class IDataProvider;
 
@@ -27,6 +31,8 @@ protected:
             const DataSource& data_source,
             QObject* parent
     ) override;
+
+    OptionalResult<daggyssh2::Ssh2Settings> convertParameters(const QVariantMap& parameters) const;
 };
 
 }
