@@ -10,7 +10,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "Precompiled.h"
 #include "CFileDataAggregator.h"
 
-CFileDataAggregator::CFileDataAggregator()
+CFileDataAggregator::CFileDataAggregator(QString output_folder)
+    : output_folder_(std::move(output_folder))
 {
 
 }

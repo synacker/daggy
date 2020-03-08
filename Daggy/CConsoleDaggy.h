@@ -29,9 +29,8 @@ public:
     CConsoleDaggy(QCoreApplication* application);
 
     daggycore::Result initialize();
-    bool start();
+    daggycore::Result start();
 
-    bool handleSystemSignal(const int signal);
 
     bool isError() const;
     const QString& errorMessage() const;
@@ -40,6 +39,11 @@ signals:
     void interrupt(const int signal);
 
 private:
+    bool handleSystemSignal(const int signal);
+
+    QStringList supportedConvertors() const;
+    QString textDataSourcesType(const QString& file_name) const;
+
     struct Settings {
         QString data_source_text_type;
         QString data_source_text;

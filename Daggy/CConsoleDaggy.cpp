@@ -26,6 +26,7 @@ CConsoleDaggy::CConsoleDaggy(QCoreApplication* application)
     , daggy_core_(new daggycore::DaggyCore(this))
 {
     application->setApplicationVersion(FULL_VERSION_STR);
+    connect(this, &CConsoleDaggy::interrupt, daggy_core_, &DaggyCore::stop, Qt::QueuedConnection);
 }
 
 daggycore::Result CConsoleDaggy::initialize()
@@ -35,11 +36,15 @@ daggycore::Result CConsoleDaggy::initialize()
     daggy_core_->createConvertor<CYamlDataSourcesConvertor>();
     daggy_core_->createConvertor<CJsonDataSourcesConvertor>();
 
-    daggy_core_->createDataAggregator<CFileDataAggregator>();
-
     const auto settings = parse();
-//    const auto [yaml_data_sources, output_folder] = parse();
+    daggy_core_->createDataAggregator<CFileDataAggregator>(settings.output_folder);
+
     return daggy_core_->setDataSources(settings.data_source_text, settings.data_source_text_type);
+}
+
+Result CConsoleDaggy::start()
+{
+    return daggy_core_->start();
 }
 
 bool CConsoleDaggy::handleSystemSignal(const int signal)
@@ -49,6 +54,26 @@ bool CConsoleDaggy::handleSystemSignal(const int signal)
         return true;
     }
     return false;
+}
+
+QStringList CConsoleDaggy::supportedConvertors() const
+{
+    return
+    {
+        CJsonDataSourcesConvertor::convertor_type,
+        CYamlDataSourcesConvertor::convertor_type
+    };
+}
+
+QString CConsoleDaggy::textDataSourcesType(const QString& file_name) const
+{
+    QString result;
+    const QString& extension = QFileInfo(file_name).suffix();
+    if (extension == "yaml" || extension == "yml")
+        result = CYamlDataSourcesConvertor::convertor_type;
+    else if(extension == "json")
+        result = CYamlDataSourcesConvertor::convertor_type;
+    return result;
 }
 
 bool CConsoleDaggy::isError() const
@@ -70,7 +95,7 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
                                                   "folder", "");
     const QCommandLineOption input_format_option({"f", "format"},
                                                  "Source format",
-                                                 QString("%1|%2").arg(CJsonDataSourcesConvertor::convertor_type, CYamlDataSourcesConvertor::convertor_type),
+                                                 supportedConvertors().join("|"),
                                                  CJsonDataSourcesConvertor::convertor_type);
     const QCommandLineOption input_from_stdin_option({"i", "stdin"},
                                                      "Read data sources from stdin");
@@ -81,7 +106,7 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     command_line_parser.addOption(input_from_stdin_option);
     command_line_parser.addHelpOption();
     command_line_parser.addVersionOption();
-    command_line_parser.addPositionalArgument("file", "Data source file", "*.yaml, *.yml, *.json");
+    command_line_parser.addPositionalArgument("file", "Data source file", "*.yaml|*.yml|*.json");
 
     command_line_parser.process(*application());
 
@@ -113,6 +138,8 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
         } else {
             result.data_source_text_type = format;
         }
+    } else {
+        result.data_source_text = textDataSourcesType(source_file_name);
     }
 
     return result;

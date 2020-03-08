@@ -16,7 +16,7 @@ class CFileDataAggregator : public daggycore::IDataAggregator
 {
     Q_OBJECT
 public:
-    CFileDataAggregator();
+    CFileDataAggregator(QString output_folder);
 
     // IDataAggregator interface
 public slots:
@@ -35,5 +35,8 @@ public slots:
     void onCommandError(const QString provider_id,
                         const QString command_id,
                         const std::error_code error_code) override;
+
+private:
+    const QString output_folder_;
 };
 
