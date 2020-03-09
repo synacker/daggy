@@ -139,7 +139,7 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
             result.data_source_text_type = format;
         }
     } else {
-        result.data_source_text = textDataSourcesType(source_file_name);
+        result.data_source_text_type = textDataSourcesType(source_file_name);
     }
 
     return result;
@@ -168,6 +168,10 @@ QString CConsoleDaggy::getTextFromFile(QString file_path) const
    else
        throw std::invalid_argument(QString("Cann't open %1 file for read: %2")
                                            .arg(file_path, source_file.errorString())
+                                           .toStdString());
+   if (result.isEmpty())
+       throw std::invalid_argument(QString("%1 file is empty")
+                                           .arg(file_path)
                                            .toStdString());
 
    return result;

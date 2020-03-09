@@ -18,15 +18,73 @@ using namespace daggyconv;
 
 namespace YAML {
 
+const QRegExp yaml_scalar_true_values = QRegExp( "true|True|TRUE|on|On|ON" );
+const QRegExp yaml_scalar_false_values = QRegExp( "false|False|FALSE|off|Off|OFF" );
+
+QVariant
+scalarToVariant( const YAML::Node& scalarNode )
+{
+    QString string = QString::fromStdString( scalarNode.as< std::string >() );
+    if ( yaml_scalar_true_values.exactMatch( string ) )
+    {
+        return QVariant( true );
+    }
+    if ( yaml_scalar_false_values.exactMatch( string ) )
+    {
+        return QVariant( false );
+    }
+    if ( QRegExp( "[-+]?\\d+" ).exactMatch( string ) )
+    {
+        return QVariant( string.toLongLong() );
+    }
+    if ( QRegExp( "[-+]?\\d*\\.?\\d+" ).exactMatch( string ) )
+    {
+        return QVariant( string.toDouble() );
+    }
+    return QVariant( string );
+}
+
 template<>
 struct convert<QVariant>
 {
     static bool decode(const Node& node, QVariant& rhs) {
-        if (!node.IsScalar()) {
-          return false;
+        switch (node.Type()) {
+        case YAML::NodeType::Undefined:
+        case YAML::NodeType::Null:
+            rhs = QVariant();
+            break;
+        case YAML::NodeType::Scalar:
+            rhs = scalarToVariant(node);
+            break;
+        case YAML::NodeType::Sequence:
+        {
+            QVariantList sequence;
+            for ( YAML::const_iterator it = node.begin(); it != node.end(); ++it )
+            {
+                QVariant value;
+                if (decode( *it, value ))
+                    sequence << value;
+                else
+                    return false;
+            }
+            rhs = sequence;
         }
-
-        rhs = QVariant(node);
+            break;
+        case YAML::NodeType::Map:
+        {
+            QVariantMap map;
+            for ( YAML::const_iterator it = node.begin(); it != node.end(); ++it )
+            {
+                QVariant value;
+                if (decode(it->second, value))
+                    map.insert( QString::fromStdString( it->first.as< std::string >() ), value );
+                else
+                    return false;
+            }
+            rhs = map;
+        }
+            break;
+        }
         return true;
     }
 };
@@ -54,21 +112,6 @@ struct convert<QMap<K, V>>
 
         std::map<K, V> smap = node.as<std::map<K, V>>();
         rhs = QMap<K, V>(smap);
-
-        return true;
-    }
-};
-
-template<>
-struct convert<QVariantMap>
-{
-    static bool decode(const Node& node, QVariantMap& rhs) {
-        if (!node.IsMap()) {
-          return false;
-        }
-
-        const QMap<QString, QVariant> smap = node.as<QMap<QString, QVariant>>();
-        rhs = QVariantMap(smap);
 
         return true;
     }
@@ -142,7 +185,7 @@ OptionalResult<DataSources> CYamlDataSourcesConvertor::convert(const QString& ya
         return Result
         {
             DaggyErrors::ConvertError,
-            exception.what()
+            QString("Yaml have syntax error: %1").arg(exception.what()).toStdString()
         };
     }
     return data_sources;
