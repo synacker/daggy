@@ -139,8 +139,8 @@ struct convert<daggycore::DataSources>
             if (source_fields[IDataSourceConvertor::g_parametersField])
                 data_source.parameters = source_fields[IDataSourceConvertor::g_parametersField].as<QVariantMap>();
 
+            daggycore::Commands commands;
             for (const auto& commands_yaml : source_fields[IDataSourceConvertor::g_commandsField]) {
-                daggycore::Commands commands;
                 for (const auto& command_yaml : commands_yaml) {
                     daggycore::Command command;
                     const QString& command_id = command_yaml.first.as<QString>();
@@ -154,8 +154,8 @@ struct convert<daggycore::DataSources>
                         command.restart = command_fields[IDataSourceConvertor::g_restartField].as<bool>();
                     commands[command.id] = command;
                 }
-                data_source.commands = commands;
             }
+            data_source.commands = commands;
             rhs[data_source.id] = data_source;
         }
         return true;

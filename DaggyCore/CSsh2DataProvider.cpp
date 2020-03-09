@@ -155,7 +155,7 @@ void CSsh2DataProvider::onSsh2ProcessStateChanged(const int process_state)
         if (command.restart && state() == IDataProvider::Started)
             ssh2_process->open();
         else
-            delete ssh2_process;
+            ssh2_process->deleteLater();
     }
 }
 

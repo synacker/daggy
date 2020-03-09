@@ -27,6 +27,10 @@ CConsoleDaggy::CConsoleDaggy(QCoreApplication* application)
 {
     application->setApplicationVersion(FULL_VERSION_STR);
     connect(this, &CConsoleDaggy::interrupt, daggy_core_, &DaggyCore::stop, Qt::QueuedConnection);
+    connect(daggy_core_, &DaggyCore::stateChanged, this, [](DaggyCore::State state){
+        if (state == DaggyCore::Finished)
+            qApp->exit();
+    });
 }
 
 daggycore::Result CConsoleDaggy::initialize()
@@ -38,13 +42,21 @@ daggycore::Result CConsoleDaggy::initialize()
 
     const auto settings = parse();
     daggy_core_->createDataAggregator<CFileDataAggregator>(settings.output_folder);
+    const auto result = daggy_core_->setDataSources(settings.data_source_text, settings.data_source_text_type);
+    if (result && settings.timeout > 0)
+        QTimer::singleShot(settings.timeout, this, &CConsoleDaggy::stop);
 
-    return daggy_core_->setDataSources(settings.data_source_text, settings.data_source_text_type);
+    return result;
 }
 
 Result CConsoleDaggy::start()
 {
     return daggy_core_->start();
+}
+
+void CConsoleDaggy::stop()
+{
+    daggy_core_->stop();
 }
 
 bool CConsoleDaggy::handleSystemSignal(const int signal)
@@ -97,6 +109,11 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
                                                  "Source format",
                                                  supportedConvertors().join("|"),
                                                  CJsonDataSourcesConvertor::convertor_type);
+    const QCommandLineOption auto_complete_timeout({"t", "timeout"},
+                                                   "Auto complete timeout",
+                                                   "time in ms",
+                                                   0
+                                                   );
     const QCommandLineOption input_from_stdin_option({"i", "stdin"},
                                                      "Read data sources from stdin");
 
@@ -104,6 +121,7 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     command_line_parser.addOption(output_folder_option);
     command_line_parser.addOption(input_format_option);
     command_line_parser.addOption(input_from_stdin_option);
+    command_line_parser.addOption(auto_complete_timeout);
     command_line_parser.addHelpOption();
     command_line_parser.addVersionOption();
     command_line_parser.addPositionalArgument("file", "Data source file", "*.yaml|*.yml|*.json");
@@ -140,6 +158,10 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
         }
     } else {
         result.data_source_text_type = textDataSourcesType(source_file_name);
+    }
+
+    if (command_line_parser.isSet(auto_complete_timeout)) {
+        result.timeout = command_line_parser.value(auto_complete_timeout).toUInt();
     }
 
     return result;
@@ -186,4 +208,20 @@ QString CConsoleDaggy::generateOutputFolder(const QString& data_sources_name) co
 QString CConsoleDaggy::homeFolder() const
 {
     return QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.daggy/";
+}
+
+void CConsoleDaggy::onDaggyCoreStateChanged(int state)
+{
+    qDebug() << "Daggy core state changed " << state;
+    switch (static_cast<DaggyCore::State>(state)) {
+    case daggycore::DaggyCore::NotStarted:
+        break;
+    case daggycore::DaggyCore::Started:
+        break;
+    case daggycore::DaggyCore::Finishing:
+        break;
+    case daggycore::DaggyCore::Finished:
+        qApp->exit();
+        break;
+    }
 }

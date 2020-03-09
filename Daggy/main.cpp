@@ -16,9 +16,10 @@ try {
         result = console_daggy->start();
     if (!result)
         throw std::runtime_error(result.detailed_error_message());
+
     return app.exec();
 }
 catch (const std::exception& exception) {
-    std::cout << exception.what() << std::endl;
+    std::cout << "Runtime error - " << exception.what() << std::endl;
     return EXIT_FAILURE;
 }

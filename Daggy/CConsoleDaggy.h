@@ -30,13 +30,16 @@ public:
 
     daggycore::Result initialize();
     daggycore::Result start();
-
+    void stop();
 
     bool isError() const;
     const QString& errorMessage() const;
 
 signals:
     void interrupt(const int signal);
+
+private slots:
+    void onDaggyCoreStateChanged(int state);
 
 private:
     bool handleSystemSignal(const int signal);
@@ -48,6 +51,7 @@ private:
         QString data_source_text_type;
         QString data_source_text;
         QString output_folder;
+        unsigned int timeout = 0;
     };
     Settings parse() const;
 

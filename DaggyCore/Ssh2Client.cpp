@@ -187,6 +187,7 @@ void Ssh2Client::onReadyRead()
         error_code = authenticate();
         break;
     case SessionStates::Established:
+    case SessionStates::Closing:
         for (Ssh2Channel* ssh2_channel : getChannels()) {
             ssh2_channel->checkIncomingData();
         }
@@ -206,10 +207,12 @@ void Ssh2Client::onChannelStateChanged(int state)
     switch (static_cast<Ssh2Channel::ChannelStates>(state)) {
     case Ssh2Channel::Closed:
     case Ssh2Channel::Opened:
+    case Ssh2Channel::FailedToOpen:
         emit openChannelsCountChanged(openChannelsCount());
         break;
     default:;
     }
+    qDebug() << "OPEN CHANNELS COUNT!!1 " << openChannelsCount();
     if (ssh2_state_ == Closing && openChannelsCount() == 0)
         setSsh2SessionState(Closed);
 }

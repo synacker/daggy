@@ -53,7 +53,7 @@ Result DaggyCore::setDataSources
     if (!convertion)
         return convertion.result();
 
-    data_sources_ = convertion.value();
+    setDataSources(convertion.value());
     return Result::success;
 }
 
@@ -97,6 +97,7 @@ Result DaggyCore::start()
         return Result::success;
     }
 
+    setState(Started);
     for (IDataProvider* provider : data_providers)
         provider->start();
 
@@ -143,6 +144,7 @@ void DaggyCore::onDataProviderStateChanged(const int state)
 
     if (activeDataProvidersCount() == 0)
         setState(Finished);
+    qDebug() << "Active providers: " << activeDataProvidersCount();
 }
 
 void DaggyCore::onDataProviderError(const std::error_code error_code)

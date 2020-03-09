@@ -9,6 +9,8 @@
 #include <QStandardPaths>
 #include <QDateTime>
 
+#include <QTimer>
+
 #include <iostream>
 
 #ifdef Q_OS_WIN
