@@ -51,6 +51,7 @@ private:
         QString data_source_text_type;
         QString data_source_text;
         QString output_folder;
+        QString data_sources_name;
         unsigned int timeout = 0;
     };
     Settings parse() const;
@@ -59,7 +60,6 @@ private:
     QCoreApplication* application() const;
 
     QString getTextFromFile(QString file_path) const;
-    QString generateOutputFolder(const QString& data_sources_name) const;
     QString homeFolder() const;
 
     daggycore::DaggyCore* daggy_core_;

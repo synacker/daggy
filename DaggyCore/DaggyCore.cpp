@@ -83,6 +83,12 @@ bool DaggyCore::isActiveProvider(const IDataProvider* const provider) const
 
 Result DaggyCore::start()
 {
+    for (auto data_aggreagator : getAggregators()) {
+        const auto result = data_aggreagator->prepare();
+        if (!result)
+            return result;
+    }
+
     auto data_providers = getProviders();
     if (data_providers.empty()) {
         for (const auto& data_source : data_sources_) {
@@ -142,8 +148,11 @@ void DaggyCore::onDataProviderStateChanged(const int state)
         provider->start();
     }
 
-    if (activeDataProvidersCount() == 0)
+    if (activeDataProvidersCount() == 0) {
+        for (auto data_aggregator : getAggregators())
+            data_aggregator->free();
         setState(Finished);
+    }
 }
 
 void DaggyCore::onDataProviderError(const std::error_code error_code)

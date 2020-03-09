@@ -18,6 +18,7 @@ namespace daggycore {
 DAGGYCORE_EXPORT extern const std::error_code success;
 
 enum DaggyErrors {
+    CannotPrepareAggregator,
     ConvertError,
     WrongSourceParameter,
     IncorrectParameterName,

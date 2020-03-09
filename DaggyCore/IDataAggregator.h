@@ -13,6 +13,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include "daggycore_export.h"
 #include "Command.h"
+#include "Result.h"
 
 namespace daggycore {
 
@@ -22,6 +23,9 @@ class DAGGYCORE_EXPORT IDataAggregator : public QObject
 public:
     explicit IDataAggregator(QObject *parent = nullptr);
     virtual ~IDataAggregator() = default;
+
+    virtual Result prepare() = 0;
+    virtual Result free() = 0;
 
 public slots:
     virtual void onDataProviderStateChanged(const QString provider_id,

@@ -26,6 +26,7 @@ CConsoleDaggy::CConsoleDaggy(QCoreApplication* application)
     , daggy_core_(new daggycore::DaggyCore(this))
 {
     application->setApplicationVersion(FULL_VERSION_STR);
+    application->setApplicationName("daggy");
     connect(this, &CConsoleDaggy::interrupt, daggy_core_, &DaggyCore::stop, Qt::QueuedConnection);
     connect(daggy_core_, &DaggyCore::stateChanged, this, [](DaggyCore::State state){
         if (state == DaggyCore::Finished)
@@ -41,7 +42,7 @@ daggycore::Result CConsoleDaggy::initialize()
     daggy_core_->createConvertor<CJsonDataSourcesConvertor>();
 
     const auto settings = parse();
-    daggy_core_->createDataAggregator<CFileDataAggregator>(settings.output_folder);
+    daggy_core_->createDataAggregator<CFileDataAggregator>(settings.output_folder, settings.data_sources_name);
     const auto result = daggy_core_->setDataSources(settings.data_source_text, settings.data_source_text_type);
     if (result && settings.timeout > 0)
         QTimer::singleShot(settings.timeout, this, &CConsoleDaggy::stop);
@@ -136,16 +137,19 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
 
     const QString& source_file_name = positional_arguments.first();
 
-    if (command_line_parser.isSet(input_from_stdin_option))
+    if (command_line_parser.isSet(input_from_stdin_option)) {
         result.data_source_text = QTextStream(stdin).readAll();
+        result.data_sources_name = "stdin";
+    }
     else {
         result.data_source_text = getTextFromFile(source_file_name);
+        result.data_sources_name = QFileInfo(source_file_name).baseName();
     }
 
     if (command_line_parser.isSet(output_folder_option))
         result.output_folder = command_line_parser.value(output_folder_option);
     else
-        result.output_folder = generateOutputFolder(QFileInfo(source_file_name).baseName());
+        result.output_folder = QString();
 
     if (command_line_parser.isSet(input_format_option)) {
         const QString& format = command_line_parser.value(input_format_option);
@@ -199,15 +203,9 @@ QString CConsoleDaggy::getTextFromFile(QString file_path) const
    return result;
 }
 
-QString CConsoleDaggy::generateOutputFolder(const QString& data_sources_name) const
-{
-    const QString current_date = QDateTime::currentDateTime().toString("dd-MM-yy_hh-mm-ss-zzz");
-    return current_date + "_" + data_sources_name;
-}
-
 QString CConsoleDaggy::homeFolder() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.daggy/";
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 }
 
 void CConsoleDaggy::onDaggyCoreStateChanged(int state)

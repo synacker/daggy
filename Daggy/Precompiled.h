@@ -10,6 +10,7 @@
 #include <QDateTime>
 
 #include <QTimer>
+#include <QDir>
 
 #include <iostream>
 

@@ -9,21 +9,28 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 
+#include <memory>
 #include <DaggyCore/IDataAggregator.h>
 
 #include <QMetaEnum>
+
+class QFile;
 
 class CFileDataAggregator : public daggycore::IDataAggregator
 {
     Q_OBJECT
 public:
-    enum ConsoleMessageType {CommError, ProvStat, ProvError, CommStat, AppStat};
+    enum ConsoleMessageType {CommError, CommStat, ProvError, ProvStat, AppStat};
     Q_ENUM(ConsoleMessageType)
 
-    CFileDataAggregator(QString output_folder, QObject* parent = nullptr);
+    CFileDataAggregator(QString output_folder,
+                        QString data_sources_name,
+                        QObject* parent = nullptr);
     ~CFileDataAggregator();
 
-    // IDataAggregator interface
+    daggycore::Result prepare() override;
+    daggycore::Result free() override;
+
 public slots:
     void onDataProviderStateChanged(const QString provider_id,
                                     const int state) override;
@@ -44,7 +51,7 @@ public slots:
 protected:
     void printAppMessage
     (
-            const QString& message
+        const QString& message
     );
     void printProviderMessage
     (
@@ -53,17 +60,32 @@ protected:
         const QString& source_message
     );
     void printCommandMessage
-    (const ConsoleMessageType& message_type,
-            const QString& provider_id,
-            const QString& command_id,
-            const QString& command_message
+    (
+        const ConsoleMessageType& message_type,
+        const QString& provider_id,
+        const QString& command_id,
+        const QString& command_message
     );
     QString currentConsoleTime() const;
 
 private:
+    QString generateOutputFolder(const QString& data_sources_name) const;
+
+    bool writeToFile
+    (
+        const QString& provider_id,
+        const QString& command_id,
+        const daggycore::Command::Stream& stream
+    );
+
     const QString output_folder_;
+    const QString data_sources_name_;
     const QMetaEnum console_message_type_;
     const QMetaEnum provider_state_;
     const QMetaEnum command_state_;
+
+    QString current_folder_;
+
+    QMap<QString, std::shared_ptr<QFile>> stream_files_;
 };
 
