@@ -21,7 +21,7 @@ struct Ssh2Settings;
 
 namespace daggycore {
 
-class DAGGYCORE_EXPORT CSsh2DataProvider : public IDataProvider
+class CSsh2DataProvider : public IDataProvider
 {
     Q_OBJECT
 public:

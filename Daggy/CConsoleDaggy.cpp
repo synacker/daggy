@@ -37,11 +37,15 @@ CConsoleDaggy::CConsoleDaggy(QCoreApplication* application)
 
 daggycore::Result CConsoleDaggy::initialize()
 {
-    daggy_core_->createProviderFabric<CSsh2DataProviderFabric>();
     daggy_core_->createProviderFabric<CLocalDataProvidersFabric>();
+#ifdef SSH2_SUPPORT
+    daggy_core_->createProviderFabric<CSsh2DataProviderFabric>();
+#endif
 
-    daggy_core_->createConvertor<CYamlDataSourcesConvertor>();
     daggy_core_->createConvertor<CJsonDataSourcesConvertor>();
+#ifdef YAML_SUPPORT
+    daggy_core_->createConvertor<CYamlDataSourcesConvertor>();
+#endif
 
     const auto settings = parse();
     daggy_core_->createDataAggregator<CFileDataAggregator>(settings.output_folder, settings.data_sources_name);
@@ -76,18 +80,20 @@ QStringList CConsoleDaggy::supportedConvertors() const
     return
     {
         CJsonDataSourcesConvertor::convertor_type,
+#ifdef YAML_SUPPORT
         CYamlDataSourcesConvertor::convertor_type
+#endif
     };
 }
 
 QString CConsoleDaggy::textDataSourcesType(const QString& file_name) const
 {
-    QString result;
     const QString& extension = QFileInfo(file_name).suffix();
-    if (extension == "yaml" || extension == "yml")
+    QString result = extension;
+#ifdef YAML_SUPPORT
+    if (extension == "yml")
         result = CYamlDataSourcesConvertor::convertor_type;
-    else if(extension == "json")
-        result = CYamlDataSourcesConvertor::convertor_type;
+#endif
     return result;
 }
 
