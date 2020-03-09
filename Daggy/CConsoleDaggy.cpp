@@ -13,6 +13,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <DaggyCore/DaggyCore.h>
 #include <DaggyCore/CSsh2DataProviderFabric.h>
+#include <DaggyCore/CLocalDataProvidersFabric.h>
 #include <DaggyCore/CYamlDataSourcesConvertor.h>
 #include <DaggyCore/CJsonDataSourcesConvertor.h>
 
@@ -37,6 +38,7 @@ CConsoleDaggy::CConsoleDaggy(QCoreApplication* application)
 daggycore::Result CConsoleDaggy::initialize()
 {
     daggy_core_->createProviderFabric<CSsh2DataProviderFabric>();
+    daggy_core_->createProviderFabric<CLocalDataProvidersFabric>();
 
     daggy_core_->createConvertor<CYamlDataSourcesConvertor>();
     daggy_core_->createConvertor<CJsonDataSourcesConvertor>();

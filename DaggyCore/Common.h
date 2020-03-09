@@ -27,6 +27,7 @@ enum DaggyErrors {
     ConvertorTypeAlreadyExists,
     NotAllowed,
     DataProviderTypeIsNotSupported,
+    CommandReadError,
     NullCommand
 };
 

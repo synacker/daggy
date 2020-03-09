@@ -8,23 +8,36 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #pragma once
+#include <QObject>
+#include <QList>
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+#include "IDataProvider.h"
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+class QProcess;
 
-#include <QProcess>
+namespace daggycore {
 
-#include <QDebug>
+class CLocalDataProvider : public IDataProvider
+{
+    Q_OBJECT
+public:
+    CLocalDataProvider(Commands commands,
+                       QObject *parent = nullptr);
 
-#include <atomic>
+    void start() override;
+    void stop() override;
+    QString type() const override;
 
-#include <libssh2.h>
-#include <errno.h>
+    constexpr static const char* provider_type = "local";
 
-#include <yaml-cpp/yaml.h>
+private slots:
+    void onProcessDestroyed();
+
+private:
+    QList<QProcess*> processes() const;
+    int activeProcessesCount() const;
+
+    void startCommands();
+};
+
+}

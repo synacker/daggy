@@ -23,6 +23,7 @@ public:
     };
     std::string message(int ev) const override {
         switch (static_cast<DaggyErrors>(ev)) {
+        case CannotPrepareAggregator: return "Cannot prepare aggregator";
         case IncorrectParameterName: return "Incorrect field name";
         case WrongSourceParameter: return "Wrong parameter type";
         case IncorrectProviderType: return "Incorrect provider type";
@@ -30,6 +31,7 @@ public:
         case NotAllowed: return "Operation is not allowed in current state";
         case DataProviderTypeIsNotSupported: return "Data provider type is not supported";
         case NullCommand: return "Null command";
+        case CommandReadError: return "Command read error";
         default: return "Unknown error";
         }
     };

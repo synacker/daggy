@@ -24,7 +24,7 @@ class DAGGYCORE_EXPORT CSsh2DataProviderFabric : public IDataProviderFabric
 public:
     CSsh2DataProviderFabric(QObject* parent = nullptr);
 
-    constexpr static const char* fabric_type = "ssh2";
+    static const char* fabric_type;
 protected:
     OptionalResult<IDataProvider*> createDataProvider
     (

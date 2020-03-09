@@ -130,7 +130,9 @@ struct convert<daggycore::DataSources>
             data_source.id = source.first.as<QString>();
 
             const auto& source_fields = source.second;
-            data_source.host = source_fields[IDataSourceConvertor::g_hostField].as<QString>();
+            if (source_fields[IDataSourceConvertor::g_hostField])
+                data_source.host = source_fields[IDataSourceConvertor::g_hostField].as<QString>();
+
             data_source.type = source_fields[IDataSourceConvertor::g_typeField].as<QString>();
 
             if (source_fields[IDataSourceConvertor::g_reconnectField])

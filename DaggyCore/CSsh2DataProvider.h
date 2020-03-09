@@ -39,6 +39,8 @@ public:
     void start() override;
     void stop() override;
 
+    constexpr static const char* provider_type = "ssh2";
+
     QString type() const override;
 
 private:

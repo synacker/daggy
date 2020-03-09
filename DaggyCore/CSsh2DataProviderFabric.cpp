@@ -38,6 +38,8 @@ constexpr const std::pair<const char*, QVariant::Type> parameters_field[] =
 
 }
 
+const char* CSsh2DataProviderFabric::fabric_type = CSsh2DataProvider::provider_type;
+
 CSsh2DataProviderFabric::CSsh2DataProviderFabric(QObject* parent)
     : IDataProviderFabric(fabric_type, parent)
 {
@@ -50,8 +52,13 @@ OptionalResult<IDataProvider*> CSsh2DataProviderFabric::createDataProvider(const
     if (!parameters) {
         return {DaggyErrors::WrongSourceParameter};
     }
+    QHostAddress host;
+    if (data_source.host.isEmpty())
+        host = QHostAddress::LocalHost;
+    else
+        host = QHostAddress(data_source.host);
 
-    return new CSsh2DataProvider(QHostAddress(data_source.host),
+    return new CSsh2DataProvider(host,
                                  parameters.value(),
                                  data_source.commands,
                                  parent);

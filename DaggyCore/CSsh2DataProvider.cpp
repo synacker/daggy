@@ -16,10 +16,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 using namespace daggycore;
 using namespace daggyssh2;
 
-namespace  {
-    const char* ssh2_type = "ssh2";
-}
-
 CSsh2DataProvider::CSsh2DataProvider(QHostAddress host,
                                      const Ssh2Settings& ssh2_settings,
                                      Commands commands,
@@ -62,7 +58,7 @@ void CSsh2DataProvider::stop()
 
 QString CSsh2DataProvider::type() const
 {
-    return ssh2_type;
+    return provider_type;
 }
 
 std::tuple<Ssh2Process*, Command> CSsh2DataProvider::getCommandContextFromSender() const
@@ -139,7 +135,7 @@ void CSsh2DataProvider::onSsh2ProcessStateChanged(const int process_state)
         break;
     case Ssh2Process::FailedToStart:
         command_state = Command::FailedToStart;
-        delete ssh2_process;
+        ssh2_process->deleteLater();
         break;
     case Ssh2Process::Finishing:
         command_state = Command::Finishing;

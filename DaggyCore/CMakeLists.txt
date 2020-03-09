@@ -20,6 +20,8 @@ set(SOURCES
     CJsonDataSourcesConvertor.cpp
     IDataSourceConvertor.cpp
     CYamlDataSourcesConvertor.cpp
+    CLocalDataProvider.cpp
+    CLocalDataProvidersFabric.cpp
 )
 qt5_wrap_cpp(MOC_SOURCES Command.h)
 
