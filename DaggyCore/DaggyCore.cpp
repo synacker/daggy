@@ -144,7 +144,6 @@ void DaggyCore::onDataProviderStateChanged(const int state)
 
     if (activeDataProvidersCount() == 0)
         setState(Finished);
-    qDebug() << "Active providers: " << activeDataProvidersCount();
 }
 
 void DaggyCore::onDataProviderError(const std::error_code error_code)
@@ -245,6 +244,8 @@ Result DaggyCore::createProvider(const DataSource& data_source)
     connect(create_provider.value(), &IDataProvider::commandStateChanged, this, &DaggyCore::onCommandStateChanged);
     connect(create_provider.value(), &IDataProvider::commandError, this, &DaggyCore::onCommandError);
     connect(create_provider.value(), &IDataProvider::commandStream, this, &DaggyCore::onCommandStream);
+
+    create_provider.value()->setObjectName(data_source.id);
 
     return create_provider.result();
 }

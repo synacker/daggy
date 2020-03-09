@@ -21,6 +21,7 @@ set(SOURCES
     IDataSourceConvertor.cpp
     CYamlDataSourcesConvertor.cpp
 )
+qt5_wrap_cpp(MOC_SOURCES Command.h)
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
@@ -37,7 +38,7 @@ if(YAML_SUPPORT)
     set(LINK_LIBRARIES ${LINK_LIBRARIES} yaml-cpp)
 endif()
 
-add_library(${TARGET} SHARED ${SOURCES})
+add_library(${TARGET} SHARED ${SOURCES} ${MOC_SOURCES})
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
 include(precompiled)

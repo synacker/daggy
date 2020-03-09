@@ -212,7 +212,6 @@ QString CConsoleDaggy::homeFolder() const
 
 void CConsoleDaggy::onDaggyCoreStateChanged(int state)
 {
-    qDebug() << "Daggy core state changed " << state;
     switch (static_cast<DaggyCore::State>(state)) {
     case daggycore::DaggyCore::NotStarted:
         break;

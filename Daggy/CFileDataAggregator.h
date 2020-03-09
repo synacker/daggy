@@ -11,12 +11,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <DaggyCore/IDataAggregator.h>
 
+#include <QMetaEnum>
 
 class CFileDataAggregator : public daggycore::IDataAggregator
 {
     Q_OBJECT
 public:
-    CFileDataAggregator(QString output_folder);
+    enum ConsoleMessageType {CommError, ProvStat, ProvError, CommStat, AppStat};
+    Q_ENUM(ConsoleMessageType)
+
+    CFileDataAggregator(QString output_folder, QObject* parent = nullptr);
+    ~CFileDataAggregator();
 
     // IDataAggregator interface
 public slots:
@@ -36,7 +41,29 @@ public slots:
                         const QString command_id,
                         const std::error_code error_code) override;
 
+protected:
+    void printAppMessage
+    (
+            const QString& message
+    );
+    void printProviderMessage
+    (
+        const ConsoleMessageType& message_type,
+        const QString& provider_id,
+        const QString& source_message
+    );
+    void printCommandMessage
+    (const ConsoleMessageType& message_type,
+            const QString& provider_id,
+            const QString& command_id,
+            const QString& command_message
+    );
+    QString currentConsoleTime() const;
+
 private:
     const QString output_folder_;
+    const QMetaEnum console_message_type_;
+    const QMetaEnum provider_state_;
+    const QMetaEnum command_state_;
 };
 

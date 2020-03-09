@@ -212,7 +212,6 @@ void Ssh2Client::onChannelStateChanged(int state)
         break;
     default:;
     }
-    qDebug() << "OPEN CHANNELS COUNT!!1 " << openChannelsCount();
     if (ssh2_state_ == Closing && openChannelsCount() == 0)
         setSsh2SessionState(Closed);
 }

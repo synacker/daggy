@@ -9,12 +9,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 
+#include "daggycore_export.h"
+
 #include <QVariantMap>
+#include <QObject>
 
 namespace daggycore {
 
-
-struct Command {
+struct DAGGYCORE_EXPORT Command {
+Q_GADGET
+public:
     enum State {
         NotStarted,
         Starting,
@@ -23,6 +27,7 @@ struct Command {
         Finishing,
         Finished
     };
+    Q_ENUM(State)
 
     struct Stream {
         enum class Type {
@@ -45,6 +50,5 @@ struct Command {
 using Commands = QMap<QString, Command>;
 }
 
-Q_DECLARE_METATYPE(daggycore::Command::Stream::Type)
 Q_DECLARE_METATYPE(daggycore::Command::Stream)
 Q_DECLARE_METATYPE(daggycore::Command)

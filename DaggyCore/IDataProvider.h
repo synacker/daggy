@@ -20,7 +20,6 @@ namespace daggycore {
 class DAGGYCORE_EXPORT IDataProvider : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(State)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
 public:
     enum State {
@@ -31,6 +30,7 @@ public:
         Finishing,
         Finished
     };
+    Q_ENUM(State)
 
     explicit IDataProvider(Commands commands,
                            QObject *parent = nullptr);
