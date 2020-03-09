@@ -11,59 +11,32 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <QObject>
 
-#include <DaggyCore/Result.h>
-
-#include "ISystemSignalHandler.h"
-
-class QCoreApplication;
+#include "daggycore_export.h"
+#include "DataSource.h"
+#include "Common.h"
+#include "OptionalResult.h"
 
 namespace daggycore {
-class DaggyCore;
-}
+class IDataProvider;
 
-class CConsoleDaggy : public QObject,
-                      public ISystemSignalHandler
+class DAGGYCORE_EXPORT IDataProviderFabric : public QObject
 {
     Q_OBJECT
 public:
-    CConsoleDaggy(QCoreApplication* application);
+    IDataProviderFabric(QString type_arg,
+                        QObject* parent = nullptr);
+    virtual ~IDataProviderFabric() = default;
 
-    daggycore::Result initialize();
-    daggycore::Result start();
-    void stop();
+    OptionalResult<IDataProvider*> create
+    (
+            const DataSource& data_source,
+            QObject* parent
+    );
 
-    bool isError() const;
-    const QString& errorMessage() const;
+    const QString type;
 
-signals:
-    void interrupt(const int signal);
-
-private slots:
-    void onDaggyCoreStateChanged(int state);
-
-private:
-    bool handleSystemSignal(const int signal);
-
-    QStringList supportedConvertors() const;
-    QString textDataSourcesType(const QString& file_name) const;
-
-    struct Settings {
-        QString data_source_text_type;
-        QString data_source_text;
-        QString output_folder;
-        QString data_sources_name;
-        unsigned int timeout = 0;
-    };
-    Settings parse() const;
-
-    daggycore::DaggyCore* daggyCore() const;
-    QCoreApplication* application() const;
-
-    QString getTextFromFile(QString file_path) const;
-    QString homeFolder() const;
-
-    daggycore::DaggyCore* daggy_core_;
-
-    QString error_message_;
+protected:
+    virtual OptionalResult<IDataProvider*> createDataProvider(const DataSource& data_source, QObject* parent) = 0;
 };
 
+}

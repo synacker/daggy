@@ -1,73 +1,226 @@
 /*
-Copyright 2017-2018 Mikhail Milovidov <milovidovmikhail@gmail.com>
+Copyright 2017-2020 Milovidov Mikhail
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
-persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
-Software.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-
 #include "Precompiled.h"
 #include "CConsoleDaggy.h"
-#include "CApplicationSettings.h"
+#include "Common.h"
 
-#include <DaggyCore/CDaggy.h>
+#include <DaggyCore/DaggyCore.h>
+#include <DaggyCore/CSsh2DataProviderFabric.h>
+#include <DaggyCore/CLocalDataProvidersFabric.h>
+#include <DaggyCore/CYamlDataSourcesConvertor.h>
+#include <DaggyCore/CJsonDataSourcesConvertor.h>
+
+#include "CFileDataAggregator.h"
 
 using namespace daggycore;
+using namespace daggyconv;
 
-CConsoleDaggy::CConsoleDaggy( const DataSources& data_sources, const QString& output_folder, QObject* parent_ptr )
-  : QObject( parent_ptr )
-  , file_remote_agregator_reciever_( output_folder )
-  , data_agregator_( data_sources )
-  , stopped_( false )
-  , interruption_count_( 0 )
+CConsoleDaggy::CConsoleDaggy(QCoreApplication* application)
+    : QObject(application)
+    , daggy_core_(new daggycore::DaggyCore(this))
 {
-     data_agregator_.connectRemoteAgregatorReciever( &file_remote_agregator_reciever_ );
-
-     connect( this, &CConsoleDaggy::interrupted, this, &CConsoleDaggy::handleInterruption );
-     connect( &data_agregator_, &CDaggy::stateChanged, this, &CConsoleDaggy::onDaggyStateChange );
+    application->setApplicationVersion(FULL_VERSION_STR);
+    application->setApplicationName("daggy");
+    connect(this, &CConsoleDaggy::interrupt, daggy_core_, &DaggyCore::stop, Qt::QueuedConnection);
+    connect(daggy_core_, &DaggyCore::stateChanged, this, [](DaggyCore::State state){
+        if (state == DaggyCore::Finished)
+            qApp->exit();
+    });
 }
 
-void CConsoleDaggy::start()
+daggycore::Result CConsoleDaggy::initialize()
 {
-     data_agregator_.start();
+    daggy_core_->createProviderFabric<CSsh2DataProviderFabric>();
+    daggy_core_->createProviderFabric<CLocalDataProvidersFabric>();
+
+    daggy_core_->createConvertor<CYamlDataSourcesConvertor>();
+    daggy_core_->createConvertor<CJsonDataSourcesConvertor>();
+
+    const auto settings = parse();
+    daggy_core_->createDataAggregator<CFileDataAggregator>(settings.output_folder, settings.data_sources_name);
+    const auto result = daggy_core_->setDataSources(settings.data_source_text, settings.data_source_text_type);
+    if (result && settings.timeout > 0)
+        QTimer::singleShot(settings.timeout, this, &CConsoleDaggy::stop);
+
+    return result;
 }
 
-bool CConsoleDaggy::handleSystemSignal( const int signal )
+Result CConsoleDaggy::start()
 {
-     bool result = false;
-     if ( signal & DEFAULT_SIGNALS )
-     {
-          emit interrupted();
-          result = true;
-     }
-     return result;
+    return daggy_core_->start();
 }
 
-void CConsoleDaggy::handleInterruption()
+void CConsoleDaggy::stop()
 {
-     interruption_count_++;
-     data_agregator_.stop( interruption_count_ > 1 );
+    daggy_core_->stop();
 }
 
-void CConsoleDaggy::onDaggyStateChange( const IRemoteAgregator::State state )
+bool CConsoleDaggy::handleSystemSignal(const int signal)
 {
-     if ( state == IRemoteAgregator::State::Stopped )
-     {
-          stopped_ = true;
-          qApp->quit();
-     }
+    if (signal & DEFAULT_SIGNALS) {
+        emit interrupt(signal);
+        return true;
+    }
+    return false;
 }
 
-bool CConsoleDaggy::stopped() const
+QStringList CConsoleDaggy::supportedConvertors() const
 {
-     return stopped_;
+    return
+    {
+        CJsonDataSourcesConvertor::convertor_type,
+        CYamlDataSourcesConvertor::convertor_type
+    };
+}
+
+QString CConsoleDaggy::textDataSourcesType(const QString& file_name) const
+{
+    QString result;
+    const QString& extension = QFileInfo(file_name).suffix();
+    if (extension == "yaml" || extension == "yml")
+        result = CYamlDataSourcesConvertor::convertor_type;
+    else if(extension == "json")
+        result = CYamlDataSourcesConvertor::convertor_type;
+    return result;
+}
+
+bool CConsoleDaggy::isError() const
+{
+    return !error_message_.isEmpty();
+}
+
+const QString& CConsoleDaggy::errorMessage() const
+{
+    return error_message_;
+}
+
+CConsoleDaggy::Settings CConsoleDaggy::parse() const
+{
+    Settings result;
+
+    const QCommandLineOption output_folder_option({"o", "output"},
+                                                  "Set output folder",
+                                                  "folder", "");
+    const QCommandLineOption input_format_option({"f", "format"},
+                                                 "Source format",
+                                                 supportedConvertors().join("|"),
+                                                 CJsonDataSourcesConvertor::convertor_type);
+    const QCommandLineOption auto_complete_timeout({"t", "timeout"},
+                                                   "Auto complete timeout",
+                                                   "time in ms",
+                                                   0
+                                                   );
+    const QCommandLineOption input_from_stdin_option({"i", "stdin"},
+                                                     "Read data sources from stdin");
+
+    QCommandLineParser command_line_parser;
+    command_line_parser.addOption(output_folder_option);
+    command_line_parser.addOption(input_format_option);
+    command_line_parser.addOption(input_from_stdin_option);
+    command_line_parser.addOption(auto_complete_timeout);
+    command_line_parser.addHelpOption();
+    command_line_parser.addVersionOption();
+    command_line_parser.addPositionalArgument("file", "Data source file", "*.yaml|*.yml|*.json");
+
+    command_line_parser.process(*application());
+
+
+    const QStringList positional_arguments = command_line_parser.positionalArguments();
+    if (positional_arguments.isEmpty()) {
+        command_line_parser.showHelp(-1);
+    }
+
+    const QString& source_file_name = positional_arguments.first();
+
+    if (command_line_parser.isSet(input_from_stdin_option)) {
+        result.data_source_text = QTextStream(stdin).readAll();
+        result.data_sources_name = "stdin";
+    }
+    else {
+        result.data_source_text = getTextFromFile(source_file_name);
+        result.data_sources_name = QFileInfo(source_file_name).baseName();
+    }
+
+    if (command_line_parser.isSet(output_folder_option))
+        result.output_folder = command_line_parser.value(output_folder_option);
+    else
+        result.output_folder = QString();
+
+    if (command_line_parser.isSet(input_format_option)) {
+        const QString& format = command_line_parser.value(input_format_option);
+        if (format != CJsonDataSourcesConvertor::convertor_type ||
+            format != CYamlDataSourcesConvertor::convertor_type)
+        {
+            command_line_parser.showHelp(-1);
+        } else {
+            result.data_source_text_type = format;
+        }
+    } else {
+        result.data_source_text_type = textDataSourcesType(source_file_name);
+    }
+
+    if (command_line_parser.isSet(auto_complete_timeout)) {
+        result.timeout = command_line_parser.value(auto_complete_timeout).toUInt();
+    }
+
+    return result;
+}
+
+daggycore::DaggyCore* CConsoleDaggy::daggyCore() const
+{
+    return findChild<daggycore::DaggyCore*>();
+}
+
+QCoreApplication* CConsoleDaggy::application() const
+{
+    return qobject_cast<QCoreApplication*>(parent());
+}
+
+QString CConsoleDaggy::getTextFromFile(QString file_path) const
+{
+   QString result;
+   if (!QFileInfo(file_path).exists()) {
+       file_path = homeFolder() + file_path;
+   }
+
+   QFile source_file(file_path);
+   if (source_file.open(QIODevice::ReadOnly | QIODevice::Text))
+       result = source_file.readAll();
+   else
+       throw std::invalid_argument(QString("Cann't open %1 file for read: %2")
+                                           .arg(file_path, source_file.errorString())
+                                           .toStdString());
+   if (result.isEmpty())
+       throw std::invalid_argument(QString("%1 file is empty")
+                                           .arg(file_path)
+                                           .toStdString());
+
+   return result;
+}
+
+QString CConsoleDaggy::homeFolder() const
+{
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+}
+
+void CConsoleDaggy::onDaggyCoreStateChanged(int state)
+{
+    switch (static_cast<DaggyCore::State>(state)) {
+    case daggycore::DaggyCore::NotStarted:
+        break;
+    case daggycore::DaggyCore::Started:
+        break;
+    case daggycore::DaggyCore::Finishing:
+        break;
+    case daggycore::DaggyCore::Finished:
+        qApp->exit();
+        break;
+    }
 }

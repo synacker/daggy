@@ -9,22 +9,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+#include <system_error>
 
-#include <QJsonParseError>
-#include <QJsonDocument>
-
-#include <QProcess>
-
-#include <QDebug>
-
-#include <atomic>
-
-#include <libssh2.h>
-#include <errno.h>
-
-#include <yaml-cpp/yaml.h>
+extern std::error_code success;

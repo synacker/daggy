@@ -1,37 +1,25 @@
-/*
-Copyright 2017-2018 Mikhail Milovidov <milovidovmikhail@gmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
 #include "Precompiled.h"
-#include "CApplicationSettings.h"
+#include <DaggyCore/DaggyCore.h>
+#include <DaggyCore/CSsh2DataProviderFabric.h>
+
+#include "CFileDataAggregator.h"
 #include "CConsoleDaggy.h"
 
-void myCategoryFilter(QLoggingCategory* category_ptr)
-{
-    if (qstrcmp(category_ptr->categoryName(), "qtc.ssh") == 0)
-        category_ptr->setEnabled(QtDebugMsg, false);
-}
+using namespace daggycore;
 
-int main(int argc, char *argv[])
+int main(int argc, char** argv) 
 try {
-    QLoggingCategory::installFilter(myCategoryFilter);
-    QCoreApplication application(argc, argv);
+    QCoreApplication app(argc, argv);
+    CConsoleDaggy* console_daggy = new CConsoleDaggy(&app);
+    auto result = console_daggy->initialize();
+    if (result)
+        result = console_daggy->start();
+    if (!result)
+        throw std::runtime_error(result.detailed_error_message());
 
-    CApplicationSettings applicationSettings;
-    CConsoleDaggy consoleDaggy(applicationSettings.dataSources(),
-                               applicationSettings.outputFolder());
-    consoleDaggy.start();
-
-    return consoleDaggy.stopped() ? 0 : application.exec();
+    return app.exec();
 }
-catch (const std::exception& exception)
-{
-    qDebug() << exception.what();
-    return -1;
+catch (const std::exception& exception) {
+    std::cout << "Runtime error - " << exception.what() << std::endl;
+    return EXIT_FAILURE;
 }

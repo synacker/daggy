@@ -7,24 +7,42 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#pragma once
+#include "Precompiled.h"
+#include "IDataProvider.h"
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+#include "Common.h"
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+using namespace daggycore;
 
-#include <QProcess>
+IDataProvider::IDataProvider(Commands commands,
+                             QObject *parent)
+    : QObject(parent)
+    , commands_(std::move(commands))
+    , state_(State::NotStarted)
+{
 
-#include <QDebug>
+}
 
-#include <atomic>
+const Commands& IDataProvider::commands() const
+{
+    return commands_;
+}
 
-#include <libssh2.h>
-#include <errno.h>
+Command IDataProvider::getCommand(const QString& id) const
+{
+    return commands_.value(id);
+}
 
-#include <yaml-cpp/yaml.h>
+IDataProvider::State IDataProvider::state() const
+{
+    return state_;
+}
+
+void IDataProvider::setState(IDataProvider::State providerState)
+{
+    if (state_ == providerState)
+        return;
+
+    state_ = providerState;
+    emit stateChanged(state_);
+}

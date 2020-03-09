@@ -9,22 +9,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+#include <system_error>
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+namespace daggyssh2 {
 
-#include <QProcess>
+void debugSsh2Error(const int ssh2_method_result);
+bool checkSsh2Error(const std::error_code& error_code);
 
-#include <QDebug>
-
-#include <atomic>
-
-#include <libssh2.h>
-#include <errno.h>
-
-#include <yaml-cpp/yaml.h>
+}

@@ -7,24 +7,34 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#pragma once
+#include "Precompiled.h"
+#include "Result.h"
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+using namespace  daggycore;
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+const std::error_code Result::success = std::error_code{};
 
-#include <QProcess>
+Result::Result()
+    : std::error_code(success)
+{
 
-#include <QDebug>
+}
 
-#include <atomic>
+Result::Result(std::error_code error_code)
+    : std::error_code(std::move(error_code))
+{
 
-#include <libssh2.h>
-#include <errno.h>
+}
 
-#include <yaml-cpp/yaml.h>
+Result::Result(std::error_code error_code,
+               std::string error_message)
+    : std::error_code(std::move(error_code))
+    , detailed_error_message_(std::move(error_message))
+{
+
+}
+
+const std::string& Result::detailed_error_message() const
+{
+    return detailed_error_message_;
+}

@@ -8,23 +8,36 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #pragma once
+#include <system_error>
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+#include "daggycore_export.h"
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+namespace daggycore {
 
-#include <QProcess>
+class DAGGYCORE_EXPORT Result : public std::error_code
+{
+public:
+    static const std::error_code success;
 
-#include <QDebug>
+    Result();
+    Result(std::error_code error_code);
+    Result(std::error_code error_code,
+           std::string detailed_error_message);
 
-#include <atomic>
+    Result(const Result& other) = default;
+    Result(Result&& other) = default;
 
-#include <libssh2.h>
-#include <errno.h>
+    Result& operator=(const Result& other) = default;
+    Result& operator=(Result&& other) = default;
 
-#include <yaml-cpp/yaml.h>
+    operator bool() const {
+        return *this == success;
+    }
+
+    const std::string& detailed_error_message() const;
+
+private:
+    std::string detailed_error_message_;
+};
+
+}

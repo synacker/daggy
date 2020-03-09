@@ -8,23 +8,36 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #pragma once
-
-#include <QDir>
+#include <system_error>
 #include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+#include "daggycore_export.h"
 
-#include <QProcess>
+namespace daggycore {
 
-#include <QDebug>
+DAGGYCORE_EXPORT extern const std::error_code success;
 
-#include <atomic>
+enum DaggyErrors {
+    CannotPrepareAggregator,
+    ConvertError,
+    WrongSourceParameter,
+    IncorrectParameterName,
+    IncorrectProviderType,
+    ProviderTypeAlreadyExists,
+    ConvertorTypeAlreadyExists,
+    NotAllowed,
+    DataProviderTypeIsNotSupported,
+    CommandReadError,
+    NullCommand
+};
 
-#include <libssh2.h>
-#include <errno.h>
+std::error_code DAGGYCORE_EXPORT make_error_code(DaggyErrors daggy_error);
+}
 
-#include <yaml-cpp/yaml.h>
+namespace std
+{
+template <>
+struct is_error_code_enum<daggycore::DaggyErrors> : true_type {};
+}
+
+

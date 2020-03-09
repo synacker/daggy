@@ -8,3 +8,7 @@ test\.json
 *.user
 
 *.9-pre1
+
+build/
+
+DaggyCore/daggycore_export.h

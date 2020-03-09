@@ -9,22 +9,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+#include "IDataSourceConvertor.h"
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+namespace daggyconv {
 
-#include <QProcess>
+class DAGGYCORE_EXPORT CYamlDataSourcesConvertor: public IDataSourceConvertor
+{
+public:
+    CYamlDataSourcesConvertor();
 
-#include <QDebug>
+    constexpr static const char* convertor_type = "yaml";
 
-#include <atomic>
+    daggycore::OptionalResult<daggycore::DataSources> convert
+    (
+        const QString& yaml
+    ) const override;
+};
 
-#include <libssh2.h>
-#include <errno.h>
-
-#include <yaml-cpp/yaml.h>
+}

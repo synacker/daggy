@@ -8,23 +8,31 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #pragma once
+#include "daggycore_export.h"
+#include "IDataProviderFabric.h"
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+namespace daggyssh2 {
+struct Ssh2Settings;
+}
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+namespace daggycore {
+class IDataProvider;
 
-#include <QProcess>
+class DAGGYCORE_EXPORT CSsh2DataProviderFabric : public IDataProviderFabric
+{
+    Q_OBJECT
+public:
+    CSsh2DataProviderFabric(QObject* parent = nullptr);
 
-#include <QDebug>
+    static const char* fabric_type;
+protected:
+    OptionalResult<IDataProvider*> createDataProvider
+    (
+            const DataSource& data_source,
+            QObject* parent
+    ) override;
 
-#include <atomic>
+    OptionalResult<daggyssh2::Ssh2Settings> convertParameters(const QVariantMap& parameters) const;
+};
 
-#include <libssh2.h>
-#include <errno.h>
-
-#include <yaml-cpp/yaml.h>
+}

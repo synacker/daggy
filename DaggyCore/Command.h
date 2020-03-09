@@ -9,22 +9,46 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+#include "daggycore_export.h"
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+#include <QVariantMap>
+#include <QObject>
 
-#include <QProcess>
+namespace daggycore {
 
-#include <QDebug>
+struct DAGGYCORE_EXPORT Command {
+Q_GADGET
+public:
+    enum State {
+        NotStarted,
+        Starting,
+        Started,
+        FailedToStart,
+        Finishing,
+        Finished
+    };
+    Q_ENUM(State)
 
-#include <atomic>
+    struct Stream {
+        enum class Type {
+            Standard,
+            Error
+        };
 
-#include <libssh2.h>
-#include <errno.h>
+        QString extension;
+        QByteArray data;
+        Type type;
+    };
 
-#include <yaml-cpp/yaml.h>
+    QString id;
+    QString extension;
+    QString exec;
+    QVariantMap parameters = {};
+    bool restart = false;
+};
+
+using Commands = QMap<QString, Command>;
+}
+
+Q_DECLARE_METATYPE(daggycore::Command::Stream)
+Q_DECLARE_METATYPE(daggycore::Command)

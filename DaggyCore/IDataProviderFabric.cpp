@@ -7,24 +7,39 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#pragma once
+#include "Precompiled.h"
+#include "IDataProviderFabric.h"
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+#include "Common.h"
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+using namespace daggycore;
 
-#include <QProcess>
+IDataProviderFabric::IDataProviderFabric
+(
+        QString type_arg,
+        QObject* parent
+)
+    : QObject(parent)
+    , type(std::move(type_arg))
+{
 
-#include <QDebug>
+}
 
-#include <atomic>
+OptionalResult<IDataProvider*> IDataProviderFabric::create
+(
+        const DataSource& data_source,
+        QObject* parent
+)
+{
+    if (data_source.type != type) {
+        return
+        {
+            DaggyErrors::IncorrectProviderType,
+            QString("Provider types dismatch: %1 and %2")
+                    .arg(data_source.type)
+                    .arg(type).toStdString()
+        };
+    }
+    return createDataProvider(data_source, parent);
+}
 
-#include <libssh2.h>
-#include <errno.h>
-
-#include <yaml-cpp/yaml.h>

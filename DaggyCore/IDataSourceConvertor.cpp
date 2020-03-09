@@ -7,24 +7,30 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#pragma once
+#include "Precompiled.h"
+#include "IDataSourceConvertor.h"
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+#include "Common.h"
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+using namespace daggycore;
+using namespace daggyconv;
 
-#include <QProcess>
+const QMap<const char*, QVariant::Type> IDataSourceConvertor::required_source_field =
+{
+    {IDataSourceConvertor::g_hostField, QVariant::String},
+    {IDataSourceConvertor::g_typeField, QVariant::String},
+    {IDataSourceConvertor::g_commandsField, QVariant::Map}
+};
 
-#include <QDebug>
+const QMap<const char*, QVariant::Type> IDataSourceConvertor::required_commands_field =
+{
+    {IDataSourceConvertor::g_execField, QVariant::String},
+    {IDataSourceConvertor::g_extensionField, QVariant::String}
+};
 
-#include <atomic>
-
-#include <libssh2.h>
-#include <errno.h>
-
-#include <yaml-cpp/yaml.h>
+IDataSourceConvertor::IDataSourceConvertor(QString type_arg, QObject* parent)
+    : QObject(parent)
+    , type(std::move(type_arg))
+{
+    
+}

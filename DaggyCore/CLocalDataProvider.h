@@ -8,62 +8,36 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #pragma once
-
 #include <QObject>
+#include <QList>
 
-#include <DaggyCore/Result.h>
+#include "IDataProvider.h"
 
-#include "ISystemSignalHandler.h"
-
-class QCoreApplication;
+class QProcess;
 
 namespace daggycore {
-class DaggyCore;
-}
 
-class CConsoleDaggy : public QObject,
-                      public ISystemSignalHandler
+class CLocalDataProvider : public IDataProvider
 {
     Q_OBJECT
 public:
-    CConsoleDaggy(QCoreApplication* application);
+    CLocalDataProvider(Commands commands,
+                       QObject *parent = nullptr);
 
-    daggycore::Result initialize();
-    daggycore::Result start();
-    void stop();
+    void start() override;
+    void stop() override;
+    QString type() const override;
 
-    bool isError() const;
-    const QString& errorMessage() const;
-
-signals:
-    void interrupt(const int signal);
+    constexpr static const char* provider_type = "local";
 
 private slots:
-    void onDaggyCoreStateChanged(int state);
+    void onProcessDestroyed();
 
 private:
-    bool handleSystemSignal(const int signal);
+    QList<QProcess*> processes() const;
+    int activeProcessesCount() const;
 
-    QStringList supportedConvertors() const;
-    QString textDataSourcesType(const QString& file_name) const;
-
-    struct Settings {
-        QString data_source_text_type;
-        QString data_source_text;
-        QString output_folder;
-        QString data_sources_name;
-        unsigned int timeout = 0;
-    };
-    Settings parse() const;
-
-    daggycore::DaggyCore* daggyCore() const;
-    QCoreApplication* application() const;
-
-    QString getTextFromFile(QString file_path) const;
-    QString homeFolder() const;
-
-    daggycore::DaggyCore* daggy_core_;
-
-    QString error_message_;
+    void startCommands();
 };
 
+}

@@ -9,22 +9,49 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
+#include <QIODevice>
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+#include "Ssh2Channel.h"
 
-#include <QProcess>
+namespace daggyssh2 {
 
-#include <QDebug>
+class Ssh2Process : public Ssh2Channel
+{
+    Q_OBJECT
+    Q_ENUMS(ProcessStates)
+    Q_PROPERTY(ProcessStates processState READ processState NOTIFY processStateChanged)
+public:
+    enum ProcessStates {
+        NotStarted,
+        Starting,
+        Started,
+        FailedToStart,
+        Finishing,
+        Finished
+    };
 
-#include <atomic>
 
-#include <libssh2.h>
-#include <errno.h>
+    ProcessStates processState() const;
+    void checkIncomingData() override;
 
-#include <yaml-cpp/yaml.h>
+signals:
+    void processStateChanged(ProcessStates processState);
+
+protected:
+    Ssh2Process(const QString& command,
+                Ssh2Client* ssh2_client);
+
+private slots:
+    void onSsh2ChannelStateChanged(const ChannelStates& state);
+
+private:
+    void setSsh2ProcessState(ProcessStates ssh2_process_state);
+    std::error_code execSsh2Process();
+
+    const QString command_;
+    ProcessStates ssh2_process_state_;
+
+    friend class Ssh2Client;
+};
+
+}
