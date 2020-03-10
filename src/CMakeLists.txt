@@ -21,7 +21,7 @@ endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}/exports)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR}/exports)
 
 include(compiler)
 include(version)

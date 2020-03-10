@@ -1,6 +1,6 @@
 set(TARGET daggy)
 
-find_package(Qt5 COMPONENTS Core Network REQUIRED)
+find_package(Qt5 COMPONENTS Core REQUIRED)
 
 set(SOURCES
     main.cpp
@@ -23,5 +23,5 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_multiple_servers.yaml ${CMAKE_
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_multiple_servers.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
 
 add_executable(${TARGET} ${SOURCES})
-target_link_libraries(${TARGET} DaggyCore Qt5::Core Qt5::Network yaml-cpp)
+target_link_libraries(${TARGET} DaggyCore)
 include(precompiled)
