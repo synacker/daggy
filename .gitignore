@@ -12,3 +12,5 @@ test\.json
 build/
 
 DaggyCore/daggycore_export.h
+
+__pycache__/
