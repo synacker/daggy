@@ -64,7 +64,7 @@ set(LINK_LIBRARIES
 if (SSH2_SUPPORT)
     list(APPEND SOURCES ${SSH2_SOURCES})
     list(APPEND INCLUDE_HEADERS ${SSH2_PUBLIC})
-    set(LINK_LIBRARIES ${LINK_LIBRARIES} ssh2)
+    set(LINK_LIBRARIES ${LINK_LIBRARIES} ssh2 ssl crypto)
 endif()
 
 
@@ -86,5 +86,5 @@ include(precompiled)
 include(GenerateExportHeader)
 generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/daggycore_export.h)
 
-install(TARGETS ${TARGET} DESTINATION ${LIBRARY_INSTALL_DIR})
-install(FILES ${INCLUDE_PUBLIC} DESTINATION ${INCLUDE_INSTALL_DIR}/${TARGET})
+install(TARGETS ${TARGET} DESTINATION lib)
+install(FILES ${INCLUDE_HEADERS} DESTINATION include/${TARGET})

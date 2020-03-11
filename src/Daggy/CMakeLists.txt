@@ -25,3 +25,5 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_multiple_servers.json ${CMAKE_
 add_executable(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET} DaggyCore)
 include(precompiled)
+
+install(TARGETS ${TARGET} DESTINATION bin)

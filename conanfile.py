@@ -7,36 +7,44 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 '''
 
 from conans import ConanFile, CMake
-import git_version
+
 
 class DaggyConan(ConanFile):
     name = "Daggy"
-    version = git_version.version()
+    version = "2.0.0"
     license = "MIT"
     url = "https://daggy.dev"
     description = "Data Aggregation Utilty - aggregation and stream data via remote and local processes."
     settings = "os", "compiler", "build_type", "arch"
     options = {
         "ssh2_support": [True, False],
-        "ssh2_support": [True, False],
         "yaml_support": [True, False],
         "daggy_console": [True, False],
-        "daggy_core_static": [True, False]
+        "daggy_core_static": [True, False],
+        "static_deps": [True, False]
     }
     default_options = {
         "ssh2_support": True,
         "yaml_support": True,
         "daggy_console": True,
-        "daggy_core_static": False
+        "daggy_core_static": False,
+        "static_deps": True
     }
     generators = "cmake"
-    export_sources = ["CMakeListrs.txt", "src/*"]
+    exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*"]
+    export_sources = ["src/*"]
 
     def requirements(self):
         self.requires("qt/5.14.1@bincrafters/stable")
 
+        if self.options.yaml_support:
+            self.requires("yaml-cpp/0.6.3")
+
+        if self.options.ssh2_support:
+            self.requires("libssh2/1.9.0")
+
     def configure(self):
-        self.options["qt"].shared = False
+        self.options["qt"].shared = not self.options.static_deps
         self.options["qt"].commercial = False
         self.options["qt"].opengl = "no"
         self.options["qt"].openssl = False
@@ -69,7 +77,27 @@ class DaggyConan(ConanFile):
         self.options["qt"].multiconfiguration = False
         self.options["libxcb"].shared = False
 
-    def build(self):
+        self.options["libssh2"].shared = not self.options.static_deps
+        self.options["openssl"].shared = not self.options.static_deps
+        self.options["zlib"].shared = not self.options.static_deps
+
+    def _configure(self):
         cmake = CMake(self)
+        cmake.definitions["SSH2_SUPPORT"] = self.options.ssh2_support
+        cmake.definitions["YAML_SUPPORT"] = self.options.yaml_support
+        cmake.definitions["DAGGY_CONSOLE"] = self.options.daggy_console
+        cmake.definitions["DAGGY_CORE_STATIC"] = self.options.daggy_core_static
+        cmake.definitions["VERSION"] = self.version
         cmake.configure()
+        return cmake
+
+    def build(self):
+        cmake = self._configure()
         cmake.build()
+
+    def package(self):
+        cmake = self._configure()
+        cmake.install()
+
+    def package_info(self):
+        self.cpp_info.libs = ["DaggyCore"]
