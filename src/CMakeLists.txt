@@ -10,6 +10,8 @@ option(SSH2_SUPPORT "ssh2 data provider support" ON)
 option(YAML_SUPPORT "yaml data sources support" ON)
 option(DAGGY_CONSOLE "daggy console application" ON)
 option(DAGGY_CORE_STATIC "static daggy core lib" OFF)
+option(CONAN_BUILD "build with conan" OFF)
+option(PACKACGE_DEPS "include daggy deps into package" OFF)
 
 if(SSH2_SUPPORT)
     add_definitions(-DSSH2_SUPPORT)

@@ -22,12 +22,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 using namespace daggycore;
 using namespace daggyconv;
 
-CConsoleDaggy::CConsoleDaggy(QCoreApplication* application)
-    : QObject(application)
+CConsoleDaggy::CConsoleDaggy(QObject* parent)
+    : QObject(parent)
     , daggy_core_(new daggycore::DaggyCore(this))
 {
-    application->setApplicationVersion(FULL_VERSION_STR);
-    application->setApplicationName("daggy");
+    qApp->setApplicationVersion(FULL_VERSION_STR);
+    qApp->setApplicationName("daggy");
     connect(this, &CConsoleDaggy::interrupt, daggy_core_, &DaggyCore::stop, Qt::QueuedConnection);
     connect(daggy_core_, &DaggyCore::stateChanged, this, [](DaggyCore::State state){
         if (state == DaggyCore::Finished)
@@ -135,7 +135,7 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     command_line_parser.addVersionOption();
     command_line_parser.addPositionalArgument("file", "Data source file", "*.yaml|*.yml|*.json");
 
-    command_line_parser.process(*application());
+    command_line_parser.process(*qApp);
 
 
     const QStringList positional_arguments = command_line_parser.positionalArguments();
