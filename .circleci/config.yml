@@ -12,7 +12,6 @@ commands:
         type: string
         default: build
     steps:
-      - checkout
       - run:
           name: Build Conan package
           command: |
@@ -26,6 +25,7 @@ jobs:
     docker:
       - image: conanio/gcc7
     steps:
+      - checkout
       - run:
           name: Upgrade conan
           command: sudo pip install --upgrade conan
@@ -38,6 +38,7 @@ jobs:
     executor: 
       name: win/default
     steps:
+      - checkout
       - run:
           name: Upgrade conan
           command: pip install --upgrade conan
