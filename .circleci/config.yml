@@ -32,7 +32,7 @@ jobs:
       - run:
           name: Create build folder
           command: mkdir build_gcc-7_x64 && cd build_gcc-7_x64
-      - conan-build
+      - conan-build:
           build-folder: build_gcc-7_x64
   msvc2019:
     executor: 
