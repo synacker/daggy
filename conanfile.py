@@ -21,30 +21,30 @@ class DaggyConan(ConanFile):
         "yaml_support": [True, False],
         "daggy_console": [True, False],
         "daggy_core_static": [True, False],
-        "static_deps": [True, False]
+        "package_deps": [True, False]
     }
     default_options = {
         "ssh2_support": True,
         "yaml_support": True,
         "daggy_console": True,
         "daggy_core_static": False,
-        "static_deps": True
+        "package_deps": True
     }
     generators = "cmake"
     exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*"]
     export_sources = ["src/*"]
 
     def requirements(self):
-        self.requires("qt/5.14.1@bincrafters/stable")
+        self.requires("qt/[>=5.12.0]@bincrafters/stable")
 
         if self.options.yaml_support:
-            self.requires("yaml-cpp/0.6.3")
+            self.requires("yaml-cpp/[>=0.6.3]")
 
         if self.options.ssh2_support:
-            self.requires("libssh2/1.9.0")
+            self.requires("libssh2/[>=1.9.0]")
 
     def configure(self):
-        self.options["qt"].shared = not self.options.static_deps
+        self.options["qt"].shared = True
         self.options["qt"].commercial = False
         self.options["qt"].opengl = "no"
         self.options["qt"].openssl = False
@@ -77,9 +77,9 @@ class DaggyConan(ConanFile):
         self.options["qt"].multiconfiguration = False
         self.options["libxcb"].shared = False
 
-        self.options["libssh2"].shared = not self.options.static_deps
-        self.options["openssl"].shared = not self.options.static_deps
-        self.options["zlib"].shared = not self.options.static_deps
+        self.options["libssh2"].shared = True
+        self.options["openssl"].shared = True
+        self.options["zlib"].shared = True
 
     def _configure(self):
         cmake = CMake(self)
@@ -88,6 +88,7 @@ class DaggyConan(ConanFile):
         cmake.definitions["DAGGY_CONSOLE"] = self.options.daggy_console
         cmake.definitions["DAGGY_CORE_STATIC"] = self.options.daggy_core_static
         cmake.definitions["VERSION"] = self.version
+        cmake.definitions["PACKAGE_DEPS"] = self.options.package_deps
         cmake.configure()
         return cmake
 
@@ -101,3 +102,11 @@ class DaggyConan(ConanFile):
 
     def package_info(self):
         self.cpp_info.libs = ["DaggyCore"]
+
+    def imports(self):
+        if self.options.package_deps:
+            if self.settings.os == "Windows":
+                self.copy("*.dll", src="@bindirs", dst="bin")
+                self.copy("*.dll", src="@libdirs", dst="bin")
+            else:
+                self.copy("*.so.*", src="@libdirs", dst="lib/daggy_deps")

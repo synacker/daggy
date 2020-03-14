@@ -38,6 +38,15 @@ IDataProvider::State IDataProvider::state() const
     return state_;
 }
 
+int IDataProvider::restartCommandsCount() const
+{
+    int result = 0;
+    for (const auto& command : commands_)
+        if (command.restart)
+            result++;
+    return result;
+}
+
 void IDataProvider::setState(IDataProvider::State providerState)
 {
     if (state_ == providerState)

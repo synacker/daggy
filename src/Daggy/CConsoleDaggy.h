@@ -26,7 +26,7 @@ class CConsoleDaggy : public QObject,
 {
     Q_OBJECT
 public:
-    CConsoleDaggy(QCoreApplication* application);
+    CConsoleDaggy(QObject* parent = nullptr);
 
     daggycore::Result initialize();
     daggycore::Result start();
