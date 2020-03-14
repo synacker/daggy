@@ -16,7 +16,6 @@ commands:
       - run:
           name: Build Conan package
           command: |
-            pip install conan
             conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
             mkdir build && cd build
             conan install .. --build=missing
@@ -27,11 +26,17 @@ jobs:
     docker:
       - image: conanio/gcc7
     steps:
+      - run:
+          name: Upgrade conan
+          command: sudo pip install --upgrade conan
       - conan-build
   msvc-2019:
     orbs: 
-      win: circleci/windows@2.2.0 
+      win: circleci/windows@2.4.0 
     steps:
+      - run:
+          name: Upgrade conan
+          command: pip install --upgrade conan
       - conan-build
 workflows:
   version: 2.1
