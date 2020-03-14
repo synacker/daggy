@@ -11,6 +11,7 @@ jobs:
           name: Build Conan package
           command: |
             sudo pip install --upgrade conan
+            conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
             mkdir build_gcc7_x64 && cd build_gcc7_x64
             conan install .. --build=missing
             conan build ..
