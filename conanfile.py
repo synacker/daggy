@@ -47,17 +47,8 @@ class DaggyConan(ConanFile):
         self.options["qt"].shared = True
         self.options["qt"].commercial = False
 
-        self.options["qt"].device = None
-        self.options["qt"].cross_compile = None
-        self.options["qt"].sysroot = None
-        self.options["qt"].config = None
-        self.options["qt"].multiconfiguration = False
-        self.options["libxcb"].shared = False
-
         self.options["yaml-cpp"].shared = True
         self.options["libssh2"].shared = True
-        self.options["openssl"].shared = True
-        self.options["zlib"].shared = True
 
     def _configure(self):
         cmake = CMake(self)
