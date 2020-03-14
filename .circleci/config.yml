@@ -16,7 +16,7 @@ commands:
       - run:
           name: Build Conan package
           command: |
-            cd << paramters.build_folder >>
+            cd << paramters.build-folder >>
             conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
             conan install ..
             conan build ..
