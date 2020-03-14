@@ -105,7 +105,8 @@ class DaggyConan(ConanFile):
 
     def imports(self):
         if self.options.package_deps:
-            if self.settings == "Windows":
-                self.copy("*.dll", "@bindirs", "bin")
+            if self.settings.os == "Windows":
+                self.copy("*.dll", src="@bindirs", dst="bin")
+                self.copy("*.dll", src="@libdirs", dst="bin")
             else:
                 self.copy("*.so.*", src="@libdirs", dst="lib/daggy_deps")

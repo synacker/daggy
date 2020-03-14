@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 3.16.4)
 project(daggy)
 
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
 
 option(SSH2_SUPPORT "ssh2 data provider support" ON)
 option(YAML_SUPPORT "yaml data sources support" ON)
