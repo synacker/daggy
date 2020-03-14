@@ -67,7 +67,7 @@ if (SSH2_SUPPORT)
     if(CONAN_BUILD)
         set(LINK_LIBRARIES ${LINK_LIBRARIES} CONAN_PKG::libssh2)
     else()
-        set(LINK_LIBRARIES ${LINK_LIBRARIES} ssh2 ssl crypto)
+        set(LINK_LIBRARIES ${LINK_LIBRARIES} ssh2)
     endif()
 endif()
 

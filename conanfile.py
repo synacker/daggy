@@ -35,7 +35,7 @@ class DaggyConan(ConanFile):
     export_sources = ["src/*"]
 
     def requirements(self):
-        self.requires("qt/[>=5.12.0]@bincrafters/stable")
+        self.requires("qt/[>=5.14.1]@bincrafters/stable")
 
         if self.options.yaml_support:
             self.requires("yaml-cpp/[>=0.6.3]")
@@ -46,40 +46,9 @@ class DaggyConan(ConanFile):
     def configure(self):
         self.options["qt"].shared = True
         self.options["qt"].commercial = False
-        self.options["qt"].opengl = "no"
-        self.options["qt"].openssl = False
-        self.options["qt"].GUI = False
-        self.options["qt"].widgets = False
-        self.options["qt"].with_pcre2 = False
-        self.options["qt"].with_glib = False
 
-        self.options["qt"].with_doubleconversion = True
-        self.options["qt"].with_freetype = False
-        self.options["qt"].with_freetype = False
-        self.options["qt"].with_fontconfig = False
-        self.options["qt"].with_icu = False
-        self.options["qt"].with_harfbuzz = False
-        self.options["qt"].with_libjpeg = False
-        self.options["qt"].with_libpng = False
-        self.options["qt"].with_sqlite3 = False
-        self.options["qt"].with_mysql = False
-        self.options["qt"].with_pq = False
-        self.options["qt"].with_odbc = False
-        self.options["qt"].with_sdl2 = False
-        self.options["qt"].with_libalsa = False
-        self.options["qt"].with_openal = False
-        self.options["qt"].with_zstd = False
-
-        self.options["qt"].device = None
-        self.options["qt"].cross_compile = None
-        self.options["qt"].sysroot = None
-        self.options["qt"].config = None
-        self.options["qt"].multiconfiguration = False
-        self.options["libxcb"].shared = False
-
+        self.options["yaml-cpp"].shared = True
         self.options["libssh2"].shared = True
-        self.options["openssl"].shared = True
-        self.options["zlib"].shared = True
 
     def _configure(self):
         cmake = CMake(self)
