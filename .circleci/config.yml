@@ -2,9 +2,9 @@
 version: 2.1
 # Use a package of configuration called an orb.
 jobs:
-  gcc-7_x64:
+  gcc-8_x64:
     docker:
-      - image: conanio/gcc7
+      - image: conanio/gcc8
     steps:
       - checkout
       - run:
@@ -19,4 +19,4 @@ workflows:
   version: 2.1
   build_and_test:
     jobs:
-    - gcc-7_x64
+    - gcc-8_x64
