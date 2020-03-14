@@ -35,7 +35,7 @@ class DaggyConan(ConanFile):
     export_sources = ["src/*"]
 
     def requirements(self):
-        self.requires("qt/5.14.1@bincrafters/stable")
+        self.requires("qt/[>=5.14.1]@bincrafters/stable")
 
         if self.options.yaml_support:
             self.requires("yaml-cpp/[>=0.6.3]")
