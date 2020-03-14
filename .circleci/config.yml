@@ -28,7 +28,7 @@ jobs:
       name: win/default
     working_directory: ~/daggy/build_msvc2019_x64
     steps:
-      - checkout
+      - checkout:
         path: daggy
       - run:
           name: Install conan
