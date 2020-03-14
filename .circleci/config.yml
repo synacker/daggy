@@ -1,54 +1,40 @@
+conan-build: &conan-build
+  description: Build with conan
+  steps:
+    - run:
+        name: Build Conan package
+        command: |
+          conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+          conan install ..
+          conan build ..
+
 # Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 # Use a package of configuration called an orb.
 orbs: 
   win: circleci/windows@2.4.0
 
-commands:
-  conan-build: 
-    description: Build with conan
-    parameters:
-      builddir:
-        type: string
-        default: build
-    steps:
-      - run:
-          name: Build Conan package
-          command: |
-            cd << paramters.builddir >>
-            conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-            conan install ..
-            conan build ..
-
 jobs:
   gcc-7_x64:
     docker:
       - image: conanio/gcc7
+    working_directory: build_gcc-7_x64
     steps:
       - checkout
       - run:
           name: Upgrade conan
           command: sudo pip install --upgrade conan
-      - run:
-          name: Create build folder
-          command: mkdir build_gcc-7_x64 && cd build_gcc-7_x64
-      - run:
-          conan-build:
-            builddir: build_gcc-7_x64
+      - <<: *conan-build
   msvc2019:
     executor: 
       name: win/default
+    working_directory: build_msvc2019_x64
     steps:
       - checkout
       - run:
           name: Upgrade conan
           command: pip install --upgrade conan
-      - run:
-          name: Create build folder
-          command: mkdir build_msvc2019_x64 -and cd build_msvc2019_x64
-      - run:
-          conan-build:
-            builddir:: build_msvc2019_x64
+      - <<: *conan-build
 workflows:
   version: 2.1
   build_and_test:
