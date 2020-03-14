@@ -6,14 +6,19 @@ orbs:
 
 commands:
   conan-build: 
+    description: Build with conan
+    parameters:
+      build-folder:
+        type: string
+        default: build
     steps:
       - checkout
       - run:
           name: Build Conan package
           command: |
+            cd << paramters.build_folder >>
             conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-            mkdir build && cd build
-            conan install .. --build=missing
+            conan install ..
             conan build ..
 
 jobs:
@@ -24,18 +29,26 @@ jobs:
       - run:
           name: Upgrade conan
           command: sudo pip install --upgrade conan
+      - run:
+          name: Create build folder
+          command: mkdir build_gcc-7_x64 && cd build_gcc-7_x64
       - conan-build
-  msvc-2019:
+          build-folder: build_gcc-7_x64
+  msvc2019:
     executor: 
       name: win/default
     steps:
       - run:
           name: Upgrade conan
           command: pip install --upgrade conan
-      - conan-build
+      - run:
+          name: Create build folder
+          command: mkdir build_msvc2019_x64 -and cd build_msvc2019_x64
+      - conan-build:
+          build-folder: build_msvc2019_x64
 workflows:
   version: 2.1
   build_and_test:
     jobs:
     - gcc-7_x64
-    - msvc-2019
+    - msvc2019
