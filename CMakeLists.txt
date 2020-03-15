@@ -6,4 +6,6 @@ set(CMAKE_PREFIX_PATH ${CONAN_QT_ROOT})
 
 include(conan)
 
+set(CONAN_BUILD ON)
+
 add_subdirectory(src)

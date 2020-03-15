@@ -78,8 +78,13 @@ int CLocalDataProvider::activeProcessesCount() const
 
 void CLocalDataProvider::onProcessDestroyed()
 {
-    if (state() == Finishing && activeProcessesCount() == 0)
+    if (
+            (state() == Finishing && activeProcessesCount() == 0) ||
+            (state() == Started && activeProcessesCount() == 0 && restartCommandsCount() == 0)
+    )
+    {
         setState(Finished);
+    }
 }
 
 void CLocalDataProvider::startCommands()

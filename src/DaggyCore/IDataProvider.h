@@ -45,6 +45,8 @@ public:
     Command getCommand(const QString& id) const;
     State state() const;
 
+    int restartCommandsCount() const;
+
 signals:
     void stateChanged(State state);
 

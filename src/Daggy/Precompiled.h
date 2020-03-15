@@ -13,6 +13,7 @@
 #include <QDir>
 
 #include <iostream>
+#include <set>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
