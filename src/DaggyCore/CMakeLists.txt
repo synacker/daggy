@@ -2,6 +2,8 @@ set(TARGET DaggyCore)
 
 find_package(Qt5 COMPONENTS Core Network REQUIRED)
 
+set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
+
 set(SSH2_SOURCES
     Ssh2Client.cpp
     Ssh2Types.cpp
@@ -40,7 +42,7 @@ set(YAML_SOURCES
     CYamlDataSourcesConvertor.cpp
 )
 
-set(SOURCES
+set(SOURCES ${SOURCES}
     IDataProvider.cpp
     IDataAggregator.cpp
     IDataProviderFabric.cpp
@@ -71,7 +73,6 @@ if (SSH2_SUPPORT)
     endif()
 endif()
 
-
 if(YAML_SUPPORT)
     list(APPEND SOURCES ${YAML_SOURCES})
     list(APPEND INCLUDE_HEADERS ${YAML_PUBLIC})
@@ -82,6 +83,13 @@ if(YAML_SUPPORT)
     endif()
 endif()
 
+set(APP_NAME ${TARGET})
+set(APP_DESCRIPTION "Daggy core library")
+set(FILETYPE "VFT_DLL")
+
+configure_file(${VERSION_RC_IN} ${CMAKE_CURRENT_LIST_DIR}/version.rc @ONLY)
+set(SOURCES ${SOURCES} version.rc)
+
 if (DAGGY_CORE_STATIC)
     add_definitions(-DDAGGYCORE_STATIC_DEFINE)
     add_library(${TARGET} STATIC ${SOURCES} ${MOC_SOURCES})
@@ -90,9 +98,23 @@ else()
 endif()
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
+
 include(precompiled)
 include(GenerateExportHeader)
 generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/daggycore_export.h)
 
-install(TARGETS ${TARGET} DESTINATION lib)
-install(FILES ${INCLUDE_HEADERS} DESTINATION include/${TARGET})
+if(UNIX)
+    if (DAGGY_CORE_STATIC)
+        install(TARGETS ${TARGET} DESTINATION lib COMPONENT devel)
+    else()
+        install(TARGETS ${TARGET} DESTINATION lib)
+    endif()
+else()
+    install(FILES ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${TARGET}.lib DESTINATION lib COMPONENT devel)
+    if (NOT DAGGY_CORE_STATIC)
+        install(FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET}.dll DESTINATION bin COMPONENT application)
+        install(FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET}.dll DESTINATION bin COMPONENT devel)
+    endif()
+endif()
+
+install(FILES ${INCLUDE_HEADERS} DESTINATION ${INCLUDE_INSTALL_DIR}/${TARGET} COMPONENT devel)
