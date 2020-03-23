@@ -16,3 +16,5 @@ DaggyCore/daggycore_export.h
 __pycache__/
 
 *.autosave
+
+.vscode/
