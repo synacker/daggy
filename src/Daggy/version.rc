@@ -8,8 +8,8 @@ SU_ICON ICON APP_ICON
 #define FILE_FLAG                   VS_FF_DEBUG
 #endif
 VS_VERSION_INFO VERSIONINFO
-    FILEVERSION 1.1.3.69
-    PRODUCTVERSION  1.1.3.69
+    FILEVERSION 1.1.3.70
+    PRODUCTVERSION  1.1.3.70
     FILEFLAGSMASK 0x3fL
     FILEFLAGS FILE_FLAG
     FILEOS VOS__WINDOWS32
@@ -22,10 +22,10 @@ VS_VERSION_INFO VERSIONINFO
             BEGIN
                 VALUE "CompanyName",      "synacker"
                 VALUE "FileDescription",  "app"
-                VALUE "FileVersion",      "1.1.3.69"
+                VALUE "FileVersion",      "1.1.3.70"
                 VALUE "LegalCopyright",   "Copyright \251 2020 Mikhail Milovidov. Some Rights Reserved"
                 VALUE "ProductName",      "daggy"
-                VALUE "ProductVersion",   "1.1.3.69"
+                VALUE "ProductVersion",   "1.1.3.70"
             END
         END
         BLOCK "VarFileInfo"

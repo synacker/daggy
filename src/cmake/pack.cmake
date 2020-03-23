@@ -24,6 +24,10 @@ set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/../README.md")
 set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.ico")
 set(CPACK_NSIS_MODIFY_PATH ON)
 set(CPACK_NSIS_URL_INFO_ABOUT "https://daggy.dev")
+set(CPACK_NSIS_MENU_LINKS
+    "https://daggy.dev" "Daggy web site"
+    "https://docs.daggy.dev" "Daggy docs"
+    )
 
 set(CPACK_COMPONENTS_ALL application devel)
 
