@@ -30,8 +30,7 @@ set(APP_NAME "${TARGET}")
 set(APP_DESCRIPTION "app")
 set(FILETYPE "VFT_APP")
 
-configure_file(${VERSION_RC_IN} ${CMAKE_CURRENT_LIST_DIR}/version.rc @ONLY)
-set(SOURCES ${SOURCES} version.rc)
+include(version_meta)
 
 add_executable(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET} DaggyCore)

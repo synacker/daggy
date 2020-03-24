@@ -87,8 +87,7 @@ set(APP_NAME ${TARGET})
 set(APP_DESCRIPTION "Daggy core library")
 set(FILETYPE "VFT_DLL")
 
-configure_file(${VERSION_RC_IN} ${CMAKE_CURRENT_LIST_DIR}/version.rc @ONLY)
-set(SOURCES ${SOURCES} version.rc)
+include(version_meta)
 
 if (DAGGY_CORE_STATIC)
     add_definitions(-DDAGGYCORE_STATIC_DEFINE)
