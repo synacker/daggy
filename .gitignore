@@ -18,3 +18,5 @@ __pycache__/
 *.autosave
 
 .vscode/
+
+*.rc

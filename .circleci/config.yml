@@ -23,20 +23,8 @@ jobs:
           name: Upgrade conan
           command: sudo pip install --upgrade conan
       - run: *conan-build
-  msvc2019:
-    executor: 
-      name: win/default
-    working_directory: ~/daggy/build_msvc2019_x64
-    steps:
-      - checkout:
-          path: ~/daggy
-      - run:
-          name: Install conan
-          command: pip install --upgrade conan
-      - run: *conan-build
 workflows:
   version: 2.1
   build_and_test:
     jobs:
     - gcc-7_x64
-    - msvc2019
