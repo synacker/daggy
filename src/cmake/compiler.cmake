@@ -12,5 +12,5 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH true)
 
 if(UNIX)
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN/../lib/daggy_deps")
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN/../lib/daggy_deps;$ORIGIN/daggy_deps")
 endif()

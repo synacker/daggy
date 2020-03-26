@@ -8,13 +8,13 @@ if(WIN32)
         COMPONENT deps
     )
 else()
-    install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/daggy_deps/
-            DESTINATION lib
+    install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/daggy_deps/
+            DESTINATION lib/daggy_deps
             COMPONENT deps
             FILES_MATCHING 
-            PATTERN ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/daggy_deps/libQt5Network.so*
-            PATTERN ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/daggy_deps/libQt5Core.so*
-            PATTERN ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/daggy_deps/libssh2.so*
-            PATTERN ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/daggy_deps/libyaml-cpp.so*
+            PATTERN libQt5Network.so*
+            PATTERN libQt5Core.so*
+            PATTERN libssh2.so*
+            PATTERN libyaml-cpp.so*
     )
 endif()
