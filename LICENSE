@@ -1,4 +1,3 @@
-/*
 MIT License
 
 Copyright (c) 2020 Mikhail Milovidov
@@ -20,35 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-*/
-#include "Precompiled.h"
-#include "Result.h"
-
-using namespace  daggycore;
-
-const std::error_code Result::success = std::error_code{};
-
-Result::Result()
-    : std::error_code(success)
-{
-
-}
-
-Result::Result(std::error_code error_code)
-    : std::error_code(std::move(error_code))
-{
-
-}
-
-Result::Result(std::error_code error_code,
-               std::string error_message)
-    : std::error_code(std::move(error_code))
-    , detailed_error_message_(std::move(error_message))
-{
-
-}
-
-const std::string& Result::detailed_error_message() const
-{
-    return detailed_error_message_;
-}
