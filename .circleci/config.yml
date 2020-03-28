@@ -14,7 +14,7 @@ jobs:
   gcc-8_x64:
     docker:
       - image: synacker2/linux_gcc8_debian
-      - user: daggy
+        user: daggy
     working_directory: ~/build
     steps:
       - checkout:
