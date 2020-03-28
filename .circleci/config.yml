@@ -32,7 +32,6 @@ jobs:
           key: conan-cache-{{ arch }}
           paths:
             - ~/.conan
-            - "venv"
       - run: 
           name: Pack artefacts
           command: cpack
@@ -80,10 +79,9 @@ jobs:
           key: conan-cache-{{ arch }}
           paths:
             - ~/.conan
-            - "venv"
       - run: 
           name: Pack artefacts
-          command: '"c:/Program Files/CMake/bin/cpack.exe"'
+          command: '& "c:/Program Files/CMake/bin/cpack.exe"'
       - run:
           name: Move artefacts
           command: |
