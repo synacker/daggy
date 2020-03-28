@@ -51,7 +51,7 @@ jobs:
     steps:
       - run:
           name: Install CMake
-          command: choco install --yes cmake --params -installargs 'ADD_CMAKE_TO_PATH=""System""'
+          command: choco install --yes cmake -installargs 'ADD_CMAKE_TO_PATH=""System""'
       - run:
           name: Install NSIS
           command: |
