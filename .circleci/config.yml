@@ -7,7 +7,7 @@ orbs:
 jobs:
   gcc-8_x64:
     docker:
-      - image: synacker2/linux_gcc8_debian:2.0.0
+      - image: synacker2/daggy_linux_gcc8_debian:2.0.0
         user: daggy
     working_directory: ~/build
     steps:
@@ -51,7 +51,7 @@ jobs:
     steps:
       - run:
           name: Install CMake
-          command: choco install --yes cmake --params '"/InstallDir:C:\cmake"' -installargs 'ADD_CMAKE_TO_PATH=""System""'
+          command: choco install --yes cmake --params -installargs 'ADD_CMAKE_TO_PATH=""System""'
       - run:
           name: Install NSIS
           command: |
@@ -83,7 +83,7 @@ jobs:
             - "venv"
       - run: 
           name: Pack artefacts
-          command: c:/cmake/bin/cpack.exe
+          command: '"c:/Program Files/CMake/bin/cpack.exe"'
       - run:
           name: Move artefacts
           command: |
