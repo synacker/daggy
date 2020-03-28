@@ -1,9 +1,3 @@
-conan-build: &conan-build
-  name: Build Conan package
-  command: |
-    conan install ../daggy
-    conan build ../daggy
-
 # Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 # Use a package of configuration called an orb.
@@ -13,15 +7,33 @@ orbs:
 jobs:
   gcc-8_x64:
     docker:
-      - image: synacker2/linux_gcc8_debian:2.0.0
+      - image: synacker2/daggy_linux_gcc8_debian:2.0.0
         user: daggy
     working_directory: ~/build
     steps:
-      - setup_remote_docker
       - checkout:
           path: ~/daggy
-      - run: *conan-build
-      - run: cpack
+      - restore_cache:
+          key: conan-cache-{{ arch }}
+      - run:
+          name: Install or update conan
+          command: pip3 install conan --upgrade
+      - run:
+          name: Add conan remote
+          command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan || true
+      - run:
+          name: Conan install
+          command: conan install ../daggy
+      - run:
+          name: Conan build
+          command: conan build ../daggy
+      - save_cache:
+          key: conan-cache-{{ arch }}
+          paths:
+            - ~/.conan
+      - run: 
+          name: Pack artefacts
+          command: cpack
       - run:
           name: Move artefacts
           command: |
@@ -31,8 +43,56 @@ jobs:
             mv *.zip /tmp/linux_artifacts
       - store_artifacts:
           path: /tmp/linux_artifacts
+  msvs2019:
+    executor: win/default
+    working_directory: ~/build
+    steps:
+      - run:
+          name: Install CMake
+          command: choco install --yes cmake -installargs 'ADD_CMAKE_TO_PATH=""System""'
+      - run:
+          name: Install NSIS
+          command: |
+            choco install --yes NSIS --params '"/InstallDir:C:\NSIS"'
+            $env:PATH += ";C:\NSIS"
+      - run:
+          name: Install pip
+          command: python -m pip install --quiet --upgrade pip
+      - checkout:
+          path: ~/daggy
+      - restore_cache:
+          key: conan-cache-{{ arch }}
+      - run:
+          name: Install or update conan
+          command: pip install conan --upgrade
+      - run:
+          name: Add conan remote
+          command: $(conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan) -or $(true)
+      - run:
+          name: Conan install
+          command: conan install ../daggy
+      - run:
+          name: Conan build
+          command: conan build ../daggy
+      - save_cache:
+          key: conan-cache-{{ arch }}
+          paths:
+            - ~/.conan
+      - run: 
+          name: Pack artefacts
+          command: '& "c:/Program Files/CMake/bin/cpack.exe"'
+      - run:
+          name: Move artefacts
+          command: |
+            mkdir windows_artifacts
+            mv *.zip windows_artifacts
+            mv *.exe windows_artifacts
+      - store_artifacts:
+          path: windows_artifacts
+      
 workflows:
   version: 2.1
   build_and_test:
     jobs:
     - gcc-8_x64
+    - msvs2019
