@@ -37,8 +37,6 @@ jobs:
     executor: win/default
     working_directory: ~/build
     steps:
-      - restore_cache:
-          key: deps2
       - run:
           name: Install CMake
           command: choco install --yes cmake -installargs 'ADD_CMAKE_TO_PATH=""System""'
@@ -50,16 +48,24 @@ jobs:
       - run:
           name: Install pip
           command: python -m pip install --quiet --upgrade pip
+      - restore_cache:
+          key: conan-cache
       - run:
           name: Install conan
           command: pip install conan
-      - save_cache:
-          key: deps2
       - run:
           name: Add conan remote
           command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
       - checkout:
           path: ~/daggy
+      - run:
+          name: Conan install
+          command: conan install ../daggy
+      - save_cache:
+          key: conan-cache
+          paths:
+            - ~/.conan
+            - "venv"
       - run: *conan-build
       - run: 
           name: Pack artefacts
