@@ -17,6 +17,7 @@ jobs:
         user: daggy
     working_directory: ~/build
     steps:
+      - setup_remote_docker
       - checkout:
           path: ~/daggy
       - run:
