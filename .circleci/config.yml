@@ -57,11 +57,14 @@ jobs:
             $env:PATH += ";C:\NSIS"
       - run:
           name: Install pip
-          command: python -m venv venv . venv/bin/activate pip install conan --upgrade
+          command: python -m pip install --quiet --upgrade pip
       - checkout:
           path: ~/daggy
       - restore_cache:
-          key: pip-conan-cache-{{ arch }}
+          key: conan-cache-{{ arch }}
+      - run:
+          name: Install or update conan
+          command: pip install conan --upgrade
       - run:
           name: Add conan remote
           command: $(conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan) -or $(true)
@@ -72,10 +75,9 @@ jobs:
           name: Conan build
           command: conan build ../daggy
       - save_cache:
-          key: pip-conan-cache-{{ arch }}
+          key: conan-cache-{{ arch }}
           paths:
             - ~/.conan
-            - venv
       - run: 
           name: Pack artefacts
           command: '& "c:/Program Files/CMake/bin/cpack.exe"'
