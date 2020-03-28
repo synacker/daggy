@@ -20,9 +20,6 @@ jobs:
       - setup_remote_docker
       - checkout:
           path: ~/daggy
-      - run:
-          name: Upgrade conan
-          command: sudo pip install --upgrade conan
       - run: *conan-build
       - run: cpack
       - run:
