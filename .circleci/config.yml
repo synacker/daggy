@@ -13,9 +13,8 @@ orbs:
 jobs:
   gcc-8_x64:
     docker:
-      - image: synacker2/linux_gcc8_debian
+      - image: synacker2/linux_gcc8_debian:2.0.0
         user: daggy
-        tag: 2.0.0
     working_directory: ~/build
     steps:
       - setup_remote_docker
