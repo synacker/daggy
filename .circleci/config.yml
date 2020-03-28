@@ -11,7 +11,6 @@ jobs:
         user: daggy
     working_directory: ~/build
     steps:
-      - setup_remote_docker
       - checkout:
           path: ~/daggy
       - restore_cache:
@@ -46,7 +45,7 @@ jobs:
           path: /tmp/linux_artifacts
   msvs2019:
     executor: win/default
-    working_directory: ~/build
+    working_directory: build
     steps:
       - run:
           name: Install CMake
@@ -60,7 +59,7 @@ jobs:
           name: Install pip
           command: python -m pip install --quiet --upgrade pip
       - checkout:
-          path: ~/daggy
+          path: daggy
       - restore_cache:
           key: conan-cache-{{ arch }}
       - run:
@@ -85,9 +84,9 @@ jobs:
       - run:
           name: Move artefacts
           command: |
-            mkdir ~/windows_artifacts
-            mv *.zip ~/windows_artifacts
-            mv *.exe ~/windows_artifacts
+            mkdir windows_artifacts
+            mv *.zip windows_artifacts
+            mv *.exe windows_artifacts
       - store_artifacts:
           path: ~/windows_artifacts
       
