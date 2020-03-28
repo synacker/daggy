@@ -83,7 +83,7 @@ jobs:
             - "venv"
       - run: 
           name: Pack artefacts
-          command: c:\Program Files\cmake\bin\cpack
+          command: "c:\Program Files\cmake\bin\cpack"
       - run:
           name: Move artefacts
           command: |
