@@ -88,7 +88,7 @@ jobs:
             mv *.zip windows_artifacts
             mv *.exe windows_artifacts
       - store_artifacts:
-          path: ~/windows_artifacts
+          path: windows_artifacts
       
 workflows:
   version: 2.1
