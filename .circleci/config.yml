@@ -21,7 +21,7 @@ jobs:
           command: pip3 install conan --upgrade
       - run:
           name: Add conan remote
-          command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+          command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan || true
       - run:
           name: Conan install
           command: conan install ../daggy
@@ -69,7 +69,7 @@ jobs:
           command: pip install conan --upgrade
       - run:
           name: Add conan remote
-          command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+          command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan -or True
       - run:
           name: Conan install
           command: conan install ../daggy
