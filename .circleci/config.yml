@@ -45,7 +45,7 @@ jobs:
           path: /tmp/linux_artifacts
   msvs2019:
     executor: win/default
-    working_directory: build
+    working_directory: ~/build
     steps:
       - run:
           name: Install CMake
@@ -59,7 +59,7 @@ jobs:
           name: Install pip
           command: python -m pip install --quiet --upgrade pip
       - checkout:
-          path: daggy
+          path: ~/daggy
       - restore_cache:
           key: conan-cache-{{ arch }}
       - run:
