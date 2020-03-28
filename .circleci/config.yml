@@ -1,9 +1,8 @@
 conan-build: &conan-build
   name: Build Conan package
   command: |
-    conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-    conan install ..
-    conan build ..
+    conan install ../daggy
+    conan build ../daggy
 
 # Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
@@ -12,19 +11,28 @@ orbs:
   win: circleci/windows@2.4.0
 
 jobs:
-  gcc-7_x64:
+  gcc-8_x64:
     docker:
-      - image: conanio/gcc7
-    working_directory: ~/daggy/build_gcc-7_x64
+      - image: synacker2/linux_gcc8_debian:2.0.0
+        user: daggy
+    working_directory: ~/build
     steps:
+      - setup_remote_docker
       - checkout:
           path: ~/daggy
-      - run:
-          name: Upgrade conan
-          command: sudo pip install --upgrade conan
       - run: *conan-build
+      - run: cpack
+      - run:
+          name: Move artefacts
+          command: |
+            mkdir /tmp/linux_artifacts
+            mv *.rpm /tmp/linux_artifacts
+            mv *.deb /tmp/linux_artifacts
+            mv *.zip /tmp/linux_artifacts
+      - store_artifacts:
+          path: /tmp/linux_artifacts
 workflows:
   version: 2.1
   build_and_test:
     jobs:
-    - gcc-7_x64
+    - gcc-8_x64
