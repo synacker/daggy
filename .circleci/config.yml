@@ -57,11 +57,11 @@ jobs:
             $env:PATH += ";C:\NSIS"
       - run:
           name: Install pip
-          command: python -m pip install --quiet --upgrade pip
+          command: python -m venv venv . venv/bin/activate pip install --quiet --upgrade pip
       - checkout:
           path: ~/daggy
       - restore_cache:
-          key: conan-cache-{{ arch }}
+          key: pip-conan-cache-{{ arch }}
       - run:
           name: Install or update conan
           command: pip install conan --upgrade
@@ -75,9 +75,10 @@ jobs:
           name: Conan build
           command: conan build ../daggy
       - save_cache:
-          key: conan-cache-{{ arch }}
+          key: pip-conan-cache-{{ arch }}
           paths:
             - ~/.conan
+            - venv
       - run: 
           name: Pack artefacts
           command: '& "c:/Program Files/CMake/bin/cpack.exe"'
