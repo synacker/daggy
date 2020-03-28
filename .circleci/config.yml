@@ -36,8 +36,6 @@ jobs:
   msvs2019:
     executor: win/default
     working_directory: ~/build
-    environment:
-      PATH: %PATH%;C:\NSIS;
     steps:
       - restore_cache:
           key: deps2
@@ -46,7 +44,9 @@ jobs:
           command: choco install --yes cmake -installargs 'ADD_CMAKE_TO_PATH=""System""'
       - run:
           name: Install NSIS
-          command: choco install --yes NSIS --params '"/InstallDir:C:\NSIS"'
+          command: |
+            choco install --yes NSIS --params '"/InstallDir:C:\NSIS"'
+            $env:PATH += ";C:\NSIS"
       - run:
           name: Install pip
           command: python -m pip install --quiet --upgrade pip
