@@ -21,7 +21,9 @@ jobs:
       - checkout:
           path: ~/daggy
       - run: *conan-build
-      - run: cpack
+      - run: 
+          name: Pack artefacts
+          command: cpack
       - run:
           name: Move artefacts
           command: |
@@ -31,8 +33,49 @@ jobs:
             mv *.zip /tmp/linux_artifacts
       - store_artifacts:
           path: /tmp/linux_artifacts
+  msvs2019:
+    executor: win/default
+    working_directory: ~/build
+    environment:
+      PATH: %PATH%;C:\NSIS;
+    steps:
+      - restore_cache:
+          key: deps2
+      - run:
+          name: Install CMake
+          command: choco install --yes cmake -installargs 'ADD_CMAKE_TO_PATH=""System""'
+      - run:
+          name: Install NSIS
+          command: choco install --yes NSIS --params '"/InstallDir:C:\NSIS"'
+      - run:
+          name: Install pip
+          command: python -m pip install --quiet --upgrade pip
+      - run:
+          name: Install conan
+          command: pip install conan
+      - save_cache:
+          key: deps2
+      - run:
+          name: Add conan remote
+          command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+      - checkout:
+          path: ~/daggy
+      - run: *conan-build
+      - run: 
+          name: Pack artefacts
+          command: c:\Program Files\cmake\bin\cpack
+      - run:
+          name: Move artefacts
+          command: |
+            mkdir ~/windows_artifacts
+            mv *.zip ~/windows_artifacts
+            mv *.exe ~/windows_artifacts
+      - store_artifacts:
+          path: ~/windows_artifacts
+      
 workflows:
   version: 2.1
   build_and_test:
     jobs:
     - gcc-8_x64
+    - msvs2019
