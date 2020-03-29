@@ -23,11 +23,11 @@ SOFTWARE.
 '''
 
 from conans import ConanFile, CMake
-import git_version
+from git_version import GitVersion
 
 class DaggyConan(ConanFile):
     name = "Daggy"
-    version = git_version.full_version()
+    version = GitVersion().full_version()
     license = "MIT"
     url = "https://daggy.dev"
     description = "Data Aggregation Utilty - aggregation and stream data via remote and local processes."
