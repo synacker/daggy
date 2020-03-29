@@ -1,4 +1,4 @@
 if(WIN32)
-    configure_file(${VERSION_RC_IN} ${CMAKE_CURRENT_LIST_DIR}/version.rc @ONLY)
-    set(SOURCES ${SOURCES} version.rc)
+    configure_file(${VERSION_RC_IN} ${CMAKE_BINARY_DIR}/${TARGET}/version.rc @ONLY)
+    set(SOURCES ${SOURCES} ${CMAKE_BINARY_DIR}/${TARGET}/version.rc)
 endif()
