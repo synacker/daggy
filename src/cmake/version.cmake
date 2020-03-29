@@ -4,7 +4,7 @@ if (NOT DEFINED VERSION)
         execute_process(COMMAND
                 "${GIT_EXECUTABLE}"
                 describe
-                --match [0-9].[0-9].[0-9]
+                --match [0-9]*.[0-9]*.[0-9]*
                 --abbrev=0
                 --tags
                 WORKING_DIRECTORY
