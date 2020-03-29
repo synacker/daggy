@@ -40,7 +40,7 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
     : QObject(parent)
     , daggy_core_(new daggycore::DaggyCore(this))
 {
-    qApp->setApplicationVersion(FULL_VERSION_STR);
+    qApp->setApplicationVersion(VERSION_STR);
     qApp->setApplicationName("daggy");
     connect(this, &CConsoleDaggy::interrupt, daggy_core_, &DaggyCore::stop, Qt::QueuedConnection);
     connect(daggy_core_, &DaggyCore::stateChanged, this, [](DaggyCore::State state){

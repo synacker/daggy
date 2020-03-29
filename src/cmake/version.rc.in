@@ -8,8 +8,8 @@ SU_ICON ICON APP_ICON
 #define FILE_FLAG                   VS_FF_DEBUG
 #endif
 VS_VERSION_INFO VERSIONINFO
-    FILEVERSION @FULL_VERSION@
-    PRODUCTVERSION  @FULL_VERSION@
+    FILEVERSION @VERSION@
+    PRODUCTVERSION  @VERSION@
     FILEFLAGSMASK 0x3fL
     FILEFLAGS FILE_FLAG
     FILEOS VOS__WINDOWS32
@@ -22,10 +22,10 @@ VS_VERSION_INFO VERSIONINFO
             BEGIN
                 VALUE "CompanyName",      "@COMPANY_NAME@"
                 VALUE "FileDescription",  "@APP_DESCRIPTION@"
-                VALUE "FileVersion",      "@FULL_VERSION@"
+                VALUE "FileVersion",      "@VERSION@"
                 VALUE "LegalCopyright",   "@APP_COPYRIGTH@"
                 VALUE "ProductName",      "@APP_NAME@"
-                VALUE "ProductVersion",   "@FULL_VERSION@"
+                VALUE "ProductVersion",   "@VERSION@"
             END
         END
         BLOCK "VarFileInfo"
