@@ -39,8 +39,6 @@ public:
         const QString& json
     ) const override;
 
-private:
-    daggycore::OptionalResult<daggycore::Commands> getCommands(const QVariantMap& commands_map) const;
 };
 
 }

@@ -155,23 +155,20 @@ struct convert<daggycore::DataSources>
             if (source_fields[IDataSourceConvertor::g_parametersField])
                 data_source.parameters = source_fields[IDataSourceConvertor::g_parametersField].as<QVariantMap>();
 
-            daggycore::Commands commands;
-            for (const auto& commands_yaml : source_fields[IDataSourceConvertor::g_commandsField]) {
-                for (const auto& command_yaml : commands_yaml) {
-                    daggycore::Command command;
-                    const QString& command_id = command_yaml.first.as<QString>();
-                    command.id = command_id;
-
-                    const auto& command_fields = command_yaml.second;
-                    command.extension = command_fields[IDataSourceConvertor::g_extensionField].as<QString>();
-                    command.exec = command_fields[IDataSourceConvertor::g_execField].as<QString>();
-
-                    if(command_fields[IDataSourceConvertor::g_restartField])
-                        command.restart = command_fields[IDataSourceConvertor::g_restartField].as<bool>();
-                    commands[command.id] = command;
-                }
+            const auto& commands = IDataSourceConvertor::getCommands(source_fields[IDataSourceConvertor::g_commandsField].as<QVariantMap>());
+            if (!commands) {
+                throw std::runtime_error(commands.result().detailed_error_message());
+                return false;
             }
-            data_source.commands = commands;
+
+            if (commands.value().size() == 0)
+                throw std::invalid_argument
+                {
+                    QString("%1 data source don't have commands").
+                            arg(data_source.id).toStdString()
+                };
+
+            data_source.commands = commands.value();
             rhs[data_source.id] = data_source;
         }
         return true;

@@ -31,7 +31,6 @@ using namespace daggyconv;
 
 const QMap<const char*, QVariant::Type> IDataSourceConvertor::required_source_field =
 {
-    {IDataSourceConvertor::g_hostField, QVariant::String},
     {IDataSourceConvertor::g_typeField, QVariant::String},
     {IDataSourceConvertor::g_commandsField, QVariant::Map}
 };
@@ -47,4 +46,46 @@ IDataSourceConvertor::IDataSourceConvertor(QString type_arg, QObject* parent)
     , type(std::move(type_arg))
 {
     
+}
+
+daggycore::OptionalResult<Commands> IDataSourceConvertor::getCommands(const QVariantMap& commands_map)
+{
+    Commands commands;
+    for (const QString& command_id : commands_map.keys()) {
+        if (commands_map[command_id].type() != QVariant::Map)
+            return
+            {
+                daggycore::DaggyErrors::ConvertError,
+                QString("%1 command is not a map").arg(command_id).toStdString()
+            };
+        const QVariantMap& command_map = commands_map[command_id].toMap();
+        for (const char* field : required_commands_field.keys()) {
+            if (!command_map.contains(field)) {
+                return
+                {
+                    daggycore::DaggyErrors::ConvertError,
+                    QString("%1 command don't have required %2 field").arg(command_id, field).toStdString()
+                };
+            }
+            if (command_map[field].type() != required_commands_field.value(field))
+            {
+                return
+                {
+                    daggycore::DaggyErrors::ConvertError,
+                    QString("%1 command have incorrect type for %2 field").arg(command_id, field).toStdString()
+                };
+            }
+        }
+        Command command;
+        command.id = command_id;
+        command.exec = command_map[g_execField].toString();
+        command.extension = command_map[g_extensionField].toString();
+        if (command_map.contains(g_restartField) &&
+            command_map[g_restartField].type() == QVariant::Bool)
+        {
+            command.restart = command_map[g_restartField].value<bool>();
+        }
+        commands[command.id] = command;
+    }
+    return commands;
 }
