@@ -1,0 +1,9 @@
+Syn-ack, user!
+
+This is installation of Daggy - Data Aggregation Utility.
+If you need server-less, cross-platform, free and open source
+solution for data aggregation and data streamining - 
+continue this installtion!
+
+You will get Daggy console application and Daggy devel library
+with C++ interface for data aggregation and data streamining. 
