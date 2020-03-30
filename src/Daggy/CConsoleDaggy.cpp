@@ -138,7 +138,7 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
                                                    0
                                                    );
     const QCommandLineOption input_from_stdin_option({"i", "stdin"},
-                                                     "Read data sources from stdin");
+                                                     "Read data aggregation sources from stdin");
 
     QCommandLineParser command_line_parser;
     command_line_parser.addOption(output_folder_option);
@@ -147,7 +147,7 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     command_line_parser.addOption(auto_complete_timeout);
     command_line_parser.addHelpOption();
     command_line_parser.addVersionOption();
-    command_line_parser.addPositionalArgument("file", "Data source file", "*.yaml|*.yml|*.json");
+    command_line_parser.addPositionalArgument("file", "data aggregation sources file", "*.yaml|*.yml|*.json");
 
     command_line_parser.process(*qApp);
 
