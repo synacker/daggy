@@ -1,5 +1,5 @@
 ---
-description: Getting started data aggregation with daggy
+description: Getting started data aggregation and streaming with daggy
 ---
 
 # Getting Started
