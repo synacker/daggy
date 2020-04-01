@@ -48,6 +48,8 @@ public:
 
     const QString type;
 
+    static daggycore::OptionalResult<daggycore::Commands> getCommands(const QVariantMap& commands_map);
+
     constexpr static const char* g_sourcesField = "sources";
 
     constexpr static const char* g_hostField = "host";
