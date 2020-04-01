@@ -1,5 +1,5 @@
 Serverless remote or local data aggreagation and 
-data streamining.
+streamining.
 
 Daggy main goals are simplicity and ease-of-use. 
 
