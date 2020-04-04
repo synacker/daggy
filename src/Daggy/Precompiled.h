@@ -12,8 +12,12 @@
 #include <QTimer>
 #include <QDir>
 
+#include <QProcessEnvironment>
+
 #include <iostream>
 #include <set>
+
+#include <kainjow/mustache.hpp>
 
 #ifdef Q_OS_WIN
 #include <windows.h>

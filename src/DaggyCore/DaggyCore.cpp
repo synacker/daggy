@@ -40,7 +40,7 @@ DaggyCore::DaggyCore(DataSources data_sources,
 }
 
 DaggyCore::DaggyCore(QObject* parent)
-    : QObject(parent)
+    : DaggyCore({}, parent)
 {
 
 }
@@ -129,6 +129,7 @@ void DaggyCore::stop()
     if (state_ != Started) {
         return;
     }
+
     const auto data_providers = getProviders();
     if (data_providers.empty() || activeDataProvidersCount() == 0) {
         setState(Finished);

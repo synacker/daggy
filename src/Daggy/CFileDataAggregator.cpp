@@ -48,25 +48,21 @@ CFileDataAggregator::~CFileDataAggregator()
 
 daggycore::Result CFileDataAggregator::prepare()
 {
-    if (output_folder_.isEmpty())
-        current_folder_ = generateOutputFolder(data_sources_name_);
-    else
-        current_folder_ = output_folder_;
-    auto aggregation_dir = QDir(current_folder_);
-    if (!aggregation_dir.exists() && !QDir().mkdir(current_folder_))
+    auto aggregation_dir = QDir(output_folder_);
+    if (!aggregation_dir.exists() && !QDir().mkdir(output_folder_))
         return
         {
             daggycore::DaggyErrors::CannotPrepareAggregator
         };
 
-    printAppMessage(QString("Start aggregation in %1").arg(current_folder_));
+    printAppMessage(QString("Start aggregation in %1").arg(output_folder_));
     return daggycore::Result::success;
 }
 
 daggycore::Result CFileDataAggregator::free()
 {
     stream_files_.clear();
-    printAppMessage(QString("Stop aggregation in %1").arg(current_folder_));
+    printAppMessage(QString("Stop aggregation in %1").arg(output_folder_));
     return daggycore::Result::success;
 }
 
@@ -205,12 +201,6 @@ QString CFileDataAggregator::currentConsoleTime() const
     return QDateTime::currentDateTime().toString("hh:mm:ss:zzz");
 }
 
-QString CFileDataAggregator::generateOutputFolder(const QString& data_sources_name) const
-{
-    const QString current_date = QDateTime::currentDateTime().toString("dd-MM-yy_hh-mm-ss-zzz");
-    return current_date + "_" + data_sources_name;
-}
-
 bool CFileDataAggregator::writeToFile(const QString& provider_id,
     const QString& command_id,
     const daggycore::Command::Stream& stream)
@@ -218,7 +208,7 @@ bool CFileDataAggregator::writeToFile(const QString& provider_id,
     const QString file_name = QString("%1-%2.%3").arg(provider_id, command_id, stream.extension);
     QFile* file = nullptr;
     if (!stream_files_.contains(file_name)) {
-        file = new QFile(QString("%1/%2").arg(current_folder_, file_name));
+        file = new QFile(QString("%1/%2").arg(output_folder_, file_name));
         if (file->open(QIODevice::Append)) {
             stream_files_.insert(file_name, std::shared_ptr<QFile>(file));
         } else

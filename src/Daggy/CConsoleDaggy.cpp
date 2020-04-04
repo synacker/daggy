@@ -39,10 +39,11 @@ using namespace daggyconv;
 CConsoleDaggy::CConsoleDaggy(QObject* parent)
     : QObject(parent)
     , daggy_core_(new daggycore::DaggyCore(this))
+    , need_hard_stop_(false)
 {
     qApp->setApplicationVersion(VERSION_STR);
     qApp->setApplicationName("daggy");
-    connect(this, &CConsoleDaggy::interrupt, daggy_core_, &DaggyCore::stop, Qt::QueuedConnection);
+    connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
     connect(daggy_core_, &DaggyCore::stateChanged, this, [](DaggyCore::State state){
         if (state == DaggyCore::Finished)
             qApp->exit();
@@ -77,7 +78,13 @@ Result CConsoleDaggy::start()
 
 void CConsoleDaggy::stop()
 {
-    daggy_core_->stop();
+    if (need_hard_stop_) {
+        qWarning() << "HARD STOP";
+        qApp->exit();
+    } else {
+        daggy_core_->stop();
+        need_hard_stop_ = true;
+    }
 }
 
 bool CConsoleDaggy::handleSystemSignal(const int signal)
@@ -190,6 +197,10 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
         result.timeout = command_line_parser.value(auto_complete_timeout).toUInt();
     }
 
+    if (result.output_folder.isEmpty())
+        result.output_folder = generateOutputFolder(result.data_sources_name);
+    result.data_source_text = mustache(result.data_source_text, result.output_folder);
+
     return result;
 }
 
@@ -228,6 +239,26 @@ QString CConsoleDaggy::getTextFromFile(QString file_path) const
 QString CConsoleDaggy::homeFolder() const
 {
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+}
+
+QString CConsoleDaggy::generateOutputFolder(const QString& data_sources_name) const
+{
+    const QString current_date = QDateTime::currentDateTime().toString("dd-MM-yy_hh-mm-ss-zzz");
+    return current_date + "_" + data_sources_name;
+}
+
+QString CConsoleDaggy::mustache(const QString& text, const QString& output_folder) const
+{
+    QProcessEnvironment process_environment = QProcessEnvironment::systemEnvironment();
+    kainjow::mustache::mustache tmpl(qUtf8Printable(text));
+    kainjow::mustache::data variables;
+    for (const auto& key : process_environment.keys()) {
+        variables.set(qPrintable(QString("env_%1").arg(key)),
+                      qUtf8Printable(process_environment.value(key)));
+    }
+    variables.set("output_folder", qUtf8Printable(output_folder));
+    std::cout << tmpl.render(variables) << std::endl;
+    return QString::fromStdString(tmpl.render(variables));
 }
 
 void CConsoleDaggy::onDaggyCoreStateChanged(int state)

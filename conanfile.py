@@ -52,6 +52,7 @@ class DaggyConan(ConanFile):
 
     def requirements(self):
         self.requires("qt/[>=5.14.1]@bincrafters/stable")
+        self.requires("kainjow-mustache/[>=3.2.1]@bincrafters/stable")
 
         if self.options.yaml_support:
             self.requires("yaml-cpp/[>=0.6.3]")
