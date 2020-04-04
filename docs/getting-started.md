@@ -152,7 +152,7 @@ tail -f 01-04-20_23-07-23-977_simple/*
 #### Stop data aggregation and streaming
 
 {% hint style="info" %}
-Type CTRL+C for stopping data aggregation and streaming
+Type _CTRL+C_ for stopping data aggregation and streaming. Type CTRL+C twice for hard stop application, without waiting cancelation of child local and remote processes. 
 {% endhint %}
 
 ```text
@@ -199,17 +199,17 @@ sources:
     remotehost:
         host: 192.168.1.9
         type: ssh2
-        connection: *ssh_auth
+        parameters: *ssh_auth
         commands: *my_commands
     remotehost2:
         host: 192.168.1.9
         type: ssh2
-        connection: *ssh_auth
+        parameters: *ssh_auth
         commands: *my_commands
     remotehost3:
         host: 192.168.1.9
         type: ssh2
-        connection: *ssh_auth
+        parameters: *ssh_auth
         commands: *my_commands
 ```
 {% endcode %}
@@ -221,7 +221,7 @@ sources:
 {
     "sources": {
       "remotehost3": {
-        "connection": {
+        "parameters": {
           "user": "muxa", 
           "key": "/home/muxa/.ssh/id_rsa"
         }, 
@@ -239,7 +239,7 @@ sources:
         "host": "192.168.1.9"
       }, 
       "remotehost2": {
-        "connection": {
+        "parameters": {
           "user": "muxa", 
           "key": "/home/muxa/.ssh/id_rsa"
         }, 
@@ -257,7 +257,7 @@ sources:
         "host": "192.168.1.9"
       }, 
       "remotehost": {
-        "connection": {
+        "parameters": {
           "user": "muxa", 
           "key": "/home/muxa/.ssh/id_rsa"
         }, 

@@ -72,20 +72,19 @@ Each config conatins map of hosts. Host \(data source\) parameters is next:
       <td style="text-align:left">Yes</td>
     </tr>
     <tr>
-      <td style="text-align:center"><b>connection</b>
+      <td style="text-align:center"><b>parameters</b>
       </td>
       <td style="text-align:center">map</td>
       <td style="text-align:left">Connection parameters</td>
-      <td style="text-align:left">Required for ssh2 <b>type</b>
+      <td style="text-align:left">Required for <b>ssh2</b>  <b>type</b>
       </td>
     </tr>
     <tr>
       <td style="text-align:center"><b>host</b>
       </td>
       <td style="text-align:center">string</td>
-      <td style="text-align:left">Host address (ip or url)</td>
-      <td style="text-align:left">Required for ssh2 <b>type</b>
-      </td>
+      <td style="text-align:left">Host address</td>
+      <td style="text-align:left">No. For <b>ssh2</b> is 127.0.0.1 by default</td>
     </tr>
     <tr>
       <td style="text-align:center"><b>reconnect</b>
@@ -222,6 +221,132 @@ Each command must contain:
 * **exec** - shell script
 * **extension** - extension for **command output file**
 * **restart** - restart command if it finished
+
+## Using environment and other variables in **Data Aggregation Sources**
+
+### Mustache syntax
+
+YAML/JSON **Data Aggregation Sources** are support [mustache syntax](https://mustache.github.io/):
+
+* _env\_\*_ - template for environment variable, where \* is environment variable name.
+* _output\_folder_ - output folder path
+
+### Example of **using** mustache syntax in **Data Aggregation Sources**
+
+{% tabs %}
+{% tab title="YAML" %}
+```yaml
+aliases:  
+    - &my_commands
+        pingYa:
+            exec: ping ya.ru
+            extension: log
+        pingGoo:
+            exec: ping goo.gl
+            extension: log
+        
+    - &ssh_auth
+        user: {{env_USER}}
+        passphrase: {{env_PASSWORD}}
+            
+sources:
+    localhost:
+        type: local
+        commands: *my_commands
+    remotehost:
+        host: 192.168.1.9
+        type: ssh2
+        parameters: *ssh_auth
+        commands: *my_commands
+    remotehost2:
+        host: 192.168.1.9
+        type: ssh2
+        parameters: *ssh_auth
+        commands: *my_commands
+    remotehost3:
+        host: 192.168.1.9
+        type: ssh2
+        parameters: *ssh_auth
+        commands: *my_commands
+```
+{% endtab %}
+
+{% tab title="JSON" %}
+```javascript
+{
+  "sources": {
+    "remotehost3": {
+      "host": "192.168.1.9", 
+      "type": "ssh2", 
+      "commands": {
+        "pingYa": {
+          "extension": "log", 
+          "exec": "ping ya.ru"
+        }, 
+        "pingGoo": {
+          "extension": "log", 
+          "exec": "ping goo.gl"
+        }
+      }, 
+      "parameters": {
+        "user": "{{env_USER}}", 
+        "passphrase": "{{env_PASSWORD}}"
+      }
+    }, 
+    "remotehost2": {
+      "host": "192.168.1.9", 
+      "type": "ssh2", 
+      "commands": {
+        "pingYa": {
+          "extension": "log", 
+          "exec": "ping ya.ru"
+        }, 
+        "pingGoo": {
+          "extension": "log", 
+          "exec": "ping goo.gl"
+        }
+      }, 
+      "parameters": {
+        "user": "{{env_USER}}", 
+        "passphrase": "{{env_PASSWORD}}"
+      }
+    }, 
+    "remotehost": {
+      "host": "192.168.1.9", 
+      "type": "ssh2", 
+      "commands": {
+        "pingYa": {
+          "extension": "log", 
+          "exec": "ping ya.ru"
+        }, 
+        "pingGoo": {
+          "extension": "log", 
+          "exec": "ping goo.gl"
+        }
+      }, 
+      "parameters": {
+        "user": "{{env_USER}}", 
+        "passphrase": "{{env_PASSWORD}}"
+      }
+    }, 
+    "localhost": {
+      "commands": {
+        "pingYa": {
+          "extension": "log", 
+          "exec": "ping ya.ru"
+        }, 
+        "pingGoo": {
+          "extension": "log", 
+          "exec": "ping goo.gl"
+        }
+      }, 
+      "type": "local"
+    }
+  }
+}
+```
+{% endtab %}
+{% endtabs %}
 
   
 
