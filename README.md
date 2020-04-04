@@ -25,51 +25,38 @@ daggy simple.yaml
 ```
 *simple.yaml:*
 ```yaml
-aliases:
-  - &pingYa
-    pingYa:
-        exec: ping ya.ru
-        extension: log
-
-  - &pingGoo
-    pingGoo:
-        exec: ping goo.gl
-        extension: log
-
-  - &my_commands
-    - *pingYa
-    - *pingGoo
-
-  - &ssh_auth
-    user: muxa
-    key: /home/muxa/.ssh/id_rsa
-
+aliases:  
+    - &my_commands
+        pingYa:
+            exec: ping ya.ru
+            extension: log
+        pingGoo:
+            exec: ping goo.gl
+            extension: log
+        
+    - &ssh_auth
+        user: {{env_USER}}
+        passphrase: {{env_PASSWORD}}
+            
 sources:
-  localhost:
-    type: local
-    commands:
-      *my_commands
-  remotehost:
-    host: 192.168.1.9
-    type: ssh2
-    parameters:
-      *ssh_auth
-    commands:
-      *my_commands
-  remotehost2:
-    host: 192.168.1.9
-    type: ssh2
-    parameters:
-      *ssh_auth
-    commands:
-      *my_commands
-  remotehost3:
-    host: 192.168.1.9
-    type: ssh2
-    parameters:
-      *ssh_auth
-    commands:
-      *my_commands
+    localhost:
+        type: local
+        commands: *my_commands
+    remotehost:
+        host: 192.168.1.9
+        type: ssh2
+        parameters: *ssh_auth
+        commands: *my_commands
+    remotehost2:
+        host: 192.168.1.9
+        type: ssh2
+        parameters: *ssh_auth
+        commands: *my_commands
+    remotehost3:
+        host: 192.168.1.9
+        type: ssh2
+        parameters: *ssh_auth
+        commands: *my_commands
 ```
 
 
