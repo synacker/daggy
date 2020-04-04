@@ -385,15 +385,16 @@ Ssh2Client::Ssh2AuthMethods Ssh2Client::getAuthenticationMethod(const QList<Ssh2
     Ssh2AuthMethods result = Ssh2AuthMethods::NoAuth;
     if (available_auth_methods.isEmpty())
         result = Ssh2AuthMethods::NoAuth;
-    else if(available_auth_methods.contains(Ssh2AuthMethods::PublicKeyAuthentication) &&
-            !ssh2_settings_.key.isNull())
-    {
-        result = Ssh2AuthMethods::PublicKeyAuthentication;
-    } else if(available_auth_methods.contains(Ssh2AuthMethods::PasswordAuthentication) &&
+    else if(available_auth_methods.contains(Ssh2AuthMethods::PasswordAuthentication) &&
               !ssh2_settings_.passphrase.isNull())
     {
         result = Ssh2AuthMethods::PasswordAuthentication;
+    } else if(available_auth_methods.contains(Ssh2AuthMethods::PublicKeyAuthentication) &&
+                    !ssh2_settings_.key.isNull())
+    {
+        result = Ssh2AuthMethods::PublicKeyAuthentication;
     }
+
     return result;
 }
 
