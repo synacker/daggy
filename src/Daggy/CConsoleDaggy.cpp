@@ -39,10 +39,11 @@ using namespace daggyconv;
 CConsoleDaggy::CConsoleDaggy(QObject* parent)
     : QObject(parent)
     , daggy_core_(new daggycore::DaggyCore(this))
+    , need_hard_stop_(false)
 {
     qApp->setApplicationVersion(VERSION_STR);
     qApp->setApplicationName("daggy");
-    connect(this, &CConsoleDaggy::interrupt, daggy_core_, &DaggyCore::stop, Qt::QueuedConnection);
+    connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
     connect(daggy_core_, &DaggyCore::stateChanged, this, [](DaggyCore::State state){
         if (state == DaggyCore::Finished)
             qApp->exit();
@@ -77,7 +78,13 @@ Result CConsoleDaggy::start()
 
 void CConsoleDaggy::stop()
 {
-    daggy_core_->stop();
+    if (need_hard_stop_) {
+        qWarning() << "HARD STOP";
+        qApp->exit();
+    } else {
+        daggy_core_->stop();
+        need_hard_stop_ = true;
+    }
 }
 
 bool CConsoleDaggy::handleSystemSignal(const int signal)
