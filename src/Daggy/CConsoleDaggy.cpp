@@ -190,6 +190,8 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
         result.timeout = command_line_parser.value(auto_complete_timeout).toUInt();
     }
 
+    if (result.output_folder.isEmpty())
+        result.output_folder = generateOutputFolder(result.data_sources_name);
     result.data_source_text = mustache(result.data_source_text, result.output_folder);
 
     return result;
@@ -230,6 +232,12 @@ QString CConsoleDaggy::getTextFromFile(QString file_path) const
 QString CConsoleDaggy::homeFolder() const
 {
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+}
+
+QString CConsoleDaggy::generateOutputFolder(const QString& data_sources_name) const
+{
+    const QString current_date = QDateTime::currentDateTime().toString("dd-MM-yy_hh-mm-ss-zzz");
+    return current_date + "_" + data_sources_name;
 }
 
 QString CConsoleDaggy::mustache(const QString& text, const QString& output_folder) const

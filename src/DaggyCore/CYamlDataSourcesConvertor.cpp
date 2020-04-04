@@ -200,6 +200,13 @@ OptionalResult<DataSources> CYamlDataSourcesConvertor::convert(const QString& ya
             DaggyErrors::ConvertError,
             QString("Yaml have syntax error: %1").arg(exception.what()).toStdString()
         };
+    } catch (const std::exception& exception) {
+        return Result
+        {
+            DaggyErrors::ConvertError,
+            QString("Yaml error: %1").arg(exception.what()).toStdString()
+        };
     }
+
     return data_sources;
 }

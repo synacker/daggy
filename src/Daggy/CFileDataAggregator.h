@@ -83,8 +83,6 @@ protected:
     QString currentConsoleTime() const;
 
 private:
-    QString generateOutputFolder(const QString& data_sources_name) const;
-
     bool writeToFile
     (
         const QString& provider_id,
@@ -97,8 +95,6 @@ private:
     const QMetaEnum console_message_type_;
     const QMetaEnum provider_state_;
     const QMetaEnum command_state_;
-
-    QString current_folder_;
 
     QMap<QString, std::shared_ptr<QFile>> stream_files_;
 };

@@ -64,7 +64,12 @@ OptionalResult<IDataProvider*> CSsh2DataProviderFabric::createDataProvider(const
 {
     const auto parameters = convertParameters(data_source.parameters);
     if (!parameters) {
-        return {DaggyErrors::WrongSourceParameter};
+        return {DaggyErrors::WrongSourceParameter,
+                QString("%1 source has syntax error. %2").
+                arg(data_source.id).
+                arg(QString::fromStdString(parameters.result().detailed_error_message())).
+                toStdString()
+                };
     }
     QHostAddress host;
     if (data_source.host.isEmpty())
@@ -87,7 +92,7 @@ OptionalResult<Ssh2Settings> CSsh2DataProviderFabric::convertParameters(const QV
             return Result
             {
                 DaggyErrors::ConvertError,
-                "Invalid parameters type"
+                QString("Parameters field '%1' has invalid type").arg(field.first).toStdString()
             };
     }
 
