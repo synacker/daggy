@@ -190,6 +190,8 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
         result.timeout = command_line_parser.value(auto_complete_timeout).toUInt();
     }
 
+    result.data_source_text = mustache(result.data_source_text, result.output_folder);
+
     return result;
 }
 
@@ -228,6 +230,20 @@ QString CConsoleDaggy::getTextFromFile(QString file_path) const
 QString CConsoleDaggy::homeFolder() const
 {
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+}
+
+QString CConsoleDaggy::mustache(const QString& text, const QString& output_folder) const
+{
+    QProcessEnvironment process_environment = QProcessEnvironment::systemEnvironment();
+    kainjow::mustache::mustache tmpl(qUtf8Printable(text));
+    kainjow::mustache::data variables;
+    for (const auto& key : process_environment.keys()) {
+        variables.set(qPrintable(QString("env_%1").arg(key)),
+                      qUtf8Printable(process_environment.value(key)));
+    }
+    variables.set("output_folder", qUtf8Printable(output_folder));
+    std::cout << tmpl.render(variables) << std::endl;
+    return QString::fromStdString(tmpl.render(variables));
 }
 
 void CConsoleDaggy::onDaggyCoreStateChanged(int state)

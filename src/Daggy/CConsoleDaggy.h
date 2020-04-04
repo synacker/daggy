@@ -76,6 +76,8 @@ private:
     QString getTextFromFile(QString file_path) const;
     QString homeFolder() const;
 
+    QString mustache(const QString& text, const QString& output_folder) const;
+
     daggycore::DaggyCore* daggy_core_;
 
     QString error_message_;
