@@ -257,7 +257,6 @@ QString CConsoleDaggy::mustache(const QString& text, const QString& output_folde
                       qUtf8Printable(process_environment.value(key)));
     }
     variables.set("output_folder", qUtf8Printable(output_folder));
-    std::cout << tmpl.render(variables) << std::endl;
     return QString::fromStdString(tmpl.render(variables));
 }
 

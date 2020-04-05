@@ -15,6 +15,7 @@
 #include <QProcessEnvironment>
 
 #include <iostream>
+#include <ostream>
 #include <set>
 
 #include <kainjow/mustache.hpp>
