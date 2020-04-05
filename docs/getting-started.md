@@ -6,9 +6,21 @@ description: Getting started data aggregation and streaming with daggy
 
 ## Getting Daggy
 
-### Windows/MacOS
+### Windows
 
-Download installation package \(exe/dmg\) from last [release](https://github.com/synacker/daggy/releases/tag/2.0.0) page and install it
+Download installation package \(exe\) from last [release](https://github.com/synacker/daggy/releases/tag/2.0.0) page and install it
+
+### MacOS
+
+```bash
+brew install https://git.io/fj9PX
+```
+
+### Fedora 30/31/32
+
+```bash
+sudo dnf install daggy daggy-devel
+```
 
 ### Linux
 
@@ -17,12 +29,6 @@ Download rpm/deb package from last [release](https://github.com/synacker/daggy/r
 {% hint style="info" %}
 All daggy dependencies \(Qt5, libssh2, libyaml-cpp\) are included into separate dir and does not effect system applications.
 {% endhint %}
-
-### Fedora 29/30/31
-
-```bash
-sudo dnf install daggy daggy-devel
-```
 
 ### Build from source
 
