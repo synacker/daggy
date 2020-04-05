@@ -1,3 +1,5 @@
+include(GNUInstallDirs)
+
 set(CMAKE_CXX_STANDARD 17)
 
 set(INCLUDE_INSTALL_DIR include)
