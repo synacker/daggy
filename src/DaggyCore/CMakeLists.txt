@@ -97,9 +97,6 @@ else()
 endif()
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
-set_target_properties(${TARGET} PROPERTIES
-                                PUBLIC_HEADER "${INCLUDE_PUBLIC_HEADERS}")
-
 include(precompiled)
 include(GenerateExportHeader)
 generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/daggycore_export.h)
@@ -119,6 +116,4 @@ else()
     endif()
 endif()
 
-message("INSTALL DIR ${CMAKE_INSTALL_LIBDIR}")
-
-install(TARGETS ${TARGET} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET} COMPONENT devel)
+install(FILES ${INCLUDE_PUBLIC_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET} COMPONENT devel)

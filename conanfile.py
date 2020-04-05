@@ -67,6 +67,12 @@ class DaggyConan(ConanFile):
         self.options["yaml-cpp"].shared = True
         self.options["libssh2"].shared = True
 
+    def _libdir(self):
+        result = "lib"
+        if self.settings.arch == "x86_64":
+            result = "lib64"
+        return result
+
     def _configure(self):
         cmake = CMake(self)
         cmake.definitions["SSH2_SUPPORT"] = self.options.ssh2_support
@@ -75,6 +81,7 @@ class DaggyConan(ConanFile):
         cmake.definitions["DAGGY_CORE_STATIC"] = self.options.daggy_core_static
         cmake.definitions["VERSION"] = self.version
         cmake.definitions["PACKAGE_DEPS"] = self.options.package_deps
+        cmake.definitions["CMAKE_INSTALL_LIBDIR"] = self._libdir()
         cmake.configure()
         return cmake
 
@@ -88,6 +95,7 @@ class DaggyConan(ConanFile):
 
     def package_info(self):
         self.cpp_info.libs = ["DaggyCore"]
+        self.cpp_info.libdirs = [self._libdir()]
 
     def imports(self):
         if self.options.package_deps:
@@ -95,4 +103,4 @@ class DaggyConan(ConanFile):
                 self.copy("*.dll", src="@bindirs", dst="bin")
                 self.copy("*.dll", src="@libdirs", dst="bin")
             else:
-                self.copy("*.so.*", src="@libdirs", dst="lib/daggy_deps")
+                self.copy("*.so.*", src="@libdirs", dst="{}/daggy_deps".format(self._libdir()))
