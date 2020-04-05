@@ -36,4 +36,4 @@ add_executable(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET} DaggyCore)
 include(precompiled)
 
-install(TARGETS ${TARGET} DESTINATION bin)
+install(TARGETS ${TARGET} RUNTIME)

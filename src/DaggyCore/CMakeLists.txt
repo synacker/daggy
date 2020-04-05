@@ -23,7 +23,7 @@ set(YAML_PUBLIC
     CYamlDataSourcesConvertor.h
 )
 
-set(INCLUDE_HEADERS
+set(INCLUDE_PUBLIC_HEADERS
     CJsonDataSourcesConvertor.h
     CYamlDataSourcesConvertor.h
     CLocalDataProvider.h
@@ -97,6 +97,8 @@ else()
 endif()
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
+set_target_properties(${TARGET} PROPERTIES
+                                PUBLIC_HEADER "${INCLUDE_PUBLIC_HEADERS}")
 
 include(precompiled)
 include(GenerateExportHeader)
@@ -104,16 +106,17 @@ generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/da
 
 if(UNIX)
     if (DAGGY_CORE_STATIC)
-        install(TARGETS ${TARGET} DESTINATION lib COMPONENT devel)
+        install(TARGETS ${TARGET} LIBRARY COMPONENT devel)
     else()
-        install(TARGETS ${TARGET} DESTINATION lib)
+        install(TARGETS ${TARGET} LIBRARY COMPONENT application)
+        install(TARGETS ${TARGET} LIBRARY COMPONENT devel)
     endif()
 else()
-    install(FILES ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${TARGET}.lib DESTINATION lib COMPONENT devel)
+    install(TARGETS ${TARGET} ARCHIVE COMPONENT devel)
     if (NOT DAGGY_CORE_STATIC)
-        install(FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET}.dll DESTINATION bin COMPONENT application)
-        install(FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET}.dll DESTINATION bin COMPONENT devel)
+        install(TARGETS ${TARGET} RUNTIME COMPONENT application)
+        install(TARGETS ${TARGET} RUNTIME COMPONENT devel)
     endif()
 endif()
 
-install(FILES ${INCLUDE_HEADERS} DESTINATION ${INCLUDE_INSTALL_DIR}/${TARGET} COMPONENT devel)
+install(TARGETS ${TARGET} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET} COMPONENT devel)
