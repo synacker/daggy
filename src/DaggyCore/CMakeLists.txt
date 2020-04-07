@@ -101,9 +101,9 @@ include(precompiled)
 include(GenerateExportHeader)
 generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/daggycore_export.h)
 
-if(PACKACGE_DEPS)
+if(PACKAGE_DEPS)
     if(UNIX)
-        set(CMAKE_INSTALL_RPATH "$ORIGIN/daggy_deps;")
+        set(CMAKE_INSTALL_RPATH "$ORIGIN/daggy;")
     endif()
 endif()
 

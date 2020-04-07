@@ -26,7 +26,7 @@ from conans import ConanFile, CMake
 from git_version import GitVersion
 
 class DaggyConan(ConanFile):
-    name = "Daggy"
+    name = "daggy"
     version = GitVersion().full_version()
     license = "MIT"
     url = "https://daggy.dev"
@@ -103,4 +103,4 @@ class DaggyConan(ConanFile):
                 self.copy("*.dll", src="@bindirs", dst="bin")
                 self.copy("*.dll", src="@libdirs", dst="bin")
             else:
-                self.copy("*.so.*", src="@libdirs", dst="{}/daggy_deps".format(self._libdir()))
+                self.copy("*.so.*", src="@libdirs", dst="{}/{}".format(self._libdir(), self.name))
