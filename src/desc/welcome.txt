@@ -2,7 +2,7 @@ Syn-ack, user!
 
 This is installation of Daggy - Data Aggregation Utility.
 If you need server-less, cross-platform, free and open source
-solution for data aggregation and streamining - 
+solution for data aggregation and streaming - 
 continue this installtion!
 
 You will get Daggy console application and Daggy devel library

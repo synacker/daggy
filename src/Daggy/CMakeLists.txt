@@ -4,6 +4,11 @@ find_package(Qt5 COMPONENTS Core REQUIRED)
 
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
 
+if(UNIX)
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR};")
+endif()
+
+
 set(SOURCES ${SOURCES}
     main.cpp
     CFileDataAggregator.cpp
