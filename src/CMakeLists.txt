@@ -9,7 +9,7 @@ option(YAML_SUPPORT "yaml data sources support" ON)
 option(DAGGY_CONSOLE "daggy console application" ON)
 option(DAGGY_CORE_STATIC "static daggy core lib" OFF)
 option(CONAN_BUILD "build with conan" OFF)
-option(PACKACGE_DEPS "include daggy deps into package" ON)
+option(PACKACGE_DEPS "include daggy deps into package" OFF)
 
 set(COMPANY_NAME "synacker")
 set(APP_COPYRIGTH "Copyright \\251 2020 Mikhail Milovidov. Some Rights Reserved")
