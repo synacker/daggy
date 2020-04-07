@@ -6,13 +6,13 @@
   <b>Daggy - Data Aggregation Utility</b>
 </p>
 
-**Daggy - Data Aggregation Utility**. Serverless remote or local data aggreagation and streamining.
+**Daggy - Data Aggregation Utility**. Server-less remote or local data aggregation and streaming.
 
 **Daggy** main goals are simplicity and ease-of-use.
 
-**Daggy** is serverless, cross-platform solution and don't require installation on remote servers. Aggregation and streaming work under SSH transport protocol or via local processes execution.
+**Daggy** is server-less, cross-platform solution and don't require installation on remote servers. Aggregation and streaming work under SSH transport protocol or via local processes execution.
 
-**Daggy** can be helpful for developers, QA, DevOps and engenieers for debug, analyze and control distributed network systems, for example, based on microservice architecture.
+**Daggy** can be helpful for developers, QA, DevOps and engineers for debug, analyze and control distributed network systems, for example, based on micro-service architecture.
 
 [Getting Started](https://docs.daggy.dev/getting-started)
 

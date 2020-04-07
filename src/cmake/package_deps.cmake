@@ -8,8 +8,8 @@ if(WIN32)
         COMPONENT deps
     )
 else()
-    install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/daggy_deps/
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/daggy_deps
+    install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/daggy/
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/daggy
             COMPONENT deps
             FILES_MATCHING 
             PATTERN libQt5Network.so*
