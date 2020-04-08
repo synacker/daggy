@@ -22,7 +22,7 @@ entireNetwork:
 
 ```yaml
 journaldLog:
-    command: journalctl -f
+    exec: journalctl -f
     extension: log
 ```
 
