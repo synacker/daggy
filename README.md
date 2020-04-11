@@ -20,7 +20,7 @@
 
 ### Windows
 
-Download installation package \(exe\) from last [release](https://github.com/synacker/daggy/releases/tag/2.0.1) page and install it
+Download installation package (.exe) or portable (.zip) from last [release](https://github.com/synacker/daggy/releases/) page and install it
 
 ### MacOS
 
@@ -36,7 +36,7 @@ sudo dnf install daggy daggy-devel
 
 ### Linux
 
-Download rpm/deb package from last [release](https://github.com/synacker/daggy/releases/tag/2.0.1) page and install it
+Download .rpm/.deb or portable .zip package from last [release](https://github.com/synacker/daggy/releases/) page and install it
 
 _All daggy dependencies (Qt5, libssh2, libyaml-cpp) are included into separate dir and does not effect system applications._
 
@@ -162,7 +162,7 @@ aliases:
         
     - &ssh_auth
         user: {{env_USER}}
-        passphrase: {{end_PASSWORD}}
+        passphrase: {{env_PASSWORD}}
             
 sources:
     localhost:
