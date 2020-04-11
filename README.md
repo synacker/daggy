@@ -1,5 +1,3 @@
-[![synacker](https://circleci.com/gh/synacker/daggy.svg?style=svg)](https://circleci.com/gh/synacker/daggy)
-
 <p align="center">
   <img width="256" height="256" src="daggy_logo.svg">
   <br/>
