@@ -8,7 +8,7 @@ description: >-
 
 ## Short Description
 
-![Daggy - Data Aggregation Utility ](.gitbook/assets/daggy_logo.png)
+![Daggy - Data Aggregation Utility ](.gitbook/assets/daggy_logo%20%281%29.png)
 
 **Daggy - Data Aggregation Utility**. Server-less remote or local data aggregation and streaming.
 

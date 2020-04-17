@@ -13,7 +13,7 @@ Download installation package \(exe\) from last [release](https://github.com/syn
 ### MacOS
 
 ```bash
-brew install https://git.io/fj9PX
+brew install https://raw.githubusercontent.com/synacker/daggy_homebrew/master/daggy.rb
 ```
 
 ### Fedora 30/31/32

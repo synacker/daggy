@@ -26,5 +26,3 @@ journaldLog:
     extension: log
 ```
 
-
-
