@@ -172,6 +172,30 @@ void CLocalDataProvider::startCommands()
                 }
             );
         });
+
+        connect(process, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this,
+        [=]()
+        {
+            emit commandStream
+            (
+                process->objectName(),
+                {
+                    command.extension,
+                    process->readAllStandardError(),
+                    Command::Stream::Type::Error
+                }
+            );
+            emit commandStream
+            (
+                process->objectName(),
+                {
+                    command.extension,
+                    process->readAllStandardOutput(),
+                    Command::Stream::Type::Standard
+                }
+            );
+        });
+
         connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
             [=](int exit_code, QProcess::ExitStatus)
             {

@@ -79,3 +79,13 @@ QString daggyssh2::defaultKnownHosts()
 {
     return QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.ssh/known_hosts";
 }
+
+bool Ssh2Settings::isPasswordAuth() const
+{
+    return !passphrase.isEmpty();
+}
+
+bool Ssh2Settings::isKeyAuth() const
+{
+    return !isPasswordAuth();
+}

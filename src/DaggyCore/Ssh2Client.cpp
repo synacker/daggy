@@ -297,12 +297,14 @@ std::error_code Ssh2Client::createSsh2Objects()
     if (known_hosts_ == nullptr)
         return Ssh2Error::UnexpectedError;
 
-    const int ssh2_method_result = libssh2_knownhost_readfile(
-                known_hosts_,
-                qPrintable(ssh2_settings_.known_hosts),
-                LIBSSH2_KNOWNHOST_FILE_OPENSSH);
-    if (ssh2_method_result < 0)
-        return Ssh2Error::ErrorReadKnownHosts;
+    if (ssh2_settings_.isKeyAuth()) {
+        const int ssh2_method_result = libssh2_knownhost_readfile(
+                    known_hosts_,
+                    qPrintable(ssh2_settings_.known_hosts),
+                    LIBSSH2_KNOWNHOST_FILE_OPENSSH);
+        if (ssh2_method_result < 0)
+            return Ssh2Error::ErrorReadKnownHosts;
+    }
 
     libssh2_session_set_blocking(ssh2_session_, 0);
 
@@ -311,6 +313,8 @@ std::error_code Ssh2Client::createSsh2Objects()
 
 std::error_code Ssh2Client::checkKnownHosts() const
 {
+    if (ssh2_settings_.isPasswordAuth())
+        return ssh2_success;
     size_t length;
     int type;
     const char* fingerprint = libssh2_session_hostkey(ssh2_session_, &length, &type);
@@ -386,11 +390,11 @@ Ssh2Client::Ssh2AuthMethods Ssh2Client::getAuthenticationMethod(const QList<Ssh2
     if (available_auth_methods.isEmpty())
         result = Ssh2AuthMethods::NoAuth;
     else if(available_auth_methods.contains(Ssh2AuthMethods::PasswordAuthentication) &&
-              !ssh2_settings_.passphrase.isNull())
+            ssh2_settings_.isPasswordAuth())
     {
         result = Ssh2AuthMethods::PasswordAuthentication;
     } else if(available_auth_methods.contains(Ssh2AuthMethods::PublicKeyAuthentication) &&
-                    !ssh2_settings_.key.isNull())
+              ssh2_settings_.isKeyAuth())
     {
         result = Ssh2AuthMethods::PublicKeyAuthentication;
     }

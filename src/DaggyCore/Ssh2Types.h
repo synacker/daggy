@@ -53,10 +53,13 @@ struct Ssh2Settings {
     QString keyphrase;
     QString known_hosts = defaultKnownHosts();
     unsigned int timeout = 1000;
+
+    bool isPasswordAuth() const;
+    bool isKeyAuth() const;
 };
 
 enum Ssh2Error {
-    ErrorReadKnownHosts,
+    ErrorReadKnownHosts = 1,
     SessionStartupError,
     UnexpectedError,
     HostKeyInvalidError,
