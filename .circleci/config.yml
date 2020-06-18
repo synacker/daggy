@@ -16,7 +16,7 @@ jobs:
       - checkout:
           path: ~/daggy
       - restore_cache:
-          key: conan-data-cache-{{ arch }}
+          key: conan-data-{{ arch }}
       - run:
           name: Install or update conan
           command: pip3 install conan --upgrade
@@ -30,7 +30,7 @@ jobs:
           name: Conan build
           command: conan build ../daggy
       - save_cache:
-          key: conan-data-cache-{{ arch }}
+          key: conan-data-{{ arch }}
           paths:
             - ~/.conan/data
       - run: 
@@ -65,7 +65,7 @@ jobs:
       - checkout:
           path: ~/daggy
       - restore_cache:
-          key: conan-data-cache-{{ arch }}
+          key: conan-data-{{ arch }}
       - run:
           name: Install or update conan
           command: pip install conan --upgrade
@@ -79,7 +79,7 @@ jobs:
           name: Conan build
           command: conan build ../daggy
       - save_cache:
-          key: conan-data-cache-{{ arch }}
+          key: conan-data-{{ arch }}
           paths:
             - ~/.conan/data
       - run: 

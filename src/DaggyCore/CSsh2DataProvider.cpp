@@ -30,6 +30,17 @@ SOFTWARE.
 using namespace daggycore;
 using namespace daggyssh2;
 
+namespace  {
+constexpr const char* kill_command_global =
+          "pids=$(pstree -p $PPID | grep -oP \"\\d+\" | grep -v $PPID | grep -v $$ | tac);"
+          "for pid in $pids; do "
+          "while kill -0 $pid; do "
+          "kill -9 $pid;"
+          "sleep 0.1;"
+          "done "
+          "done ";
+}
+
 CSsh2DataProvider::CSsh2DataProvider(QHostAddress host,
                                      const Ssh2Settings& ssh2_settings,
                                      Commands commands,
@@ -67,7 +78,19 @@ void CSsh2DataProvider::start()
 
 void CSsh2DataProvider::stop()
 {
-    ssh2_client_->disconnectFromHost();
+    auto terminate_process = ssh2_client_->createProcess(kill_command_global);
+    connect(terminate_process, &Ssh2Process::processStateChanged,
+         [this](const Ssh2Process::ProcessStates state)
+    {
+      switch (state) {
+      case Ssh2Process::ProcessStates::Finished:
+      case Ssh2Process::ProcessStates::FailedToStart:
+           ssh2_client_->disconnectFromHost();
+           break;
+      default:;
+      }
+    });
+    terminate_process->open();
 }
 
 QString CSsh2DataProvider::type() const
