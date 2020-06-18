@@ -10,7 +10,7 @@ jobs:
       - image: synacker2/daggy_linux_gcc8_debian:2.0.0
         user: daggy
     environment:
-        CONAN_USER_HOME: ~/.conan
+        CONAN_USER_HOME: ~/
     working_directory: ~/build
     steps:
       - checkout:
@@ -49,7 +49,7 @@ jobs:
     executor: win/default
     working_directory: ~/build
     environment:
-        CONAN_USER_HOME: ~/.conan
+        CONAN_USER_HOME: ~/
     steps:
       - run:
           name: Install CMake

@@ -105,6 +105,7 @@ void Ssh2Channel::close()
         return;
     if (ssh2_channel_state_ == Opened) {
         emit aboutToClose();
+        libssh2_channel_send_eof(ssh2_channel_);
         std::error_code error_code = closeSession();
         setLastError(error_code);
     } else
