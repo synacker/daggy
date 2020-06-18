@@ -9,6 +9,8 @@ jobs:
     docker:
       - image: synacker2/daggy_linux_gcc8_debian:2.0.0
         user: daggy
+    environment:
+        CONAN_USER_HOME: ~/.conan
     working_directory: ~/build
     steps:
       - checkout:
@@ -46,6 +48,8 @@ jobs:
   msvs2019:
     executor: win/default
     working_directory: ~/build
+    environment:
+        CONAN_USER_HOME: ~/.conan
     steps:
       - run:
           name: Install CMake
