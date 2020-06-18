@@ -94,7 +94,9 @@ Each config conatins map of hosts. Host \(data source\) parameters is next:
       <td style="text-align:left">No</td>
     </tr>
   </tbody>
-</table>## Data Sources Types
+</table>
+
+## Data Sources Types
 
 **Daggy** supportes `local` and `ssh2` \(remote\) host connection types.
 
@@ -141,7 +143,7 @@ remotehost:
     type: ssh2
     host: 192.168.1.9
     restart: false
-    connection:
+    parameters:
       user: muxa
       key: /home/muxa/.ssh/id_rsa
     commands:
@@ -160,8 +162,8 @@ remotehost:
         "type": "ssh",
         "host": "192.169.1.9",
         "restart": false,
-        "connection": {
-            "login": "muxa",
+        "parameters": {
+            "user": "muxa",
             "key": "/home/muxa/.ssh/id_rsa"
         },
         "commands": {
