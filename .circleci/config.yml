@@ -23,7 +23,7 @@ jobs:
           command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan || true
       - run:
           name: Conan install
-          command: conan install ../daggy
+          command: conan install ../daggy --build=missing
       - run:
           name: Conan build
           command: conan build ../daggy
@@ -70,7 +70,7 @@ jobs:
           command: $(conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan) -or $(true)
       - run:
           name: Conan install
-          command: conan install ../daggy
+          command: conan install ../daggy --build=missing
       - run:
           name: Conan build
           command: conan build ../daggy
