@@ -27,7 +27,6 @@ from git_version import GitVersion
 
 class DaggyConan(ConanFile):
     name = "daggy"
-    version = GitVersion().full_version()
     license = "MIT"
     url = "https://daggy.dev"
     description = "Data Aggregation Utilty - aggregation and stream data via remote and local processes."
@@ -49,6 +48,9 @@ class DaggyConan(ConanFile):
     generators = "cmake"
     exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*"]
     export_sources = ["src/*"]
+
+    def set_version(self):
+        self.version = GitVersion().full_version()
 
     def requirements(self):
         self.requires("openssl/1.1.1g")
