@@ -136,6 +136,9 @@ void Ssh2Client::disconnectFromHost()
         }
     }
         break;
+    case Closing:
+        destroySsh2Objects();
+        break;
     default:;
     }
 }
