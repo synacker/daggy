@@ -16,7 +16,7 @@ jobs:
       - checkout:
           path: ~/daggy
       - restore_cache:
-          key: conan-cache-{{ arch }}
+          key: conan-data-cache-{{ arch }}
       - run:
           name: Install or update conan
           command: pip3 install conan --upgrade
@@ -30,9 +30,9 @@ jobs:
           name: Conan build
           command: conan build ../daggy
       - save_cache:
-          key: conan-cache-{{ arch }}
+          key: conan-data-cache-{{ arch }}
           paths:
-            - ~/.conan
+            - ~/.conan/data
       - run: 
           name: Pack artefacts
           command: cpack
@@ -65,7 +65,7 @@ jobs:
       - checkout:
           path: ~/daggy
       - restore_cache:
-          key: conan-cache-{{ arch }}
+          key: conan-data-cache-{{ arch }}
       - run:
           name: Install or update conan
           command: pip install conan --upgrade
@@ -79,9 +79,9 @@ jobs:
           name: Conan build
           command: conan build ../daggy
       - save_cache:
-          key: conan-cache-{{ arch }}
+          key: conan-data-cache-{{ arch }}
           paths:
-            - ~/.conan
+            - ~/.conan/data
       - run: 
           name: Pack artefacts
           command: '& "c:/Program Files/CMake/bin/cpack.exe"'
