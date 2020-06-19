@@ -65,9 +65,9 @@ jobs:
       - checkout:
           path: ~/daggy
       - restore_cache:
-          keys: 
-            - conan-data-{{ arch }}
-            - conan-{{arch}}
+          key: conan-data-{{ arch }}
+      - restore_cache:
+          key: conan-{{ arch }}            
       - run:
           name: Install or update conan
           command: pip install conan --upgrade
