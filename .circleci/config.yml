@@ -9,12 +9,14 @@ jobs:
     docker:
       - image: synacker2/daggy_linux_gcc8_debian:2.0.0
         user: daggy
+    environment:
+        CONAN_USER_HOME: ~/
     working_directory: ~/build
     steps:
       - checkout:
           path: ~/daggy
       - restore_cache:
-          key: conan-cache-{{ arch }}
+          key: conan-data-{{ arch }}
       - run:
           name: Install or update conan
           command: pip3 install conan --upgrade
@@ -23,14 +25,14 @@ jobs:
           command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan || true
       - run:
           name: Conan install
-          command: conan install ../daggy
+          command: conan install ../daggy --build=missing
       - run:
           name: Conan build
           command: conan build ../daggy
       - save_cache:
-          key: conan-cache-{{ arch }}
+          key: conan-data-{{ arch }}
           paths:
-            - ~/.conan
+            - ~/.conan/data
       - run: 
           name: Pack artefacts
           command: cpack
@@ -46,6 +48,8 @@ jobs:
   msvs2019:
     executor: win/default
     working_directory: ~/build
+    environment:
+        CONAN_USER_HOME: ~/
     steps:
       - run:
           name: Install CMake
@@ -61,7 +65,9 @@ jobs:
       - checkout:
           path: ~/daggy
       - restore_cache:
-          key: conan-cache-{{ arch }}
+          key: conan-data-{{ arch }}
+      - restore_cache:
+          key: conan-{{ arch }}            
       - run:
           name: Install or update conan
           command: pip install conan --upgrade
@@ -70,14 +76,18 @@ jobs:
           command: $(conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan) -or $(true)
       - run:
           name: Conan install
-          command: conan install ../daggy
+          command: conan install ../daggy --build=missing
       - run:
           name: Conan build
           command: conan build ../daggy
       - save_cache:
-          key: conan-cache-{{ arch }}
+          key: conan-data-{{ arch }}
           paths:
-            - ~/.conan
+            - ~/.conan/data
+      - save_cache:
+            key: conan-{{ arch }}
+            paths:
+                - c:\.conan\
       - run: 
           name: Pack artefacts
           command: '& "c:/Program Files/CMake/bin/cpack.exe"'

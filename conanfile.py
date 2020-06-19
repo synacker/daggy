@@ -27,7 +27,6 @@ from git_version import GitVersion
 
 class DaggyConan(ConanFile):
     name = "daggy"
-    version = GitVersion().full_version()
     license = "MIT"
     url = "https://daggy.dev"
     description = "Data Aggregation Utilty - aggregation and stream data via remote and local processes."
@@ -50,8 +49,12 @@ class DaggyConan(ConanFile):
     exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*"]
     export_sources = ["src/*"]
 
+    def set_version(self):
+        self.version = GitVersion().full_version()
+
     def requirements(self):
-        self.requires("qt/[>=5.14.1]@bincrafters/stable")
+        self.requires("openssl/1.1.1g")
+        self.requires("qt/5.15.0@bincrafters/stable")
         self.requires("kainjow-mustache/[>=3.2.1]@bincrafters/stable")
 
         if self.options.yaml_support:
@@ -64,8 +67,31 @@ class DaggyConan(ConanFile):
         self.options["qt"].shared = True
         self.options["qt"].commercial = False
 
-        self.options["yaml-cpp"].shared = True
-        self.options["libssh2"].shared = True
+
+        self.options["qt"].opengl = "no"
+        self.options["qt"].openssl = False
+        self.options["qt"].with_vulkan = False
+        self.options["qt"].with_pcre2 = False
+        self.options["qt"].with_glib = False
+        self.options["qt"].with_freetype = False
+        self.options["qt"].with_fontconfig = False
+        self.options["qt"].with_harfbuzz = False
+        self.options["qt"].with_libjpeg = False
+        self.options["qt"].with_libpng = False
+        self.options["qt"].with_sqlite3 = False
+        self.options["qt"].with_mysql = False
+        self.options["qt"].with_pq = False
+        self.options["qt"].with_odbc = False
+        self.options["qt"].with_sdl2 = False
+        self.options["qt"].with_libalsa = False
+        self.options["qt"].with_openal = False
+        self.options["qt"].with_zstd = False
+        self.options["qt"].with_pq = False
+        self.options["qt"].GUI = False
+        self.options["qt"].widgets = False
+
+        self.options["yaml-cpp"].shared = False
+        self.options["libssh2"].shared = False
 
     def _libdir(self):
         result = "lib"
