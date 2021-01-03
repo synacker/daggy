@@ -88,6 +88,10 @@ public:
 
     State state() const;
 
+    Result addDataProvidersFabric(IDataProviderFabric* new_fabric);
+    Result addDataAggregator(IDataAggregator* aggregator);
+    Result addDataSourceConvertor(daggyconv::IDataSourceConvertor* convertor);
+
 signals:
     void stateChanged(State state);
 
@@ -120,9 +124,6 @@ private slots:
                         const std::error_code error_code);
 
 private:
-    Result addDataProvidersFabric(IDataProviderFabric* new_fabric);
-    Result addDataAggregator(IDataAggregator* aggregator);
-    Result addDataSourceConvertor(daggyconv::IDataSourceConvertor* convertor);
 
     IDataProviderFabric* getFabric(const QString& type) const;
     daggyconv::IDataSourceConvertor* getConvertor(const QString& type) const;

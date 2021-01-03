@@ -45,7 +45,7 @@ class DaggyConan(ConanFile):
         "daggy_core_static": False,
         "package_deps": True
     }
-    generators = "cmake"
+    generators = "cmake", "cmake_paths", "cmake_find_package"
     exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*"]
     export_sources = ["src/*"]
 
@@ -54,8 +54,8 @@ class DaggyConan(ConanFile):
 
     def requirements(self):
         self.requires("openssl/1.1.1g")
-        self.requires("qt/5.15.0@bincrafters/stable")
-        self.requires("kainjow-mustache/[>=3.2.1]@bincrafters/stable")
+        self.requires("qt/5.15.2@bincrafters/stable")
+        self.requires("kainjow-mustache/4.1")
 
         if self.options.yaml_support:
             self.requires("yaml-cpp/[>=0.6.3]")
