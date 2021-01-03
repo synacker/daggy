@@ -16,16 +16,10 @@ jobs:
       - checkout:
           path: ~/daggy
       - restore_cache:
-          key: pip-data-{{ arch }}
-      - restore_cache:
-          key: conan-data-{{ arch }}
+          key: conan-qt6-data-{{ arch }}
       - run:
           name: Install or update conan
           command: pip3 install conan --upgrade
-      - save_cache:
-          key: pip-data-{{ arch }}
-          paths:
-            - ~/.cache/pip/
       - run:
           name: Add conan remote
           command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan || true
@@ -33,7 +27,7 @@ jobs:
           name: Conan install
           command: conan install ../daggy --build=missing
       - save_cache:
-          key: conan-data-{{ arch }}
+          key: conan-qt6-data-{{ arch }}
           paths:
             - ~/.conan/data
       - run:
@@ -57,8 +51,6 @@ jobs:
     environment:
         CONAN_USER_HOME: ~/
     steps:
-      - restore_cache:
-          key: choco-data-{{ arch }}
       - run:
           name: Install CMake
           command: choco install --yes cmake -installargs 'ADD_CMAKE_TO_PATH=""System""'
@@ -67,25 +59,15 @@ jobs:
           command: |
             choco install --yes NSIS --params '"/InstallDir:C:\NSIS"'
             $env:PATH += ";C:\NSIS"
-      - save_cache:
-          key: choco-data-{{ arch }}
-          paths:
-            - ~/AppData/Local/Temp/chocolatey
-      - restore_cache:
-          key: pip-data-{{ arch }}
       - run:
           name: Install pip
           command: python -m pip install --quiet --upgrade pip
-      - save_cache:
-          key: pip-data-{{ arch }}
-          paths:
-            - ~/AppData/pip/Cache
       - checkout:
           path: ~/daggy
       - restore_cache:
-          key: conan-data-{{ arch }}
+          key: conan-qt6-data-{{ arch }}
       - restore_cache:
-          key: conan-{{ arch }}            
+          key: conan-qt6-{{ arch }}            
       - run:
           name: Install or update conan
           command: pip install conan --upgrade
@@ -96,11 +78,11 @@ jobs:
           name: Conan install
           command: conan install ../daggy --build=missing
       - save_cache:
-          key: conan-data-{{ arch }}
+          key: conan-qt6-data-{{ arch }}
           paths:
             - ~/.conan/data            
       - save_cache:
-            key: conan-{{ arch }}
+            key: conan-qt6-{{ arch }}
             paths:
                 - c:\.conan\
       - run:

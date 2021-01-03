@@ -1,6 +1,6 @@
 set(TARGET DaggyCore)
 
-find_package(Qt5 COMPONENTS Core Network REQUIRED)
+find_package(Qt6 COMPONENTS Core Network REQUIRED)
 
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
 
@@ -54,13 +54,13 @@ set(SOURCES ${SOURCES}
     CLocalDataProvider.cpp
     CLocalDataProvidersFabric.cpp
 )
-qt5_wrap_cpp(MOC_SOURCES Command.h)
+qt6_wrap_cpp(MOC_SOURCES Command.h)
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 
 set(LINK_LIBRARIES
-    Qt5::Core Qt5::Network
+    Qt6::Core Qt6::Network
 )
 
 if (SSH2_SUPPORT)

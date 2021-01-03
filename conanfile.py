@@ -58,16 +58,14 @@ class DaggyConan(ConanFile):
         self.requires("kainjow-mustache/4.1")
 
         if self.options.yaml_support:
-            self.requires("yaml-cpp/[>=0.6.3]")
+            self.requires("yaml-cpp/0.6.3")
 
         if self.options.ssh2_support:
-            self.requires("libssh2/[>=1.9.0]")
+            self.requires("libssh2/1.9.0")
 
     def configure(self):
         self.options["qt"].shared = True
         self.options["qt"].commercial = False
-
-       
 
     def _libdir(self):
         result = "lib"

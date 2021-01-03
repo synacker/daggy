@@ -29,16 +29,16 @@ SOFTWARE.
 using namespace daggycore;
 using namespace daggyconv;
 
-const QMap<const char*, QVariant::Type> IDataSourceConvertor::required_source_field =
+const QMap<const char*, QMetaType::Type> IDataSourceConvertor::required_source_field =
 {
-    {IDataSourceConvertor::g_typeField, QVariant::String},
-    {IDataSourceConvertor::g_commandsField, QVariant::Map}
+    {IDataSourceConvertor::g_typeField, QMetaType::QString},
+    {IDataSourceConvertor::g_commandsField, QMetaType::Type::QVariantMap}
 };
 
-const QMap<const char*, QVariant::Type> IDataSourceConvertor::required_commands_field =
+const QMap<const char*, QMetaType::Type> IDataSourceConvertor::required_commands_field =
 {
-    {IDataSourceConvertor::g_execField, QVariant::String},
-    {IDataSourceConvertor::g_extensionField, QVariant::String}
+    {IDataSourceConvertor::g_execField, QMetaType::Type::QString},
+    {IDataSourceConvertor::g_extensionField, QMetaType::QString}
 };
 
 IDataSourceConvertor::IDataSourceConvertor(QString type_arg, QObject* parent)
@@ -52,7 +52,7 @@ daggycore::OptionalResult<Commands> IDataSourceConvertor::getCommands(const QVar
 {
     Commands commands;
     for (const QString& command_id : commands_map.keys()) {
-        if (commands_map[command_id].type() != QVariant::Map)
+        if (commands_map[command_id].metaType() != QMetaType(QMetaType::QVariantMap))
             return
             {
                 daggycore::DaggyErrors::ConvertError,
@@ -67,7 +67,7 @@ daggycore::OptionalResult<Commands> IDataSourceConvertor::getCommands(const QVar
                     QString("%1 command don't have required %2 field").arg(command_id, field).toStdString()
                 };
             }
-            if (command_map[field].type() != required_commands_field.value(field))
+            if (command_map[field].metaType() != QMetaType(required_commands_field.value(field)))
             {
                 return
                 {
@@ -81,7 +81,7 @@ daggycore::OptionalResult<Commands> IDataSourceConvertor::getCommands(const QVar
         command.exec = command_map[g_execField].toString();
         command.extension = command_map[g_extensionField].toString();
         if (command_map.contains(g_restartField) &&
-            command_map[g_restartField].type() == QVariant::Bool)
+            command_map[g_restartField].metaType() == QMetaType(QMetaType::Bool))
         {
             command.restart = command_map[g_restartField].value<bool>();
         }

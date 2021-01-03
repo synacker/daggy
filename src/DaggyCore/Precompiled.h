@@ -28,11 +28,14 @@ SOFTWARE.
 #include <QStandardPaths>
 #include <QHostAddress>
 #include <QTimer>
+#include <QRegularExpression>
 
 #include <QJsonParseError>
 #include <QJsonDocument>
 
 #include <QProcess>
+
+#include <QMetaType>
 
 #include <QDebug>
 

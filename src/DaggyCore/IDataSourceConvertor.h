@@ -58,12 +58,12 @@ public:
     constexpr static const char* g_commandsField = "commands";
     constexpr static const char* g_reconnectField = "reconnect";
 
-    static const QMap<const char*, QVariant::Type> required_source_field;
+    static const QMap<const char*, QMetaType::Type> required_source_field;
 
     constexpr static const char* g_execField = "exec";
     constexpr static const char* g_extensionField = "extension";
     constexpr static const char* g_restartField = "restart";
 
-    static const QMap<const char*, QVariant::Type> required_commands_field;
+    static const QMap<const char*, QMetaType::Type> required_commands_field;
 };
 }
