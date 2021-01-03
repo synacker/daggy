@@ -61,7 +61,7 @@ OptionalResult<DataSources> CJsonDataSourcesConvertor::convert(
         };
     }
 
-    if (sources[g_sourcesField].type() != QVariant::Map) {
+    if (sources[g_sourcesField].metaType() != QMetaType(QMetaType::QVariantMap)) {
         return
         {
             daggycore::DaggyErrors::ConvertError,
@@ -75,7 +75,7 @@ OptionalResult<DataSources> CJsonDataSourcesConvertor::convert(
         DataSource source;
         source.id = source_id;
 
-        if (sources_map[source_id].type() != QVariant::Map)
+        if (sources_map[source_id].metaType() != QMetaType(QMetaType::QVariantMap))
             return
             {
                 daggycore::DaggyErrors::ConvertError,
@@ -90,7 +90,7 @@ OptionalResult<DataSources> CJsonDataSourcesConvertor::convert(
                     QString("%1 data source don't have required '%2' field").arg(source_id, field).toStdString()
                 };
             }
-            if (source_map[field].type() != required_source_field.value(field))
+            if (source_map[field].metaType() != QMetaType(required_source_field.value(field)))
             {
                 return
                 {
@@ -125,7 +125,7 @@ OptionalResult<DataSources> CJsonDataSourcesConvertor::convert(
             source.reconnect = source_map[g_reconnectField].toBool();
 
         if(source_map.contains(g_parametersField) &&
-           source_map[g_parametersField].type() == QVariant::Map)
+           source_map[g_parametersField].metaType() == QMetaType(QMetaType::QVariantMap))
         {
             source.parameters = source_map[g_parametersField].toMap();
         }

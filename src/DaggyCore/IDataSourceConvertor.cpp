@@ -29,13 +29,13 @@ SOFTWARE.
 using namespace daggycore;
 using namespace daggyconv;
 
-const QMap<const char*, QMetaType::Type> IDataSourceConvertor::required_source_field =
+const QHash<const char*, QMetaType::Type> IDataSourceConvertor::required_source_field =
 {
     {IDataSourceConvertor::g_typeField, QMetaType::QString},
     {IDataSourceConvertor::g_commandsField, QMetaType::Type::QVariantMap}
 };
 
-const QMap<const char*, QMetaType::Type> IDataSourceConvertor::required_commands_field =
+const QHash<const char*, QMetaType::Type> IDataSourceConvertor::required_commands_field =
 {
     {IDataSourceConvertor::g_execField, QMetaType::Type::QString},
     {IDataSourceConvertor::g_extensionField, QMetaType::QString}
