@@ -26,13 +26,13 @@ jobs:
       - run:
           name: Conan install
           command: conan install ../daggy --build=missing
-      - run:
-          name: Conan build
-          command: conan build ../daggy
       - save_cache:
           key: conan-data-{{ arch }}
           paths:
             - ~/.conan/data
+      - run:
+          name: Conan build
+          command: conan build ../daggy
       - run: 
           name: Pack artefacts
           command: cpack
@@ -77,9 +77,6 @@ jobs:
       - run:
           name: Conan install
           command: conan install ../daggy --build=missing
-      - run:
-          name: Conan build
-          command: conan build ../daggy
       - save_cache:
           key: conan-data-{{ arch }}
           paths:
@@ -88,6 +85,9 @@ jobs:
             key: conan-{{ arch }}
             paths:
                 - c:\.conan\
+      - run:
+          name: Conan build
+          command: conan build ../daggy
       - run: 
           name: Pack artefacts
           command: '& "c:/Program Files/CMake/bin/cpack.exe"'
