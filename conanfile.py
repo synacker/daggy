@@ -45,7 +45,7 @@ class DaggyConan(ConanFile):
         "daggy_core_static": False,
         "package_deps": True
     }
-    generators = "cmake", "cmake_paths"
+    generators = "cmake", "cmake_paths", "cmake_find_package"
     exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*"]
     export_sources = ["src/*"]
 
