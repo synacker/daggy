@@ -45,7 +45,7 @@ class DaggyConan(ConanFile):
         "daggy_core_static": False,
         "package_deps": True
     }
-    generators = "cmake"
+    generators = "cmake", "cmake_paths"
     exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*"]
     export_sources = ["src/*"]
 
@@ -53,9 +53,9 @@ class DaggyConan(ConanFile):
         self.version = GitVersion().full_version()
 
     def requirements(self):
-        self.requires("openssl/1.1.1g")
-        self.requires("qt/5.15.0@bincrafters/stable")
-        self.requires("kainjow-mustache/[>=3.2.1]@bincrafters/stable")
+        self.requires("openssl/1.1.1i")
+        self.requires("qt/6.0.0@bincrafters/stable")
+        self.requires("kainjow-mustache/4.1")
 
         if self.options.yaml_support:
             self.requires("yaml-cpp/[>=0.6.3]")
@@ -67,31 +67,7 @@ class DaggyConan(ConanFile):
         self.options["qt"].shared = True
         self.options["qt"].commercial = False
 
-
-        self.options["qt"].opengl = "no"
-        self.options["qt"].openssl = False
-        self.options["qt"].with_vulkan = False
-        self.options["qt"].with_pcre2 = False
-        self.options["qt"].with_glib = False
-        self.options["qt"].with_freetype = False
-        self.options["qt"].with_fontconfig = False
-        self.options["qt"].with_harfbuzz = False
-        self.options["qt"].with_libjpeg = False
-        self.options["qt"].with_libpng = False
-        self.options["qt"].with_sqlite3 = False
-        self.options["qt"].with_mysql = False
-        self.options["qt"].with_pq = False
-        self.options["qt"].with_odbc = False
-        self.options["qt"].with_sdl2 = False
-        self.options["qt"].with_libalsa = False
-        self.options["qt"].with_openal = False
-        self.options["qt"].with_zstd = False
-        self.options["qt"].with_pq = False
-        self.options["qt"].GUI = False
-        self.options["qt"].widgets = False
-
-        self.options["yaml-cpp"].shared = False
-        self.options["libssh2"].shared = False
+       
 
     def _libdir(self):
         result = "lib"
