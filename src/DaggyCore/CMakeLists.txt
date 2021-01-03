@@ -64,9 +64,13 @@ set(LINK_LIBRARIES
 )
 
 if (SSH2_SUPPORT)
+    if (CONAN_BUILD)
+        set(LINK_LIBRARIES ${LINK_LIBRARIES} CONAN_PKG::libssh2)
+    else()
+        set(LINK_LIBRARIES ${LINK_LIBRARIES} ssh2)
+    endif()
     list(APPEND SOURCES ${SSH2_SOURCES})
     list(APPEND INCLUDE_HEADERS ${SSH2_PUBLIC})
-    set(LINK_LIBRARIES ${LINK_LIBRARIES} ssh2)
 endif()
 
 if(YAML_SUPPORT)
