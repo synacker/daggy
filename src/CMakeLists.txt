@@ -12,7 +12,7 @@ option(CONAN_BUILD "build with conan" OFF)
 option(PACKAGE_DEPS "include daggy deps into package" OFF)
 
 set(COMPANY_NAME "synacker")
-set(APP_COPYRIGTH "Copyright \\251 2020 Mikhail Milovidov. Some Rights Reserved")
+set(APP_COPYRIGTH "Copyright \\251 2021 Mikhail Milovidov. Some Rights Reserved")
 
 if(SSH2_SUPPORT)
     add_definitions(-DSSH2_SUPPORT)
