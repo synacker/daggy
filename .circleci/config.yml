@@ -54,11 +54,19 @@ jobs:
       - run:
           name: Install CMake
           command: choco install --yes cmake -installargs 'ADD_CMAKE_TO_PATH=""System""'
+      - restore_cache:
+          key: QtIFW-4.0.1-{{ arch }}
       - run:
-          name: Install NSIS
+          name: Install QtIFW
           command: |
-            choco install --yes NSIS --params '"/InstallDir:C:\NSIS"'
-            $env:PATH += ";C:\NSIS"
+            if ( -not(Test-Path C:\QtIFW) ) {
+                wget -UseBasicParsing 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-win-x86.exe'
+                ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
+            }
+      - save_cache:
+          key: QtIFW-4.0.1-{{ arch }}
+          paths:
+            - C:\QtIFW
       - run:
           name: Install pip
           command: python -m pip install --quiet --upgrade pip
