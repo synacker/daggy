@@ -32,26 +32,26 @@ using namespace daggyconv;
 
 namespace YAML {
 
-const QRegExp yaml_scalar_true_values = QRegExp( "true|True|TRUE|on|On|ON" );
-const QRegExp yaml_scalar_false_values = QRegExp( "false|False|FALSE|off|Off|OFF" );
+static const QRegularExpression yaml_scalar_true_values = QRegularExpression( "true|True|TRUE|on|On|ON" );
+static const QRegularExpression yaml_scalar_false_values = QRegularExpression( "false|False|FALSE|off|Off|OFF" );
 
 QVariant
 scalarToVariant( const YAML::Node& scalarNode )
 {
     QString string = QString::fromStdString( scalarNode.as< std::string >() );
-    if ( yaml_scalar_true_values.exactMatch( string ) )
+    if ( yaml_scalar_true_values.match( string ).hasMatch() )
     {
         return QVariant( true );
     }
-    if ( yaml_scalar_false_values.exactMatch( string ) )
+    if ( yaml_scalar_false_values.match( string ).hasMatch() )
     {
         return QVariant( false );
     }
-    if ( QRegExp( "[-+]?\\d+" ).exactMatch( string ) )
+    if ( QRegularExpression( "[-+]?\\d+" ).match( string ).hasMatch() )
     {
         return QVariant( string.toLongLong() );
     }
-    if ( QRegExp( "[-+]?\\d*\\.?\\d+" ).exactMatch( string ) )
+    if ( QRegularExpression( "[-+]?\\d*\\.?\\d+" ).match( string ).hasMatch() )
     {
         return QVariant( string.toDouble() );
     }
