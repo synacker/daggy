@@ -58,6 +58,8 @@ if(WIN32)
     include(InstallRequiredSystemLibraries)
     set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} redist)
     set(CPACK_PACKAGE_INSTALL_DIRECTORY daggy)
+elseif(APPLE)
+    set(CPACK_PACKAGING_INSTALL_PREFIX ${CPACK_PACKAGING_INSTALL_PREFIX}/daggy)
 endif()
 
 if(PACKAGE_DEPS)
