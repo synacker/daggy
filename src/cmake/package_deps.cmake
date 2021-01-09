@@ -15,6 +15,13 @@ elseif(APPLE)
             PATTERN libQt6Core*dylib
     )
 else()
+    set(VC_REDIST ${CMAKE_BINARY_DIR}/vc_redist-x64.exe)
+    if(NOT EXISTS ${VC_REDIST})
+        execute_process(COMMAND powershell  wget -UseBasicParsing -OutFile ${VC_REDIST} 'https://aka.ms/vs/16/release/vc_redist.x64.exe')
+    endif()
+    install(FILES ${VC_REDIST}
+            DESTINATION vcredist
+            COMPONENT deps)
     install(FILES
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Qt6Network.dll
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Qt6Core.dll

@@ -48,15 +48,14 @@ set(CPACK_IFW_PACKAGE_WINDOW_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.png")
 set(CPACK_IFW_PACKAGE_LOGO "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.svg")
 set(CPACK_IFW_PACKAGE_WIZARD_STYLE "Modern")
 set(CPACK_IFW_TARGET_DIRECTORY "@ApplicationsDirX64@/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
+set(CPACK_IFW_PACKAGE_CONTROL_SCRIPT ${CMAKE_BINARY_DIR}/installer/installscript.js)
+
+configure_file(${CMAKE_CURRENT_LIST_DIR}/installscript.js.in ${CMAKE_BINARY_DIR}/installer/installscript.js @ONLY)
 
 set(CPACK_COMPONENTS_ALL application devel)
 
 if(WIN32)
-    set(CMAKE_INSTALL_UCRT_LIBRARIES ON)
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION bin)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "redist")
-    include(InstallRequiredSystemLibraries)
-    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} redist)
     set(CPACK_PACKAGE_INSTALL_DIRECTORY daggy)
 elseif(APPLE)
     set(CPACK_PACKAGING_INSTALL_PREFIX ${CPACK_PACKAGING_INSTALL_PREFIX}/daggy)
@@ -98,14 +97,6 @@ cpack_add_component(devel
                     DISPLAY_NAME "Daggy-devel"
                     DESCRIPTION "Daggy devel lib"
                     DISABLED)
-
-if(WIN32)
-    cpack_add_component(redist
-                        DISPLAY_NAME "MSVS-redist"
-                        DESCRIPTION "Daggy devel lib"
-                        HIDDEN
-                        REQUIRED)
-endif()
 
 if(PACKAGE_DEPS)
     cpack_add_component(deps
