@@ -4,6 +4,14 @@ find_package(Qt6 COMPONENTS Core Network REQUIRED)
 
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
 
+if(APPLE)
+    set(CMAKE_INSTALL_RPATH "@executable_path/daggy")
+elseif(UNIX)
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/daggy;")
+endif()
+
+
+
 set(SSH2_SOURCES
     Ssh2Client.cpp
     Ssh2Types.cpp
@@ -101,11 +109,6 @@ include(precompiled)
 include(GenerateExportHeader)
 generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/daggycore_export.h)
 
-if(PACKAGE_DEPS)
-    if(UNIX)
-        set(CMAKE_INSTALL_RPATH "$ORIGIN/daggy;")
-    endif()
-endif()
 
 if(UNIX)
     if (DAGGY_CORE_STATIC)

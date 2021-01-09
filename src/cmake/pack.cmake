@@ -19,7 +19,9 @@ set(CPACK_PACKAGE_HOMEPAGE_URL "https://daggy.dev")
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   set(CPACK_GENERATOR DEB RPM ZIP)
-else()     
+elseif(APPLE)
+  set(CPACK_GENERATOR DragNDrop)
+else()
   set(CPACK_GENERATOR ZIP IFW)
   set(CPACK_IFW_ROOT "C:/QtIFW")
   set(CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_NAME})
@@ -78,8 +80,9 @@ ELSEIF(${CPACK_SYSTEM_NAME} MATCHES Linux)
   ELSE()
     SET(CPACK_SYSTEM_NAME linux64)
   ENDIF()
+ELSEIF(${CPACK_SYSTEM_NAME} MATCHES Darwin)
+  SET(CPACK_SYSTEM_NAME macos)
 ENDIF()
-
 
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_SYSTEM_NAME}-${CPACK_PACKAGE_VERSION}")
 
@@ -87,17 +90,17 @@ include(CPack)
 
 cpack_add_component(application
                     DISPLAY_NAME "Daggy"
-                    #DESCRIPTION "Daggy console application"
+                    DESCRIPTION "Daggy console application"
                     )
 cpack_add_component(devel
                     DISPLAY_NAME "Daggy-devel"
-                    #DESCRIPTION "Daggy devel lib"
+                    DESCRIPTION "Daggy devel lib"
                     DISABLED)
 
 if(WIN32)
     cpack_add_component(redist
                         DISPLAY_NAME "MSVS-redist"
-                        #DESCRIPTION "Daggy devel lib"
+                        DESCRIPTION "Daggy devel lib"
                         HIDDEN
                         REQUIRED)
 endif()
@@ -105,7 +108,7 @@ endif()
 if(PACKAGE_DEPS)
     cpack_add_component(deps
                         DISPLAY_NAME "Daggy-deps"
-                        #DESCRIPTION "Daggy deps"
+                        DESCRIPTION "Daggy deps"
                         HIDDEN
                         REQUIRED)
 endif()

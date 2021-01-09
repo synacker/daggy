@@ -69,7 +69,7 @@ class DaggyConan(ConanFile):
 
     def _libdir(self):
         result = "lib"
-        if self.settings.arch == "x86_64":
+        if self.settings.arch == "x86_64" and self.settings.os == "Linux":
             result = "lib64"
         return result
 
@@ -102,5 +102,7 @@ class DaggyConan(ConanFile):
             if self.settings.os == "Windows":
                 self.copy("*.dll", src="@bindirs", dst="bin")
                 self.copy("*.dll", src="@libdirs", dst="bin")
-            else:
+            elif self.settings.os == "Linux":
                 self.copy("*.so.*", src="@libdirs", dst="{}/{}".format(self._libdir(), self.name))
+            else:
+                self.copy("*.dylib", src="@libdirs", dst="{}/{}".format(self._libdir(), self.name))
