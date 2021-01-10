@@ -48,9 +48,7 @@ set(CPACK_IFW_PACKAGE_WINDOW_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.png")
 set(CPACK_IFW_PACKAGE_LOGO "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.svg")
 set(CPACK_IFW_PACKAGE_WIZARD_STYLE "Modern")
 set(CPACK_IFW_TARGET_DIRECTORY "@ApplicationsDirX64@/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
-set(CPACK_IFW_PACKAGE_CONTROL_SCRIPT ${CMAKE_BINARY_DIR}/installer/installscript.js)
-
-configure_file(${CMAKE_CURRENT_LIST_DIR}/installscript.js.in ${CMAKE_BINARY_DIR}/installer/installscript.js @ONLY)
+set(CPACK_IFW_PACKAGE_CONTROL_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/installscript.js)
 
 set(CPACK_COMPONENTS_ALL application devel)
 

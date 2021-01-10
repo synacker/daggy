@@ -25,6 +25,7 @@ else()
     install(FILES
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Qt6Network.dll
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Qt6Core.dll
+            ${CMAKE_CURRENT_LIST_DIR}/daggyenv.bat
             DESTINATION ${CMAKE_INSTALL_BINDIR}
             COMPONENT deps)
 endif()
