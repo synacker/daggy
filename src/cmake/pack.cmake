@@ -1,5 +1,6 @@
 set(CPACK_PACKAGE_NAME daggy)
 set(CPACK_PACKAGE_VENDOR synacker)
+set(CPACK_PACKAGE_CONTACT milovidovmikhail@gmail.com)
 set(CPACK_PACKAGE_VERSION ${VERSION})
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
@@ -42,13 +43,17 @@ set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/../README.md")
 
+set(CPACK_IFW_VERBOSE ON)
 set(CPACK_IFW_PRODUCT_URL "https://daggy.dev")
 set(CPACK_IFW_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.ico")
 set(CPACK_IFW_PACKAGE_WINDOW_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.png")
 set(CPACK_IFW_PACKAGE_LOGO "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.svg")
 set(CPACK_IFW_PACKAGE_WIZARD_STYLE "Modern")
 set(CPACK_IFW_TARGET_DIRECTORY "@ApplicationsDirX64@/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
-set(CPACK_IFW_PACKAGE_CONTROL_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/installscript.js)
+set(CPACK_IFW_PACKAGE_STYLE_SHEET ${CMAKE_CURRENT_LIST_DIR}/installer.qss)
+set(CPACK_IFW_PACKAGE_TITLE_COLOR "#007A5C")
+set(CPACK_IFW_PACKAGE_NAME ${CPACK_PACKAGE_NAME})
+
 
 set(CPACK_COMPONENTS_ALL application devel)
 
@@ -86,20 +91,37 @@ ENDIF()
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_SYSTEM_NAME}-${CPACK_PACKAGE_VERSION}")
 
 include(CPack)
+include(CPackIFW)
+
+cpack_add_component_group(Daggy 
+                          DISPLAY_NAME "Daggy"
+                          DESCRIPTION "Daggy components"
+                          EXPANDED)
 
 cpack_add_component(application
-                    DISPLAY_NAME "Daggy"
+                    DISPLAY_NAME "Daggy Console"
                     DESCRIPTION "Daggy console application"
+                    GROUP Daggy
                     )
 cpack_add_component(devel
                     DISPLAY_NAME "Daggy-devel"
                     DESCRIPTION "Daggy devel lib"
+                    GROUP Daggy
                     DISABLED)
 
 if(PACKAGE_DEPS)
     cpack_add_component(deps
                         DISPLAY_NAME "Daggy-deps"
                         DESCRIPTION "Daggy deps"
+                        GROUP Daggy
                         HIDDEN
                         REQUIRED)
 endif()
+
+cpack_ifw_configure_component_group(Daggy
+                                    FORCED_INSTALLATION
+                                    NAME Daggy
+                                    DISPLAY_NAME Daggy components
+                                    VERSION ${FULL_VERSION}
+                                    SCRIPT ${CMAKE_CURRENT_LIST_DIR}/installscript.qs
+                                    LICENSES MIT ${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE)

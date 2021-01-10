@@ -17,7 +17,7 @@ elseif(APPLE)
 else()
     set(VC_REDIST ${CMAKE_BINARY_DIR}/vc_redist-x64.exe)
     if(NOT EXISTS ${VC_REDIST})
-        execute_process(COMMAND powershell  wget -UseBasicParsing -OutFile ${VC_REDIST} 'https://aka.ms/vs/16/release/vc_redist.x64.exe')
+        execute_process(COMMAND powershell wget -UseBasicParsing -OutFile ${VC_REDIST} 'https://aka.ms/vs/16/release/vc_redist.x64.exe')
     endif()
     install(FILES ${VC_REDIST}
             DESTINATION vcredist
