@@ -83,6 +83,19 @@ jobs:
             - run:
                   name: Add conan remote
                   command: $(conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan) -or $(true)
+            - restore_cache:
+                  key: build_dir-{{arch}}
+            - run:
+                  name: Download vc_redist
+                  command: |
+                   if ( -not(Test-Path ~/build/vc_redist-x64.exe) ) {
+                        $ProgressPreference = 'SilentlyContinue'
+                        wget -UseBasicParsing -OutFile ~/build/vc_redist-x64.exe 'https://aka.ms/vs/16/release/vc_redist.x64.exe'
+                  }
+            - save_cache:
+                  key: build_dir-{{arch}}
+                  paths:
+                      - ~/build
             - run:
                   name: Conan install
                   command: conan install ../daggy --build=missing
@@ -94,6 +107,7 @@ jobs:
                   key: conan-qt6-{{ arch }}
                   paths:
                       - c:\.conan\
+           
             - run:
                   name: Conan build
                   command: conan build ../daggy

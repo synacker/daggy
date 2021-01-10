@@ -119,9 +119,9 @@ if(PACKAGE_DEPS)
 endif()
 
 cpack_ifw_configure_component_group(Daggy
-                                    FORCED_INSTALLATION
+                                    FORCED_INSTALLATION REQUIRES_ADMIN_RIGHTS
                                     NAME Daggy
                                     DISPLAY_NAME Daggy components
-                                    VERSION ${FULL_VERSION}
                                     SCRIPT ${CMAKE_CURRENT_LIST_DIR}/installscript.qs
-                                    LICENSES MIT ${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE)
+                                    LICENSES MIT ${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE
+                                    )
