@@ -16,7 +16,7 @@ Download installation package \(exe\) from last [release](https://github.com/syn
 brew install https://raw.githubusercontent.com/synacker/daggy_homebrew/master/daggy.rb
 ```
 
-### Fedora 30/31/32
+### Fedora
 
 ```bash
 sudo dnf install daggy daggy-devel
