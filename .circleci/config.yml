@@ -61,7 +61,7 @@ jobs:
                   command: |
                       if ( -not(Test-Path C:\QtIFW) ) {
                           $ProgressPreference = 'SilentlyContinue'
-                          wget -UseBasicParsing 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-win-x86.exe'
+                          wget -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-win-x86.exe'
                           ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
                       }
             - save_cache:
