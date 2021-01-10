@@ -22,3 +22,5 @@ __pycache__/
 *.rc
 
 CMakeLists.txt.user.*
+
+.DS_Store
