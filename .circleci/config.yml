@@ -140,6 +140,24 @@ jobs:
                   name: Install cmake
                   command: brew install cmake
             - run:
+                  name: Install wget
+                  command: brew install wget      
+            - restore_cache:
+                  key: QtIFW-4.0.1-{{ arch }}
+            - run:
+                  name: Install QtIFW
+                  command: |
+                      if [[ -d ~/QtIFW ]]
+                      then
+                          wget -O ~/QtInstallerFramework-mac-x86.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-mac-x86.dmg'
+                          sudo hdutil attach ~/QtInstallerFramework-mac-x86.dmg
+                          /Volumes/QtInstallerFramework-mac-x86.app --am --al -c --root ~/QtIFW install   
+                      fi
+            - save_cache:
+                  key: QtIFW-4.0.1-{{ arch }}
+                  paths:
+                      - ~/QtIFW
+            - run:
                   name: Conan install
                   command: conan install ../daggy --build=missing
             - save_cache:
@@ -157,6 +175,7 @@ jobs:
                   command: |
                       mkdir /tmp/macos_artifacts
                       mv *.dmg /tmp/macos_artifacts
+                      mv *.zip /tmp/macos_artifacts
             - store_artifacts:
                   path: /tmp/macos_artifacts
 workflows:
