@@ -146,18 +146,18 @@ jobs:
                   name: Install wget
                   command: brew install wget      
             - restore_cache:
-                  key: QtIFW-4.0.1-{{ arch }}
+                  key: QtIFW4.0.1_{{ arch }}
             - run:
                   name: Install QtIFW
                   command: |
-                      if [[ -d ~/QtIFW ]]
+                      if [[ ! -d ~/QtIFW ]]
                       then
                           wget -O ~/QtInstallerFramework-mac-x86.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-mac-x86.dmg'
                           sudo hdutil attach ~/QtInstallerFramework-mac-x86.dmg
                           /Volumes/QtInstallerFramework-mac-x86.app --am --al -c --root ~/QtIFW install   
                       fi
             - save_cache:
-                  key: QtIFW-4.0.1-{{ arch }}
+                  key: QtIFW-4.0.1_{{ arch }}
                   paths:
                       - ~/QtIFW
             - run:
