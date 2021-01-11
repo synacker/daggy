@@ -153,7 +153,7 @@ jobs:
                       if [[ ! -d ~/QtIFW ]]
                       then
                           wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-mac-x64.dmg'
-                          sudo hdutil attach ~/QtInstallerFramework-mac-x64.dmg
+                          sudo hdiutil attach ~/QtInstallerFramework-mac-x64.dmg
                           /Volumes/QtInstallerFramework-mac-x64.app --am --al -c --root ~/QtIFW install   
                       fi
             - save_cache:
