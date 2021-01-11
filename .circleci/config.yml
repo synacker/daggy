@@ -182,6 +182,6 @@ workflows:
     version: 2.1
     build_and_test:
         jobs:
-            - gcc-8_x64
-            - msvs2019
+            #- gcc-8_x64
+            #- msvs2019
             - macos
