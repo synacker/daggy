@@ -132,20 +132,6 @@ jobs:
             - checkout:
                   path: ~/daggy
             - restore_cache:
-                  key: conan-qt6-data-{{ arch }}
-            - run:
-                  name: Install Conan
-                  command: brew install conan
-            - run:
-                  name: Add conan remote
-                  command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-            - run:
-                  name: Install cmake
-                  command: brew install cmake
-            - run:
-                  name: Install wget
-                  command: brew install wget      
-            - restore_cache:
                   key: QtIFW4.0.1_{{ arch }}
             - run:
                   name: Install QtIFW
@@ -160,6 +146,27 @@ jobs:
                   key: QtIFW-4.0.1_{{ arch }}
                   paths:
                       - ~/QtIFW
+            - restore_cache:
+                  key: conan-qt6-data-{{ arch }}
+            - restore_cache:
+                  key: brew_cache
+            - run:
+                  name: Install Conan
+                  command: brew install conan
+            - run:
+                  name: Add conan remote
+                  command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+            - run:
+                  name: Install cmake
+                  command: brew install cmake
+            - run:
+                  name: Install wget
+                  command: brew install wget      
+            - save_cache:
+                paths:
+                  - ~/Library/Caches/Homebrew
+                  - /Library/Caches/Homebrew
+                key: brew_cache
             - run:
                   name: Conan install
                   command: conan install ../daggy --build=missing
