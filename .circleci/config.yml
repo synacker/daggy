@@ -132,21 +132,6 @@ jobs:
             - checkout:
                   path: ~/daggy
             - restore_cache:
-                  key: QtIFW4.0.1_{{ arch }}
-            - run:
-                  name: Install QtIFW
-                  command: |
-                      if [[ ! -d ~/QtIFW ]]
-                      then
-                          wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-mac-x64.dmg'
-                          sudo hdiutil attach ~/QtInstallerFramework-mac-x64.dmg
-                          /Volumes/QtInstallerFramework-mac-x64/QtInstallerFramework-mac-x64.app/Contents/MacOS/QtInstallerFramework-mac-x64 --am --al -c --root ~/QtIFW install   
-                      fi
-            - save_cache:
-                  key: QtIFW-4.0.1_{{ arch }}
-                  paths:
-                      - ~/QtIFW
-            - restore_cache:
                   key: conan-qt6-data-{{ arch }}
             - restore_cache:
                   key: brew_cache
@@ -167,6 +152,21 @@ jobs:
                   - ~/Library/Caches/Homebrew
                   - /Library/Caches/Homebrew
                 key: brew_cache
+            - restore_cache:
+                  key: QtIFW-4.0.1_{{ arch }}
+            - run:
+                  name: Install QtIFW
+                  command: |
+                      if [[ ! -d ~/QtIFW ]]
+                      then
+                          wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-mac-x64.dmg'
+                          sudo hdiutil attach ~/QtInstallerFramework-mac-x64.dmg
+                          /Volumes/QtInstallerFramework-mac-x64/QtInstallerFramework-mac-x64.app/Contents/MacOS/QtInstallerFramework-mac-x64 --am --al -c --root ~/QtIFW install   
+                      fi
+            - save_cache:
+                  key: QtIFW-4.0.1_{{ arch }}
+                  paths:
+                      - ~/QtIFW
             - run:
                   name: Conan install
                   command: conan install ../daggy --build=missing
