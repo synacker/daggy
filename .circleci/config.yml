@@ -137,6 +137,9 @@ jobs:
                   name: Install Conan
                   command: brew install conan
             - run:
+                  name: Add conan remote
+                  command: $(conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan) -or $(true)
+            - run:
                   name: Install cmake
                   command: brew install cmake
             - run:
