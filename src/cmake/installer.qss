@@ -1,0 +1,20 @@
+QWidget
+{
+    color: white;
+    background-color: rgb(0, 0, 0);
+}
+
+QPushButton
+{
+    background: transparent;
+    border-color: rgb(23, 99, 40);
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 9px;
+    min-height: 20px;
+    max-height: 20px;
+    min-width: 60px;
+    max-width: 60px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
