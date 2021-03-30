@@ -50,6 +50,9 @@ jobs:
         environment:
             CONAN_USER_HOME: ~/
         steps:
+            - run:
+                  name: Install CMake
+                  command: choco install --yes cmake -installargs 'ADD_CMAKE_TO_PATH=""System""'
             - restore_cache:
                   key: QtIFW-4.0.1-{{ arch }}
             - run:
@@ -137,6 +140,9 @@ jobs:
             - run:
                   name: Add conan remote
                   command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+            - run:
+                  name: Install cmake
+                  command: brew install cmake
             - run:
                   name: Install wget
                   command: brew install wget      
