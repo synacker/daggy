@@ -15,7 +15,7 @@ jobs:
             - checkout:
                   path: ~/daggy
             - restore_cache:
-                  key: conan-qt6-data-{{ arch }}
+                  key: conan-qt6.0.1-data-{{ arch }}
             - run:
                   name: Install or update conan
                   command: pip3 install conan --upgrade
@@ -26,7 +26,7 @@ jobs:
                   name: Conan install
                   command: conan install ../daggy --build=missing
             - save_cache:
-                  key: conan-qt6-data-{{ arch }}
+                  key: conan-qt6.0.1-data-{{ arch }}
                   paths:
                       - ~/.conan/data
             - run:
@@ -73,9 +73,9 @@ jobs:
             - checkout:
                   path: ~/daggy
             - restore_cache:
-                  key: conan-qt6-data-{{ arch }}
+                  key: conan-qt6.0.1-data-{{ arch }}
             - restore_cache:
-                  key: conan-qt6-{{ arch }}
+                  key: conan-qt6.0.1-{{ arch }}
             - run:
                   name: Install or update conan
                   command: pip install conan --upgrade
@@ -99,11 +99,11 @@ jobs:
                   name: Conan install
                   command: conan install ../daggy --build=missing
             - save_cache:
-                  key: conan-qt6-data-{{ arch }}
+                  key: conan-qt6.0.1-data-{{ arch }}
                   paths:
                       - ~/.conan/data
             - save_cache:
-                  key: conan-qt6-{{ arch }}
+                  key: conan-qt6.0.1-{{ arch }}
                   paths:
                       - c:\.conan\
            
@@ -131,7 +131,7 @@ jobs:
             - checkout:
                   path: ~/daggy
             - restore_cache:
-                  key: conan-qt6-data-{{ arch }}
+                  key: conan-qt6.0.1-data-{{ arch }}
             - restore_cache:
                   key: brew_cache
             - run:
@@ -170,7 +170,7 @@ jobs:
                   name: Conan install
                   command: conan install ../daggy --build=missing
             - save_cache:
-                  key: conan-qt6-data-{{ arch }}
+                  key: conan-qt6.0.1-data-{{ arch }}
                   paths:
                       - ~/.conan/data
             - run:
