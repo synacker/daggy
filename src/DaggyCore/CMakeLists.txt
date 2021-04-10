@@ -10,8 +10,6 @@ elseif(UNIX)
     set(CMAKE_INSTALL_RPATH "$ORIGIN/daggy;")
 endif()
 
-
-
 set(SSH2_SOURCES
     Ssh2Client.cpp
     Ssh2Types.cpp
@@ -71,7 +69,10 @@ set(LINK_LIBRARIES
     Qt6::Core Qt6::Network
 )
 
+add_subdirectory(tests/local)
+
 if (SSH2_SUPPORT)
+    #add_subdirectory(tests/ssh2)
     if (CONAN_BUILD)
         set(LINK_LIBRARIES ${LINK_LIBRARIES} CONAN_PKG::libssh2)
     else()

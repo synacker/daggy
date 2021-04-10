@@ -52,11 +52,8 @@ class DaggyConan(ConanFile):
     def set_version(self):
         self.version = GitVersion().full_version()
 
-    def build_requirements(self):
-        self.requires("cmake/3.20.0")
-
     def requirements(self):
-        self.requires("openssl/1.1.1j")
+        self.requires("openssl/1.1.1i", override=True)
         self.requires("qt/6.0.1@bincrafters/stable")
         self.requires("kainjow-mustache/4.1")
 
