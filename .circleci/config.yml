@@ -34,7 +34,7 @@ jobs:
                           command: conan build ../daggy
                   - run:
                           name: Run local tests
-                          command: bin/DaggyCoreLocalTests -o ../tests/local_tests.xml,junitxml
+                          command: mkdir tests && bin/DaggyCoreLocalTests -o ../tests/local_tests.xml,junitxml
                   - store_test_results:
                           path: tests
                   - run:
@@ -117,7 +117,7 @@ jobs:
                           command: conan build ../daggy
                   - run:
                           name: Run local tests
-                          command: bin/DaggyCoreLocalTests -o ../tests/local_tests.xml,junitxml
+                          command: mkdir tests && bin/DaggyCoreLocalTests -o ../tests/local_tests.xml,junitxml
                   - store_test_results:
                           path: tests
                   - run:
@@ -188,7 +188,7 @@ jobs:
                           command: conan build ../daggy
                   - run:
                           name: Run local tests
-                          command: bin/DaggyCoreLocalTests -o ../tests/local_tests.xml,junitxml
+                          command: mkdir tests && bin/DaggyCoreLocalTests -o ../tests/local_tests.xml,junitxml
                   - store_test_results:
                           path: tests
                   - run:
