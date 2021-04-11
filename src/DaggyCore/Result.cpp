@@ -40,6 +40,10 @@ Result::Result(std::error_code error_code)
 
 }
 
+daggycore::Result::operator bool() const {
+    return *this == success;
+}
+
 Result::Result(std::error_code error_code,
                std::string error_message)
     : std::error_code(std::move(error_code))

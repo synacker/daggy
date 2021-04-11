@@ -4,13 +4,7 @@ find_package(Qt6 COMPONENTS Core Network REQUIRED)
 
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
 
-if(APPLE)
-    set(CMAKE_INSTALL_RPATH "@executable_path/daggy")
-elseif(UNIX)
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/daggy;")
-endif()
-
-
+include(rpath_lib)
 
 set(SSH2_SOURCES
     Ssh2Client.cpp
@@ -61,6 +55,8 @@ set(SOURCES ${SOURCES}
     IDataSourceConvertor.cpp
     CLocalDataProvider.cpp
     CLocalDataProvidersFabric.cpp
+    DataSource.cpp
+    Command.cpp
 )
 qt6_wrap_cpp(MOC_SOURCES Command.h)
 
@@ -71,7 +67,10 @@ set(LINK_LIBRARIES
     Qt6::Core Qt6::Network
 )
 
+add_subdirectory(tests/local)
+
 if (SSH2_SUPPORT)
+    #add_subdirectory(tests/ssh2)
     if (CONAN_BUILD)
         set(LINK_LIBRARIES ${LINK_LIBRARIES} CONAN_PKG::libssh2)
     else()

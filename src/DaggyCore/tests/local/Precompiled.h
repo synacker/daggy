@@ -21,35 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
-#include <system_error>
 
-#include "daggycore_export.h"
-
-namespace daggycore {
-
-class DAGGYCORE_EXPORT Result : public std::error_code
-{
-public:
-    static const std::error_code success;
-
-    Result();
-    Result(std::error_code error_code);
-    Result(std::error_code error_code,
-           std::string detailed_error_message);
-
-    Result(const Result& other) = default;
-    Result(Result&& other) = default;
-
-    Result& operator=(const Result& other) = default;
-    Result& operator=(Result&& other) = default;
-
-    operator bool() const;
-
-    const std::string& detailed_error_message() const;
-
-private:
-    std::string detailed_error_message_;
-};
-
-}
+#include <QtTest>

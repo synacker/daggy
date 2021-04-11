@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2020 Mikhail Milovidov
+Copyright (c) 2021 Mikhail Milovidov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,35 +21,30 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
-#include <system_error>
 
-#include "daggycore_export.h"
+#pragma once
+
+#include <QObject>
 
 namespace daggycore {
+class DaggyCore;
+}
 
-class DAGGYCORE_EXPORT Result : public std::error_code
+class DaggyCoreLocalTests : public QObject
 {
+    Q_OBJECT
 public:
-    static const std::error_code success;
+    explicit DaggyCoreLocalTests(QObject *parent = nullptr);
 
-    Result();
-    Result(std::error_code error_code);
-    Result(std::error_code error_code,
-           std::string detailed_error_message);
+private slots:
+    void init();
+    void cleanup();
 
-    Result(const Result& other) = default;
-    Result(Result&& other) = default;
-
-    Result& operator=(const Result& other) = default;
-    Result& operator=(Result&& other) = default;
-
-    operator bool() const;
-
-    const std::string& detailed_error_message() const;
+    void startAndTerminateTest_data();
+    void startAndTerminateTest();
 
 private:
-    std::string detailed_error_message_;
+    daggycore::DaggyCore* daggy_core_;
+
 };
 
-}

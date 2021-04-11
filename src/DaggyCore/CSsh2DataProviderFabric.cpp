@@ -39,15 +39,15 @@ constexpr const char* g_keyphraseField = "keyphrase";
 constexpr const char* g_knownHostsField = "knownhosts";
 constexpr const char* g_timeoutField = "timeout";
 
-constexpr const std::pair<const char*, QVariant::Type> parameters_field[] =
+constexpr const std::pair<const char*, QMetaType::Type> parameters_field[] =
 {
-    {g_userField, QVariant::String},
-    {g_portField, QVariant::UInt},
-    {g_passphraseField, QVariant::String},
-    {g_keyField, QVariant::String},
-    {g_keyphraseField, QVariant::String},
-    {g_knownHostsField, QVariant::String},
-    {g_timeoutField, QVariant::UInt}
+    {g_userField, QMetaType::QString},
+    {g_portField, QMetaType::UInt},
+    {g_passphraseField, QMetaType::QString},
+    {g_keyField, QMetaType::QString},
+    {g_keyphraseField, QMetaType::QString},
+    {g_knownHostsField, QMetaType::QString},
+    {g_timeoutField, QMetaType::UInt}
 };
 
 }
@@ -66,8 +66,7 @@ OptionalResult<IDataProvider*> CSsh2DataProviderFabric::createDataProvider(const
     if (!parameters) {
         return {DaggyErrors::WrongSourceParameter,
                 QString("%1 source has syntax error. %2").
-                arg(data_source.id).
-                arg(QString::fromStdString(parameters.result().detailed_error_message())).
+                arg(data_source.id, QString::fromStdString(parameters.result().detailed_error_message())).
                 toStdString()
                 };
     }
@@ -88,7 +87,7 @@ OptionalResult<Ssh2Settings> CSsh2DataProviderFabric::convertParameters(const QV
     Ssh2Settings result;
 
     for (const auto& field : parameters_field) {
-        if (parameters.contains(field.first) && parameters[field.first].type() != field.second)
+        if (parameters.contains(field.first) && parameters[field.first].metaType() != QMetaType(field.second))
             return Result
             {
                 DaggyErrors::ConvertError,

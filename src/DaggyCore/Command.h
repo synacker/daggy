@@ -59,6 +59,8 @@ public:
     QString exec;
     QVariantMap parameters = {};
     bool restart = false;
+
+    bool operator==(const Command& other) const;
 };
 
 using Commands = QMap<QString, Command>;

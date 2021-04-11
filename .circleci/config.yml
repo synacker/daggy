@@ -2,195 +2,212 @@
 version: 2.1
 # Use a package of configuration called an orb.
 orbs:
-    win: circleci/windows@2.4.0
+      win: circleci/windows@2.4.0
 jobs:
-    gcc-8_x64:
-        docker:
-            - image: synacker2/daggy_linux_gcc8_debian:2.0.0
-              user: daggy
-        environment:
-            CONAN_USER_HOME: ~/
-        working_directory: ~/build
-        steps:
-            - checkout:
-                  path: ~/daggy
-            - restore_cache:
-                  key: conan-qt6.0.1-data-{{ arch }}
-            - run:
-                  name: Install or update conan
-                  command: pip3 install conan --upgrade
-            - run:
-                  name: Add conan remote
-                  command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan || true
-            - run:
-                  name: Conan install
-                  command: conan install ../daggy --build=missing
-            - save_cache:
-                  key: conan-qt6.0.1-data-{{ arch }}
-                  paths:
-                      - ~/.conan/data
-            - run:
-                  name: Conan build
-                  command: conan build ../daggy
-            - run:
-                  name: Pack artefacts
-                  command: cpack
-            - run:
-                  name: Move artefacts
-                  command: |
-                      mkdir /tmp/linux_artifacts
-                      mv *.rpm /tmp/linux_artifacts
-                      mv *.deb /tmp/linux_artifacts
-                      mv *.zip /tmp/linux_artifacts
-            - store_artifacts:
-                  path: /tmp/linux_artifacts
-    msvs2019:
-        executor: win/default
-        working_directory: ~/build
-        environment:
-            CONAN_USER_HOME: ~/
-        steps:
-            - run:
-                  name: Install CMake
-                  command: choco install --yes cmake -installargs 'ADD_CMAKE_TO_PATH=""System""'
-            - restore_cache:
-                  key: QtIFW-4.0.1-{{ arch }}
-            - run:
-                  name: Install QtIFW
-                  command: |
-                      if ( -not(Test-Path C:\QtIFW) ) {
-                          $ProgressPreference = 'SilentlyContinue'
-                          wget -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-win-x86.exe'
-                          ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
-                      }
-            - save_cache:
-                  key: QtIFW-4.0.1-{{ arch }}
-                  paths:
-                      - C:\QtIFW
-            - run:
-                  name: Install pip
-                  command: python -m pip install --quiet --upgrade pip
-            - checkout:
-                  path: ~/daggy
-            - restore_cache:
-                  key: conan-qt6.0.1-data-{{ arch }}
-            - restore_cache:
-                  key: conan-qt6.0.1-{{ arch }}
-            - run:
-                  name: Install or update conan
-                  command: pip install conan --upgrade
-            - run:
-                  name: Add conan remote
-                  command: $(conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan) -or $(true)
-            - restore_cache:
-                  key: build_dir-{{arch}}
-            - run:
-                  name: Download vc_redist
-                  command: |
-                    if ( -not(Test-Path ~/build/vc_redist-x64.exe) ) {
-                        $ProgressPreference = 'SilentlyContinue'
-                        wget -UseBasicParsing -OutFile ~/build/vc_redist-x64.exe 'https://aka.ms/vs/16/release/vc_redist.x64.exe'
-                    }
-            - save_cache:
-                  key: build_dir-{{arch}}
-                  paths:
-                      - ~/build
-            - run:
-                  name: Conan install
-                  command: conan install ../daggy --build=missing
-            - save_cache:
-                  key: conan-qt6.0.1-data-{{ arch }}
-                  paths:
-                      - ~/.conan/data
-            - save_cache:
-                  key: conan-qt6.0.1-{{ arch }}
-                  paths:
-                      - c:\.conan\
-           
-            - run:
-                  name: Conan build
-                  command: conan build ../daggy
-            - run:
-                  name: Pack artefacts
-                  command: '& "c:/Program Files/CMake/bin/cpack.exe"'
-            - run:
-                  name: Move artefacts
-                  command: |
-                      mkdir windows_artifacts
-                      mv *.zip windows_artifacts
-                      mv *.exe windows_artifacts
-            - store_artifacts:
-                  path: windows_artifacts
-    macos:
-        macos:
-            xcode: 12.3.0
-        environment:
-            CONAN_USER_HOME: ~/
-        working_directory: ~/build
-        steps:
-            - checkout:
-                  path: ~/daggy
-            - restore_cache:
-                  key: conan-qt6.0.1-data-{{ arch }}
-            - restore_cache:
-                  key: brew_cache
-            - run:
-                  name: Install Conan
-                  command: brew install conan
-            - run:
-                  name: Add conan remote
-                  command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-            - run:
-                  name: Install cmake
-                  command: brew install cmake
-            - run:
-                  name: Install wget
-                  command: brew install wget      
-            - save_cache:
-                paths:
-                  - ~/Library/Caches/Homebrew
-                  - /Library/Caches/Homebrew
-                key: brew_cache
-            - restore_cache:
-                  key: QtIFW-4.0.1_{{ arch }}
-            - run:
-                  name: Install QtIFW
-                  command: |
-                      if [[ ! -d ~/QtIFW ]]
-                      then
-                          wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-mac-x64.dmg'
-                          sudo hdiutil attach ~/QtInstallerFramework-mac-x64.dmg
-                          /Volumes/QtInstallerFramework-mac-x64/QtInstallerFramework-mac-x64.app/Contents/MacOS/QtInstallerFramework-mac-x64 --am --al -c --root ~/QtIFW install   
-                      fi
-            - save_cache:
-                  key: QtIFW-4.0.1_{{ arch }}
-                  paths:
-                      - ~/QtIFW
-            - run:
-                  name: Conan install
-                  command: conan install ../daggy --build=missing
-            - save_cache:
-                  key: conan-qt6.0.1-data-{{ arch }}
-                  paths:
-                      - ~/.conan/data
-            - run:
-                  name: Conan build
-                  command: conan build ../daggy
-            - run:
-                  name: Pack artefacts
-                  command: cpack
-            - run:
-                  name: Move artefacts
-                  command: |
-                      mkdir /tmp/macos_artifacts
-                      mv *.dmg /tmp/macos_artifacts
-                      mv *.zip /tmp/macos_artifacts
-            - store_artifacts:
-                  path: /tmp/macos_artifacts
+      gcc-8_x64:
+            docker:
+                  - image: synacker2/daggy_linux_gcc8_debian:2.0.0
+                    user: daggy
+            environment:
+                  CONAN_USER_HOME: ~/
+            working_directory: ~/build
+            steps:
+                  - checkout:
+                          path: ~/daggy
+                  - restore_cache:
+                          key: conan-qt6.0.1-data-{{ arch }}
+                  - run:
+                          name: Install or update conan
+                          command: pip3 install conan --upgrade
+                  - run:
+                          name: Add conan remote
+                          command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan || true
+                  - run:
+                          name: Conan install
+                          command: conan install ../daggy --build=missing
+                  - save_cache:
+                          key: conan-qt6.0.1-data-{{ arch }}
+                          paths:
+                                - ~/.conan/data
+                  - run:
+                          name: Conan build
+                          command: conan build ../daggy
+                  - run:
+                          name: Run local tests
+                          command: mkdir tests && bin/DaggyCoreLocalTests -o tests/local_tests.xml,junitxml
+                  - store_test_results:
+                          path: tests
+                  - run:
+                          name: Pack artefacts
+                          command: cpack
+                  - run:
+                          name: Move artefacts
+                          command: |
+                                mkdir /tmp/linux_artifacts
+                                mv *.rpm /tmp/linux_artifacts
+                                mv *.deb /tmp/linux_artifacts
+                                mv *.zip /tmp/linux_artifacts
+                  - store_artifacts:
+                          path: /tmp/linux_artifacts
+      msvs2019:
+            executor: win/default
+            working_directory: ~/build
+            environment:
+                  CONAN_USER_HOME: ~/
+            steps:
+                  - run:
+                          name: Install CMake
+                          command: choco install --yes cmake -installargs 'ADD_CMAKE_TO_PATH=""System""'
+                  - restore_cache:
+                          key: QtIFW-4.0.1-{{ arch }}
+                  - run:
+                          name: Install QtIFW
+                          command: |
+                                if ( -not(Test-Path C:\QtIFW) ) {
+                                    $ProgressPreference = 'SilentlyContinue'
+                                    wget -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-win-x86.exe'
+                                    ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
+                                }
+                  - save_cache:
+                          key: QtIFW-4.0.1-{{ arch }}
+                          paths:
+                                - C:\QtIFW
+                  - run:
+                          name: Install pip
+                          command: python -m pip install --quiet --upgrade pip
+                  - checkout:
+                          path: ~/daggy
+                  - restore_cache:
+                          key: conan-qt6.0.1-data-{{ arch }}
+                  - restore_cache:
+                          key: conan-qt6.0.1-{{ arch }}
+                  - run:
+                          name: Install or update conan
+                          command: pip install conan --upgrade
+                  - run:
+                          name: Add conan remote
+                          command: $(conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan) -or $(true)
+                  - restore_cache:
+                          key: build_dir-{{arch}}
+                  - run:
+                          name: Download vc_redist
+                          command: |
+                                if ( -not(Test-Path ~/build/vc_redist-x64.exe) ) {
+                                    $ProgressPreference = 'SilentlyContinue'
+                                    wget -UseBasicParsing -OutFile ~/build/vc_redist-x64.exe 'https://aka.ms/vs/16/release/vc_redist.x64.exe'
+                                }
+                  - save_cache:
+                          key: build_dir-{{arch}}
+                          paths:
+                                - ~/build
+                  - run:
+                          name: Conan install
+                          command: conan install ../daggy --build=missing
+                  - save_cache:
+                          key: conan-qt6.0.1-data-{{ arch }}
+                          paths:
+                                - ~/.conan/data
+                  - save_cache:
+                          key: conan-qt6.0.1-{{ arch }}
+                          paths:
+                                - c:\.conan\
+                  - run:
+                          name: Conan build
+                          command: conan build ../daggy
+                  - run:
+                          name: Make tests dir
+                          command: mkdir tests
+                  - run:
+                          name: Run local tests
+                          command: .\bin\DaggyCoreLocalTests -o tests\local_tests.xml,junitxml
+                  - store_test_results:
+                          path: tests
+                  - run:
+                          name: Pack artefacts
+                          command: '& "c:/Program Files/CMake/bin/cpack.exe"'
+                  - run:
+                          name: Move artefacts
+                          command: |
+                                mkdir windows_artifacts
+                                mv *.zip windows_artifacts
+                                mv *.exe windows_artifacts
+                  - store_artifacts:
+                          path: windows_artifacts
+      macos:
+            macos:
+                  xcode: 12.3.0
+            environment:
+                  CONAN_USER_HOME: ~/
+            working_directory: ~/build
+            steps:
+                  - checkout:
+                          path: ~/daggy
+                  - restore_cache:
+                          key: conan-qt6.0.1-data-{{ arch }}
+                  - restore_cache:
+                          key: brew_cache
+                  - run:
+                          name: Install Conan
+                          command: brew install conan
+                  - run:
+                          name: Add conan remote
+                          command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+                  - run:
+                          name: Install cmake
+                          command: brew install cmake
+                  - run:
+                          name: Install wget
+                          command: brew install wget
+                  - save_cache:
+                          paths:
+                                - ~/Library/Caches/Homebrew
+                                - /Library/Caches/Homebrew
+                          key: brew_cache
+                  - restore_cache:
+                          key: QtIFW-4.0.1_{{ arch }}
+                  - run:
+                          name: Install QtIFW
+                          command: |
+                                if [[ ! -d ~/QtIFW ]]
+                                then
+                                    wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-mac-x64.dmg'
+                                    sudo hdiutil attach ~/QtInstallerFramework-mac-x64.dmg
+                                    /Volumes/QtInstallerFramework-mac-x64/QtInstallerFramework-mac-x64.app/Contents/MacOS/QtInstallerFramework-mac-x64 --am --al -c --root ~/QtIFW install   
+                                fi
+                  - save_cache:
+                          key: QtIFW-4.0.1_{{ arch }}
+                          paths:
+                                - ~/QtIFW
+                  - run:
+                          name: Conan install
+                          command: conan install ../daggy --build=missing
+                  - save_cache:
+                          key: conan-qt6.0.1-data-{{ arch }}
+                          paths:
+                                - ~/.conan/data
+                  - run:
+                          name: Conan build
+                          command: conan build ../daggy
+                  - run:
+                          name: Run local tests
+                          command: mkdir tests && bin/DaggyCoreLocalTests -o tests/local_tests.xml,junitxml
+                  - store_test_results:
+                          path: tests
+                  - run:
+                          name: Pack artefacts
+                          command: cpack
+                  - run:
+                          name: Move artefacts
+                          command: |
+                                mkdir /tmp/macos_artifacts
+                                mv *.dmg /tmp/macos_artifacts
+                                mv *.zip /tmp/macos_artifacts
+                  - store_artifacts:
+                          path: /tmp/macos_artifacts
 workflows:
-    version: 2.1
-    build_and_test:
-        jobs:
-            - gcc-8_x64
-            - msvs2019
-            - macos
+      version: 2.1
+      build_and_test:
+            jobs:
+                  - gcc-8_x64
+                  - msvs2019
+                  - macos

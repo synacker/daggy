@@ -21,35 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
-#include <system_error>
 
-#include "daggycore_export.h"
+#include "Precompiled.h"
+#include "DataSource.h"
 
-namespace daggycore {
-
-class DAGGYCORE_EXPORT Result : public std::error_code
+bool daggycore::DataSource::operator==(const daggycore::DataSource &other) const
 {
-public:
-    static const std::error_code success;
-
-    Result();
-    Result(std::error_code error_code);
-    Result(std::error_code error_code,
-           std::string detailed_error_message);
-
-    Result(const Result& other) = default;
-    Result(Result&& other) = default;
-
-    Result& operator=(const Result& other) = default;
-    Result& operator=(Result&& other) = default;
-
-    operator bool() const;
-
-    const std::string& detailed_error_message() const;
-
-private:
-    std::string detailed_error_message_;
-};
-
+    return id == other.id &&
+           type == other.type &&
+           host == other.host &&
+           commands == other.commands &&
+           reconnect == other.reconnect &&
+           parameters == other.parameters;
 }

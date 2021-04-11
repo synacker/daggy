@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16.4)
+cmake_minimum_required(VERSION 3.16.3)
 
 project(daggy)
 
@@ -28,6 +28,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR}/exports)
 
 include(compiler)
 include(version)
+
+enable_testing()
 
 add_subdirectory(DaggyCore)
 if(DAGGY_CONSOLE)
