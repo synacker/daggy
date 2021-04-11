@@ -116,11 +116,11 @@ jobs:
                           command: conan build ../daggy
                   - run:
                           name: Make tests dir
-                          command: mkdir ~\build\tests
+                          command: mkdir tests
                   - run:
                           name: Run local tests
                           shell: cmd.exe
-                          command: ~\build\bin\DaggyCoreLocalTests -o ~\build\tests\local_tests.xml,junitxml
+                          command: bin\Release\DaggyCoreLocalTests -o ~\build\tests\local_tests.xml,junitxml
                   - store_test_results:
                           path: tests
                   - run:
