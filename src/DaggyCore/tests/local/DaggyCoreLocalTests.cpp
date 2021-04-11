@@ -259,16 +259,16 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     result = daggy_core_->start();
     QVERIFY2(result, result.detailed_error_message().c_str());
 
-    spy.wait(1000);
+    QVERIFY(spy.wait(1000));
     auto arguments = spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
 
     daggy_core_->stop();
-    spy.wait(1000);
+    QVERIFY(spy.wait(1000));
     arguments = spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finishing);
 
-    spy.wait(1000);
+    QVERIFY(spy.wait(1000));
     arguments = spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
 }
