@@ -119,7 +119,6 @@ jobs:
                           command: mkdir tests
                   - run:
                           name: Run local tests
-                          shell: cmd.exe
                           command: bin\Release\DaggyCoreLocalTests -o tests\local_tests.xml,junitxml
                   - store_test_results:
                           path: tests
