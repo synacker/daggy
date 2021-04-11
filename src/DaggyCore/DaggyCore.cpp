@@ -105,7 +105,7 @@ Result DaggyCore::start()
 
     auto data_providers = getProviders();
     if (data_providers.empty()) {
-        for (const auto& data_source : data_sources_) {
+        for (const auto& data_source : qAsConst(data_sources_)) {
             auto result = createProvider(data_source);
             if (!result)
                 return result;

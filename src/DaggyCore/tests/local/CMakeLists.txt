@@ -5,22 +5,18 @@ find_package(Qt6Test REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+enable_testing()
 
 set(SOURCES
     DaggyCoreLocalTests.cpp
     main.cpp
 )
 
-if(APPLE)
-    set(CMAKE_INSTALL_RPATH "@executable_path/../${CMAKE_INSTALL_LIBDIR}/;@executable_path/../${CMAKE_INSTALL_LIBDIR}/daggy")
-elseif(UNIX)
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/daggy;$ORIGIN/../${CMAKE_INSTALL_LIBDIR};")
-endif()
+include(rpath_bin)
 
-enable_testing(true)
 add_executable(${TARGET} ${SOURCES})
 add_test(NAME ${TARGET} COMMAND ${TARGET})
 
-target_link_libraries(${TARGET} PRIVATE Qt6::Test)
+target_link_libraries(${TARGET} PRIVATE DaggyCore Qt6::Test)
 
 include(precompiled)

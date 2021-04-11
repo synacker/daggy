@@ -44,9 +44,7 @@ public:
     Result& operator=(const Result& other) = default;
     Result& operator=(Result&& other) = default;
 
-    operator bool() const {
-        return *this == success;
-    }
+    operator bool() const;
 
     const std::string& detailed_error_message() const;
 

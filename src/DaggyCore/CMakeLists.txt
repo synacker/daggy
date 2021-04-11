@@ -4,11 +4,7 @@ find_package(Qt6 COMPONENTS Core Network REQUIRED)
 
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
 
-if(APPLE)
-    set(CMAKE_INSTALL_RPATH "@executable_path/daggy")
-elseif(UNIX)
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/daggy;")
-endif()
+include(rpath_lib)
 
 set(SSH2_SOURCES
     Ssh2Client.cpp
