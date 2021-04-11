@@ -21,50 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
+#include "Precompiled.h"
+#include "Command.h"
 
-#include "daggycore_export.h"
-
-#include <QVariantMap>
-#include <QObject>
-
-namespace daggycore {
-
-struct DAGGYCORE_EXPORT Command {
-Q_GADGET
-public:
-    enum State {
-        NotStarted,
-        Starting,
-        Started,
-        FailedToStart,
-        Finishing,
-        Finished
-    };
-    Q_ENUM(State)
-
-    struct Stream {
-        enum class Type {
-            Standard,
-            Error
-        };
-
-        QString extension;
-        QByteArray data;
-        Type type;
-    };
-
-    QString id;
-    QString extension;
-    QString exec;
-    QVariantMap parameters = {};
-    bool restart = false;
-
-    bool operator==(const Command& other) const;
-};
-
-using Commands = QMap<QString, Command>;
+bool daggycore::Command::operator==(const daggycore::Command &other) const
+{
+    return id == other.id &&
+           extension == other.extension &&
+           exec == other.exec &&
+           parameters == other.parameters &&
+           restart == other.restart;
 }
-
-Q_DECLARE_METATYPE(daggycore::Command::Stream)
-Q_DECLARE_METATYPE(daggycore::Command)

@@ -32,26 +32,28 @@ using namespace daggyconv;
 
 namespace YAML {
 
-static const QRegularExpression yaml_scalar_true_values = QRegularExpression( "true|True|TRUE|on|On|ON" );
-static const QRegularExpression yaml_scalar_false_values = QRegularExpression( "false|False|FALSE|off|Off|OFF" );
+namespace  {
+static const QRegularExpression yaml_scalar_true_values( "true|True|TRUE|on|On|ON" );
+static const QRegularExpression yaml_scalar_false_values( "false|False|FALSE|off|Off|OFF" );
+}
 
 QVariant
 scalarToVariant( const YAML::Node& scalarNode )
 {
-    QString string = QString::fromStdString( scalarNode.as< std::string >() );
-    if ( yaml_scalar_true_values.match( string ).hasMatch() )
+    const QString string = QString::fromStdString( scalarNode.as< std::string >() );
+    if ( yaml_scalar_true_values.match( string ).capturedLength() == string.size() )
     {
         return QVariant( true );
     }
-    if ( yaml_scalar_false_values.match( string ).hasMatch() )
+    if ( yaml_scalar_false_values.match( string ).capturedLength() == string.size())
     {
         return QVariant( false );
     }
-    if ( QRegularExpression( "[-+]?\\d+" ).match( string ).hasMatch() )
+    if ( QRegularExpression( "[-+]?\\d+" ).match( string ).capturedLength() == string.size() )
     {
         return QVariant( string.toLongLong() );
     }
-    if ( QRegularExpression( "[-+]?\\d*\\.?\\d+" ).match( string ).hasMatch() )
+    if ( QRegularExpression( "[-+]?\\d*\\.?\\d+" ).match( string ).capturedLength() == string.size() )
     {
         return QVariant( string.toDouble() );
     }

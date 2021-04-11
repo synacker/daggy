@@ -71,6 +71,11 @@ Result DaggyCore::setDataSources
     return Result::success;
 }
 
+const DataSources& DaggyCore::dataSources() const
+{
+    return data_sources_;
+}
+
 int DaggyCore::activeDataProvidersCount() const
 {
     int result = 0;

@@ -26,9 +26,11 @@ SOFTWARE.
 #include <QVariantMap>
 #include "Command.h"
 
+#include "daggycore_export.h"
+
 namespace daggycore {
 
-struct DataSource {
+struct DAGGYCORE_EXPORT DataSource {
     QString id;
     QString type;
     QString host;
@@ -36,6 +38,8 @@ struct DataSource {
     bool reconnect = false;
 
     QVariantMap parameters;
+
+    bool operator==(const DataSource& other) const;
 };
 using DataSources = QMap<QString, DataSource>;
 }

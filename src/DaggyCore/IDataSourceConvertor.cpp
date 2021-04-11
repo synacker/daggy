@@ -37,7 +37,7 @@ const QHash<const char*, QMetaType::Type> IDataSourceConvertor::required_source_
 
 const QHash<const char*, QMetaType::Type> IDataSourceConvertor::required_commands_field =
 {
-    {IDataSourceConvertor::g_execField, QMetaType::Type::QString},
+    {IDataSourceConvertor::g_execField, QMetaType::QString},
     {IDataSourceConvertor::g_extensionField, QMetaType::QString}
 };
 

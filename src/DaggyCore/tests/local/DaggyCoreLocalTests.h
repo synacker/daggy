@@ -24,7 +24,11 @@ SOFTWARE.
 
 #pragma once
 
-#include <QtTest>
+#include <QObject>
+
+namespace daggycore {
+class DaggyCore;
+}
 
 class DaggyCoreLocalTests : public QObject
 {
@@ -32,34 +36,15 @@ class DaggyCoreLocalTests : public QObject
 public:
     explicit DaggyCoreLocalTests(QObject *parent = nullptr);
 
-private:
-    bool myCondition()
-    {
-        return true;
-    }
-
 private slots:
-    void initTestCase()
-    {
-        qDebug("Called before everything else.");
-    }
+    void init();
+    void cleanup();
 
-    void myFirstTest()
-    {
-        QVERIFY(true); // check that a condition is satisfied
-        QCOMPARE(1, 1); // compare two values
-    }
+    void startAndTerminateTest_data();
+    void startAndTerminateTest();
 
-    void mySecondTest()
-    {
-        QVERIFY(myCondition());
-        QVERIFY(1 != 2);
-    }
-
-    void cleanupTestCase()
-    {
-        qDebug("Called after myFirstTest and mySecondTest.");
-    }
+private:
+    daggycore::DaggyCore* daggy_core_;
 
 };
 

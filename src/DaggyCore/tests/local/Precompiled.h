@@ -23,3 +23,5 @@ SOFTWARE.
 */
 
 #pragma once
+
+#include <QtTest>

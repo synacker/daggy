@@ -83,6 +83,8 @@ public:
         const QString& text_format_type
     );
 
+    const DataSources& dataSources() const;
+
     Result start();
     void stop();
 

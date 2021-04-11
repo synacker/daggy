@@ -55,6 +55,8 @@ set(SOURCES ${SOURCES}
     IDataSourceConvertor.cpp
     CLocalDataProvider.cpp
     CLocalDataProvidersFabric.cpp
+    DataSource.cpp
+    Command.cpp
 )
 qt6_wrap_cpp(MOC_SOURCES Command.h)
 
