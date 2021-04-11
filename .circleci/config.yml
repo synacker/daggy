@@ -121,7 +121,7 @@ jobs:
                   - run:
                           name: Run local tests
                           shell: cmd.exe
-                          command: bin\DaggyCoreLocalTests -o tests\local_tests.xml,junitxml
+                          command: .\bin\DaggyCoreLocalTests -o tests\local_tests.xml,junitxml
                   - store_test_results:
                           path: tests
                   - run:
