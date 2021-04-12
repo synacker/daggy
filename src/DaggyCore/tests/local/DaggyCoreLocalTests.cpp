@@ -298,7 +298,7 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     QCOMPARE(stream_keys, sources_keys);
 
     QVERIFY(!streams["ping_once"].isEmpty());
-    QVERIFY(streams["ping_once"].size() < streams["ping"].size());
-    QVERIFY(streams["ping"].size() < streams["ping_restart"].size());
+    QVERIFY(!streams["ping_restart"].isEmpty());
+    QVERIFY(!streams["ping"].isEmpty());
 }
 
