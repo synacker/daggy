@@ -216,7 +216,7 @@ DaggyCoreLocalTests::DaggyCoreLocalTests(QObject *parent)
 
 void DaggyCoreLocalTests::init()
 {
-    daggy_core_ = new DaggyCore(this);
+    daggy_core_ = new DaggyCore();
     auto result = daggy_core_->createProviderFabric<CLocalDataProvidersFabric>();
     QVERIFY2(result, result.detailed_error_message().c_str());
     result = daggy_core_->createConvertor<CJsonDataSourcesConvertor>();
