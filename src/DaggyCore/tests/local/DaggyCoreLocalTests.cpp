@@ -261,15 +261,18 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     QVERIFY2(result, result.detailed_error_message().c_str());
 
     states_spy.wait();
+    QVERIFY(!states_spy.isEmpty());
     auto arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
 
     daggy_core_->stop();
     states_spy.wait(1000);
+    QVERIFY(!states_spy.isEmpty());
     arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finishing);
 
     states_spy.wait(1000);
+    QVERIFY(!states_spy.isEmpty());
     arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
 
@@ -279,7 +282,6 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     for (auto command_stream : streams_spy) {
         auto command_id = command_stream[1].toString();
         auto stream = command_stream[2].value<Command::Stream>();
-        QVERIFY(stream.type == Command::Stream::Type::Standard);
         QVERIFY(!stream.data.isEmpty());
         streams[command_id].push_back(stream);
     }
