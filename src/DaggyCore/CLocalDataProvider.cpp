@@ -176,24 +176,30 @@ void CLocalDataProvider::startCommands()
         connect(process, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this,
         [=]()
         {
-            emit commandStream
-            (
-                process->objectName(),
-                {
-                    command.extension,
-                    process->readAllStandardError(),
-                    Command::Stream::Type::Error
-                }
-            );
-            emit commandStream
-            (
-                process->objectName(),
-                {
-                    command.extension,
-                    process->readAllStandardOutput(),
-                    Command::Stream::Type::Standard
-                }
-            );
+            auto stream = process->readAllStandardError();
+            if (!stream.isEmpty()) {
+                emit commandStream
+                (
+                    process->objectName(),
+                    {
+                        command.extension,
+                        stream,
+                        Command::Stream::Type::Error
+                    }
+                );
+            }
+            stream = process->readAllStandardOutput();
+            if (!stream.isEmpty()) {
+                emit commandStream
+                (
+                    process->objectName(),
+                    {
+                        command.extension,
+                        stream,
+                        Command::Stream::Type::Standard
+                    }
+                );
+            }
         });
 
         connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
@@ -202,12 +208,20 @@ void CLocalDataProvider::startCommands()
                 emit commandStateChanged(process->objectName(),
                                          Command::Finished,
                                          exit_code);
-                if (command.restart && state() == IDataProvider::Started)
-                    process->start(command.exec);
+                if (command.restart && state() == IDataProvider::Started) {
+                    startProcess(process, command.exec);
+                }
                 else
                     process->deleteLater();
             }
         );
-        process->start(command.exec);
+        startProcess(process, command.exec);
     }
+}
+
+void CLocalDataProvider::startProcess(QProcess *process, const QString& command) const
+{
+    auto parameters = command.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+    auto program = parameters.takeFirst();
+    process->start(program, parameters);
 }

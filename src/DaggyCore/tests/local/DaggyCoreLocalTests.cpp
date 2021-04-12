@@ -254,21 +254,49 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     QVERIFY2(result, result.detailed_error_message().c_str());
     QCOMPARE(daggy_core_->dataSources(), data_sources);
 
-    QSignalSpy spy(daggy_core_, &DaggyCore::stateChanged);
+    QSignalSpy states_spy(daggy_core_, &DaggyCore::stateChanged);
+    QSignalSpy streams_spy(daggy_core_, &DaggyCore::commandStream);
 
     result = daggy_core_->start();
     QVERIFY2(result, result.detailed_error_message().c_str());
 
-    spy.wait(1000);
-    auto arguments = spy.takeFirst();
+    states_spy.wait();
+    auto arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
 
     daggy_core_->stop();
-    spy.wait(1000);
-    arguments = spy.takeFirst();
+    states_spy.wait(1000);
+    arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finishing);
 
-    spy.wait(1000);
-    arguments = spy.takeFirst();
+    states_spy.wait(1000);
+    arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
+
+    QVERIFY(!streams_spy.isEmpty());
+
+    QMap<QString, QList<Command::Stream>> streams;
+    for (auto command_stream : streams_spy) {
+        auto command_id = command_stream[1].toString();
+        auto stream = command_stream[2].value<Command::Stream>();
+        QVERIFY(stream.type == Command::Stream::Type::Standard);
+        QVERIFY(!stream.data.isEmpty());
+        streams[command_id].push_back(stream);
+    }
+
+    auto stream_keys = streams.keys();
+    std::sort(stream_keys.begin(), stream_keys.end());
+
+    QList<QString> sources_keys;
+    for (const auto& command : data_sources) {
+        sources_keys += command.commands.keys();
+    }
+    std::sort(sources_keys.begin(), sources_keys.end());
+
+    QCOMPARE(stream_keys, sources_keys);
+
+    QVERIFY(!streams["ping_once"].isEmpty());
+    QVERIFY(streams["ping_once"].size() < streams["ping"].size());
+    QVERIFY(streams["ping"].size() < streams["ping_restart"].size());
 }
+

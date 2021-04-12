@@ -25,4 +25,4 @@ furnished to do so, subject to the following conditions:
 #include "Precompiled.h"
 #include "DaggyCoreLocalTests.h"
 
-QTEST_MAIN(DaggyCoreLocalTests)
+QTEST_GUILESS_MAIN(DaggyCoreLocalTests)

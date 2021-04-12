@@ -52,6 +52,8 @@ private:
     int activeProcessesCount() const;
 
     void startCommands();
+
+    void startProcess(QProcess* process, const QString& command) const;
 };
 
 }
