@@ -257,21 +257,29 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     QSignalSpy states_spy(daggy_core_, &DaggyCore::stateChanged);
     QSignalSpy streams_spy(daggy_core_, &DaggyCore::commandStream);
 
-    result = daggy_core_->start();
-    QVERIFY2(result, result.detailed_error_message().c_str());
+    QTimer::singleShot(0, [&]()
+    {
+        auto result = daggy_core_->start();
+        QVERIFY2(result, result.detailed_error_message().c_str());
+    });
 
-    states_spy.wait(10000);
+    QVERIFY(states_spy.wait());
     QVERIFY(!states_spy.isEmpty());
     auto arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
 
-    daggy_core_->stop();
-    states_spy.wait(1000);
+    QTest::qWait(5000);
+
+    QTimer::singleShot(0, [&]()
+    {
+        daggy_core_->stop();
+    });
+    QVERIFY(states_spy.wait());
     QVERIFY(!states_spy.isEmpty());
     arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finishing);
 
-    states_spy.wait(1000);
+    QTest::qWait(1000);
     QVERIFY(!states_spy.isEmpty());
     arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
