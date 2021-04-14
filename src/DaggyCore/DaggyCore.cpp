@@ -123,8 +123,9 @@ Result DaggyCore::start()
     }
 
     setState(Started);
-    for (IDataProvider* provider : data_providers)
+    for (IDataProvider* provider : data_providers) {
         provider->start();
+    }
 
     return Result::success;
 }
@@ -153,7 +154,7 @@ DaggyCore::State DaggyCore::state() const
     return state_;
 }
 
-void DaggyCore::onDataProviderStateChanged(const int state)
+void DaggyCore::onDataProviderStateChanged(const IDataProvider::State state)
 {
     const QString& provider_id = sender()->objectName();
     emit dataProviderStateChanged(provider_id,
@@ -175,15 +176,15 @@ void DaggyCore::onDataProviderStateChanged(const int state)
     }
 }
 
-void DaggyCore::onDataProviderError(const std::error_code error_code)
+void DaggyCore::onDataProviderError(std::error_code error_code)
 {
     emit dataProviderError(sender()->objectName(),
                            error_code);
 }
 
-void DaggyCore::onCommandStateChanged(const QString command_id,
-                                      const Command::State state,
-                                      const int exit_code)
+void DaggyCore::onCommandStateChanged(QString command_id,
+                                      Command::State state,
+                                      int exit_code)
 {
     emit commandStateChanged(sender()->objectName(),
                              command_id,
@@ -191,16 +192,16 @@ void DaggyCore::onCommandStateChanged(const QString command_id,
                              exit_code);
 }
 
-void DaggyCore::onCommandStream(const QString command_id,
-                                const Command::Stream stream)
+void DaggyCore::onCommandStream(QString command_id,
+                                Command::Stream stream)
 {
     emit commandStream(sender()->objectName(),
                        command_id,
                        stream);
 }
 
-void DaggyCore::onCommandError(const QString command_id,
-                               const std::error_code error_code)
+void DaggyCore::onCommandError(QString command_id,
+                               std::error_code error_code)
 {
     emit commandError(sender()->objectName(),
                       command_id,
@@ -291,16 +292,12 @@ void DaggyCore::setState(DaggyCore::State state)
 
 Result DaggyCore::addDataProvidersFabric(IDataProviderFabric* new_fabric)
 {
-    new_fabric->setParent(this);
     new_fabric->setObjectName(new_fabric->type);
-
     return Result::success;
 }
 
 Result DaggyCore::addDataAggregator(IDataAggregator* aggregator)
 {
-    aggregator->setParent(this);
-
     connect(this, &DaggyCore::dataProviderStateChanged, aggregator, &IDataAggregator::onDataProviderStateChanged);
     connect(this, &DaggyCore::dataProviderError, aggregator, &IDataAggregator::onDataProviderError);
 
@@ -313,8 +310,6 @@ Result DaggyCore::addDataAggregator(IDataAggregator* aggregator)
 
 Result DaggyCore::addDataSourceConvertor(daggyconv::IDataSourceConvertor* convertor)
 {
-    convertor->setParent(this);
     convertor->setObjectName(convertor->type);
-
     return Result::success;
 }
