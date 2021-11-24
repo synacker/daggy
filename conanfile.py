@@ -35,14 +35,14 @@ class DaggyConan(ConanFile):
         "ssh2_support": [True, False],
         "yaml_support": [True, False],
         "daggy_console": [True, False],
-        "daggy_core_static": [True, False],
+        "shared": [True, False],
         "package_deps": [True, False]
     }
     default_options = {
         "ssh2_support": True,
         "yaml_support": True,
         "daggy_console": True,
-        "daggy_core_static": False,
+        "shared": True,
         "package_deps": True
     }
     generators = "cmake", "cmake_paths", "cmake_find_package"
@@ -53,19 +53,14 @@ class DaggyConan(ConanFile):
         self.version = GitVersion().full_version()
 
     def requirements(self):
-        self.requires("openssl/1.1.1i", override=True)
-        self.requires("qt/6.0.1@bincrafters/stable")
+        self.requires("qt/6.2.1")
         self.requires("kainjow-mustache/4.1")
 
         if self.options.yaml_support:
-            self.requires("yaml-cpp/0.6.3")
+            self.requires("yaml-cpp/0.7.0")
 
         if self.options.ssh2_support:
-            self.requires("libssh2/1.9.0")
-
-    def configure(self):
-        self.options["qt"].shared = True
-        self.options["qt"].commercial = False
+            self.requires("libssh2/1.10.0")
 
     def _libdir(self):
         result = "lib"
@@ -78,10 +73,13 @@ class DaggyConan(ConanFile):
         cmake.definitions["SSH2_SUPPORT"] = self.options.ssh2_support
         cmake.definitions["YAML_SUPPORT"] = self.options.yaml_support
         cmake.definitions["DAGGY_CONSOLE"] = self.options.daggy_console
-        cmake.definitions["DAGGY_CORE_STATIC"] = self.options.daggy_core_static
         cmake.definitions["VERSION"] = self.version
         cmake.definitions["PACKAGE_DEPS"] = self.options.package_deps
         cmake.definitions["CMAKE_INSTALL_LIBDIR"] = self._libdir()
+        if self.options.shared:
+            cmake.definitions["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
+            cmake.definitions["CMAKE_CXX_VISIBILITY_PRESET"] = "hidden"
+            cmake.definitions["CMAKE_VISIBILITY_INLINES_HIDDEN"] = 1
         cmake.configure()
         return cmake
 

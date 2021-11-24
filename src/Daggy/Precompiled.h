@@ -18,7 +18,7 @@
 #include <ostream>
 #include <set>
 
-#include <kainjow/mustache.hpp>
+#include <mustache.hpp>
 
 #ifdef Q_OS_WIN
 #include <windows.h>

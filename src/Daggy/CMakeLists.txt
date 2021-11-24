@@ -35,8 +35,8 @@ set(FILETYPE "VFT_APP")
 
 include(version_meta)
 
-add_executable(${TARGET} ${SOURCES})
-target_link_libraries(${TARGET} DaggyCore)
+qt6_add_executable(${TARGET} WIN32 MACOSX_BUNDLE ${SOURCES})
+target_link_libraries(${TARGET} PRIVATE DaggyCore)
 include(precompiled)
 
 install(TARGETS ${TARGET} RUNTIME)
