@@ -29,9 +29,9 @@ namespace daggycore {
 
 class DAGGYCORE_EXPORT CLocalDataProvidersFabric : public IDataProviderFabric
 {
-    Q_OBJECT
 public:
-    CLocalDataProvidersFabric(QObject* parent = nullptr);
+    CLocalDataProvidersFabric();
+    ~CLocalDataProvidersFabric() = default;
 
     static const char* fabric_type;
 protected:

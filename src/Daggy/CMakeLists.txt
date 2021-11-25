@@ -4,7 +4,6 @@ find_package(Qt6 COMPONENTS Core REQUIRED)
 
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
 
-
 include(rpath_bin)
 
 set(SOURCES ${SOURCES}
@@ -37,6 +36,6 @@ include(version_meta)
 
 qt6_add_executable(${TARGET} WIN32 MACOSX_BUNDLE ${SOURCES})
 target_link_libraries(${TARGET} PRIVATE DaggyCore)
-include(precompiled)
+target_precompile_headers(${TARGET} PRIVATE Precompiled.h)
 
 install(TARGETS ${TARGET} RUNTIME)

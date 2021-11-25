@@ -39,6 +39,9 @@ constexpr const char* kill_command_global =
           "sleep 0.1;"
           "done "
           "done ";
+
+const char* kill_command_id = "15397cd1-e80e-4584-9611-5398705fbd8e";
+
 }
 
 CSsh2DataProvider::CSsh2DataProvider(QHostAddress host,
@@ -68,7 +71,7 @@ CSsh2DataProvider::CSsh2DataProvider(QHostAddress host,
 
 CSsh2DataProvider::~CSsh2DataProvider()
 {
-    stop();
+    disconnectAll();
 }
 
 void CSsh2DataProvider::start()
@@ -78,7 +81,21 @@ void CSsh2DataProvider::start()
 
 void CSsh2DataProvider::stop()
 {
+    disconnectAll();
+}
+
+QString CSsh2DataProvider::type() const
+{
+    return provider_type;
+}
+
+void CSsh2DataProvider::disconnectAll()
+{
+    if (ssh2Process(kill_command_id) != nullptr || (state() != IDataProvider::Started))
+        return;
+
     auto terminate_process = ssh2_client_->createProcess(kill_command_global);
+    terminate_process->setObjectName(kill_command_id);
     connect(terminate_process, &Ssh2Process::processStateChanged,
          [this](const Ssh2Process::ProcessStates state)
     {
@@ -91,11 +108,6 @@ void CSsh2DataProvider::stop()
       }
     });
     terminate_process->open();
-}
-
-QString CSsh2DataProvider::type() const
-{
-    return provider_type;
 }
 
 std::tuple<Ssh2Process*, Command> CSsh2DataProvider::getCommandContextFromSender() const

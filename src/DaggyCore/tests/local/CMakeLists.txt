@@ -19,4 +19,4 @@ add_test(NAME ${TARGET} COMMAND ${TARGET})
 
 target_link_libraries(${TARGET} PRIVATE DaggyCore Qt6::Test)
 
-include(precompiled)
+target_precompile_headers(${TARGET} PRIVATE Precompiled.h)

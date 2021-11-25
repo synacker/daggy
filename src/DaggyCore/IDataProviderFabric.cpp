@@ -28,13 +28,8 @@ SOFTWARE.
 
 using namespace daggycore;
 
-IDataProviderFabric::IDataProviderFabric
-(
-        QString type_arg,
-        QObject* parent
-)
-    : QObject(parent)
-    , type(std::move(type_arg))
+IDataProviderFabric::IDataProviderFabric(QString type_arg)
+    : type(std::move(type_arg))
 {
 
 }

@@ -38,6 +38,9 @@ public:
     CLocalDataProvider(Commands commands,
                        QObject *parent = nullptr);
 
+    ~CLocalDataProvider();
+
+
     void start() override;
     void stop() override;
     QString type() const override;
@@ -46,14 +49,21 @@ public:
 
 private slots:
     void onProcessDestroyed();
+    void onProcessStart();
+    void onProcessError(QProcess::ProcessError error);
+    void onProcessReadyReadStandard();
+    void onProcessReadyReadError();
+    void onProcessFinished(int exit_code, QProcess::ExitStatus);
 
 private:
+    void terminate();
+
     QList<QProcess*> processes() const;
     int activeProcessesCount() const;
 
     void startCommands();
 
-    void startProcess(QProcess* process, const QString& command) const;
+    void startProcess(QProcess* process, const QString& command);
 };
 
 }

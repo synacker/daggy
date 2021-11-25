@@ -29,8 +29,8 @@ using namespace daggycore;
 
 const char* CLocalDataProvidersFabric::fabric_type = CLocalDataProvider::provider_type;
 
-CLocalDataProvidersFabric::CLocalDataProvidersFabric(QObject* parent)
-    : IDataProviderFabric(fabric_type, parent)
+CLocalDataProvidersFabric::CLocalDataProvidersFabric()
+    : IDataProviderFabric(fabric_type)
 {
 
 }

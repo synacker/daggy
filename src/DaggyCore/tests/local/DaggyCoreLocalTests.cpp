@@ -217,14 +217,6 @@ DaggyCoreLocalTests::DaggyCoreLocalTests(QObject *parent)
 void DaggyCoreLocalTests::init()
 {
     daggy_core_ = new DaggyCore();
-    auto result = daggy_core_->createProviderFabric<CLocalDataProvidersFabric>();
-    QVERIFY2(result, result.detailed_error_message().c_str());
-    result = daggy_core_->createConvertor<CJsonDataSourcesConvertor>();
-    QVERIFY2(result, result.detailed_error_message().c_str());
-#ifdef YAML_SUPPORT
-    result = daggy_core_->createConvertor<CYamlDataSourcesConvertor>();
-    QVERIFY2(result, result.detailed_error_message().c_str());
-#endif
 }
 
 void DaggyCoreLocalTests::cleanup()
@@ -257,7 +249,7 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     QSignalSpy states_spy(daggy_core_, &DaggyCore::stateChanged);
     QSignalSpy streams_spy(daggy_core_, &DaggyCore::commandStream);
 
-    QTimer::singleShot(0, [&]()
+    QTimer::singleShot(0, [=]()
     {
         auto result = daggy_core_->start();
         QVERIFY2(result, result.detailed_error_message().c_str());
@@ -268,22 +260,22 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     auto arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
 
-    QTest::qWait(5000);
-
-    QTimer::singleShot(0, [&]()
+    QTimer::singleShot(1000, [=]()
     {
         daggy_core_->stop();
     });
+
+
     QVERIFY(states_spy.wait());
     QVERIFY(!states_spy.isEmpty());
     arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finishing);
 
-    QTest::qWait(1000);
+    //QVERIFY(states_spy.wait());
     QVERIFY(!states_spy.isEmpty());
     arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
-
+    streams_spy.wait();
     QVERIFY(!streams_spy.isEmpty());
 
     QMap<QString, QList<Command::Stream>> streams;

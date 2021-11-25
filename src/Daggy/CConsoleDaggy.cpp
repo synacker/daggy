@@ -38,13 +38,12 @@ using namespace daggyconv;
 
 CConsoleDaggy::CConsoleDaggy(QObject* parent)
     : QObject(parent)
-    , daggy_core_(new daggycore::DaggyCore(this))
     , need_hard_stop_(false)
 {
     qApp->setApplicationVersion(VERSION_STR);
     qApp->setApplicationName("daggy");
     connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
-    connect(daggy_core_, &DaggyCore::stateChanged, this, [](DaggyCore::State state){
+    connect(&daggy_core_, &DaggyCore::stateChanged, this, [](DaggyCore::State state){
         if (state == DaggyCore::Finished)
             qApp->exit();
     });
@@ -52,19 +51,9 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
 
 daggycore::Result CConsoleDaggy::initialize()
 {
-    daggy_core_->createProviderFabric<CLocalDataProvidersFabric>();
-#ifdef SSH2_SUPPORT
-    daggy_core_->createProviderFabric<CSsh2DataProviderFabric>();
-#endif
-
-    daggy_core_->createConvertor<CJsonDataSourcesConvertor>();
-#ifdef YAML_SUPPORT
-    daggy_core_->createConvertor<CYamlDataSourcesConvertor>();
-#endif
-
     const auto settings = parse();
-    daggy_core_->createDataAggregator<CFileDataAggregator>(settings.output_folder, settings.data_sources_name);
-    const auto result = daggy_core_->setDataSources(settings.data_source_text, settings.data_source_text_type);
+    daggy_core_.addDataAggregator(new CFileDataAggregator(settings.output_folder, settings.data_sources_name));
+    const auto result = daggy_core_.setDataSources(settings.data_source_text, settings.data_source_text_type);
     if (result && settings.timeout > 0)
         QTimer::singleShot(settings.timeout, this, &CConsoleDaggy::stop);
 
@@ -73,7 +62,7 @@ daggycore::Result CConsoleDaggy::initialize()
 
 Result CConsoleDaggy::start()
 {
-    return daggy_core_->start();
+    return daggy_core_.start();
 }
 
 void CConsoleDaggy::stop()
@@ -82,7 +71,7 @@ void CConsoleDaggy::stop()
         qWarning() << "HARD STOP";
         qApp->exit();
     } else {
-        daggy_core_->stop();
+        daggy_core_.stop();
         need_hard_stop_ = true;
     }
 }

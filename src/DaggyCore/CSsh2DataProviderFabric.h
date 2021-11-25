@@ -34,9 +34,9 @@ class IDataProvider;
 
 class DAGGYCORE_EXPORT CSsh2DataProviderFabric : public IDataProviderFabric
 {
-    Q_OBJECT
 public:
-    CSsh2DataProviderFabric(QObject* parent = nullptr);
+    CSsh2DataProviderFabric();
+    ~CSsh2DataProviderFabric() = default;
 
     static const char* fabric_type;
 protected:
