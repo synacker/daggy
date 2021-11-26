@@ -26,7 +26,6 @@ SOFTWARE.
 #include <QObject>
 
 #include <DaggyCore/Result.h>
-#include <DaggyCore/DaggyCore.h>
 
 #include "ISystemSignalHandler.h"
 
@@ -81,7 +80,7 @@ private:
 
     QString mustache(const QString& text, const QString& output_folder) const;
 
-    daggycore::DaggyCore daggy_core_;
+    daggycore::DaggyCore* daggy_core_;
     bool need_hard_stop_;
 
     QString error_message_;

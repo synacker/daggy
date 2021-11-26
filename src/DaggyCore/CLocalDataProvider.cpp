@@ -134,9 +134,6 @@ void CLocalDataProvider::terminate()
         for (QProcess* process : processes()) {
             process->terminate();
         }
-
-        for (auto process : processes())
-            process->waitForFinished(1);
     }
     else
         setState(Finished);
@@ -157,9 +154,6 @@ void CLocalDataProvider::startCommands()
 
         startProcess(process, command.exec);
     }
-
-    for (auto process : processes())
-        process->waitForStarted(1);
 }
 
 void CLocalDataProvider::startProcess(QProcess *process, const QString& command)

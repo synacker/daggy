@@ -6,7 +6,11 @@ set(CMAKE_PREFIX_PATH ${CONAN_QT_ROOT})
 
 include(conan)
 
-set(CONAN_BUILD ON)
+option(CONAN_BUILD "build with conan" ON)
+option(PACKAGE_DEPS "include daggy deps into package" ON)
+
+set(PACKAGE_DEPS ${CONAN_BUILD})
+
 enable_testing()
 
 add_subdirectory(src)

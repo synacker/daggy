@@ -91,7 +91,7 @@ QString CSsh2DataProvider::type() const
 
 void CSsh2DataProvider::disconnectAll()
 {
-    if (ssh2Process(kill_command_id) != nullptr || (state() != IDataProvider::Started))
+    if (ssh2Process(kill_command_id) != nullptr || state() != IDataProvider::Started)
         return;
 
     auto terminate_process = ssh2_client_->createProcess(kill_command_global);

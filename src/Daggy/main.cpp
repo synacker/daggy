@@ -17,8 +17,6 @@ try {
     if (!result)
         throw std::runtime_error(result.detailed_error_message());
 
-    QTimer::singleShot(5000, [&](){console_daggy->stop();});
-
     return app.exec();
 }
 catch (const std::exception& exception) {

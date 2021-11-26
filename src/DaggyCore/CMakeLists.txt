@@ -93,7 +93,7 @@ set(CMAKE_C_VISIBILITY_PRESET hidden)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 
-add_library(${TARGET} SHARED ${SOURCES} ${MOC_SOURCES})
+add_library(${TARGET} ${SOURCES} ${MOC_SOURCES})
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
 include(GenerateExportHeader)

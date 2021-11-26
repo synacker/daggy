@@ -6,7 +6,6 @@ option(SSH2_SUPPORT "ssh2 data provider support" ON)
 option(YAML_SUPPORT "yaml data sources support" ON)
 option(DAGGY_CONSOLE "daggy console application" ON)
 option(BUILD_SHARED_LIBS ON)
-option(PACKAGE_DEPS "include daggy deps into package" OFF)
 
 set(COMPANY_NAME "synacker")
 set(APP_COPYRIGTH "Copyright \\251 2021 Mikhail Milovidov. Some Rights Reserved")

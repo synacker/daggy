@@ -36,14 +36,14 @@ class DaggyConan(ConanFile):
         "yaml_support": [True, False],
         "daggy_console": [True, False],
         "shared": [True, False],
-        "package_deps": [True, False]
+        "fPIC": [True, False]
     }
     default_options = {
         "ssh2_support": True,
         "yaml_support": True,
         "daggy_console": True,
         "shared": True,
-        "package_deps": True
+        "fPIC": True
     }
     generators = "cmake", "cmake_paths", "cmake_find_package"
     exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*"]
@@ -51,6 +51,13 @@ class DaggyConan(ConanFile):
 
     def set_version(self):
         self.version = GitVersion().full_version()
+
+    def configure(self):
+        self.options.fPIC = self.options.shared
+        self.options["qt"].shared = self.options.shared
+        self.options["openssl"].shared = self.options.shared
+        self.options["libssh2"].shared = self.options.shared
+        self.options["yaml-cpp"].shared = self.options.shared
 
     def requirements(self):
         self.requires("qt/6.2.1")
@@ -74,7 +81,6 @@ class DaggyConan(ConanFile):
         cmake.definitions["YAML_SUPPORT"] = self.options.yaml_support
         cmake.definitions["DAGGY_CONSOLE"] = self.options.daggy_console
         cmake.definitions["VERSION"] = self.version
-        cmake.definitions["PACKAGE_DEPS"] = self.options.package_deps
         cmake.definitions["CMAKE_INSTALL_LIBDIR"] = self._libdir()
         if self.options.shared:
             cmake.definitions["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
@@ -96,11 +102,10 @@ class DaggyConan(ConanFile):
         self.cpp_info.libdirs = [self._libdir()]
 
     def imports(self):
-        if self.options.package_deps:
-            if self.settings.os == "Windows":
-                self.copy("*.dll", src="@bindirs", dst="bin")
-                self.copy("*.dll", src="@libdirs", dst="bin")
-            elif self.settings.os == "Linux":
-                self.copy("*.so.*", src="@libdirs", dst="{}/{}".format(self._libdir(), self.name))
-            else:
-                self.copy("*.dylib", src="@libdirs", dst="{}/{}".format(self._libdir(), self.name))
+        if self.settings.os == "Windows":
+            self.copy("*.dll", src="@bindirs", dst="bin")
+            self.copy("*.dll", src="@libdirs", dst="bin")
+        elif self.settings.os == "Linux":
+            self.copy("*.so.*", src="@libdirs", dst="{}/{}".format(self._libdir(), self.name))
+        else:
+            self.copy("*.dylib", src="@libdirs", dst="{}/{}".format(self._libdir(), self.name))

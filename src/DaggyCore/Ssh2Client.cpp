@@ -409,23 +409,29 @@ std::error_code Ssh2Client::authenticate()
 {
     std::error_code result = ssh2_success;
     int ssh2_method_result = 0;
+    const auto user = ssh2_settings_.user.toLocal8Bit();
+    const auto key = ssh2_settings_.key.toLocal8Bit();
+    const auto passphrase = ssh2_settings_.passphrase.toLocal8Bit();
+
     switch (ssh2_auth_method_) {
     case Ssh2AuthMethods::NoAuth:
         ssh2_method_result = libssh2_userauth_authenticated(ssh2_session_);
         break;
     case Ssh2AuthMethods::PublicKeyAuthentication:
+    {
         ssh2_method_result = libssh2_userauth_publickey_fromfile(
                     ssh2_session_,
-                    qPrintable(ssh2_settings_.user),
+                    user.data(),
                     nullptr,
-                    qPrintable(ssh2_settings_.key),
-                    qPrintable(ssh2_settings_.keyphrase));
+                    key.data(),
+                    passphrase.isEmpty() ? nullptr : passphrase.data());
+    }
         break;
     case Ssh2AuthMethods::PasswordAuthentication:
         ssh2_method_result = libssh2_userauth_password(
                     ssh2_session_,
-                    qPrintable(ssh2_settings_.user),
-                    qPrintable(ssh2_settings_.passphrase));
+                    user.data(),
+                    passphrase.data());
         break;
     }
     switch (ssh2_method_result) {

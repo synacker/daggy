@@ -18,11 +18,18 @@ aliases:
         extension: log
 
   - &ssh_auth
-    user: muxa
-    key: /home/muxa/.ssh/id_rsa
+    user: {{env_USER}}
+    key: {{env_HOME}}/.ssh/id_ed25519
 
 sources:
   localhost:
     type: local
+    commands:
+      *my_commands
+  remotehost:
+    host: 127.0.0.1
+    parameters:
+      *ssh_auth
+    type: ssh2
     commands:
       *my_commands
