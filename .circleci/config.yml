@@ -26,6 +26,9 @@ jobs:
                           name: Conan build
                           command: conan build ../daggy
                   - run:
+                          name: ping
+                          command: ping -c 4 127.0.0.1
+                  - run:
                           name: Make tests dir
                           command: mkdir tests
                   - run:
