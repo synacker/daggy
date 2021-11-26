@@ -216,7 +216,7 @@ DaggyCoreLocalTests::DaggyCoreLocalTests(QObject *parent)
 
 void DaggyCoreLocalTests::init()
 {
-    daggy_core_ = new DaggyCore();
+    daggy_core_ = new DaggyCore(this);
 }
 
 void DaggyCoreLocalTests::cleanup()
@@ -260,7 +260,7 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     auto arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
 
-    QTimer::singleShot(1000, [=]()
+    QTimer::singleShot(3000, [=]()
     {
         daggy_core_->stop();
     });

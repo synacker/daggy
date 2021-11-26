@@ -129,30 +129,52 @@ void CLocalDataProvider::onProcessError(QProcess::ProcessError error)
 
 void CLocalDataProvider::terminate()
 {
+    if (state() != Started)
+        return;
+
     if (activeProcessesCount() > 0) {
         setState(Finishing);
         for (QProcess* process : processes()) {
-            process->terminate();
+            switch (process->state()) {
+            case QProcess::Running:
+                process->terminate();
+                break;
+            case QProcess::Starting:
+                process->close();
+                break;
+            default:;
+            }
         }
     }
     else
         setState(Finished);
 }
 
+QProcess* CLocalDataProvider::startProcess(const Command &command)
+{
+    QProcess* process = new QProcess(this);
+    process->setObjectName(command.id);
+
+    connect(process, &QProcess::destroyed, this, &CLocalDataProvider::onProcessDestroyed);
+    connect(process, &QProcess::started, this, &CLocalDataProvider::onProcessStart);
+    connect(process, &QProcess::errorOccurred, this, &CLocalDataProvider::onProcessError);
+    connect(process, &QProcess::readyReadStandardOutput, this, &CLocalDataProvider::onProcessReadyReadStandard);
+    connect(process, &QProcess::readyReadStandardError, this, &CLocalDataProvider::onProcessReadyReadError);
+    connect(process, &QProcess::finished, this, &CLocalDataProvider::onProcessFinished);
+
+    auto parameters = command.exec.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+    auto program = parameters.takeFirst();
+    emit commandStateChanged(process->objectName(),
+                             Command::Starting,
+                             process->exitCode());
+    process->start(program, parameters);
+    return process;
+}
+
 void CLocalDataProvider::startCommands()
 {
     for (const auto& command : commands()) {
-        QProcess* process = new QProcess(this);
-        process->setObjectName(command.id);
-
-        connect(process, &QProcess::destroyed, this, &CLocalDataProvider::onProcessDestroyed);
-        connect(process, &QProcess::started, this, &CLocalDataProvider::onProcessStart);
-        connect(process, &QProcess::errorOccurred, this, &CLocalDataProvider::onProcessError);
-        connect(process, &QProcess::readyReadStandardOutput, this, &CLocalDataProvider::onProcessReadyReadStandard);
-        connect(process, &QProcess::readyReadStandardError, this, &CLocalDataProvider::onProcessReadyReadError);
-        connect(process, &QProcess::finished, this, &CLocalDataProvider::onProcessFinished);
-
-        startProcess(process, command.exec);
+        startProcess(command);
     }
 }
 
@@ -207,14 +229,13 @@ void CLocalDataProvider::onProcessFinished(int exit_code, QProcess::ExitStatus)
     onProcessReadyReadStandard();
     onProcessReadyReadError();
     auto process = qobject_cast<QProcess*>(sender());
-    auto command = commands().value(process->objectName());
+    const auto& command = commands().value(process->objectName());
     emit commandStateChanged(process->objectName(),
                              Command::Finished,
                              exit_code);
+    process->deleteLater();
     if (command.restart && state() == IDataProvider::Started) {
-        startProcess(process, command.exec);
+        startProcess(command);
     }
-    else
-        process->deleteLater();
 }
 

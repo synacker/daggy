@@ -58,6 +58,8 @@ private slots:
 private:
     void terminate();
 
+    QProcess *startProcess(const daggycore::Command& command);
+
     QList<QProcess*> processes() const;
     int activeProcessesCount() const;
 
