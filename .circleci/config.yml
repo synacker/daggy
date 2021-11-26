@@ -26,8 +26,11 @@ jobs:
                           name: Conan build
                           command: conan build ../daggy
                   - run:
+                          name: Make tests dir
+                          command: mkdir tests
+                  - run:
                           name: Run local tests
-                          command: mkdir tests && bin/DaggyCoreLocalTests -o tests/local_tests.xml,junitxml
+                          command: bin/DaggyCoreLocalTests -o tests/local_tests.xml,junitxml
                   - store_test_results:
                           path: tests
                   - run:
