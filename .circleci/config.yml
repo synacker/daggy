@@ -8,11 +8,14 @@ jobs:
             docker:
                   - image: synacker2/daggy_linux_gcc10_debian:3.0.0
             environment:
-                  CONAN_USER_HOME: ~/
+                  CONAN_USER_HOME: /root
             working_directory: /root/build
             steps:
                   - checkout:
                           path: /root/daggy
+                  - setup_remote_docker:
+                          version: 19.03.13
+                          docker_layer_caching: true
                   - restore_cache:
                           key: conan-qt6.2.1-gcc10-{{ arch }}
                   - run:
