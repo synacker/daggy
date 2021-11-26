@@ -7,13 +7,13 @@ jobs:
       gcc-10_x64:
             docker:
                   - image: synacker2/daggy_linux_gcc10_debian:3.0.0
-                    user: root
+                    user: daggy
             environment:
-                  CONAN_USER_HOME: /root
-            working_directory: /root/build
+                  CONAN_USER_HOME: ~/
+            working_directory: ~/build
             steps:
                   - checkout:
-                          path: /root/daggy
+                          path: ~/daggy
                   - setup_remote_docker:
                           version: 19.03.13
                           docker_layer_caching: true
