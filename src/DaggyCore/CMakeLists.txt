@@ -69,7 +69,13 @@ set(LINK_LIBRARIES
 add_subdirectory(tests/local)
 
 if (SSH2_SUPPORT)
-    set(LINK_LIBRARIES ${LINK_LIBRARIES} ssh2 crypto)
+    if(CONAN_BUILD)
+        find_package(Libssh2 REQUIRED)
+        set(LINK_LIBRARIES ${LINK_LIBRARIES} Libssh2::libssh2)
+    else()
+        set(LINK_LIBRARIES ${LINK_LIBRARIES} ssh2 crypto)
+    endif()
+
     list(APPEND SOURCES ${SSH2_SOURCES})
     list(APPEND INCLUDE_HEADERS ${SSH2_PUBLIC})
 endif()

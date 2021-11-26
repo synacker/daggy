@@ -4,31 +4,25 @@ version: 2.1
 orbs:
       win: circleci/windows@2.4.0
 jobs:
-      gcc-8_x64:
+      gcc-10_x64:
             docker:
-                  - image: synacker2/daggy_linux_gcc8_debian:2.0.0
+                  - image: synacker2/daggy_linux_gcc10_debian:3.0.0
                     user: daggy
             environment:
                   CONAN_USER_HOME: ~/
-            working_directory: ~/build
+            working_directory: /root/build
             steps:
                   - checkout:
-                          path: ~/daggy
+                          path: /root/daggy
                   - restore_cache:
-                          key: conan-qt6.0.1-data-{{ arch }}
-                  - run:
-                          name: Install or update conan
-                          command: pip3 install conan --upgrade
-                  - run:
-                          name: Add conan remote
-                          command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan || true
+                          key: conan-qt6.2.1-gcc10-{{ arch }}
                   - run:
                           name: Conan install
                           command: conan install ../daggy --build=missing
                   - save_cache:
-                          key: conan-qt6.0.1-data-{{ arch }}
+                          key: conan-qt6.2.1-gcc10-{{ arch }}
                           paths:
-                                - ~/.conan/data
+                                - /root/.conan/data
                   - run:
                           name: Conan build
                           command: conan build ../daggy
@@ -208,6 +202,6 @@ workflows:
       version: 2.1
       build_and_test:
             jobs:
-                  - gcc-8_x64
-                  - msvs2019
-                  - macos
+                  - gcc-10_x64
+                  #- msvs2019
+                  #- macos
