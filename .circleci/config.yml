@@ -18,12 +18,12 @@ jobs:
                           version: 19.03.13
                           docker_layer_caching: true
                   - restore_cache:
-                          key: conan-qt6.2.1-gcc10-{{ arch }}
+                          key: conan-data-gcc10-{{ arch }}
                   - run:
                           name: Conan install
                           command: conan install ../daggy --build=missing
                   - save_cache:
-                          key: conan-qt6.2.1-gcc10-{{ arch }}
+                          key: conan-data-gcc10-{{ arch }}
                           paths:
                                 - ~/.conan/data
                   - run:
