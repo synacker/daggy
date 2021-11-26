@@ -25,7 +25,7 @@ jobs:
                   - save_cache:
                           key: conan-qt6.2.1-gcc10-{{ arch }}
                           paths:
-                                - /root/.conan/data
+                                - ~/.conan/data
                   - run:
                           name: Conan build
                           command: conan build ../daggy
