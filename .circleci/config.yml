@@ -15,7 +15,7 @@ jobs:
                   - checkout:
                           path: ~/daggy
                   - setup_remote_docker:
-                          version: 20.10
+                          version: 20.10.11
                           docker_layer_caching: true
                   - restore_cache:
                           key: conan-data-gcc10-{{ arch }}
