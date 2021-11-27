@@ -45,6 +45,9 @@ RUN apt-get install -y gcc \
                        libxcb-dri3-dev \
                        iputils-ping
 
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.0/cmake-3.22.0.tar.gz -O /tmp/cmake-3.22.0.tar.gz
+RUN tar -xvf /tmp/cmake-3.22.0.tar.gz -C /tmp && cd /tmp/cmake-3.22.0 && ./bootstrap -- && make && make install
+
 RUN pip3 install conan
 
 RUN setcap cap_net_raw+ep /bin/ping

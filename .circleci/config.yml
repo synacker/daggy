@@ -31,7 +31,7 @@ jobs:
                                   command: mkdir tests
                         - run:
                                   name: Run local tests
-                                  command: bin/DaggyCoreLocalTests -o tests/local_tests.xml,junitxml
+                                  command: ctest --output-junit tests/local_tests.xml,junitxml
                         - store_test_results:
                                   path: tests
                         - run:
