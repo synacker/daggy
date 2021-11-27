@@ -67,6 +67,7 @@ set(LINK_LIBRARIES
 )
 
 add_subdirectory(tests/local)
+add_subdirectory(tests/pingpong)
 
 if (SSH2_SUPPORT)
     if(CONAN_BUILD)

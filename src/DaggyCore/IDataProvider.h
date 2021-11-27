@@ -48,7 +48,7 @@ public:
 
     explicit IDataProvider(Commands commands,
                            QObject *parent = nullptr);
-    virtual ~IDataProvider() = default;
+    virtual ~IDataProvider();
 
     virtual void start() = 0;
     virtual void stop() = 0;

@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2021 Mikhail Milovidov
+Copyright (c) 2020 Mikhail Milovidov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,8 @@ SOFTWARE.
 
 #pragma once
 
-#include <QObject>
+#include <QtCore>
+#include <QTimer>
 
-namespace daggycore {
-class DaggyCore;
-}
-
-class DaggyCoreLocalTests : public QObject
-{
-    Q_OBJECT
-public:
-    explicit DaggyCoreLocalTests(QObject *parent = nullptr);
-
-private slots:
-    void init();
-    void cleanup();
-
-    void startAndTerminateTest_data();
-    void startAndTerminateTest();
-
-    void stopWithFakeProcess();
-
-private:
-    daggycore::DaggyCore* daggy_core_;
-
-};
-
+#include <iostream>
+#include <limits>

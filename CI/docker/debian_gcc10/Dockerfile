@@ -47,6 +47,8 @@ RUN apt-get install -y gcc \
 
 RUN pip3 install conan
 
+RUN setcap cap_net_raw+ep /bin/ping
+
 RUN useradd -s /bin/bash daggy
 RUN mkdir -p /home/daggy/.conan
 RUN chown -R daggy /home/daggy

@@ -71,7 +71,6 @@ CSsh2DataProvider::CSsh2DataProvider(QHostAddress host,
 
 CSsh2DataProvider::~CSsh2DataProvider()
 {
-    disconnectAll();
 }
 
 void CSsh2DataProvider::start()
