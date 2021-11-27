@@ -110,7 +110,7 @@ jobs:
                                   command: conan build ../daggy
                         - run:
                                   name: Run local tests
-                                  command: ctest --output-junit tests/local_tests.xml
+                                  command: ctest -C Release --output-junit tests/local_tests.xml
                         - store_test_results:
                                   path: tests
                         - run:
