@@ -44,6 +44,7 @@ private slots:
     void startAndTerminateTest();
 
     void stopWithFakeProcess();
+    void stopOnceProcess();
 
 private:
     daggycore::DaggyCore* daggy_core_;

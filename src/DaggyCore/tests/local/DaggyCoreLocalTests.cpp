@@ -144,6 +144,31 @@ const DataSources fake_data_sources = {
     }
 };
 
+const DataSources once_process_data_sources = {
+    {
+        "localhost", {
+            "localhost",
+            "local",
+            "",
+            {
+                {
+                    "pingpong",
+                    {
+                        "pingpong",
+                        "log",
+                        "pingpong",
+                        {},
+                        false
+                    }
+                }
+            },
+            false,
+            {}
+        }
+    }
+};
+
+
 }
 
 
@@ -267,3 +292,38 @@ void DaggyCoreLocalTests::stopWithFakeProcess()
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
 }
 
+void DaggyCoreLocalTests::stopOnceProcess()
+{
+    QVERIFY(daggy_core_->state() == DaggyCore::NotStarted);
+    daggy_core_->setDataSources(once_process_data_sources);
+
+    QSignalSpy states_spy(daggy_core_, &DaggyCore::stateChanged);
+    QSignalSpy streams_spy(daggy_core_, &DaggyCore::commandStream);
+
+    QTimer::singleShot(0, [=]()
+    {
+        auto result = daggy_core_->start();
+        QVERIFY2(result, result.detailed_error_message().c_str());
+    });
+
+    QVERIFY(states_spy.wait());
+    QVERIFY(!states_spy.isEmpty());
+    auto arguments = states_spy.takeFirst();
+    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
+
+    QTimer::singleShot(3000, [=]()
+    {
+        daggy_core_->stop();
+    });
+
+    QVERIFY(states_spy.wait());
+    QVERIFY(!states_spy.isEmpty());
+    arguments = states_spy.takeFirst();
+    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finishing);
+
+    QVERIFY(states_spy.wait());
+    QVERIFY(!states_spy.isEmpty());
+    arguments = states_spy.takeFirst();
+    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
+    QVERIFY(!streams_spy.isEmpty());
+}

@@ -39,6 +39,13 @@ CLocalDataProvider::CLocalDataProvider
 
 CLocalDataProvider::~CLocalDataProvider()
 {
+    for (auto process : processes()) {
+        process->kill();
+    }
+
+    for (auto process : processes()) {
+        process->waitForFinished();
+    }
 }
 
 void CLocalDataProvider::start()
@@ -156,7 +163,11 @@ void CLocalDataProvider::terminate()
         for (QProcess* process : processes()) {
             switch (process->state()) {
             case QProcess::Running:
+#ifdef Q_OS_WIN
+                process->kill();
+#else
                 process->terminate();
+#endif
                 break;
             case QProcess::Starting:
                 process->close();
