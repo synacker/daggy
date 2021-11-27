@@ -53,17 +53,17 @@ jobs:
                                   name: Install CMake
                                   command: choco install --yes cmake -installargs 'ADD_CMAKE_TO_PATH=""System""'
                         - restore_cache:
-                                  key: QtIFW-4.0.1-{{ arch }}
+                                  key: QtIFW-4.2.0-{{ arch }}
                         - run:
                                   name: Install QtIFW
                                   command: |
                                           if ( -not(Test-Path C:\QtIFW) ) {
                                               $ProgressPreference = 'SilentlyContinue'
-                                              wget -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-win-x86.exe'
+                                              wget -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.2.0/QtInstallerFramework-win-x86.exe'
                                               ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
                                           }
                         - save_cache:
-                                  key: QtIFW-4.0.1-{{ arch }}
+                                  key: QtIFW-4.2.0-{{ arch }}
                                   paths:
                                           - C:\QtIFW
                         - run:
@@ -72,9 +72,9 @@ jobs:
                         - checkout:
                                   path: ~/daggy
                         - restore_cache:
-                                  key: conan-qt6.0.1-data-{{ arch }}
+                                  key: conan-data-{{ arch }}
                         - restore_cache:
-                                  key: conan-qt6.0.1-{{ arch }}
+                                  key: conan-{{ arch }}
                         - run:
                                   name: Install or update conan
                                   command: pip install conan --upgrade
@@ -98,22 +98,19 @@ jobs:
                                   name: Conan install
                                   command: conan install ../daggy --build=missing
                         - save_cache:
-                                  key: conan-qt6.0.1-data-{{ arch }}
+                                  key: conan-data-{{ arch }}
                                   paths:
                                           - ~/.conan/data
                         - save_cache:
-                                  key: conan-qt6.0.1-{{ arch }}
+                                  key: conan-{{ arch }}
                                   paths:
                                           - c:\.conan\
                         - run:
                                   name: Conan build
                                   command: conan build ../daggy
                         - run:
-                                  name: Make tests dir
-                                  command: mkdir tests
-                        - run:
                                   name: Run local tests
-                                  command: .\bin\DaggyCoreLocalTests -o tests\local_tests.xml,junitxml
+                                  command: ctest --output-junit tests/local_tests.xml
                         - store_test_results:
                                   path: tests
                         - run:
@@ -203,5 +200,5 @@ workflows:
         build_and_test:
                 jobs:
                         - gcc-10_x64
-                        #- msvs2019
+                        - msvs2019
                         #- macos
