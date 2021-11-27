@@ -11,6 +11,8 @@ set(SOURCES
     main.cpp
 )
 
+include(rpath_bin)
+
 qt6_add_executable(${TARGET} ${SOURCES})
 
 target_link_libraries(${TARGET} PRIVATE DaggyCore Qt6::Test)

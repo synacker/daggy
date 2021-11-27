@@ -318,6 +318,7 @@ void DaggyCoreLocalTests::stopOnceProcess()
 
     QVERIFY(states_spy.wait());
     QVERIFY(!states_spy.isEmpty());
+    QCOMPARE(states_spy.count(), 1);
     arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finishing);
 
