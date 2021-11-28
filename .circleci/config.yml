@@ -141,6 +141,9 @@ jobs:
                                   name: Brew update
                                   command: brew update
                         - run:
+                                  name: Install python-tk
+                                  command: brew install python-tk
+                        - run:
                                   name: Install Conan
                                   command: brew install conan
                         - run:
