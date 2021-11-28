@@ -168,7 +168,7 @@ jobs:
                                           - ~/QtIFW
                         - run:
                                   name: Conan install
-                                  command: conan install ../daggy --build=missing shared=False
+                                  command: conan install ../daggy --build=missing -o shared=False
                         - save_cache:
                                   key: conan-data-{{ arch }}
                                   paths:
