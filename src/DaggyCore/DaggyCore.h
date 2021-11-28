@@ -27,6 +27,7 @@ SOFTWARE.
 #include "DataSource.h"
 
 #include <memory>
+#include <unordered_map>
 
 #include <QMap>
 #include <QObject>
