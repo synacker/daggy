@@ -138,8 +138,8 @@ jobs:
                         - restore_cache:
                                   key: brew_cache
                         - run:
-                                  name: Install Python
-                                  command: brew install python-tk
+                                  name: Brew update
+                                  command: brew update
                         - run:
                                   name: Install Conan
                                   command: brew install conan
