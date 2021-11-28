@@ -39,4 +39,4 @@ target_link_libraries(${TARGET} PRIVATE DaggyCore)
 target_precompile_headers(${TARGET} PRIVATE Precompiled.h)
 
 install(TARGETS ${TARGET} RUNTIME)
-install(TARGETS ${TARGET} BUNDLE)
+install(TARGETS ${TARGET} BUNDLE DESTINATION ${CMAKE_INSTALL_PREFIX})
