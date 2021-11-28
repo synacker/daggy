@@ -160,7 +160,7 @@ jobs:
                                           then
                                               wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.2.0/QtInstallerFramework-macOS-x64-4.2.0.dmg'
                                               sudo hdiutil attach ~/QtInstallerFramework-mac-x64.dmg
-                                              /Volumes/QtInstallerFramework-mac-x64/QtInstallerFramework-mac-x64.app/Contents/MacOS/QtInstallerFramework-mac-x64 --am --al -c --root ~/QtIFW install   
+                                              /Volumes/QtInstallerFramework-macOS-x64-4.2.0/QtInstallerFramework-macOS-x64-4.2.0.app/Contents/MacOS/QtInstallerFramework-macOS-x64-4.2.0 --am --al -c --root ~/QtIFW install   
                                           fi
                         - save_cache:
                                   key: QtIFW-4.2.0_{{ arch }}
