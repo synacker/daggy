@@ -138,14 +138,14 @@ jobs:
                         - restore_cache:
                                   key: brew_cache
                         - run:
+                                  name: Install Conan
+                                  command: pip3 install conan
+                        - run:
                                   name: Install cmake
                                   command: brew install cmake
                         - run:
                                   name: Install wget
                                   command: brew install wget
-                        - run:
-                                  name: Install Conan
-                                  command: pip install conan
                         - save_cache:
                                   paths:
                                           - ~/Library/Caches/Homebrew
@@ -196,6 +196,6 @@ workflows:
         version: 2.1
         build_and_test:
                 jobs:
-                        - gcc-10_x64
-                        - msvs2019
+                        #- gcc-10_x64
+                        #- msvs2019
                         - macos
