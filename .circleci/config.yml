@@ -136,7 +136,7 @@ jobs:
                         - restore_cache:
                                   key: conan-data-{{ arch }}
                         - restore_cache:
-                                  key: brew_cache
+                                  key: brew-{{checksum “Brewfile”}}
                         - run:
                                   name: Install Conan
                                   command: pip3 install conan
@@ -147,10 +147,12 @@ jobs:
                                   name: Install wget
                                   command: brew install wget
                         - save_cache:
+                                  key: brew-{{checksum “Brewfile”}}
                                   paths:
+                                          - /Users/distiller/Library/Caches/Homebrew
+                                          - /usr/local/Homebrew
                                           - ~/Library/Caches/Homebrew
                                           - /Library/Caches/Homebrew
-                                  key: brew_cache
                         - restore_cache:
                                   key: QtIFW-4.2.0_{{ arch }}
                         - run:
