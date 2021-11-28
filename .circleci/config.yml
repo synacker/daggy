@@ -136,7 +136,7 @@ jobs:
                         - restore_cache:
                                   key: conan-data-{{ arch }}
                         - restore_cache:
-                                  key: brew-{{checksum “Brewfile”}}
+                                  key: brew-install
                         - run:
                                   name: Install Conan
                                   command: pip3 install conan
@@ -147,7 +147,7 @@ jobs:
                                   name: Install wget
                                   command: brew install wget
                         - save_cache:
-                                  key: brew-{{checksum “Brewfile”}}
+                                  key: brew-install
                                   paths:
                                           - /Users/distiller/Library/Caches/Homebrew
                                           - /usr/local/Homebrew
