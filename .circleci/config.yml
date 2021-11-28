@@ -134,15 +134,12 @@ jobs:
                         - checkout:
                                   path: ~/daggy
                         - restore_cache:
-                                  key: conan-qt6.0.1-data-{{ arch }}
+                                  key: conan-data-{{ arch }}
                         - restore_cache:
                                   key: brew_cache
                         - run:
                                   name: Install Conan
                                   command: brew install conan
-                        - run:
-                                  name: Add conan remote
-                                  command: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
                         - run:
                                   name: Install cmake
                                   command: brew install cmake
@@ -155,25 +152,25 @@ jobs:
                                           - /Library/Caches/Homebrew
                                   key: brew_cache
                         - restore_cache:
-                                  key: QtIFW-4.0.1_{{ arch }}
+                                  key: QtIFW-4.2.0_{{ arch }}
                         - run:
                                   name: Install QtIFW
                                   command: |
                                           if [[ ! -d ~/QtIFW ]]
                                           then
-                                              wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.0.1/QtInstallerFramework-mac-x64.dmg'
+                                              wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.2.0/QtInstallerFramework-macOS-x64-4.2.0.dmg'
                                               sudo hdiutil attach ~/QtInstallerFramework-mac-x64.dmg
                                               /Volumes/QtInstallerFramework-mac-x64/QtInstallerFramework-mac-x64.app/Contents/MacOS/QtInstallerFramework-mac-x64 --am --al -c --root ~/QtIFW install   
                                           fi
                         - save_cache:
-                                  key: QtIFW-4.0.1_{{ arch }}
+                                  key: QtIFW-4.2.0_{{ arch }}
                                   paths:
                                           - ~/QtIFW
                         - run:
                                   name: Conan install
-                                  command: conan install ../daggy --build=missing
+                                  command: conan install ../daggy --build=missing shared=False
                         - save_cache:
-                                  key: conan-qt6.0.1-data-{{ arch }}
+                                  key: conan-data-{{ arch }}
                                   paths:
                                           - ~/.conan/data
                         - run:
@@ -181,7 +178,7 @@ jobs:
                                   command: conan build ../daggy
                         - run:
                                   name: Run local tests
-                                  command: mkdir tests && bin/DaggyCoreLocalTests -o tests/local_tests.xml,junitxml
+                                  command: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
                         - store_test_results:
                                   path: tests
                         - run:
@@ -201,4 +198,4 @@ workflows:
                 jobs:
                         - gcc-10_x64
                         - msvs2019
-                        #- macos
+                        - macos
