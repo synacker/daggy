@@ -126,7 +126,7 @@ jobs:
                                   path: windows_artifacts
         macos:
                 macos:
-                        xcode: 12.3.0
+                        xcode: 12.5.1
                 environment:
                         CONAN_USER_HOME: ~/
                 working_directory: ~/build
@@ -138,20 +138,14 @@ jobs:
                         - restore_cache:
                                   key: brew_cache
                         - run:
-                                  name: Brew update
-                                  command: brew update
-                        - run:
-                                  name: Install python-tk
-                                  command: brew install python-tk
-                        - run:
-                                  name: Install Conan
-                                  command: brew install conan
-                        - run:
                                   name: Install cmake
                                   command: brew install cmake
                         - run:
                                   name: Install wget
                                   command: brew install wget
+                        - run:
+                                  name: Install Conan
+                                  command: pip install conan
                         - save_cache:
                                   paths:
                                           - ~/Library/Caches/Homebrew
