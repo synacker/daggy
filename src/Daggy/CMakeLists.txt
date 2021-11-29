@@ -34,13 +34,9 @@ set(FILETYPE "VFT_APP")
 
 include(version_meta)
 
-qt6_add_executable(${TARGET} WIN32 MACOSX_BUNDLE ${SOURCES})
+add_executable(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET} PRIVATE DaggyCore)
 target_precompile_headers(${TARGET} PRIVATE Precompiled.h)
 
 
-if(APPLE)
-    install(TARGETS ${TARGET} BUNDLE DESTINATION ${CMAKE_INSTALL_PREFIX})
-else()
-    install(TARGETS ${TARGET} RUNTIME)
-endif()
+install(TARGETS ${TARGET} RUNTIME)
