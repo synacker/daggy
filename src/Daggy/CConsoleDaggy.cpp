@@ -52,18 +52,8 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
 
 daggycore::Result CConsoleDaggy::initialize()
 {
-    daggy_core_->createProviderFabric<CLocalDataProvidersFabric>();
-#ifdef SSH2_SUPPORT
-    daggy_core_->createProviderFabric<CSsh2DataProviderFabric>();
-#endif
-
-    daggy_core_->createConvertor<CJsonDataSourcesConvertor>();
-#ifdef YAML_SUPPORT
-    daggy_core_->createConvertor<CYamlDataSourcesConvertor>();
-#endif
-
     const auto settings = parse();
-    daggy_core_->createDataAggregator<CFileDataAggregator>(settings.output_folder, settings.data_sources_name);
+    daggy_core_->addDataAggregator(new CFileDataAggregator(settings.output_folder, settings.data_sources_name));
     const auto result = daggy_core_->setDataSources(settings.data_source_text, settings.data_source_text_type);
     if (result && settings.timeout > 0)
         QTimer::singleShot(settings.timeout, this, &CConsoleDaggy::stop);

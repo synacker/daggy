@@ -1,4 +1,4 @@
-FROM debian:10
+FROM debian:11
 
 RUN apt-get update -y
 RUN apt-get install -y gcc \
@@ -40,17 +40,21 @@ RUN apt-get install -y gcc \
                        libvulkan-dev \
                        libssl-dev \
                        libxcb-util0-dev \ 
-                       xorg-dev
+                       xorg-dev \
+                       cmake \
+                       libxcb-dri3-dev \
+                       iputils-ping
 
-
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.19.2/cmake-3.19.2.tar.gz -O /tmp/cmake-3.19.2.tar.gz
-RUN tar -xvf /tmp/cmake-3.19.2.tar.gz -C /tmp && cd /tmp/cmake-3.19.2 && ./bootstrap -- && make && make install
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.0/cmake-3.22.0.tar.gz -O /tmp/cmake-3.22.0.tar.gz
+RUN tar -xvf /tmp/cmake-3.22.0.tar.gz -C /tmp && cd /tmp/cmake-3.22.0 && ./bootstrap -- && make && make install
 
 RUN pip3 install conan
 
+RUN setcap cap_net_raw+ep /bin/ping
+
 RUN useradd -s /bin/bash daggy
 RUN mkdir -p /home/daggy/.conan
-RUN chown -R daggy /home/daggy/
+RUN chown -R daggy /home/daggy
 
 USER daggy
 WORKDIR /home/daggy

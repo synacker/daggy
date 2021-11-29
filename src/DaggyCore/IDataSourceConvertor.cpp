@@ -41,11 +41,14 @@ const QHash<const char*, QMetaType::Type> IDataSourceConvertor::required_command
     {IDataSourceConvertor::g_extensionField, QMetaType::QString}
 };
 
-IDataSourceConvertor::IDataSourceConvertor(QString type_arg, QObject* parent)
-    : QObject(parent)
-    , type(std::move(type_arg))
+IDataSourceConvertor::IDataSourceConvertor(QString type_arg)
+    : type(std::move(type_arg))
 {
     
+}
+
+IDataSourceConvertor::~IDataSourceConvertor()
+{
 }
 
 daggycore::OptionalResult<Commands> IDataSourceConvertor::getCommands(const QVariantMap& commands_map)

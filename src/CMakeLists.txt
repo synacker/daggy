@@ -1,15 +1,11 @@
-cmake_minimum_required(VERSION 3.16.3)
+cmake_minimum_required(VERSION 3.22.0)
 
 project(daggy)
-
-set(CMAKE_AUTOMOC ON)
 
 option(SSH2_SUPPORT "ssh2 data provider support" ON)
 option(YAML_SUPPORT "yaml data sources support" ON)
 option(DAGGY_CONSOLE "daggy console application" ON)
-option(DAGGY_CORE_STATIC "static daggy core lib" OFF)
-option(CONAN_BUILD "build with conan" OFF)
-option(PACKAGE_DEPS "include daggy deps into package" OFF)
+option(BUILD_SHARED_LIBS ON)
 
 set(COMPANY_NAME "synacker")
 set(APP_COPYRIGTH "Copyright \\251 2021 Mikhail Milovidov. Some Rights Reserved")

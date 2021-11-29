@@ -33,24 +33,24 @@ SOFTWARE.
 using namespace daggycore;
 using namespace daggyconv;
 
-#ifdef _WIN32
+namespace  {
 constexpr const char* json_data = R"JSON(
 {
     "sources": {
         "localhost" : {
             "type": "local",
             "commands": {
-                "ping": {
-                    "exec": "ping -t 127.0.0.1",
+                "pingpong": {
+                    "exec": "pingpong",
                     "extension": "log"
                 },
-                "ping_restart": {
-                    "exec": "ping -n 1 127.0.0.1",
+                "pingpong_restart": {
+                    "exec": "pingpong -c 1",
                     "extension": "log",
                     "restart": true
                 },
-                "ping_once": {
-                    "exec": "ping -n 1 127.0.0.1",
+                "pingpong_once": {
+                    "exec": "pingpong -c 1",
                     "extension": "log"
                 }
             }
@@ -61,15 +61,15 @@ constexpr const char* json_data = R"JSON(
 constexpr const char* yaml_data = R"YAML(
 aliases:
     - &my_commands
-        ping:
-            exec: ping -t 127.0.0.1
+        pingpong:
+            exec: pingpong
             extension: log
-        ping_restart:
-            exec: ping -n 1 127.0.0.1
+        pingpong_restart:
+            exec: pingpong -c 1
             extension: log
             restart: true
-        ping_once:
-            exec: ping -n 1 127.0.0.1
+        pingpong_once:
+            exec: pingpong -c 1
             extension: log
 sources:
     localhost:
@@ -84,31 +84,31 @@ const DataSources data_sources{
             "",
             {
                 {
-                    "ping",
+                    "pingpong",
                     {
-                        "ping",
+                        "pingpong",
                         "log",
-                        "ping -t 127.0.0.1",
+                        "pingpong",
                         {},
                         false
                     }
                 },
                 {
-                    "ping_restart",
+                    "pingpong_restart",
                     {
-                        "ping_restart",
+                        "pingpong_restart",
                         "log",
-                        "ping -n 1 127.0.0.1",
+                        "pingpong -c 1",
                         {},
                         true
                     }
                 },
                 {
-                    "ping_once",
+                    "pingpong_once",
                     {
-                        "ping_once",
+                        "pingpong_once",
                         "log",
-                        "ping -n 1 127.0.0.1",
+                        "pingpong -c 1",
                         {},
                         false
                     }
@@ -119,50 +119,8 @@ const DataSources data_sources{
         }
     }
 };
-#else
-constexpr const char* json_data = R"JSON(
-{
-    "sources": {
-        "localhost" : {
-            "type": "local",
-            "commands": {
-                "ping": {
-                    "exec": "ping 127.0.0.1",
-                    "extension": "log"
-                },
-                "ping_restart": {
-                    "exec": "ping -c 1 127.0.0.1",
-                    "extension": "log",
-                    "restart": true
-                },
-                "ping_once": {
-                    "exec": "ping -c 1 127.0.0.1",
-                    "extension": "log"
-                }
-            }
-        }
-    }
-}
-)JSON";
-constexpr const char* yaml_data = R"YAML(
-aliases:
-    - &my_commands
-        ping:
-            exec: ping 127.0.0.1
-            extension: log
-        ping_restart:
-            exec: ping -c 1 127.0.0.1
-            extension: log
-            restart: true
-        ping_once:
-            exec: ping -c 1 127.0.0.1
-            extension: log
-sources:
-    localhost:
-        type: local
-        commands: *my_commands
-)YAML";
-const DataSources data_sources{
+
+const DataSources fake_data_sources = {
     {
         "localhost", {
             "localhost",
@@ -170,42 +128,49 @@ const DataSources data_sources{
             "",
             {
                 {
-                    "ping",
+                    "fake_ping",
                     {
-                        "ping",
+                        "fake_ping",
                         "log",
-                        "ping 127.0.0.1",
+                        "ping_fake 127.0.0.1",
                         {},
                         false
                     }
-                },
-                {
-                    "ping_restart",
-                    {
-                        "ping_restart",
-                        "log",
-                        "ping -c 1 127.0.0.1",
-                        {},
-                        true
-                    }
-                },
-                {
-                    "ping_once",
-                    {
-                        "ping_once",
-                        "log",
-                        "ping -c 1 127.0.0.1",
-                        {},
-                        false
-                    }
-                },
+                }
             },
             false,
             {}
         }
     }
 };
-#endif
+
+const DataSources once_process_data_sources = {
+    {
+        "localhost", {
+            "localhost",
+            "local",
+            "",
+            {
+                {
+                    "pingpong",
+                    {
+                        "pingpong",
+                        "log",
+                        "pingpong",
+                        {},
+                        false
+                    }
+                }
+            },
+            false,
+            {}
+        }
+    }
+};
+
+
+}
+
 
 DaggyCoreLocalTests::DaggyCoreLocalTests(QObject *parent)
     : QObject(parent)
@@ -217,14 +182,6 @@ DaggyCoreLocalTests::DaggyCoreLocalTests(QObject *parent)
 void DaggyCoreLocalTests::init()
 {
     daggy_core_ = new DaggyCore(this);
-    auto result = daggy_core_->createProviderFabric<CLocalDataProvidersFabric>();
-    QVERIFY2(result, result.detailed_error_message().c_str());
-    result = daggy_core_->createConvertor<CJsonDataSourcesConvertor>();
-    QVERIFY2(result, result.detailed_error_message().c_str());
-#ifdef YAML_SUPPORT
-    result = daggy_core_->createConvertor<CYamlDataSourcesConvertor>();
-    QVERIFY2(result, result.detailed_error_message().c_str());
-#endif
 }
 
 void DaggyCoreLocalTests::cleanup()
@@ -254,21 +211,120 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     QVERIFY2(result, result.detailed_error_message().c_str());
     QCOMPARE(daggy_core_->dataSources(), data_sources);
 
-    QSignalSpy spy(daggy_core_, &DaggyCore::stateChanged);
+    QSignalSpy states_spy(daggy_core_, &DaggyCore::stateChanged);
+    QSignalSpy streams_spy(daggy_core_, &DaggyCore::commandStream);
 
-    result = daggy_core_->start();
-    QVERIFY2(result, result.detailed_error_message().c_str());
+    QTimer::singleShot(0, [=]()
+    {
+        auto result = daggy_core_->start();
+        QVERIFY2(result, result.detailed_error_message().c_str());
+    });
 
-    spy.wait(1000);
-    auto arguments = spy.takeFirst();
+    QVERIFY(states_spy.wait());
+    QVERIFY(!states_spy.isEmpty());
+    auto arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
 
-    daggy_core_->stop();
-    spy.wait(1000);
-    arguments = spy.takeFirst();
+    QTimer::singleShot(3000, [=]()
+    {
+        daggy_core_->stop();
+    });
+
+
+    QVERIFY(states_spy.wait());
+    QVERIFY(!states_spy.isEmpty());
+    arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finishing);
 
-    spy.wait(1000);
-    arguments = spy.takeFirst();
+    QVERIFY(states_spy.wait());
+    QVERIFY(!states_spy.isEmpty());
+    arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
+    streams_spy.wait();
+    QVERIFY(!streams_spy.isEmpty());
+
+    QMap<QString, QList<Command::Stream>> streams;
+    for (auto command_stream : streams_spy) {
+        auto command_id = command_stream[1].toString();
+        auto stream = command_stream[2].value<Command::Stream>();
+        QVERIFY(!stream.data.isEmpty());
+        streams[command_id].push_back(stream);
+    }
+
+    auto stream_keys = streams.keys();
+    std::sort(stream_keys.begin(), stream_keys.end());
+
+    QList<QString> sources_keys;
+    for (const auto& command : data_sources) {
+        sources_keys += command.commands.keys();
+    }
+    std::sort(sources_keys.begin(), sources_keys.end());
+
+    QCOMPARE(stream_keys, sources_keys);
+
+    QVERIFY(!streams["pingpong_once"].isEmpty());
+    QVERIFY(!streams["pingpong_restart"].isEmpty());
+    QVERIFY(!streams["pingpong"].isEmpty());
+}
+
+void DaggyCoreLocalTests::stopWithFakeProcess()
+{
+    QVERIFY(daggy_core_->state() == DaggyCore::NotStarted);
+    daggy_core_->setDataSources(fake_data_sources);
+
+    QSignalSpy states_spy(daggy_core_, &DaggyCore::stateChanged);
+
+    QTimer::singleShot(0, [=]()
+    {
+        auto result = daggy_core_->start();
+        QVERIFY2(result, result.detailed_error_message().c_str());
+    });
+
+    QVERIFY(states_spy.wait());
+    QVERIFY(!states_spy.isEmpty());
+    auto arguments = states_spy.takeFirst();
+    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
+
+
+    QVERIFY(states_spy.wait());
+    QVERIFY(!states_spy.isEmpty());
+    arguments = states_spy.takeFirst();
+    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
+}
+
+void DaggyCoreLocalTests::stopOnceProcess()
+{
+    QVERIFY(daggy_core_->state() == DaggyCore::NotStarted);
+    daggy_core_->setDataSources(once_process_data_sources);
+
+    QSignalSpy states_spy(daggy_core_, &DaggyCore::stateChanged);
+    QSignalSpy streams_spy(daggy_core_, &DaggyCore::commandStream);
+
+    QTimer::singleShot(0, [=]()
+    {
+        auto result = daggy_core_->start();
+        QVERIFY2(result, result.detailed_error_message().c_str());
+    });
+
+    QVERIFY(states_spy.wait());
+    QVERIFY(!states_spy.isEmpty());
+    auto arguments = states_spy.takeFirst();
+    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
+
+    QTimer::singleShot(3000, [=]()
+    {
+        daggy_core_->stop();
+    });
+
+    QVERIFY(states_spy.wait());
+    QVERIFY(!states_spy.isEmpty());
+    QCOMPARE(states_spy.count(), 1);
+    arguments = states_spy.takeFirst();
+    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finishing);
+
+    QVERIFY(states_spy.wait());
+    QVERIFY(!states_spy.isEmpty());
+    arguments = states_spy.takeFirst();
+    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
+    QVERIFY(!streams_spy.isEmpty());
 }

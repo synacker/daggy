@@ -58,6 +58,8 @@ public:
     QString type() const override;
 
 private:
+    void disconnectAll();
+
     std::tuple<daggyssh2::Ssh2Process*, Command> getCommandContextFromSender() const;
 
     daggyssh2::Ssh2Process* ssh2Process(const QString& id) const;

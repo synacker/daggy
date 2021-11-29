@@ -37,6 +37,11 @@ IDataProvider::IDataProvider(Commands commands,
 
 }
 
+IDataProvider::~IDataProvider()
+{
+    setState(Finished);
+}
+
 const Commands& IDataProvider::commands() const
 {
     return commands_;

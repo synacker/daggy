@@ -21,32 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
-#include "daggycore_export.h"
-#include "IDataProviderFabric.h"
 
-namespace daggyssh2 {
-struct Ssh2Settings;
-}
+#include <QtCore>
+#include <QTimer>
 
-namespace daggycore {
-class IDataProvider;
-
-class DAGGYCORE_EXPORT CSsh2DataProviderFabric : public IDataProviderFabric
-{
-public:
-    CSsh2DataProviderFabric();
-    ~CSsh2DataProviderFabric() = default;
-
-    static const char* fabric_type;
-protected:
-    OptionalResult<IDataProvider*> createDataProvider
-    (
-            const DataSource& data_source,
-            QObject* parent
-    ) override;
-
-    OptionalResult<daggyssh2::Ssh2Settings> convertParameters(const QVariantMap& parameters) const;
-};
-
-}
+#include <iostream>
+#include <limits>

@@ -33,12 +33,10 @@ SOFTWARE.
 namespace daggycore {
 class IDataProvider;
 
-class DAGGYCORE_EXPORT IDataProviderFabric : public QObject
+class DAGGYCORE_EXPORT IDataProviderFabric
 {
-    Q_OBJECT
 public:
-    IDataProviderFabric(QString type_arg,
-                        QObject* parent = nullptr);
+    IDataProviderFabric(QString type_arg);
     virtual ~IDataProviderFabric() = default;
 
     OptionalResult<IDataProvider*> create

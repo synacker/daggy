@@ -29,6 +29,18 @@ SOFTWARE.
 #include "IDataProvider.h"
 #include "IDataSourceConvertor.h"
 
+#include "CLocalDataProvidersFabric.h"
+
+#ifdef SSH2_SUPPORT
+#include "CSsh2DataProviderFabric.h"
+#endif
+
+#include "CJsonDataSourcesConvertor.h"
+
+#ifdef YAML_SUPPORT
+#include "CYamlDataSourcesConvertor.h"
+#endif
+
 using namespace daggycore;
 
 DaggyCore::DaggyCore(DataSources data_sources,
@@ -37,10 +49,24 @@ DaggyCore::DaggyCore(DataSources data_sources,
     , data_sources_(std::move(data_sources))
     , state_(NotStarted)
 {
+    addDataProvidersFabric(std::make_unique<CLocalDataProvidersFabric>());
+#ifdef SSH2_SUPPORT
+    addDataProvidersFabric(std::make_unique<CSsh2DataProviderFabric>());
+#endif
+
+    data_convertors_[daggyconv::CJsonDataSourcesConvertor::convertor_type] = std::make_unique<daggyconv::CJsonDataSourcesConvertor>();
+#ifdef YAML_SUPPORT
+    data_convertors_[daggyconv::CYamlDataSourcesConvertor::convertor_type] = std::make_unique<daggyconv::CYamlDataSourcesConvertor>();
+#endif
 }
 
 DaggyCore::DaggyCore(QObject* parent)
     : DaggyCore({}, parent)
+{
+
+}
+
+DaggyCore::~DaggyCore()
 {
 
 }
@@ -123,8 +149,9 @@ Result DaggyCore::start()
     }
 
     setState(Started);
-    for (IDataProvider* provider : data_providers)
+    for (IDataProvider* provider : data_providers) {
         provider->start();
+    }
 
     return Result::success;
 }
@@ -153,7 +180,7 @@ DaggyCore::State DaggyCore::state() const
     return state_;
 }
 
-void DaggyCore::onDataProviderStateChanged(const int state)
+void DaggyCore::onDataProviderStateChanged(const IDataProvider::State state)
 {
     const QString& provider_id = sender()->objectName();
     emit dataProviderStateChanged(provider_id,
@@ -175,15 +202,15 @@ void DaggyCore::onDataProviderStateChanged(const int state)
     }
 }
 
-void DaggyCore::onDataProviderError(const std::error_code error_code)
+void DaggyCore::onDataProviderError(std::error_code error_code)
 {
     emit dataProviderError(sender()->objectName(),
                            error_code);
 }
 
-void DaggyCore::onCommandStateChanged(const QString command_id,
-                                      const Command::State state,
-                                      const int exit_code)
+void DaggyCore::onCommandStateChanged(QString command_id,
+                                      Command::State state,
+                                      int exit_code)
 {
     emit commandStateChanged(sender()->objectName(),
                              command_id,
@@ -191,16 +218,16 @@ void DaggyCore::onCommandStateChanged(const QString command_id,
                              exit_code);
 }
 
-void DaggyCore::onCommandStream(const QString command_id,
-                                const Command::Stream stream)
+void DaggyCore::onCommandStream(QString command_id,
+                                Command::Stream stream)
 {
     emit commandStream(sender()->objectName(),
                        command_id,
                        stream);
 }
 
-void DaggyCore::onCommandError(const QString command_id,
-                               const std::error_code error_code)
+void DaggyCore::onCommandError(QString command_id,
+                               std::error_code error_code)
 {
     emit commandError(sender()->objectName(),
                       command_id,
@@ -210,16 +237,16 @@ void DaggyCore::onCommandError(const QString command_id,
 IDataProviderFabric* DaggyCore::getFabric(const QString& type) const
 {
     IDataProviderFabric* result = nullptr;
-    if (!type.isEmpty())
-        result = findChild<IDataProviderFabric*>(type);
+    if (data_provider_fabrics_.find(type) != data_provider_fabrics_.end())
+        result = data_provider_fabrics_.at(type).get();
     return result;
 }
 
 daggyconv::IDataSourceConvertor* DaggyCore::getConvertor(const QString& type) const
 {
     daggyconv::IDataSourceConvertor* result = nullptr;
-    if (!type.isEmpty())
-        result = findChild<daggyconv::IDataSourceConvertor*>(type);
+    if (data_convertors_.find(type) != data_convertors_.end())
+        result = data_convertors_.at(type).get();
     return result;
 }
 
@@ -228,19 +255,9 @@ QList<IDataAggregator*> DaggyCore::getAggregators() const
     return findChildren<IDataAggregator*>();
 }
 
-QList<IDataProviderFabric*> DaggyCore::getFabrics() const
-{
-    return findChildren<IDataProviderFabric*>();
-}
-
 QList<IDataProvider*> DaggyCore::getProviders() const
 {
     return findChildren<IDataProvider*>();
-}
-
-QList<daggyconv::IDataSourceConvertor*> DaggyCore::getConvertors() const
-{
-    return findChildren<daggyconv::IDataSourceConvertor*>();
 }
 
 IDataProvider* DaggyCore::getProvider(const QString& provider_id) const
@@ -289,18 +306,18 @@ void DaggyCore::setState(DaggyCore::State state)
 }
 
 
-Result DaggyCore::addDataProvidersFabric(IDataProviderFabric* new_fabric)
+Result DaggyCore::addDataProvidersFabric(std::unique_ptr<IDataProviderFabric> new_fabric)
 {
-    new_fabric->setParent(this);
-    new_fabric->setObjectName(new_fabric->type);
-
+    if (data_provider_fabrics_.find(new_fabric->type) != data_provider_fabrics_.end())
+        return Result{DaggyErrors::ProviderTypeAlreadyExists};
+    const auto type = new_fabric->type;
+    data_provider_fabrics_[type] = std::move(new_fabric);
     return Result::success;
 }
 
 Result DaggyCore::addDataAggregator(IDataAggregator* aggregator)
 {
     aggregator->setParent(this);
-
     connect(this, &DaggyCore::dataProviderStateChanged, aggregator, &IDataAggregator::onDataProviderStateChanged);
     connect(this, &DaggyCore::dataProviderError, aggregator, &IDataAggregator::onDataProviderError);
 
@@ -311,10 +328,11 @@ Result DaggyCore::addDataAggregator(IDataAggregator* aggregator)
     return Result::success;
 }
 
-Result DaggyCore::addDataSourceConvertor(daggyconv::IDataSourceConvertor* convertor)
+Result DaggyCore::addDataSourceConvertor(std::unique_ptr<daggyconv::IDataSourceConvertor> convertor)
 {
-    convertor->setParent(this);
-    convertor->setObjectName(convertor->type);
-
+    if (data_convertors_.find(convertor->type) != data_convertors_.end())
+        return Result{DaggyErrors::ConvertorTypeAlreadyExists};
+    const auto type = convertor->type;
+    data_convertors_[type] = std::move(convertor);
     return Result::success;
 }

@@ -27,9 +27,12 @@ SOFTWARE.
 #include "DataSource.h"
 
 #include <memory>
+#include <unordered_map>
 
 #include <QMap>
 #include <QObject>
+
+#include "IDataProvider.h"
 
 #include "OptionalResult.h"
 
@@ -59,23 +62,7 @@ public:
               QObject* parent = nullptr);
     DaggyCore(QObject* parent = nullptr);
 
-    ~DaggyCore() = default;
-
-    template<typename Fabric, typename... Args> Result createProviderFabric(Args... args) {
-        if (getFabric(Fabric::fabric_type))
-            return Result{DaggyErrors::ProviderTypeAlreadyExists};
-        return addDataProvidersFabric(new Fabric(args...));
-    }
-
-    template<typename Aggregator, typename... Args> Result createDataAggregator(Args... args) {
-        return addDataAggregator(new Aggregator(args...));
-    }
-
-    template<typename Convertor, typename... Args> Result createConvertor(Args... args) {
-        if (getConvertor(Convertor::convertor_type))
-            return {DaggyErrors::ConvertorTypeAlreadyExists};
-        return addDataSourceConvertor(new Convertor(args...));
-    }
+    ~DaggyCore();
 
     void setDataSources(DataSources data_sources);
     Result setDataSources(
@@ -90,40 +77,40 @@ public:
 
     State state() const;
 
-    Result addDataProvidersFabric(IDataProviderFabric* new_fabric);
+    Result addDataProvidersFabric(std::unique_ptr<IDataProviderFabric> new_fabric);
     Result addDataAggregator(IDataAggregator* aggregator);
-    Result addDataSourceConvertor(daggyconv::IDataSourceConvertor* convertor);
+    Result addDataSourceConvertor(std::unique_ptr<daggyconv::IDataSourceConvertor> convertor);
 
 signals:
     void stateChanged(State state);
 
-    void dataProviderStateChanged(const QString provider_id,
-                                  const int state);
-    void dataProviderError(const QString provider_id,
-                           const std::error_code error_code);
+    void dataProviderStateChanged(QString provider_id,
+                                  IDataProvider::State state);
+    void dataProviderError(QString provider_id,
+                           std::error_code error_code);
 
-    void commandStateChanged(const QString provider_id,
-                             const QString command_id,
-                             const Command::State state,
-                             const int exit_code);
-    void commandStream(const QString provider_id,
-                       const QString command_id,
-                       const Command::Stream stream);
-    void commandError(const QString provider_id,
-                      const QString command_id,
-                      const std::error_code error_code);
+    void commandStateChanged(QString provider_id,
+                             QString command_id,
+                             Command::State state,
+                             int exit_code);
+    void commandStream(QString provider_id,
+                       QString command_id,
+                       Command::Stream stream);
+    void commandError(QString provider_id,
+                      QString command_id,
+                      std::error_code error_code);
 
 private slots:
-    void onDataProviderStateChanged(const int state);
-    void onDataProviderError(const std::error_code error_code);
+    void onDataProviderStateChanged(IDataProvider::State state);
+    void onDataProviderError(std::error_code error_code);
 
-    void onCommandStateChanged(const QString command_id,
-                               const Command::State state,
-                               const int exit_code);
-    void onCommandStream(const QString command_id,
-                         const Command::Stream stream);
-    void onCommandError(const QString command_id,
-                        const std::error_code error_code);
+    void onCommandStateChanged(QString command_id,
+                               Command::State state,
+                               int exit_code);
+    void onCommandStream(QString command_id,
+                         Command::Stream stream);
+    void onCommandError(QString command_id,
+                        std::error_code error_code);
 
 private:
 
@@ -131,9 +118,7 @@ private:
     daggyconv::IDataSourceConvertor* getConvertor(const QString& type) const;
 
     QList<IDataAggregator*> getAggregators() const;
-    QList<IDataProviderFabric*> getFabrics() const;
     QList<IDataProvider*> getProviders() const;
-    QList<daggyconv::IDataSourceConvertor*> getConvertors() const;
     IDataProvider* getProvider(const QString& provider_id) const;
 
     daggycore::Result createProvider(const DataSource& data_source);
@@ -142,6 +127,9 @@ private:
 
     int activeDataProvidersCount() const;
     bool isActiveProvider(const IDataProvider* const provider) const;
+
+    std::unordered_map<QString, std::unique_ptr<IDataProviderFabric>> data_provider_fabrics_;
+    std::unordered_map<QString, std::unique_ptr<daggyconv::IDataSourceConvertor>> data_convertors_;
 
     DataSources data_sources_;
     State state_;

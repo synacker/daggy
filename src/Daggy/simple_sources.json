@@ -1,0 +1,35 @@
+{
+    "sources": {
+        "localhost": {
+            "type": "local",
+            "commands": {
+                "pingYa": {
+                    "exec": "ping ya.ru",
+                    "extension": "log"
+                },
+                "pingGoo": {
+                    "exec": "ping goo.gl",
+                    "extension": "log"
+                }
+            }
+        },
+        "remotehost": {
+            "type": "ssh2",
+            "host": "127.0.0.1",
+            "parameters": {
+              "user": "{{env_USER}}",
+              "key": "{{env_HOME}}/.ssh/id_ed25519"
+            },
+            "commands": {
+                "pingYa": {
+                    "exec": "ping ya.ru",
+                    "extension": "log"
+                },
+                "pingGoo": {
+                    "exec": "ping goo.gl",
+                    "extension": "log"
+                }
+            }
+        }
+    }
+}

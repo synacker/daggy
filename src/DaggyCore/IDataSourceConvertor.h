@@ -30,17 +30,12 @@ SOFTWARE.
 
 namespace daggyconv {
 
-class DAGGYCORE_EXPORT IDataSourceConvertor : public QObject
+class DAGGYCORE_EXPORT IDataSourceConvertor
 {
-    Q_OBJECT
 public:
-    IDataSourceConvertor
-    (
-        QString type_arg,
-        QObject* parent = nullptr
-    );
+    IDataSourceConvertor(QString type_arg);
+    virtual ~IDataSourceConvertor();
 
-    virtual ~IDataSourceConvertor() = default;
     virtual daggycore::OptionalResult<daggycore::DataSources> convert
     (
             const QString& data

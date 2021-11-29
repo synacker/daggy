@@ -31,6 +31,7 @@ class DAGGYCORE_EXPORT CJsonDataSourcesConvertor: public IDataSourceConvertor
 {
 public:
     CJsonDataSourcesConvertor();
+    ~CJsonDataSourcesConvertor() = default;
 
     constexpr static const char* convertor_type = "json";
 

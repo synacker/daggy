@@ -4,7 +4,6 @@ find_package(Qt6 COMPONENTS Core REQUIRED)
 
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
 
-
 include(rpath_bin)
 
 set(SOURCES ${SOURCES}
@@ -26,8 +25,8 @@ endif()
 
 add_definitions(-DAPP_ICON="${CMAKE_CURRENT_LIST_DIR}/../icons/daggy.ico")
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_multiple_servers.yaml ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_multiple_servers.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_sources.yaml ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_sources.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
 
 set(APP_NAME "${TARGET}")
 set(APP_DESCRIPTION "app")
@@ -36,7 +35,8 @@ set(FILETYPE "VFT_APP")
 include(version_meta)
 
 add_executable(${TARGET} ${SOURCES})
-target_link_libraries(${TARGET} DaggyCore)
-include(precompiled)
+target_link_libraries(${TARGET} PRIVATE DaggyCore)
+target_precompile_headers(${TARGET} PRIVATE Precompiled.h)
+
 
 install(TARGETS ${TARGET} RUNTIME)

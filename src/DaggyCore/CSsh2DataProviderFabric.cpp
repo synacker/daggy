@@ -54,8 +54,8 @@ constexpr const std::pair<const char*, QMetaType::Type> parameters_field[] =
 
 const char* CSsh2DataProviderFabric::fabric_type = CSsh2DataProvider::provider_type;
 
-CSsh2DataProviderFabric::CSsh2DataProviderFabric(QObject* parent)
-    : IDataProviderFabric(fabric_type, parent)
+CSsh2DataProviderFabric::CSsh2DataProviderFabric()
+    : IDataProviderFabric(fabric_type)
 {
 
 }

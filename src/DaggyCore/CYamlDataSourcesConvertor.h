@@ -31,6 +31,7 @@ class DAGGYCORE_EXPORT CYamlDataSourcesConvertor: public IDataSourceConvertor
 {
 public:
     CYamlDataSourcesConvertor();
+    ~CYamlDataSourcesConvertor() = default;
 
     constexpr static const char* convertor_type = "yaml";
 
