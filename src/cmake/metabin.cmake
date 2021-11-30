@@ -1,0 +1,13 @@
+if(WIN32)
+    get_target_property(target_type ${TARGET} TYPE)
+    if (target_type STREQUAL "EXECUTABLE")
+        set(FILETYPE "VFT_APP")
+    elseif(BUILD_SHARED_LIBS)
+        set(FILETYPE "VFT_DLL")
+    else()
+        set(FILETYPE "VFT_STATIC_LIB")
+    endif()
+
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/version.rc.in ${CMAKE_BINARY_DIR}/${TARGET}/version.rc @ONLY)
+    set(SOURCES ${SOURCES} ${CMAKE_BINARY_DIR}/${TARGET}/version.rc)
+endif()
