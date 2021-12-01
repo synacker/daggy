@@ -49,6 +49,8 @@ class DaggyConan(ConanFile):
     exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*"]
     export_sources = ["src/*"]
 
+    _cmake = None
+
     def set_version(self):
         self.version = GitVersion().full_version()
 
@@ -76,18 +78,20 @@ class DaggyConan(ConanFile):
         return result
 
     def _configure(self):
-        cmake = CMake(self)
-        cmake.definitions["SSH2_SUPPORT"] = self.options.ssh2_support
-        cmake.definitions["YAML_SUPPORT"] = self.options.yaml_support
-        cmake.definitions["DAGGY_CONSOLE"] = self.options.daggy_console
-        cmake.definitions["VERSION"] = self.version
-        cmake.definitions["CMAKE_INSTALL_LIBDIR"] = self._libdir()
+        if self._cmake:
+            return self._cmake
+        self._cmake = CMake(self)
+        self._cmake.definitions["SSH2_SUPPORT"] = self.options.ssh2_support
+        self._cmake.definitions["YAML_SUPPORT"] = self.options.yaml_support
+        self._cmake.definitions["DAGGY_CONSOLE"] = self.options.daggy_console
+        self._cmake.definitions["VERSION"] = self.version
+        self._cmake.definitions["CMAKE_INSTALL_LIBDIR"] = self._libdir()
         if self.options.shared:
-            cmake.definitions["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
-            cmake.definitions["CMAKE_CXX_VISIBILITY_PRESET"] = "hidden"
-            cmake.definitions["CMAKE_VISIBILITY_INLINES_HIDDEN"] = 1
-        cmake.configure()
-        return cmake
+            self._cmake.definitions["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
+            self._cmake.definitions["CMAKE_CXX_VISIBILITY_PRESET"] = "hidden"
+            self._cmake.definitions["CMAKE_VISIBILITY_INLINES_HIDDEN"] = 1
+        self._cmake.configure()
+        return self._cmake
 
     def build(self):
         cmake = self._configure()
