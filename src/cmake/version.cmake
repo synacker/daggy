@@ -1,10 +1,22 @@
-find_package(Git)
-if (NOT DEFINED VERSION)
-    if (GIT_FOUND)
+include (CMakeParseArguments)
+
+macro(SET_GIT_VERSION)
+    set(args PATTERN POSTFIX EXPORT)
+    cmake_parse_arguments(GIT_VERSION
+                          ""
+                          "${args}"
+                          ""
+                          ${ARGN}
+    )
+    if(NOT VERSION)
+        if (NOT GIT_VERSION_PATTERN)
+            set(GIT_VERSION_PATTERN [0-9]*.[0-9]*.[0-9]*)
+        endif()
+        find_package(Git REQUIRED)
         execute_process(COMMAND
                 "${GIT_EXECUTABLE}"
                 describe
-                --match [0-9]*.[0-9]*.[0-9]*
+                --match ${GIT_VERSION_PATTERN}
                 --abbrev=0
                 --tags
                 WORKING_DIRECTORY
@@ -22,31 +34,43 @@ if (NOT DEFINED VERSION)
                 OUTPUT_VARIABLE
                 BUILD_NUMBER
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
-    endif(GIT_FOUND)
 
-    string(REPLACE "." ";" VERSION_LIST ${VERSION})
+
+        set(VERSION ${VERSION}.${BUILD_NUMBER})
+        if (GIT_VERSION_POSTFIX)
+            set(VERSION ${VERSION}-${GIT_VERSION_POSTFIX})
+        endif()
+    endif()
+
+    set(PROJECT_VERSION_FULL ${VERSION})
+    string(REPLACE "-" ";" VERSION_LIST ${PROJECT_VERSION_FULL})
+    list(LENGTH VERSION_LIST LIST_SIZE)
+    list(GET VERSION_LIST 0 PROJECT_VERSION)
+    if(LIST_SIZE GREATER 1)
+        list(GET VERSION_LIST 1 PROJECT_VERSION_POSTFIX)
+    endif()
+
+    string(REPLACE "." ";" VERSION_LIST ${PROJECT_VERSION})
     list(GET VERSION_LIST 0 PROJECT_VERSION_MAJOR)
     list(GET VERSION_LIST 1 PROJECT_VERSION_MINOR)
     list(GET VERSION_LIST 2 PROJECT_VERSION_PATCH)
+    list(GET VERSION_LIST 3 PROJECT_VERSION_TWEAK)
 
-    set(VERSION ${VERSION}.${BUILD_NUMBER})
-endif()
+    if(NOT GIT_VERSION_EXPORT)
+        set(GIT_VERSION_EXPORT ${CMAKE_BINARY_DIR})
+    endif()
 
-if (NOT DEFINED BUILD_NUMBER)
-    set(BUILD_NUMBER 0)
-endif()
+    string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 
+    add_definitions(-D${PROJECT_NAME_UPPER}_VERSION_FULL="${PROJECT_VERSION_FULL}")
+    add_definitions(-D${PROJECT_NAME_UPPER}_VERSION="${PROJECT_VERSION}")
+    add_definitions(-D${PROJECT_NAME_UPPER}_VERSION_MAJOR=${PROJECT_VERSION_MAJOR})
+    add_definitions(-D${PROJECT_NAME_UPPER}_VERSION_MINOR=${PROJECT_VERSION_MINOR})
+    add_definitions(-D${PROJECT_NAME_UPPER}_VERSION_PATCH=${PROJECT_VERSION_PATCH})
+    add_definitions(-D${PROJECT_NAME_UPPER}_VERSION_BUILD=${PROJECT_VERSION_TWEAK})
+    add_definitions(-D${PROJECT_NAME_UPPER}_VERSION_POSTFIX="${PROJECT_VERSION_POSTFIX}")
 
-set(PROJECT_VERSION ${VERSION})
-
-add_definitions(-DVERSION_MAJOR=${PROJECT_VERSION_MAJOR})
-add_definitions(-DVERSION_MINOR=${PROJECT_VERSION_MINOR})
-add_definitions(-DVERSION_PATCH=${PROJECT_VERSION_PATCH})
-add_definitions(-DVERSION_BUILD=${BUILD_NUMBER})
-add_definitions(-DVERSION=${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
-
-add_definitions(-DVERSION_STR="${VERSION}")
-
-if (WIN32)
-    set(VERSION_RC_IN ${CMAKE_CURRENT_LIST_DIR}/version.rc.in)
-endif()
+    add_definitions(-D${PROJECT_NAME_UPPER}_NAME="${PROJECT_NAME}")
+    add_definitions(-D${PROJECT_NAME_UPPER}_VENDOR="${PROJECT_VENDOR}")
+    add_definitions(-D${PROJECT_NAME_UPPER}_HOMEPAGE_URL="${PROJECT_HOMEPAGE_URL}")
+endmacro()

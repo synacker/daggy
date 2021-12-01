@@ -71,6 +71,20 @@ DaggyCore::~DaggyCore()
 
 }
 
+DaggyCore::Version DaggyCore::version() const
+{
+    return
+    {
+        DAGGY_VERSION_FULL,
+        DAGGY_VERSION_MAJOR,
+        DAGGY_VERSION_MINOR,
+        DAGGY_VERSION_PATCH,
+        DAGGY_VERSION_BUILD,
+        DAGGY_VERSION_POSTFIX,
+        DAGGY_VENDOR
+    };
+}
+
 void DaggyCore::setDataSources(DataSources data_sources)
 {
     data_sources_ = std::move(data_sources);

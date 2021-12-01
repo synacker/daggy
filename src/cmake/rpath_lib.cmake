@@ -1,7 +1,0 @@
-if(CONAN_BUILD)
-    if(APPLE)
-        set(CMAKE_INSTALL_RPATH "@executable_path/daggy")
-    elseif(UNIX)
-        set(CMAKE_INSTALL_RPATH "$ORIGIN/daggy;")
-    endif()
-endif()

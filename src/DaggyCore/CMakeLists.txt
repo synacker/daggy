@@ -4,8 +4,6 @@ find_package(Qt6 COMPONENTS Core Network REQUIRED)
 
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
 
-include(rpath_lib)
-
 set(SSH2_SOURCES
     Ssh2Client.cpp
     Ssh2Types.cpp
@@ -88,24 +86,14 @@ if(YAML_SUPPORT)
     list(APPEND INCLUDE_HEADERS ${YAML_PUBLIC})
 endif()
 
-
-
-set(APP_NAME ${TARGET})
-set(APP_DESCRIPTION "Daggy core library")
-set(FILETYPE "VFT_DLL")
-
-include(version_meta)
-
-set(CMAKE_C_VISIBILITY_PRESET hidden)
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+ADD_BINARY_META(LIB)
+SET_RPATH(LIB)
 
 add_library(${TARGET} ${SOURCES} ${MOC_SOURCES})
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
 include(GenerateExportHeader)
 generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/daggycore_export.h)
-
 target_precompile_headers(${TARGET} PRIVATE Precompiled.h)
 
 if(UNIX)

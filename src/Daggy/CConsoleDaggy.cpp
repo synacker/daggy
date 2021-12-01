@@ -41,8 +41,11 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
     , daggy_core_(new daggycore::DaggyCore(this))
     , need_hard_stop_(false)
 {
-    qApp->setApplicationVersion(VERSION_STR);
-    qApp->setApplicationName("daggy");
+    qApp->setApplicationName(DAGGY_NAME);
+    qApp->setApplicationVersion(DAGGY_VERSION_FULL);
+    qApp->setOrganizationName(DAGGY_VENDOR);
+    qApp->setOrganizationDomain(DAGGY_HOMEPAGE_URL);
+
     connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
     connect(daggy_core_, &DaggyCore::stateChanged, this, [](DaggyCore::State state){
         if (state == DaggyCore::Finished)
