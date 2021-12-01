@@ -87,16 +87,13 @@ if(YAML_SUPPORT)
 endif()
 
 ADD_BINARY_META(LIB)
+SET_RPATH(LIB)
 
 add_library(${TARGET} ${SOURCES} ${MOC_SOURCES})
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
-
-include(rpath)
-
 include(GenerateExportHeader)
 generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/daggycore_export.h)
-
 target_precompile_headers(${TARGET} PRIVATE Precompiled.h)
 
 if(UNIX)
