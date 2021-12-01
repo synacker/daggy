@@ -86,11 +86,12 @@ if(YAML_SUPPORT)
     list(APPEND INCLUDE_HEADERS ${YAML_PUBLIC})
 endif()
 
+ADD_BINARY_META(LIB)
 
 add_library(${TARGET} ${SOURCES} ${MOC_SOURCES})
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
-include(metabin)
+
 include(rpath)
 
 include(GenerateExportHeader)

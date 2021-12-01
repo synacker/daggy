@@ -1,6 +1,6 @@
 include (CMakeParseArguments)
 
-function(SET_GIT_VERSION)
+macro(SET_GIT_VERSION)
     set(args PATTERN POSTFIX EXPORT)
     cmake_parse_arguments(GIT_VERSION
                           ""
@@ -73,4 +73,4 @@ function(SET_GIT_VERSION)
     add_definitions(-D${PROJECT_NAME}_NAME="${PROJECT_NAME}")
     add_definitions(-D${PROJECT_NAME}_VENDOR="${PROJECT_VENDOR}")
     add_definitions(-D${PROJECT_NAME}_HOMEPAGE_URL="${PROJECT_HOMEPAGE_URL}")
-endfunction()
+endmacro()

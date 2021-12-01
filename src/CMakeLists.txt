@@ -11,14 +11,14 @@ set(PROJECT_COPYRIGTH "Copyright \\251 2021 Mikhail Milovidov. Some Rights Reser
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(version)
-set_git_version()
+include(metabin)
+SET_GIT_VERSION(${VERSION})
+
 
 option(SSH2_SUPPORT "ssh2 data provider support" ON)
 option(YAML_SUPPORT "yaml data sources support" ON)
 option(DAGGY_CONSOLE "daggy console application" ON)
 option(BUILD_SHARED_LIBS ON)
-
-
 
 
 if(SSH2_SUPPORT)

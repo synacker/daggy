@@ -25,10 +25,10 @@ endif()
 
 add_definitions(-DAPP_ICON="${CMAKE_CURRENT_LIST_DIR}/../icons/daggy.ico")
 
+ADD_BINARY_META()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_sources.yaml ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_sources.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
 
-include(metabin)
 
 add_executable(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET} PRIVATE DaggyCore)
