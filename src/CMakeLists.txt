@@ -13,7 +13,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(version)
 include(metabin)
 include(rpath)
-SET_GIT_VERSION(${VERSION})
+SET_GIT_VERSION()
 
 
 option(SSH2_SUPPORT "ssh2 data provider support" ON)

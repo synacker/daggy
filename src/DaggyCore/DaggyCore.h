@@ -51,6 +51,16 @@ class DAGGYCORE_EXPORT DaggyCore : public QObject
     Q_ENUMS(State)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
 public:
+    struct Version {
+        const char* full;
+        const std::uint16_t major;
+        const std::uint16_t minor;
+        const std::uint16_t patch;
+        const std::uint16_t build;
+        const char* postfix;
+        const char* vendor;
+    };
+
     enum State {
         NotStarted,
         Started,
@@ -63,6 +73,8 @@ public:
     DaggyCore(QObject* parent = nullptr);
 
     ~DaggyCore();
+
+    Version version() const;
 
     void setDataSources(DataSources data_sources);
     Result setDataSources(
