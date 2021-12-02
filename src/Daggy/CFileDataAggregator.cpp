@@ -149,14 +149,7 @@ void CFileDataAggregator::onCommandError(const QString provider_id,
 
 void CFileDataAggregator::printAppMessage(const QString& message)
 {
-    const char* message_type_string = console_message_type_.valueToKey(AppStat);
-    printf
-    (
-           "%12s | %-8s | %s\n",
-           qPrintable(currentConsoleTime()),
-           message_type_string,
-           qPrintable(message)
-    );
+    printMessage(AppStat, QString(), QString(), message);
 }
 
 void CFileDataAggregator::printProviderMessage
@@ -166,15 +159,7 @@ void CFileDataAggregator::printProviderMessage
         const QString& source_message
 )
 {
-    const char* message_type_string = console_message_type_.valueToKey(message_type);
-    printf
-    (
-           "%12s | %-8s | %-15s | %s\n",
-           qPrintable(currentConsoleTime()),
-           message_type_string,
-           qPrintable(provider_id),
-           qPrintable(source_message)
-    );
+    printMessage(message_type, provider_id, QString(), source_message);
 }
 
 void CFileDataAggregator::printCommandMessage
@@ -184,10 +169,15 @@ void CFileDataAggregator::printCommandMessage
     const QString& command_id,
     const QString& command_message)
 {
+    printMessage(message_type, provider_id, command_id, command_message);
+}
+
+void CFileDataAggregator::printMessage(const ConsoleMessageType& message_type, const QString& provider_id, const QString& command_id, const QString& command_message)
+{
     const char* message_type_string = console_message_type_.valueToKey(message_type);
     printf
     (
-           "%12s | %-8s | %-15s | %-15s | %s\n",
+           "%12s | %-9s | %-15s | %-15s | %s\n",
            qPrintable(currentConsoleTime()),
            message_type_string,
            qPrintable(provider_id),
