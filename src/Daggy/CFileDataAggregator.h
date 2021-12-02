@@ -80,6 +80,15 @@ protected:
         const QString& command_id,
         const QString& command_message
     );
+
+    void printMessage
+    (
+        const ConsoleMessageType& message_type,
+        const QString& provider_id,
+        const QString& command_id,
+        const QString& command_message
+    );
+
     QString currentConsoleTime() const;
 
 private:
