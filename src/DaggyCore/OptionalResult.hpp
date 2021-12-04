@@ -23,7 +23,7 @@ SOFTWARE.
 */
 #pragma once
 #include <optional>
-#include "Result.h"
+#include "Result.hpp"
 
 namespace daggy {
 

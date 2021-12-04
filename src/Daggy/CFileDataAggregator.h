@@ -24,7 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include <memory>
-#include <DaggyCore/IDataAggregator.h>
+#include <DaggyCore/IDataAggregator.hpp>
 
 #include <QMetaEnum>
 

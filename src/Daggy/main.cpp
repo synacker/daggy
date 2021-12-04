@@ -1,6 +1,6 @@
 #include "Precompiled.h"
-#include <DaggyCore/DaggyCore.h>
-#include <DaggyCore/CSsh2DataProviderFabric.h>
+#include <DaggyCore/Core.hpp>
+#include <DaggyCore/CSsh2DataProviderFabric.hpp>
 
 #include "CFileDataAggregator.h"
 #include "CConsoleDaggy.h"

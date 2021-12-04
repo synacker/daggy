@@ -26,8 +26,8 @@ SOFTWARE.
 #include <QObject>
 
 #include "daggycore_export.h"
-#include "Command.h"
-#include "Result.h"
+#include "Command.hpp"
+#include "Result.hpp"
 
 namespace daggy {
 

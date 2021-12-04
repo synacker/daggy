@@ -22,26 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-
-#include <QVariantMap>
-#include "Command.h"
-
 #include "daggycore_export.h"
+#include "IDataProviderFabric.hpp"
 
-namespace daggy {
-
-struct DAGGYCORE_EXPORT DataSource {
-    QString id;
-    QString type;
-    QString host;
-    Commands commands;
-    bool reconnect = false;
-
-    QVariantMap parameters;
-
-    bool operator==(const DataSource& other) const;
-};
-using DataSources = QMap<QString, DataSource>;
+namespace daggyssh2 {
+struct Ssh2Settings;
 }
 
-Q_DECLARE_METATYPE(daggy::DataSource);
+namespace daggy {
+class IDataProvider;
+
+class DAGGYCORE_EXPORT CSsh2DataProviderFabric : public IDataProviderFabric
+{
+public:
+    CSsh2DataProviderFabric();
+    ~CSsh2DataProviderFabric() = default;
+
+    static const char* fabric_type;
+protected:
+    OptionalResult<IDataProvider*> createDataProvider
+    (
+            const DataSource& data_source,
+            QObject* parent
+    ) override;
+
+    OptionalResult<daggyssh2::Ssh2Settings> convertParameters(const QVariantMap& parameters) const;
+};
+
+}

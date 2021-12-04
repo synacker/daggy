@@ -30,7 +30,7 @@ set(INCLUDE_PUBLIC_HEADERS
     CSsh2DataProviderFabric.h
     Command.h
     Common.h
-    DaggyCore.h
+    Core.hpp
     IDataAggregator.h
     IDataProviderFabric.h
     IDataSourceConvertor.h
@@ -47,7 +47,7 @@ set(SOURCES ${SOURCES}
     IDataAggregator.cpp
     IDataProviderFabric.cpp
     Common.cpp
-    DaggyCore.cpp
+    Core.cpp
     Result.cpp
     CJsonDataSourcesConvertor.cpp
     IDataSourceConvertor.cpp
@@ -56,7 +56,7 @@ set(SOURCES ${SOURCES}
     DataSource.cpp
     Command.cpp
 )
-qt6_wrap_cpp(MOC_SOURCES Command.h)
+qt6_wrap_cpp(MOC_SOURCES Command.hpp)
 
 
 
@@ -94,7 +94,7 @@ target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
 include(GenerateExportHeader)
 generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/daggycore_export.h)
-target_precompile_headers(${TARGET} PRIVATE Precompiled.h)
+target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
 
 if(UNIX)
     if (BUILD_SHARED_LIBS)

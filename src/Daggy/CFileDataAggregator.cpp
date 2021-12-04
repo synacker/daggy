@@ -24,8 +24,8 @@ SOFTWARE.
 #include "Precompiled.h"
 #include "CFileDataAggregator.h"
 
-#include <DaggyCore/IDataProvider.h>
-#include <DaggyCore/Common.h>
+#include <DaggyCore/IDataProvider.hpp>
+#include <DaggyCore/Common.hpp>
 
 CFileDataAggregator::CFileDataAggregator
 (

@@ -21,11 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "Precompiled.h"
-#include "CYamlDataSourcesConvertor.h"
+#include "Precompiled.hpp"
+#include "CYamlDataSourcesConvertor.hpp"
 
-#include "Command.h"
-#include "Common.h"
+#include "Command.hpp"
+#include "Common.hpp"
 
 using namespace daggy;
 using namespace daggyconv;

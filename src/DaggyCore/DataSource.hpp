@@ -23,32 +23,25 @@ SOFTWARE.
 */
 #pragma once
 
-#include <QObject>
+#include <QVariantMap>
+#include "Command.hpp"
 
 #include "daggycore_export.h"
-#include "DataSource.h"
-#include "Common.h"
-#include "OptionalResult.h"
 
 namespace daggy {
-class IDataProvider;
 
-class DAGGYCORE_EXPORT IDataProviderFabric
-{
-public:
-    IDataProviderFabric(QString type_arg);
-    virtual ~IDataProviderFabric() = default;
+struct DAGGYCORE_EXPORT DataSource {
+    QString id;
+    QString type;
+    QString host;
+    Commands commands;
+    bool reconnect = false;
 
-    OptionalResult<IDataProvider*> create
-    (
-            const DataSource& data_source,
-            QObject* parent
-    );
+    QVariantMap parameters;
 
-    const QString type;
-
-protected:
-    virtual OptionalResult<IDataProvider*> createDataProvider(const DataSource& data_source, QObject* parent) = 0;
+    bool operator==(const DataSource& other) const;
 };
-
+using DataSources = QMap<QString, DataSource>;
 }
+
+Q_DECLARE_METATYPE(daggy::DataSource);

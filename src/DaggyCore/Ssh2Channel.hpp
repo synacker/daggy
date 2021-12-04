@@ -25,7 +25,7 @@ SOFTWARE.
 
 #include <QIODevice>
 
-#include "Ssh2Types.h"
+#include "Ssh2Types.hpp"
 
 namespace daggyssh2 {
 class Ssh2Client;

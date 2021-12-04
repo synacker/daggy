@@ -23,7 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
-#include "IDataSourceConvertor.h"
+#include "IDataSourceConvertor.hpp"
 
 namespace daggyconv {
 

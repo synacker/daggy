@@ -25,11 +25,11 @@ SOFTWARE.
 #include "CConsoleDaggy.h"
 #include "Common.h"
 
-#include <DaggyCore/DaggyCore.h>
-#include <DaggyCore/CSsh2DataProviderFabric.h>
-#include <DaggyCore/CLocalDataProvidersFabric.h>
-#include <DaggyCore/CYamlDataSourcesConvertor.h>
-#include <DaggyCore/CJsonDataSourcesConvertor.h>
+#include <DaggyCore/Core.hpp>
+#include <DaggyCore/CSsh2DataProviderFabric.hpp>
+#include <DaggyCore/CLocalDataProvidersFabric.hpp>
+#include <DaggyCore/CYamlDataSourcesConvertor.hpp>
+#include <DaggyCore/CJsonDataSourcesConvertor.hpp>
 
 #include "CFileDataAggregator.h"
 
@@ -38,7 +38,7 @@ using namespace daggyconv;
 
 CConsoleDaggy::CConsoleDaggy(QObject* parent)
     : QObject(parent)
-    , daggy_core_(new daggy::DaggyCore(this))
+    , daggy_core_(new daggy::Core(this))
     , need_hard_stop_(false)
 {
     qApp->setApplicationName(DAGGY_NAME);
@@ -47,8 +47,8 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
     qApp->setOrganizationDomain(DAGGY_HOMEPAGE_URL);
 
     connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
-    connect(daggy_core_, &DaggyCore::stateChanged, this, [](DaggyCore::State state){
-        if (state == DaggyCore::Finished)
+    connect(daggy_core_, &Core::stateChanged, this, [](Core::State state){
+        if (state == Core::Finished)
             qApp->exit();
     });
 }
@@ -197,9 +197,9 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     return result;
 }
 
-daggy::DaggyCore* CConsoleDaggy::daggyCore() const
+daggy::Core* CConsoleDaggy::daggyCore() const
 {
-    return findChild<daggy::DaggyCore*>();
+    return findChild<daggy::Core*>();
 }
 
 QCoreApplication* CConsoleDaggy::application() const
@@ -255,14 +255,14 @@ QString CConsoleDaggy::mustache(const QString& text, const QString& output_folde
 
 void CConsoleDaggy::onDaggyCoreStateChanged(int state)
 {
-    switch (static_cast<DaggyCore::State>(state)) {
-    case daggy::DaggyCore::NotStarted:
+    switch (static_cast<Core::State>(state)) {
+    case daggy::Core::NotStarted:
         break;
-    case daggy::DaggyCore::Started:
+    case daggy::Core::Started:
         break;
-    case daggy::DaggyCore::Finishing:
+    case daggy::Core::Finishing:
         break;
-    case daggy::DaggyCore::Finished:
+    case daggy::Core::Finished:
         qApp->exit();
         break;
     }

@@ -23,8 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Common.h"
-#include "DataSource.h"
+#include "Common.hpp"
+#include "DataSource.hpp"
 
 #include <memory>
 #include <unordered_map>
@@ -32,9 +32,9 @@ SOFTWARE.
 #include <QMap>
 #include <QObject>
 
-#include "IDataProvider.h"
+#include "IDataProvider.hpp"
 
-#include "OptionalResult.h"
+#include "OptionalResult.hpp"
 
 namespace daggyconv {
 class IDataSourceConvertor;
@@ -45,7 +45,7 @@ class IDataProviderFabric;
 class IDataAggregator;
 class IDataProvider;
 
-class DAGGYCORE_EXPORT DaggyCore : public QObject
+class DAGGYCORE_EXPORT Core : public QObject
 {
     Q_OBJECT
     Q_ENUMS(State)
@@ -68,11 +68,11 @@ public:
         Finished
     };
 
-    DaggyCore(DataSources data_sources,
+    Core(DataSources data_sources,
               QObject* parent = nullptr);
-    DaggyCore(QObject* parent = nullptr);
+    Core(QObject* parent = nullptr);
 
-    ~DaggyCore();
+    ~Core();
 
     Version version() const;
 

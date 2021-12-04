@@ -25,14 +25,14 @@ SOFTWARE.
 
 #include <QObject>
 
-#include <DaggyCore/Result.h>
+#include <DaggyCore/Result.hpp>
 
 #include "ISystemSignalHandler.h"
 
 class QCoreApplication;
 
 namespace daggy {
-class DaggyCore;
+class Core;
 }
 
 class CConsoleDaggy : public QObject,
@@ -70,7 +70,7 @@ private:
     };
     Settings parse() const;
 
-    daggy::DaggyCore* daggyCore() const;
+    daggy::Core* daggyCore() const;
     QCoreApplication* application() const;
 
     QString getTextFromFile(QString file_path) const;
@@ -80,7 +80,7 @@ private:
 
     QString mustache(const QString& text, const QString& output_folder) const;
 
-    daggy::DaggyCore* daggy_core_;
+    daggy::Core* daggy_core_;
     bool need_hard_stop_;
 
     QString error_message_;

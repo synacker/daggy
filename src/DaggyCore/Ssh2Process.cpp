@@ -21,11 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "Precompiled.h"
-#include "Ssh2Process.h"
+#include "Precompiled.hpp"
+#include "Ssh2Process.hpp"
 
-#include "Ssh2Client.h"
-#include "Ssh2Debug.h"
+#include "Ssh2Client.hpp"
+#include "Ssh2Debug.hpp"
 
 using namespace daggyssh2;
 

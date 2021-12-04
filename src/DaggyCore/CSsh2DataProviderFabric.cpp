@@ -21,11 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "Precompiled.h"
-#include "CSsh2DataProviderFabric.h"
-#include "IDataProvider.h"
-#include "Ssh2Types.h"
-#include "CSsh2DataProvider.h"
+#include "Precompiled.hpp"
+#include "CSsh2DataProviderFabric.hpp"
+#include "IDataProvider.hpp"
+#include "Ssh2Types.hpp"
+#include "CSsh2DataProvider.hpp"
 
 using namespace daggy;
 using namespace daggyssh2;

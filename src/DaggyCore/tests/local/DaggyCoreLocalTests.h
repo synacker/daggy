@@ -27,7 +27,7 @@ SOFTWARE.
 #include <QObject>
 
 namespace daggy {
-class DaggyCore;
+class Core;
 }
 
 class DaggyCoreLocalTests : public QObject
@@ -49,7 +49,7 @@ private slots:
     void stopOnceProcess();
 
 private:
-    daggy::DaggyCore* daggy_core_;
+    daggy::Core* daggy_core_;
 
 };
 

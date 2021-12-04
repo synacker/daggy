@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#include "IDataProvider.h"
-#include "IDataProviderFabric.h"
+#include "IDataProvider.hpp"
+#include "IDataProviderFabric.hpp"
 
 #include <QHostAddress>
 

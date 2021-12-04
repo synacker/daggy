@@ -25,10 +25,10 @@ SOFTWARE.
 #include "Precompiled.h"
 #include "DaggyCoreLocalTests.h"
 
-#include <DaggyCore/DaggyCore.h>
-#include <DaggyCore/CYamlDataSourcesConvertor.h>
-#include <DaggyCore/CJsonDataSourcesConvertor.h>
-#include <DaggyCore/CLocalDataProvidersFabric.h>
+#include <DaggyCore/Core.hpp>
+#include <DaggyCore/CYamlDataSourcesConvertor.hpp>
+#include <DaggyCore/CJsonDataSourcesConvertor.hpp>
+#include <DaggyCore/CLocalDataProvidersFabric.hpp>
 
 using namespace daggy;
 using namespace daggyconv;
@@ -181,7 +181,7 @@ DaggyCoreLocalTests::DaggyCoreLocalTests(QObject *parent)
 
 void DaggyCoreLocalTests::init()
 {
-    daggy_core_ = new DaggyCore(this);
+    daggy_core_ = new Core(this);
 }
 
 void DaggyCoreLocalTests::cleanup()
@@ -218,13 +218,13 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     QFETCH(QString, type);
     QFETCH(QString, data);
 
-    QVERIFY(daggy_core_->state() == DaggyCore::NotStarted);
+    QVERIFY(daggy_core_->state() == Core::NotStarted);
     auto result = daggy_core_->setDataSources(data, type);
     QVERIFY2(result, result.detailed_error_message().c_str());
     QCOMPARE(daggy_core_->dataSources(), data_sources);
 
-    QSignalSpy states_spy(daggy_core_, &DaggyCore::stateChanged);
-    QSignalSpy streams_spy(daggy_core_, &DaggyCore::commandStream);
+    QSignalSpy states_spy(daggy_core_, &Core::stateChanged);
+    QSignalSpy streams_spy(daggy_core_, &Core::commandStream);
 
     QTimer::singleShot(0, [=]()
     {
@@ -235,7 +235,7 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     QVERIFY(states_spy.wait());
     QVERIFY(!states_spy.isEmpty());
     auto arguments = states_spy.takeFirst();
-    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
+    QCOMPARE(arguments.at(0).value<Core::State>(), Core::Started);
 
     QTimer::singleShot(3000, [=]()
     {
@@ -246,12 +246,12 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     QVERIFY(states_spy.wait());
     QVERIFY(!states_spy.isEmpty());
     arguments = states_spy.takeFirst();
-    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finishing);
+    QCOMPARE(arguments.at(0).value<Core::State>(), Core::Finishing);
 
     QVERIFY(states_spy.wait());
     QVERIFY(!states_spy.isEmpty());
     arguments = states_spy.takeFirst();
-    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
+    QCOMPARE(arguments.at(0).value<Core::State>(), Core::Finished);
     streams_spy.wait();
     QVERIFY(!streams_spy.isEmpty());
 
@@ -281,10 +281,10 @@ void DaggyCoreLocalTests::startAndTerminateTest()
 
 void DaggyCoreLocalTests::stopWithFakeProcess()
 {
-    QVERIFY(daggy_core_->state() == DaggyCore::NotStarted);
+    QVERIFY(daggy_core_->state() == Core::NotStarted);
     daggy_core_->setDataSources(fake_data_sources);
 
-    QSignalSpy states_spy(daggy_core_, &DaggyCore::stateChanged);
+    QSignalSpy states_spy(daggy_core_, &Core::stateChanged);
 
     QTimer::singleShot(0, [=]()
     {
@@ -295,22 +295,22 @@ void DaggyCoreLocalTests::stopWithFakeProcess()
     QVERIFY(states_spy.wait());
     QVERIFY(!states_spy.isEmpty());
     auto arguments = states_spy.takeFirst();
-    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
+    QCOMPARE(arguments.at(0).value<Core::State>(), Core::Started);
 
 
     QVERIFY(states_spy.wait());
     QVERIFY(!states_spy.isEmpty());
     arguments = states_spy.takeFirst();
-    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
+    QCOMPARE(arguments.at(0).value<Core::State>(), Core::Finished);
 }
 
 void DaggyCoreLocalTests::stopOnceProcess()
 {
-    QVERIFY(daggy_core_->state() == DaggyCore::NotStarted);
+    QVERIFY(daggy_core_->state() == Core::NotStarted);
     daggy_core_->setDataSources(once_process_data_sources);
 
-    QSignalSpy states_spy(daggy_core_, &DaggyCore::stateChanged);
-    QSignalSpy streams_spy(daggy_core_, &DaggyCore::commandStream);
+    QSignalSpy states_spy(daggy_core_, &Core::stateChanged);
+    QSignalSpy streams_spy(daggy_core_, &Core::commandStream);
 
     QTimer::singleShot(0, [=]()
     {
@@ -321,7 +321,7 @@ void DaggyCoreLocalTests::stopOnceProcess()
     QVERIFY(states_spy.wait());
     QVERIFY(!states_spy.isEmpty());
     auto arguments = states_spy.takeFirst();
-    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Started);
+    QCOMPARE(arguments.at(0).value<Core::State>(), Core::Started);
 
     QTimer::singleShot(3000, [=]()
     {
@@ -332,11 +332,11 @@ void DaggyCoreLocalTests::stopOnceProcess()
     QVERIFY(!states_spy.isEmpty());
     QCOMPARE(states_spy.count(), 1);
     arguments = states_spy.takeFirst();
-    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finishing);
+    QCOMPARE(arguments.at(0).value<Core::State>(), Core::Finishing);
 
     QVERIFY(states_spy.wait());
     QVERIFY(!states_spy.isEmpty());
     arguments = states_spy.takeFirst();
-    QCOMPARE(arguments.at(0).value<DaggyCore::State>(), DaggyCore::Finished);
+    QCOMPARE(arguments.at(0).value<Core::State>(), Core::Finished);
     QVERIFY(!streams_spy.isEmpty());
 }

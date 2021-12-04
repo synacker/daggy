@@ -24,61 +24,31 @@ SOFTWARE.
 #pragma once
 
 #include <QObject>
-#include <map>
 
 #include "daggycore_export.h"
-#include "Command.h"
+#include "DataSource.hpp"
+#include "Common.hpp"
+#include "OptionalResult.hpp"
 
 namespace daggy {
+class IDataProvider;
 
-class DAGGYCORE_EXPORT IDataProvider : public QObject
+class DAGGYCORE_EXPORT IDataProviderFabric
 {
-    Q_OBJECT
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
 public:
-    enum State {
-        NotStarted,
-        Starting,
-        FailedToStart,
-        Started,
-        Finishing,
-        Finished
-    };
-    Q_ENUM(State)
+    IDataProviderFabric(QString type_arg);
+    virtual ~IDataProviderFabric() = default;
 
-    explicit IDataProvider(Commands commands,
-                           QObject *parent = nullptr);
-    virtual ~IDataProvider();
+    OptionalResult<IDataProvider*> create
+    (
+            const DataSource& data_source,
+            QObject* parent
+    );
 
-    virtual void start() = 0;
-    virtual void stop() = 0;
-
-    virtual QString type() const = 0;
-
-    const Commands& commands() const;
-    Command getCommand(const QString& id) const;
-    State state() const;
-
-    int restartCommandsCount() const;
-
-signals:
-    void stateChanged(State state);
-
-    void commandStateChanged(QString id,
-                             Command::State state,
-                             int exit_code);
-    void commandStream(QString id,
-                       Command::Stream);
-    void commandError(QString id,
-                      std::error_code error_code);
-
-    void error(std::error_code error_code);
+    const QString type;
 
 protected:
-    void setState(State state);
-
-private:
-    const Commands commands_;
-    State state_;
+    virtual OptionalResult<IDataProvider*> createDataProvider(const DataSource& data_source, QObject* parent) = 0;
 };
+
 }

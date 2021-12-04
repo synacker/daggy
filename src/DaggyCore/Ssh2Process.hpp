@@ -22,31 +22,50 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#include "daggycore_export.h"
-#include "IDataProviderFabric.h"
+
+#include <QIODevice>
+
+#include "Ssh2Channel.hpp"
 
 namespace daggyssh2 {
-struct Ssh2Settings;
-}
 
-namespace daggy {
-class IDataProvider;
-
-class DAGGYCORE_EXPORT CSsh2DataProviderFabric : public IDataProviderFabric
+class Ssh2Process : public Ssh2Channel
 {
+    Q_OBJECT
+    Q_ENUMS(ProcessStates)
+    Q_PROPERTY(ProcessStates processState READ processState NOTIFY processStateChanged)
 public:
-    CSsh2DataProviderFabric();
-    ~CSsh2DataProviderFabric() = default;
+    enum ProcessStates {
+        NotStarted,
+        Starting,
+        Started,
+        FailedToStart,
+        Finishing,
+        Finished
+    };
 
-    static const char* fabric_type;
+
+    ProcessStates processState() const;
+    void checkIncomingData() override;
+
+signals:
+    void processStateChanged(ProcessStates processState);
+
 protected:
-    OptionalResult<IDataProvider*> createDataProvider
-    (
-            const DataSource& data_source,
-            QObject* parent
-    ) override;
+    Ssh2Process(const QString& command,
+                Ssh2Client* ssh2_client);
 
-    OptionalResult<daggyssh2::Ssh2Settings> convertParameters(const QVariantMap& parameters) const;
+private slots:
+    void onSsh2ChannelStateChanged(const ChannelStates& state);
+
+private:
+    void setSsh2ProcessState(ProcessStates ssh2_process_state);
+    std::error_code execSsh2Process();
+
+    const QString command_;
+    ProcessStates ssh2_process_state_;
+
+    friend class Ssh2Client;
 };
 
 }

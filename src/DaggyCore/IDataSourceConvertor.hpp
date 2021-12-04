@@ -25,8 +25,8 @@ SOFTWARE.
 
 #include <QObject>
 
-#include "DataSource.h"
-#include "OptionalResult.h"
+#include "DataSource.hpp"
+#include "OptionalResult.hpp"
 
 namespace daggyconv {
 

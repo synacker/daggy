@@ -26,7 +26,7 @@ SOFTWARE.
 #include <QList>
 #include <QPointer>
 
-#include "Ssh2Types.h"
+#include "Ssh2Types.hpp"
 
 namespace daggyssh2 {
 class Ssh2Process;

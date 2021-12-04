@@ -23,49 +23,19 @@ SOFTWARE.
 */
 #pragma once
 
-#include <QIODevice>
+#include "IDataProviderFabric.hpp"
 
-#include "Ssh2Channel.h"
+namespace daggy {
 
-namespace daggyssh2 {
-
-class Ssh2Process : public Ssh2Channel
+class DAGGYCORE_EXPORT CLocalDataProvidersFabric : public IDataProviderFabric
 {
-    Q_OBJECT
-    Q_ENUMS(ProcessStates)
-    Q_PROPERTY(ProcessStates processState READ processState NOTIFY processStateChanged)
 public:
-    enum ProcessStates {
-        NotStarted,
-        Starting,
-        Started,
-        FailedToStart,
-        Finishing,
-        Finished
-    };
+    CLocalDataProvidersFabric();
+    ~CLocalDataProvidersFabric() = default;
 
-
-    ProcessStates processState() const;
-    void checkIncomingData() override;
-
-signals:
-    void processStateChanged(ProcessStates processState);
-
+    static const char* fabric_type;
 protected:
-    Ssh2Process(const QString& command,
-                Ssh2Client* ssh2_client);
-
-private slots:
-    void onSsh2ChannelStateChanged(const ChannelStates& state);
-
-private:
-    void setSsh2ProcessState(ProcessStates ssh2_process_state);
-    std::error_code execSsh2Process();
-
-    const QString command_;
-    ProcessStates ssh2_process_state_;
-
-    friend class Ssh2Client;
+    OptionalResult<IDataProvider*> createDataProvider(const DataSource& data_source, QObject* parent);
 };
 
 }

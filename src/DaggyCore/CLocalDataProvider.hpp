@@ -25,7 +25,7 @@ SOFTWARE.
 #include <QObject>
 #include <QList>
 
-#include "IDataProvider.h"
+#include "IDataProvider.hpp"
 
 class QProcess;
 

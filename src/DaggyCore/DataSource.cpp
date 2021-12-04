@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "Precompiled.h"
-#include "DataSource.h"
+#include "Precompiled.hpp"
+#include "DataSource.hpp"
 
 bool daggy::DataSource::operator==(const daggy::DataSource &other) const
 {
