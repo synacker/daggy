@@ -23,9 +23,9 @@ SOFTWARE.
 */
 #include "Common.h"
 
-using namespace daggycore;
+using namespace daggy;
 
-const std::error_code daggycore::success = std::error_code{};
+const std::error_code daggy::success = std::error_code{};
 
 namespace  {
 class DaggyErrorCategory : public std::error_category
@@ -54,7 +54,7 @@ public:
 
 }
 
-std::error_code daggycore::make_error_code(DaggyErrors daggy_error)
+std::error_code daggy::make_error_code(DaggyErrors daggy_error)
 {
     return std::error_code(static_cast<int>(daggy_error), daggy_error_category);
 }

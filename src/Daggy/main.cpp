@@ -5,7 +5,7 @@
 #include "CFileDataAggregator.h"
 #include "CConsoleDaggy.h"
 
-using namespace daggycore;
+using namespace daggy;
 
 int main(int argc, char** argv) 
 try {

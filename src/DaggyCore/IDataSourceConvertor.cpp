@@ -26,7 +26,7 @@ SOFTWARE.
 
 #include "Common.h"
 
-using namespace daggycore;
+using namespace daggy;
 using namespace daggyconv;
 
 const QHash<const char*, QMetaType::Type> IDataSourceConvertor::required_source_field =
@@ -51,14 +51,14 @@ IDataSourceConvertor::~IDataSourceConvertor()
 {
 }
 
-daggycore::OptionalResult<Commands> IDataSourceConvertor::getCommands(const QVariantMap& commands_map)
+daggy::OptionalResult<Commands> IDataSourceConvertor::getCommands(const QVariantMap& commands_map)
 {
     Commands commands;
     for (const QString& command_id : commands_map.keys()) {
         if (commands_map[command_id].metaType() != QMetaType(QMetaType::QVariantMap))
             return
             {
-                daggycore::DaggyErrors::ConvertError,
+                daggy::DaggyErrors::ConvertError,
                 QString("%1 command is not a map").arg(command_id).toStdString()
             };
         const QVariantMap& command_map = commands_map[command_id].toMap();
@@ -66,7 +66,7 @@ daggycore::OptionalResult<Commands> IDataSourceConvertor::getCommands(const QVar
             if (!command_map.contains(field)) {
                 return
                 {
-                    daggycore::DaggyErrors::ConvertError,
+                    daggy::DaggyErrors::ConvertError,
                     QString("%1 command don't have required %2 field").arg(command_id, field).toStdString()
                 };
             }
@@ -74,7 +74,7 @@ daggycore::OptionalResult<Commands> IDataSourceConvertor::getCommands(const QVar
             {
                 return
                 {
-                    daggycore::DaggyErrors::ConvertError,
+                    daggy::DaggyErrors::ConvertError,
                     QString("%1 command have incorrect type for %2 field").arg(command_id, field).toStdString()
                 };
             }

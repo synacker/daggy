@@ -27,7 +27,7 @@ SOFTWARE.
 #include "Ssh2Types.h"
 #include "CSsh2DataProvider.h"
 
-using namespace daggycore;
+using namespace daggy;
 using namespace daggyssh2;
 
 namespace  {

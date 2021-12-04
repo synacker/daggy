@@ -26,7 +26,7 @@ SOFTWARE.
 
 #include "Common.h"
 
-using namespace daggycore;
+using namespace daggy;
 
 IDataProvider::IDataProvider(Commands commands,
                              QObject *parent)

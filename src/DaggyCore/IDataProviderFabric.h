@@ -30,7 +30,7 @@ SOFTWARE.
 #include "Common.h"
 #include "OptionalResult.h"
 
-namespace daggycore {
+namespace daggy {
 class IDataProvider;
 
 class DAGGYCORE_EXPORT IDataProviderFabric

@@ -26,7 +26,7 @@ SOFTWARE.
 
 #include "Common.h"
 
-using namespace daggycore;
+using namespace daggy;
 using namespace daggyconv;
 
 CJsonDataSourcesConvertor::CJsonDataSourcesConvertor()
@@ -64,7 +64,7 @@ OptionalResult<DataSources> CJsonDataSourcesConvertor::convert(
     if (sources[g_sourcesField].metaType() != QMetaType(QMetaType::QVariantMap)) {
         return
         {
-            daggycore::DaggyErrors::ConvertError,
+            daggy::DaggyErrors::ConvertError,
             QString("%1 field is not a map").arg(g_sourcesField).toStdString()
         };
     }
@@ -78,7 +78,7 @@ OptionalResult<DataSources> CJsonDataSourcesConvertor::convert(
         if (sources_map[source_id].metaType() != QMetaType(QMetaType::QVariantMap))
             return
             {
-                daggycore::DaggyErrors::ConvertError,
+                daggy::DaggyErrors::ConvertError,
                 QString("%1 data source is not a map").arg(source_id).toStdString()
             };
         const QVariantMap& source_map = sources_map[source_id].toMap();
@@ -86,7 +86,7 @@ OptionalResult<DataSources> CJsonDataSourcesConvertor::convert(
             if (!source_map.contains(field)) {
                 return
                 {
-                    daggycore::DaggyErrors::ConvertError,
+                    daggy::DaggyErrors::ConvertError,
                     QString("%1 data source don't have required '%2' field").arg(source_id, field).toStdString()
                 };
             }
@@ -94,7 +94,7 @@ OptionalResult<DataSources> CJsonDataSourcesConvertor::convert(
             {
                 return
                 {
-                    daggycore::DaggyErrors::ConvertError,
+                    daggy::DaggyErrors::ConvertError,
                     QString("%1 data source have incorrect type for '%2' field").arg(source_id, field).toStdString()
                 };
             }

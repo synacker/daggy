@@ -36,14 +36,14 @@ public:
     IDataSourceConvertor(QString type_arg);
     virtual ~IDataSourceConvertor();
 
-    virtual daggycore::OptionalResult<daggycore::DataSources> convert
+    virtual daggy::OptionalResult<daggy::DataSources> convert
     (
             const QString& data
     ) const = 0;
 
     const QString type;
 
-    static daggycore::OptionalResult<daggycore::Commands> getCommands(const QVariantMap& commands_map);
+    static daggy::OptionalResult<daggy::Commands> getCommands(const QVariantMap& commands_map);
 
     constexpr static const char* g_sourcesField = "sources";
 

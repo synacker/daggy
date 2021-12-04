@@ -24,7 +24,7 @@ SOFTWARE.
 #include "Precompiled.h"
 #include "Result.h"
 
-using namespace  daggycore;
+using namespace  daggy;
 
 const std::error_code Result::success = std::error_code{};
 
@@ -40,7 +40,7 @@ Result::Result(std::error_code error_code)
 
 }
 
-daggycore::Result::operator bool() const {
+daggy::Result::operator bool() const {
     return *this == success;
 }
 

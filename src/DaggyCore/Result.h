@@ -26,7 +26,7 @@ SOFTWARE.
 
 #include "daggycore_export.h"
 
-namespace daggycore {
+namespace daggy {
 
 class DAGGYCORE_EXPORT Result : public std::error_code
 {

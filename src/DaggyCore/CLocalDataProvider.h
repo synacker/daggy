@@ -29,7 +29,7 @@ SOFTWARE.
 
 class QProcess;
 
-namespace daggycore {
+namespace daggy {
 
 class CLocalDataProvider : public IDataProvider
 {
@@ -60,7 +60,7 @@ private slots:
 private:
     void terminate();
 
-    QProcess* startProcess(const daggycore::Command& command);
+    QProcess* startProcess(const daggy::Command& command);
     bool onProcessStop(QProcess* process);
 
     QList<QProcess*> processes() const;

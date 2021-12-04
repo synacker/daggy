@@ -29,7 +29,7 @@ namespace daggyssh2 {
 struct Ssh2Settings;
 }
 
-namespace daggycore {
+namespace daggy {
 class IDataProvider;
 
 class DAGGYCORE_EXPORT CSsh2DataProviderFabric : public IDataProviderFabric

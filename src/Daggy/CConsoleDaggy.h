@@ -31,7 +31,7 @@ SOFTWARE.
 
 class QCoreApplication;
 
-namespace daggycore {
+namespace daggy {
 class DaggyCore;
 }
 
@@ -42,8 +42,8 @@ class CConsoleDaggy : public QObject,
 public:
     CConsoleDaggy(QObject* parent = nullptr);
 
-    daggycore::Result initialize();
-    daggycore::Result start();
+    daggy::Result initialize();
+    daggy::Result start();
     void stop();
 
     bool isError() const;
@@ -70,7 +70,7 @@ private:
     };
     Settings parse() const;
 
-    daggycore::DaggyCore* daggyCore() const;
+    daggy::DaggyCore* daggyCore() const;
     QCoreApplication* application() const;
 
     QString getTextFromFile(QString file_path) const;
@@ -80,7 +80,7 @@ private:
 
     QString mustache(const QString& text, const QString& output_folder) const;
 
-    daggycore::DaggyCore* daggy_core_;
+    daggy::DaggyCore* daggy_core_;
     bool need_hard_stop_;
 
     QString error_message_;

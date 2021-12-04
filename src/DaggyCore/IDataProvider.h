@@ -29,7 +29,7 @@ SOFTWARE.
 #include "daggycore_export.h"
 #include "Command.h"
 
-namespace daggycore {
+namespace daggy {
 
 class DAGGYCORE_EXPORT IDataProvider : public QObject
 {

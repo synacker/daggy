@@ -35,7 +35,7 @@ public:
 
     constexpr static const char* convertor_type = "yaml";
 
-    daggycore::OptionalResult<daggycore::DataSources> convert
+    daggy::OptionalResult<daggy::DataSources> convert
     (
         const QString& yaml
     ) const override;

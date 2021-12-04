@@ -29,7 +29,7 @@ SOFTWARE.
 #include "Command.h"
 #include "Result.h"
 
-namespace daggycore {
+namespace daggy {
 
 class DAGGYCORE_EXPORT IDataAggregator : public QObject
 {

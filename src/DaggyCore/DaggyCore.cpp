@@ -41,7 +41,7 @@ SOFTWARE.
 #include "CYamlDataSourcesConvertor.h"
 #endif
 
-using namespace daggycore;
+using namespace daggy;
 
 DaggyCore::DaggyCore(DataSources data_sources,
                      QObject* parent)

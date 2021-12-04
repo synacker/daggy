@@ -26,7 +26,7 @@ SOFTWARE.
 
 #include "Common.h"
 
-using namespace daggycore;
+using namespace daggy;
 
 CLocalDataProvider::CLocalDataProvider
 (
@@ -51,9 +51,9 @@ CLocalDataProvider::~CLocalDataProvider()
 void CLocalDataProvider::start()
 {
     switch (state()) {
-    case daggycore::IDataProvider::NotStarted:
-    case daggycore::IDataProvider::FailedToStart:
-    case daggycore::IDataProvider::Finished:
+    case daggy::IDataProvider::NotStarted:
+    case daggy::IDataProvider::FailedToStart:
+    case daggy::IDataProvider::Finished:
     {
         setState(Started);
         startCommands();
@@ -99,23 +99,23 @@ void CLocalDataProvider::onProcessDestroyed()
 {
     const size_t active_processes = activeProcessesCount();
     switch (state()) {
-    case daggycore::IDataProvider::NotStarted:
+    case daggy::IDataProvider::NotStarted:
         break;
-    case daggycore::IDataProvider::Starting:
+    case daggy::IDataProvider::Starting:
         if (activeProcessesCount() == 0)
             setState(Finished);
         break;
-    case daggycore::IDataProvider::FailedToStart:
+    case daggy::IDataProvider::FailedToStart:
         break;
-    case daggycore::IDataProvider::Started:
+    case daggy::IDataProvider::Started:
         if (active_processes == 0 && restartCommandsCount() == 0)
             setState(Finished);
         break;
-    case daggycore::IDataProvider::Finishing:
+    case daggy::IDataProvider::Finishing:
         if (active_processes == 0)
             setState(Finished);
         break;
-    case daggycore::IDataProvider::Finished:
+    case daggy::IDataProvider::Finished:
         break;
     }
 }

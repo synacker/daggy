@@ -30,7 +30,7 @@ SOFTWARE.
 
 class QFile;
 
-class CFileDataAggregator : public daggycore::IDataAggregator
+class CFileDataAggregator : public daggy::IDataAggregator
 {
     Q_OBJECT
 public:
@@ -42,8 +42,8 @@ public:
                         QObject* parent = nullptr);
     ~CFileDataAggregator();
 
-    daggycore::Result prepare() override;
-    daggycore::Result free() override;
+    daggy::Result prepare() override;
+    daggy::Result free() override;
 
 public slots:
     void onDataProviderStateChanged(const QString provider_id,
@@ -53,11 +53,11 @@ public slots:
 
     void onCommandStateChanged(const QString provider_id,
                                const QString command_id,
-                               const daggycore::Command::State state,
+                               const daggy::Command::State state,
                                const int exit_code) override;
     void onCommandStream(const QString provider_id,
                          const QString command_id,
-                         const daggycore::Command::Stream stream) override;
+                         const daggy::Command::Stream stream) override;
     void onCommandError(const QString provider_id,
                         const QString command_id,
                         const std::error_code error_code) override;
@@ -96,7 +96,7 @@ private:
     (
         const QString& provider_id,
         const QString& command_id,
-        const daggycore::Command::Stream& stream
+        const daggy::Command::Stream& stream
     );
 
     const QString output_folder_;

@@ -25,7 +25,7 @@ SOFTWARE.
 #include "CLocalDataProvidersFabric.h"
 #include "CLocalDataProvider.h"
 
-using namespace daggycore;
+using namespace daggy;
 
 const char* CLocalDataProvidersFabric::fabric_type = CLocalDataProvider::provider_type;
 

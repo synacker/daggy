@@ -30,7 +30,7 @@ SOFTWARE.
 #include <DaggyCore/CJsonDataSourcesConvertor.h>
 #include <DaggyCore/CLocalDataProvidersFabric.h>
 
-using namespace daggycore;
+using namespace daggy;
 using namespace daggyconv;
 
 namespace  {

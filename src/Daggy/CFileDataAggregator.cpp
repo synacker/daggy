@@ -33,12 +33,12 @@ CFileDataAggregator::CFileDataAggregator
         QString data_sources_name,
         QObject* parent
 )
-    : daggycore::IDataAggregator(parent)
+    : daggy::IDataAggregator(parent)
     , output_folder_(std::move(output_folder))
     , data_sources_name_(std::move(data_sources_name))
     , console_message_type_(QMetaEnum::fromType<ConsoleMessageType>())
-    , provider_state_(QMetaEnum::fromType<daggycore::IDataProvider::State>())
-    , command_state_(QMetaEnum::fromType<daggycore::Command::State>())
+    , provider_state_(QMetaEnum::fromType<daggy::IDataProvider::State>())
+    , command_state_(QMetaEnum::fromType<daggy::Command::State>())
 {
 }
 
@@ -46,30 +46,30 @@ CFileDataAggregator::~CFileDataAggregator()
 {
 }
 
-daggycore::Result CFileDataAggregator::prepare()
+daggy::Result CFileDataAggregator::prepare()
 {
     auto aggregation_dir = QDir(output_folder_);
     if (!aggregation_dir.exists() && !QDir().mkdir(output_folder_))
         return
         {
-            daggycore::DaggyErrors::CannotPrepareAggregator
+            daggy::DaggyErrors::CannotPrepareAggregator
         };
 
     printAppMessage(QString("Start aggregation in %1").arg(output_folder_));
-    return daggycore::Result::success;
+    return daggy::Result::success;
 }
 
-daggycore::Result CFileDataAggregator::free()
+daggy::Result CFileDataAggregator::free()
 {
     stream_files_.clear();
     printAppMessage(QString("Stop aggregation in %1").arg(output_folder_));
-    return daggycore::Result::success;
+    return daggy::Result::success;
 }
 
 void CFileDataAggregator::onDataProviderStateChanged(const QString provider_id,
                                                      const int state)
 {
-    const auto provider_state = static_cast<daggycore::IDataProvider::State>(state);
+    const auto provider_state = static_cast<daggy::IDataProvider::State>(state);
     const char* provider_state_string = provider_state_.valueToKey(provider_state);
     const QString message = QString("New state: %1").arg(provider_state_string);
     printProviderMessage
@@ -93,12 +93,12 @@ void CFileDataAggregator::onDataProviderError(const QString provider_id,
 
 void CFileDataAggregator::onCommandStateChanged(const QString provider_id,
                                                 const QString command_id,
-                                                const daggycore::Command::State state,
+                                                const daggy::Command::State state,
                                                 const int exit_code)
 {
     const char* state_string = command_state_.valueToKey(state);
     QString message = QString("New state: %1").arg(state_string);
-    if (state == daggycore::Command::Finished)
+    if (state == daggy::Command::Finished)
         message += QString(". Exit code: %1").arg(exit_code);
     printCommandMessage
     (
@@ -111,10 +111,10 @@ void CFileDataAggregator::onCommandStateChanged(const QString provider_id,
 
 void CFileDataAggregator::onCommandStream(const QString provider_id,
                                           const QString command_id,
-                                          const daggycore::Command::Stream stream)
+                                          const daggy::Command::Stream stream)
 {
     switch (stream.type) {
-        case daggycore::Command::Stream::Type::Standard:
+        case daggy::Command::Stream::Type::Standard:
             if (!writeToFile(provider_id,
                              command_id,
                              stream))
@@ -125,7 +125,7 @@ void CFileDataAggregator::onCommandStream(const QString provider_id,
                                     "Cannot write data");
             }
             break;
-        case daggycore::Command::Stream::Type::Error:
+        case daggy::Command::Stream::Type::Error:
             printCommandMessage(CommError,
                                 provider_id,
                                 command_id,
@@ -193,7 +193,7 @@ QString CFileDataAggregator::currentConsoleTime() const
 
 bool CFileDataAggregator::writeToFile(const QString& provider_id,
     const QString& command_id,
-    const daggycore::Command::Stream& stream)
+    const daggy::Command::Stream& stream)
 {
     const QString file_name = QString("%1-%2.%3").arg(provider_id, command_id, stream.extension);
     QFile* file = nullptr;

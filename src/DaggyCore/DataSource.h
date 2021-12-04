@@ -28,7 +28,7 @@ SOFTWARE.
 
 #include "daggycore_export.h"
 
-namespace daggycore {
+namespace daggy {
 
 struct DAGGYCORE_EXPORT DataSource {
     QString id;
@@ -44,4 +44,4 @@ struct DAGGYCORE_EXPORT DataSource {
 using DataSources = QMap<QString, DataSource>;
 }
 
-Q_DECLARE_METATYPE(daggycore::DataSource);
+Q_DECLARE_METATYPE(daggy::DataSource);

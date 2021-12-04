@@ -25,7 +25,7 @@ SOFTWARE.
 
 #include "IDataProviderFabric.h"
 
-namespace daggycore {
+namespace daggy {
 
 class DAGGYCORE_EXPORT CLocalDataProvidersFabric : public IDataProviderFabric
 {

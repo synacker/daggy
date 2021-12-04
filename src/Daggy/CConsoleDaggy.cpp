@@ -33,12 +33,12 @@ SOFTWARE.
 
 #include "CFileDataAggregator.h"
 
-using namespace daggycore;
+using namespace daggy;
 using namespace daggyconv;
 
 CConsoleDaggy::CConsoleDaggy(QObject* parent)
     : QObject(parent)
-    , daggy_core_(new daggycore::DaggyCore(this))
+    , daggy_core_(new daggy::DaggyCore(this))
     , need_hard_stop_(false)
 {
     qApp->setApplicationName(DAGGY_NAME);
@@ -53,7 +53,7 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
     });
 }
 
-daggycore::Result CConsoleDaggy::initialize()
+daggy::Result CConsoleDaggy::initialize()
 {
     const auto settings = parse();
     daggy_core_->addDataAggregator(new CFileDataAggregator(settings.output_folder, settings.data_sources_name));
@@ -197,9 +197,9 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     return result;
 }
 
-daggycore::DaggyCore* CConsoleDaggy::daggyCore() const
+daggy::DaggyCore* CConsoleDaggy::daggyCore() const
 {
-    return findChild<daggycore::DaggyCore*>();
+    return findChild<daggy::DaggyCore*>();
 }
 
 QCoreApplication* CConsoleDaggy::application() const
@@ -256,13 +256,13 @@ QString CConsoleDaggy::mustache(const QString& text, const QString& output_folde
 void CConsoleDaggy::onDaggyCoreStateChanged(int state)
 {
     switch (static_cast<DaggyCore::State>(state)) {
-    case daggycore::DaggyCore::NotStarted:
+    case daggy::DaggyCore::NotStarted:
         break;
-    case daggycore::DaggyCore::Started:
+    case daggy::DaggyCore::Started:
         break;
-    case daggycore::DaggyCore::Finishing:
+    case daggy::DaggyCore::Finishing:
         break;
-    case daggycore::DaggyCore::Finished:
+    case daggy::DaggyCore::Finished:
         qApp->exit();
         break;
     }

@@ -27,7 +27,7 @@ SOFTWARE.
 #include "Ssh2Client.h"
 #include "Ssh2Process.h"
 
-using namespace daggycore;
+using namespace daggy;
 using namespace daggyssh2;
 
 namespace  {

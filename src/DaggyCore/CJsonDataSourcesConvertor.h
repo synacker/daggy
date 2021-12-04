@@ -35,7 +35,7 @@ public:
 
     constexpr static const char* convertor_type = "json";
 
-    daggycore::OptionalResult<daggycore::DataSources> convert
+    daggy::OptionalResult<daggy::DataSources> convert
     (
         const QString& json
     ) const override;

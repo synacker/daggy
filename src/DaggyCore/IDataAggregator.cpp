@@ -24,7 +24,7 @@ SOFTWARE.
 #include "Precompiled.h"
 #include "IDataAggregator.h"
 
-using namespace daggycore;
+using namespace daggy;
 
 IDataAggregator::IDataAggregator(QObject *parent)
     : QObject(parent)

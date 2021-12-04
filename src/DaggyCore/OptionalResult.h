@@ -25,7 +25,7 @@ SOFTWARE.
 #include <optional>
 #include "Result.h"
 
-namespace daggycore {
+namespace daggy {
 
 template<typename Data> class OptionalResult : public std::optional<Data>
 {

@@ -25,7 +25,7 @@ SOFTWARE.
 #include "Precompiled.h"
 #include "DataSource.h"
 
-bool daggycore::DataSource::operator==(const daggycore::DataSource &other) const
+bool daggy::DataSource::operator==(const daggy::DataSource &other) const
 {
     return id == other.id &&
            type == other.type &&

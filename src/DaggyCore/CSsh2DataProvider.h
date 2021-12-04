@@ -33,7 +33,7 @@ class Ssh2Process;
 struct Ssh2Settings;
 }
 
-namespace daggycore {
+namespace daggy {
 
 class CSsh2DataProvider : public IDataProvider
 {

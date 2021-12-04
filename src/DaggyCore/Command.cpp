@@ -24,7 +24,7 @@ SOFTWARE.
 #include "Precompiled.h"
 #include "Command.h"
 
-bool daggycore::Command::operator==(const daggycore::Command &other) const
+bool daggy::Command::operator==(const daggy::Command &other) const
 {
     return id == other.id &&
            extension == other.extension &&

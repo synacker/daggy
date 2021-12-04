@@ -28,7 +28,7 @@ SOFTWARE.
 #include <QVariantMap>
 #include <QObject>
 
-namespace daggycore {
+namespace daggy {
 
 struct DAGGYCORE_EXPORT Command {
 Q_GADGET
@@ -66,5 +66,5 @@ public:
 using Commands = QMap<QString, Command>;
 }
 
-Q_DECLARE_METATYPE(daggycore::Command::Stream)
-Q_DECLARE_METATYPE(daggycore::Command)
+Q_DECLARE_METATYPE(daggy::Command::Stream)
+Q_DECLARE_METATYPE(daggy::Command)

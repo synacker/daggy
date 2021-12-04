@@ -27,7 +27,7 @@ SOFTWARE.
 #include "Command.h"
 #include "Common.h"
 
-using namespace daggycore;
+using namespace daggy;
 using namespace daggyconv;
 
 namespace YAML {
@@ -134,15 +134,15 @@ struct convert<QMap<K, V>>
 };
 
 template<>
-struct convert<daggycore::DataSources>
+struct convert<daggy::DataSources>
 {
-    static bool decode(const Node& node, daggycore::DataSources& rhs) {
+    static bool decode(const Node& node, daggy::DataSources& rhs) {
         if (!node.IsMap()) {
           return false;
         }
 
         for (const auto& source : node) {
-            daggycore::DataSource data_source;
+            daggy::DataSource data_source;
             data_source.id = source.first.as<QString>();
 
             const auto& source_fields = source.second;

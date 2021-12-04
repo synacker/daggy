@@ -26,7 +26,7 @@ SOFTWARE.
 
 #include "Common.h"
 
-using namespace daggycore;
+using namespace daggy;
 
 IDataProviderFabric::IDataProviderFabric(QString type_arg)
     : type(std::move(type_arg))

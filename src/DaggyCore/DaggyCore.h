@@ -40,7 +40,7 @@ namespace daggyconv {
 class IDataSourceConvertor;
 }
 
-namespace daggycore {
+namespace daggy {
 class IDataProviderFabric;
 class IDataAggregator;
 class IDataProvider;
@@ -133,7 +133,7 @@ private:
     QList<IDataProvider*> getProviders() const;
     IDataProvider* getProvider(const QString& provider_id) const;
 
-    daggycore::Result createProvider(const DataSource& data_source);
+    daggy::Result createProvider(const DataSource& data_source);
 
     void setState(State state);
 

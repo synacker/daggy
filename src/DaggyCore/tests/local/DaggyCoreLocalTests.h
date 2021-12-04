@@ -26,7 +26,7 @@ SOFTWARE.
 
 #include <QObject>
 
-namespace daggycore {
+namespace daggy {
 class DaggyCore;
 }
 
@@ -49,7 +49,7 @@ private slots:
     void stopOnceProcess();
 
 private:
-    daggycore::DaggyCore* daggy_core_;
+    daggy::DaggyCore* daggy_core_;
 
 };
 

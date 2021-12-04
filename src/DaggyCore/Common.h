@@ -27,7 +27,7 @@ SOFTWARE.
 
 #include "daggycore_export.h"
 
-namespace daggycore {
+namespace daggy {
 
 DAGGYCORE_EXPORT extern const std::error_code success;
 
@@ -51,7 +51,7 @@ std::error_code DAGGYCORE_EXPORT make_error_code(DaggyErrors daggy_error);
 namespace std
 {
 template <>
-struct is_error_code_enum<daggycore::DaggyErrors> : true_type {};
+struct is_error_code_enum<daggy::DaggyErrors> : true_type {};
 }
 
 
