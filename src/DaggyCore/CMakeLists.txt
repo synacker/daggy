@@ -55,6 +55,7 @@ set(SOURCES ${SOURCES}
     CLocalDataProvidersFabric.cpp
     DataSource.cpp
     Command.cpp
+    Sources.cpp
 )
 qt6_wrap_cpp(MOC_SOURCES Command.hpp)
 
