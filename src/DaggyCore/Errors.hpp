@@ -21,32 +21,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 
-#include <QObject>
+#include "daggycore_export.h"
+#include "Errors.h"
+
+#include <system_error>
 
 namespace daggy {
-class Core;
+namespace errors {
+DAGGYCORE_EXPORT extern const std::error_code success;
+
+DAGGYCORE_EXPORT const std::error_category& category() noexcept;
+DAGGYCORE_EXPORT std::error_code make_error_code(DaggyErrors error) noexcept;
+}
 }
 
-class DaggyCoreLocalTests : public QObject
-{
-    Q_OBJECT
-public:
-    explicit DaggyCoreLocalTests(QObject *parent = nullptr);
-
-private slots:
-    void init();
-    void cleanup();
-
-    void checkVersion();
-
-    void startAndTerminateTest_data();
-    void startAndTerminateTest();
-
-    void stopWithFakeProcess();
-    void stopOnceProcess();
-
-};
-
+namespace std {
+template <>
+struct is_error_code_enum<DaggyErrors>: public true_type {};
+}

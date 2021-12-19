@@ -21,32 +21,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "../Precompiled.hpp"
+#include "CLocalFabric.hpp"
 
-#pragma once
+#include "CLocal.hpp"
+#include "../Errors.hpp"
 
-#include <QObject>
+daggy::providers::CLocalFabric::CLocalFabric()
+{
 
-namespace daggy {
-class Core;
 }
 
-class DaggyCoreLocalTests : public QObject
+const QString& daggy::providers::CLocalFabric::type() const
 {
-    Q_OBJECT
-public:
-    explicit DaggyCoreLocalTests(QObject *parent = nullptr);
+    return CLocal::provider_type;
+}
 
-private slots:
-    void init();
-    void cleanup();
-
-    void checkVersion();
-
-    void startAndTerminateTest_data();
-    void startAndTerminateTest();
-
-    void stopWithFakeProcess();
-    void stopOnceProcess();
-
-};
-
+daggy::Result<daggy::providers::IProvider*> daggy::providers::CLocalFabric::createProvider(const Source& source, QObject* parent)
+{
+    return new CLocal(source.second.commands, parent);
+}

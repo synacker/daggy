@@ -21,32 +21,53 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 
-#include <QObject>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace daggy {
-class Core;
-}
-
-class DaggyCoreLocalTests : public QObject
-{
-    Q_OBJECT
-public:
-    explicit DaggyCoreLocalTests(QObject *parent = nullptr);
-
-private slots:
-    void init();
-    void cleanup();
-
-    void checkVersion();
-
-    void startAndTerminateTest_data();
-    void startAndTerminateTest();
-
-    void stopWithFakeProcess();
-    void stopOnceProcess();
-
+enum DaggyProviderStates {
+    DaggyProviderNotStarted,
+    DaggyProviderStarting,
+    DaggyProviderFailedToStart,
+    DaggyProviderStarted,
+    DaggyProviderFinishing,
+    DaggyProviderFinished
 };
 
+enum DaggyCommandStates {
+    DaggyCommandNotStarted,
+    DaggyCommandStarting,
+    DaggyCommandStarted,
+    DaggyCommandFailedToStart,
+    DaggyCommandFinishing,
+    DaggyCommandFinished
+};
+
+enum DaggyStreamTypes {
+    DaggyStreamStandard,
+    DaggyStreamError
+};
+
+enum DaggyStates {
+    DaggyNotStarted,
+    DaggyStarted,
+    DaggyFinishing,
+    DaggyFinished
+};
+
+struct {
+    const char* full;
+    const std::uint16_t major;
+    const std::uint16_t minor;
+    const std::uint16_t patch;
+    const std::uint16_t build;
+    const char* postfix;
+    const char* vendor;
+    const char* commit;
+} typedef DaggyVersion;
+
+#ifdef __cplusplus
+}
+#endif

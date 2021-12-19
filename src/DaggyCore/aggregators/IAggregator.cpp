@@ -21,32 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "../Precompiled.hpp"
+#include "IAggregator.hpp"
 
-#pragma once
 
-#include <QObject>
+daggy::aggregators::IAggregator::IAggregator(QObject* parent)
+    : QObject(parent)
+{
 
-namespace daggy {
-class Core;
 }
 
-class DaggyCoreLocalTests : public QObject
+daggy::aggregators::IAggregator::~IAggregator()
 {
-    Q_OBJECT
-public:
-    explicit DaggyCoreLocalTests(QObject *parent = nullptr);
 
-private slots:
-    void init();
-    void cleanup();
-
-    void checkVersion();
-
-    void startAndTerminateTest_data();
-    void startAndTerminateTest();
-
-    void stopWithFakeProcess();
-    void stopOnceProcess();
-
-};
-
+}

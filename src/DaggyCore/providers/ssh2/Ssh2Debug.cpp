@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2021 Mikhail Milovidov
+Copyright (c) 2020 Mikhail Milovidov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,32 +21,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "../../Precompiled.hpp"
+#include "Ssh2Debug.hpp"
 
-#pragma once
+#include "Ssh2Types.hpp"
 
-#include <QObject>
+using namespace qtssh2;
 
-namespace daggy {
-class Core;
+bool qtssh2::checkSsh2Error(const std::error_code& error_code)
+{
+    return error_code == ssh2_success || error_code == Ssh2Error::TryAgain;
 }
 
-class DaggyCoreLocalTests : public QObject
+void qtssh2::debugSsh2Error(const int ssh2_method_result)
 {
-    Q_OBJECT
-public:
-    explicit DaggyCoreLocalTests(QObject *parent = nullptr);
-
-private slots:
-    void init();
-    void cleanup();
-
-    void checkVersion();
-
-    void startAndTerminateTest_data();
-    void startAndTerminateTest();
-
-    void stopWithFakeProcess();
-    void stopOnceProcess();
-
-};
-
+    qDebug() << "Ssh2 error: " << ssh2_method_result;
+}

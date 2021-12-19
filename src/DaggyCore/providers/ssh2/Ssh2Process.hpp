@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2021 Mikhail Milovidov
+Copyright (c) 2020 Mikhail Milovidov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,32 +21,51 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 
-#include <QObject>
+#include <QIODevice>
 
-namespace daggy {
-class Core;
-}
+#include "Ssh2Channel.hpp"
 
-class DaggyCoreLocalTests : public QObject
+namespace qtssh2 {
+
+class Ssh2Process : public Ssh2Channel
 {
     Q_OBJECT
+    Q_ENUMS(ProcessStates)
+    Q_PROPERTY(ProcessStates processState READ processState NOTIFY processStateChanged)
 public:
-    explicit DaggyCoreLocalTests(QObject *parent = nullptr);
+    enum ProcessStates {
+        NotStarted,
+        Starting,
+        Started,
+        FailedToStart,
+        Finishing,
+        Finished
+    };
+
+
+    ProcessStates processState() const;
+    void checkIncomingData() override;
+
+signals:
+    void processStateChanged(ProcessStates processState);
+
+protected:
+    Ssh2Process(const QString& command,
+                Ssh2Client* ssh2_client);
 
 private slots:
-    void init();
-    void cleanup();
+    void onSsh2ChannelStateChanged(const ChannelStates& state);
 
-    void checkVersion();
+private:
+    void setSsh2ProcessState(ProcessStates ssh2_process_state);
+    std::error_code execSsh2Process();
 
-    void startAndTerminateTest_data();
-    void startAndTerminateTest();
+    const QString command_;
+    ProcessStates ssh2_process_state_;
 
-    void stopWithFakeProcess();
-    void stopOnceProcess();
-
+    friend class Ssh2Client;
 };
 
+}

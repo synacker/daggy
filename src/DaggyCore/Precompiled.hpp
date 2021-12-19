@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2021 Mikhail Milovidov
+Copyright (c) 2020 Mikhail Milovidov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,32 +21,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 
-#include <QObject>
+#include <QDir>
+#include <QString>
+#include <QStandardPaths>
+#include <QHostAddress>
+#include <QTimer>
+#include <QRegularExpression>
 
-namespace daggy {
-class Core;
-}
+#include <QJsonParseError>
+#include <QJsonDocument>
 
-class DaggyCoreLocalTests : public QObject
-{
-    Q_OBJECT
-public:
-    explicit DaggyCoreLocalTests(QObject *parent = nullptr);
+#include <QProcess>
 
-private slots:
-    void init();
-    void cleanup();
+#include <QMetaType>
+#include <QMetaEnum>
 
-    void checkVersion();
+#include <QDebug>
 
-    void startAndTerminateTest_data();
-    void startAndTerminateTest();
+#include <atomic>
 
-    void stopWithFakeProcess();
-    void stopOnceProcess();
+#ifdef SSH2_SUPPORT
+#include <libssh2.h>
+#include <errno.h>
+#endif
 
-};
-
+#ifdef YAML_SUPPORT
+#include <yaml-cpp/yaml.h>
+#include <yaml-cpp/node/node.h>
+#endif

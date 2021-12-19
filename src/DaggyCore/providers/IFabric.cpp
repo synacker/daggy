@@ -21,32 +21,31 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "../Precompiled.hpp"
+#include "IFabric.hpp"
 
-#pragma once
+#include "../Sources.hpp"
+#include "../Errors.hpp"
 
-#include <QObject>
+daggy::providers::IFabric::IFabric()
+{
 
-namespace daggy {
-class Core;
 }
 
-class DaggyCoreLocalTests : public QObject
+daggy::providers::IFabric::~IFabric()
 {
-    Q_OBJECT
-public:
-    explicit DaggyCoreLocalTests(QObject *parent = nullptr);
 
-private slots:
-    void init();
-    void cleanup();
+}
 
-    void checkVersion();
-
-    void startAndTerminateTest_data();
-    void startAndTerminateTest();
-
-    void stopWithFakeProcess();
-    void stopOnceProcess();
-
-};
-
+daggy::Result<daggy::providers::IProvider*> daggy::providers::IFabric::create(const Source& source, QObject* parent)
+{
+    const auto& properties = source.second;
+    if (properties.type != type()) {
+        return
+        {
+            errors::make_error_code(DaggyErrorSourceIncorrectProviderType),
+            QString("Source %1 has incorrect provider type %2 - type %3 is required").arg(source.first, properties.type, type())
+        };
+    }
+    return createProvider(source, parent);
+}

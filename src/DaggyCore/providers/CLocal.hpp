@@ -21,32 +21,50 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 
-#include <QObject>
+#include "IProvider.hpp"
 
 namespace daggy {
-class Core;
-}
+namespace providers {
 
-class DaggyCoreLocalTests : public QObject
+class CLocal : public IProvider
 {
     Q_OBJECT
 public:
-    explicit DaggyCoreLocalTests(QObject *parent = nullptr);
+    CLocal(sources::Commands commands,
+           QObject *parent = nullptr);
+    ~CLocal();
+
+    std::error_code start() noexcept override;
+    std::error_code stop() noexcept override;
+    const QString& type() const noexcept override;
+
+    static const QString provider_type;
 
 private slots:
-    void init();
-    void cleanup();
+    void onProcessDestroyed();
+    void onProcessStart();
+    void onProcessError(QProcess::ProcessError error);
+    void onProcessReadyReadStandard();
+    void onProcessReadyReadStandard(QProcess* process);
+    void onProcessReadyReadError();
+    void onProcessReadyReadError(QProcess* process);
+    void onProcessFinished(int exit_code, QProcess::ExitStatus);
 
-    void checkVersion();
+private:
+    void terminate();
 
-    void startAndTerminateTest_data();
-    void startAndTerminateTest();
+    QProcess* startProcess(const daggy::sources::Command& command);
+    bool onProcessStop(QProcess* process);
 
-    void stopWithFakeProcess();
-    void stopOnceProcess();
+    QList<QProcess*> processes() const;
+    int activeProcessesCount() const;
 
+    void startCommands();
+
+    void startProcess(QProcess* process, const QString& command);
 };
 
+}
+}

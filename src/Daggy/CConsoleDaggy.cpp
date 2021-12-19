@@ -21,24 +21,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "Precompiled.h"
-#include "CConsoleDaggy.h"
-#include "Common.h"
+#include "Precompiled.hpp"
+#include "CConsoleDaggy.hpp"
 
-#include <DaggyCore/DaggyCore.h>
-#include <DaggyCore/CSsh2DataProviderFabric.h>
-#include <DaggyCore/CLocalDataProvidersFabric.h>
-#include <DaggyCore/CYamlDataSourcesConvertor.h>
-#include <DaggyCore/CJsonDataSourcesConvertor.h>
+#include <DaggyCore/Core.hpp>
+#include <DaggyCore/aggregators/CConsole.hpp>
+#include <DaggyCore/aggregators/CFile.hpp>
+#include <DaggyCore/Types.hpp>
+#include <DaggyCore/Errors.hpp>
 
-#include "CFileDataAggregator.h"
-
-using namespace daggycore;
-using namespace daggyconv;
+using namespace daggy;
 
 CConsoleDaggy::CConsoleDaggy(QObject* parent)
     : QObject(parent)
-    , daggy_core_(new daggycore::DaggyCore(this))
+    , daggy_core_(nullptr)
     , need_hard_stop_(false)
 {
     qApp->setApplicationName(DAGGY_NAME);
@@ -47,25 +43,41 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
     qApp->setOrganizationDomain(DAGGY_HOMEPAGE_URL);
 
     connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
-    connect(daggy_core_, &DaggyCore::stateChanged, this, [](DaggyCore::State state){
-        if (state == DaggyCore::Finished)
-            qApp->exit();
-    });
 }
 
-daggycore::Result CConsoleDaggy::initialize()
+std::error_code CConsoleDaggy::prepare()
 {
+    if (daggy_core_)
+        return errors::success;
     const auto settings = parse();
-    daggy_core_->addDataAggregator(new CFileDataAggregator(settings.output_folder, settings.data_sources_name));
-    const auto result = daggy_core_->setDataSources(settings.data_source_text, settings.data_source_text_type);
-    if (result && settings.timeout > 0)
-        QTimer::singleShot(settings.timeout, this, &CConsoleDaggy::stop);
+    Sources sources;
+    switch (settings.data_source_text_type) {
+    case CConsoleDaggy::Json:
+        sources = std::move(*sources::convertors::json(settings.data_source_text));
+        break;
+    case CConsoleDaggy::Yaml:
+        sources = std::move(*sources::convertors::yaml(settings.data_source_text));
+        break;
+    }
 
-    return result;
+    daggy_core_ = new Core(std::move(sources), this);
+
+    connect(daggy_core_, &Core::stateChanged, this, &CConsoleDaggy::onDaggyCoreStateChanged);
+
+    auto file_aggregator = new aggregators::CFile(settings.output_folder);
+    file_aggregator->moveToThread(&file_thread_);
+    connect(this, &CConsoleDaggy::destroyed, file_aggregator, &aggregators::CFile::deleteLater);
+    auto console_aggregator = new aggregators::CConsole(settings.output_folder, daggy_core_);
+
+    daggy_core_->connectAggregator(file_aggregator);
+    daggy_core_->connectAggregator(console_aggregator);
+
+    return daggy_core_->prepare();;
 }
 
-Result CConsoleDaggy::start()
+std::error_code CConsoleDaggy::start()
 {
+    file_thread_.start();
     return daggy_core_->start();
 }
 
@@ -78,6 +90,8 @@ void CConsoleDaggy::stop()
         daggy_core_->stop();
         need_hard_stop_ = true;
     }
+    file_thread_.quit();
+    file_thread_.wait();
 }
 
 bool CConsoleDaggy::handleSystemSignal(const int signal)
@@ -89,25 +103,23 @@ bool CConsoleDaggy::handleSystemSignal(const int signal)
     return false;
 }
 
-QStringList CConsoleDaggy::supportedConvertors() const
+const QStringList& CConsoleDaggy::supportedConvertors() const
 {
-    return
-    {
-        CJsonDataSourcesConvertor::convertor_type,
+    static thread_local QStringList formats = {
+        "json",
 #ifdef YAML_SUPPORT
-        CYamlDataSourcesConvertor::convertor_type
+        "yaml"
 #endif
     };
+    return formats;
 }
 
-QString CConsoleDaggy::textDataSourcesType(const QString& file_name) const
+CConsoleDaggy::TextType CConsoleDaggy::textFormatType(const QString& file_name) const
 {
+    CConsoleDaggy::TextType result = Json;
     const QString& extension = QFileInfo(file_name).suffix();
-    QString result = extension;
-#ifdef YAML_SUPPORT
-    if (extension == "yml")
-        result = CYamlDataSourcesConvertor::convertor_type;
-#endif
+    if (extension == "yml" || extension == "yaml")
+        result = Yaml;
     return result;
 }
 
@@ -131,7 +143,7 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     const QCommandLineOption input_format_option({"f", "format"},
                                                  "Source format",
                                                  supportedConvertors().join("|"),
-                                                 CJsonDataSourcesConvertor::convertor_type);
+                                                 supportedConvertors()[0]);
     const QCommandLineOption auto_complete_timeout({"t", "timeout"},
                                                    "Auto complete timeout",
                                                    "time in ms",
@@ -175,15 +187,14 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
 
     if (command_line_parser.isSet(input_format_option)) {
         const QString& format = command_line_parser.value(input_format_option);
-        if (format != CJsonDataSourcesConvertor::convertor_type ||
-            format != CYamlDataSourcesConvertor::convertor_type)
+        if (!supportedConvertors().contains(format.toLower()))
         {
             command_line_parser.showHelp(-1);
         } else {
-            result.data_source_text_type = format;
+            result.data_source_text_type = textFormatType(format);
         }
     } else {
-        result.data_source_text_type = textDataSourcesType(source_file_name);
+        result.data_source_text_type = textFormatType(source_file_name);
     }
 
     if (command_line_parser.isSet(auto_complete_timeout)) {
@@ -197,9 +208,9 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     return result;
 }
 
-daggycore::DaggyCore* CConsoleDaggy::daggyCore() const
+daggy::Core* CConsoleDaggy::daggyCore() const
 {
-    return findChild<daggycore::DaggyCore*>();
+    return findChild<daggy::Core*>();
 }
 
 QCoreApplication* CConsoleDaggy::application() const
@@ -210,7 +221,7 @@ QCoreApplication* CConsoleDaggy::application() const
 QString CConsoleDaggy::getTextFromFile(QString file_path) const
 {
    QString result;
-   if (!QFileInfo(file_path).exists()) {
+   if (!QFileInfo::exists(file_path)) {
        file_path = homeFolder() + file_path;
    }
 
@@ -253,16 +264,16 @@ QString CConsoleDaggy::mustache(const QString& text, const QString& output_folde
     return QString::fromStdString(tmpl.render(variables));
 }
 
-void CConsoleDaggy::onDaggyCoreStateChanged(int state)
+void CConsoleDaggy::onDaggyCoreStateChanged(DaggyStates state)
 {
-    switch (static_cast<DaggyCore::State>(state)) {
-    case daggycore::DaggyCore::NotStarted:
+    switch (state) {
+    case DaggyNotStarted:
         break;
-    case daggycore::DaggyCore::Started:
+    case DaggyStarted:
         break;
-    case daggycore::DaggyCore::Finishing:
+    case DaggyFinishing:
         break;
-    case daggycore::DaggyCore::Finished:
+    case DaggyFinished:
         qApp->exit();
         break;
     }

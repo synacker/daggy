@@ -21,32 +21,37 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 
-#include <QObject>
+#include <utility>
+#include <system_error>
+
+#include "../Sources.hpp"
+#include "../Result.hpp"
+
+class QObject;
 
 namespace daggy {
-class Core;
-}
 
-class DaggyCoreLocalTests : public QObject
+namespace providers {
+class IProvider;
+
+class DAGGYCORE_EXPORT IFabric
 {
-    Q_OBJECT
 public:
-    explicit DaggyCoreLocalTests(QObject *parent = nullptr);
+    IFabric();
+    virtual ~IFabric();
 
-private slots:
-    void init();
-    void cleanup();
+    virtual const QString& type() const = 0;
+    Result<IProvider*> create(const Source& source,
+                              QObject* parent);
 
-    void checkVersion();
-
-    void startAndTerminateTest_data();
-    void startAndTerminateTest();
-
-    void stopWithFakeProcess();
-    void stopOnceProcess();
-
+protected:
+    virtual Result<IProvider*> createProvider(const Source& source,
+                                              QObject* parent) = 0;
 };
+
+
+}
+}
 
