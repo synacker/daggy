@@ -34,13 +34,39 @@ macro(SET_GIT_VERSION)
                 OUTPUT_VARIABLE
                 BUILD_NUMBER
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
+        execute_process(COMMAND
+                "${GIT_EXECUTABLE}"
+                branch
+                --show-current
+                WORKING_DIRECTORY
+                "${CMAKE_CURRENT_SOURCE_DIR}"
+                OUTPUT_VARIABLE
+                GIT_VERSION_POSTFIX
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
 
+        execute_process(COMMAND
+                "${GIT_EXECUTABLE}"
+                rev-parse
+                HEAD
+                WORKING_DIRECTORY
+                "${CMAKE_CURRENT_SOURCE_DIR}"
+                OUTPUT_VARIABLE
+                GIT_VERSION_COMMIT
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
 
         set(VERSION ${VERSION}.${BUILD_NUMBER})
-        if (GIT_VERSION_POSTFIX)
-            set(VERSION ${VERSION}-${GIT_VERSION_POSTFIX})
+        if (GIT_VERSION_POSTFIX STREQUAL "master")
+            unset(GIT_VERSION_POSTFIX)
         endif()
     endif()
+
+    if (GIT_VERSION_POSTFIX)
+        set(VERSION ${VERSION}-${GIT_VERSION_POSTFIX})
+    endif()
+
+    set(PROJECT_VERSION_COMMIT ${GIT_VERSION_COMMIT})
 
     set(PROJECT_VERSION_FULL ${VERSION})
     string(REPLACE "-" ";" VERSION_LIST ${PROJECT_VERSION_FULL})
@@ -69,6 +95,7 @@ macro(SET_GIT_VERSION)
     add_definitions(-D${PROJECT_NAME_UPPER}_VERSION_PATCH=${PROJECT_VERSION_PATCH})
     add_definitions(-D${PROJECT_NAME_UPPER}_VERSION_BUILD=${PROJECT_VERSION_TWEAK})
     add_definitions(-D${PROJECT_NAME_UPPER}_VERSION_POSTFIX="${PROJECT_VERSION_POSTFIX}")
+    add_definitions(-D${PROJECT_NAME_UPPER}_VERSION_COMMIT="${PROJECT_VERSION_COMMIT}")
 
     add_definitions(-D${PROJECT_NAME_UPPER}_NAME="${PROJECT_NAME}")
     add_definitions(-D${PROJECT_NAME_UPPER}_VENDOR="${PROJECT_VENDOR}")

@@ -221,7 +221,7 @@ QCoreApplication* CConsoleDaggy::application() const
 QString CConsoleDaggy::getTextFromFile(QString file_path) const
 {
    QString result;
-   if (!QFileInfo(file_path).exists()) {
+   if (!QFileInfo::exists(file_path)) {
        file_path = homeFolder() + file_path;
    }
 

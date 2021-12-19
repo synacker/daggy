@@ -73,7 +73,7 @@ sources:
         type: local
         commands: *my_commands
 )YAML";
-const Sources test_sources{
+thread_local const Sources test_sources{
     {
         "localhost", {
             "local",
@@ -113,7 +113,7 @@ const Sources test_sources{
     }
 };
 
-const Sources fake_data_sources = {
+thread_local const Sources fake_data_sources = {
     {
         "localhost", {
             "local",
@@ -135,7 +135,7 @@ const Sources fake_data_sources = {
     }
 };
 
-const Sources once_process_data_sources = {
+thread_local const Sources once_process_data_sources = {
     {
         "localhost", {
             "local",
@@ -186,6 +186,7 @@ void DaggyCoreLocalTests::checkVersion()
     QCOMPARE(version.build, DAGGY_VERSION_BUILD);
     QCOMPARE(QString(version.postfix), QString(DAGGY_VERSION_POSTFIX));
     QCOMPARE(QString(version.vendor), QString(DAGGY_VENDOR));
+    QCOMPARE(QString(version.commit), QString(DAGGY_VERSION_COMMIT));
 }
 
 void DaggyCoreLocalTests::startAndTerminateTest_data()
@@ -223,7 +224,7 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     QSignalSpy states_spy(&core, &Core::stateChanged);
     QSignalSpy streams_spy(&core, &Core::commandStream);
 
-    QTimer::singleShot(0, [&]()
+    QTimer::singleShot(0, &core, [&]()
     {
         auto result = core.start();
         QCOMPARE(result, errors::success);
@@ -234,7 +235,7 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     auto arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyStates>(), DaggyStarted);
 
-    QTimer::singleShot(3000, [&]()
+    QTimer::singleShot(3000, &core, [&]()
     {
         core.stop();
     });
@@ -285,7 +286,7 @@ void DaggyCoreLocalTests::stopWithFakeProcess()
 
     QSignalSpy states_spy(&core, &Core::stateChanged);
 
-    QTimer::singleShot(0, [&]()
+    QTimer::singleShot(0, &core, [&]()
     {
         auto result = core.start();
         QCOMPARE(result, errors::success);
@@ -312,7 +313,7 @@ void DaggyCoreLocalTests::stopOnceProcess()
     QSignalSpy states_spy(&core, &Core::stateChanged);
     QSignalSpy streams_spy(&core, &Core::commandStream);
 
-    QTimer::singleShot(0, [&]()
+    QTimer::singleShot(0, &core, [&]()
     {
         auto result = core.start();
         QCOMPARE(result, errors::success);
@@ -323,7 +324,7 @@ void DaggyCoreLocalTests::stopOnceProcess()
     auto arguments = states_spy.takeFirst();
     QCOMPARE(arguments.at(0).value<DaggyStates>(), DaggyStarted);
 
-    QTimer::singleShot(3000, [&]()
+    QTimer::singleShot(3000, &core, [&]()
     {
         core.stop();
     });

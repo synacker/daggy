@@ -106,7 +106,6 @@ void daggy::aggregators::CFile::write()
         {
             stream++;
         }
-
     }
     if (!streams_.empty())
         emit nextWrite();

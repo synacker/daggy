@@ -60,7 +60,8 @@ DaggyVersion Core::version() const
         DAGGY_VERSION_PATCH,
         DAGGY_VERSION_BUILD,
         DAGGY_VERSION_POSTFIX,
-        DAGGY_VENDOR
+        DAGGY_VENDOR,
+        DAGGY_VERSION_COMMIT
     };
 }
 

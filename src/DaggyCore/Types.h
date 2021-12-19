@@ -65,6 +65,7 @@ struct {
     const std::uint16_t build;
     const char* postfix;
     const char* vendor;
+    const char* commit;
 } typedef DaggyVersion;
 
 #ifdef __cplusplus
