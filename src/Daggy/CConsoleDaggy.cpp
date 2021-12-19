@@ -64,7 +64,9 @@ std::error_code CConsoleDaggy::prepare()
 
     connect(daggy_core_, &Core::stateChanged, this, &CConsoleDaggy::onDaggyCoreStateChanged);
 
-    auto file_aggregator = new aggregators::CFile(settings.output_folder, daggy_core_);
+    auto file_aggregator = new aggregators::CFile(settings.output_folder);
+    file_aggregator->moveToThread(&file_thread_);
+    connect(this, &CConsoleDaggy::destroyed, file_aggregator, &aggregators::CFile::deleteLater);
     auto console_aggregator = new aggregators::CConsole(settings.output_folder, daggy_core_);
 
     daggy_core_->connectAggregator(file_aggregator);
@@ -75,6 +77,7 @@ std::error_code CConsoleDaggy::prepare()
 
 std::error_code CConsoleDaggy::start()
 {
+    file_thread_.start();
     return daggy_core_->start();
 }
 
@@ -87,6 +90,8 @@ void CConsoleDaggy::stop()
         daggy_core_->stop();
         need_hard_stop_ = true;
     }
+    file_thread_.quit();
+    file_thread_.wait();
 }
 
 bool CConsoleDaggy::handleSystemSignal(const int signal)

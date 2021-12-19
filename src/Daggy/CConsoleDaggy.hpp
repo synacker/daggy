@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include <QObject>
+#include <QThread>
 
 #include <DaggyCore/Types.hpp>
 
@@ -85,6 +86,8 @@ private:
     QString generateOutputFolder(const QString& data_sources_name) const;
 
     QString mustache(const QString& text, const QString& output_folder) const;
+
+    QThread file_thread_;
 
     daggy::Core* daggy_core_;
     bool need_hard_stop_;
