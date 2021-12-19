@@ -21,9 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "Precompiled.hpp"
+#include "../Precompiled.hpp"
 #include "CLocal.hpp"
-#include "Errors.hpp"
+#include "../Errors.hpp"
 
 const QString daggy::providers::CLocal::provider_type("local");
 
@@ -47,6 +47,7 @@ daggy::providers::CLocal::~CLocal()
 
 std::error_code daggy::providers::CLocal::start() noexcept
 {
+    std::error_code result = errors::success;
     switch (state()) {
     case DaggyProviderNotStarted:
     case DaggyProviderFailedToStart:
@@ -56,15 +57,29 @@ std::error_code daggy::providers::CLocal::start() noexcept
         startCommands();
     }
         break;
-    default:;
+    default:
+        result = errors::make_error_code(DaggyErrorProviderAlreadyStarted);
     }
-    return state() == DaggyProviderStarting || state() == DaggyProviderStarted ? errors::success : errors::make_error_code(DaggyErrorProviderFailedToStart);
+    return result;
 }
 
 std::error_code daggy::providers::CLocal::stop() noexcept
 {
-    terminate();
-    return state() == DaggyProviderFinished || state() == DaggyProviderFinishing ? errors::success : errors::make_error_code(DaggyErrorProviderFailedToStop);
+    std::error_code result = errors::success;
+    switch (state()) {
+    case DaggyProviderNotStarted:
+    case DaggyProviderFailedToStart:
+    case DaggyProviderFinished:
+        result = errors::make_error_code(DaggyErrorProviderAlreadyFinished);
+        break;
+    case DaggyProviderStarting:
+    case DaggyProviderStarted:
+    case DaggyProviderFinishing:
+        terminate();
+        break;
+
+    }
+    return result;
 }
 
 const QString& daggy::providers::CLocal::type() const noexcept

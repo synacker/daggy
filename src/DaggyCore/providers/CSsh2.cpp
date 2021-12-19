@@ -21,11 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "Precompiled.hpp"
+#include "../Precompiled.hpp"
 #include "CSsh2.hpp"
 #include "ssh2/Ssh2Client.hpp"
 #include "ssh2/Ssh2Process.hpp"
-#include "Errors.hpp"
+#include "../Errors.hpp"
 
 namespace  {
 constexpr const char* kill_command_global =
@@ -53,7 +53,9 @@ daggy::providers::CSsh2::CSsh2(QHostAddress host,
     , port_(ssh2_settings.port)
     , ssh2_client_(new Ssh2Client(ssh2_settings, this))
 {
-
+    connect(ssh2_client_, &Ssh2Client::sessionStateChanged, this, &CSsh2::onSsh2SessionStateChanged);
+    connect(ssh2_client_, &Ssh2Client::channelsCountChanged, this, &CSsh2::onSsh2ChannelsCountChanged);
+    connect(ssh2_client_, &Ssh2Client::ssh2Error, this, &CSsh2::error);
 }
 
 daggy::providers::CSsh2::CSsh2(QHostAddress host,
@@ -71,14 +73,40 @@ daggy::providers::CSsh2::~CSsh2()
 
 std::error_code daggy::providers::CSsh2::start() noexcept
 {
-    ssh2_client_->connectToHost(host_, port_);
-    return state() == DaggyProviderStarting || state() == DaggyProviderStarted ? errors::success : errors::make_error_code(DaggyErrorProviderFailedToStart);
+    std::error_code result = errors::success;
+    switch (state()) {
+    case DaggyProviderNotStarted:
+    case DaggyProviderFinished:
+    case DaggyProviderFailedToStart:
+        ssh2_client_->connectToHost(host_, port_);
+        break;
+    case DaggyProviderStarting:
+    case DaggyProviderStarted:
+    case DaggyProviderFinishing:
+        result = errors::make_error_code(DaggyErrorAlreadyStarted);
+        break;
+
+    }
+    return result;
 }
 
 std::error_code daggy::providers::CSsh2::stop() noexcept
 {
-    disconnectAll();
-    return state() == DaggyProviderFinished || state() == DaggyProviderFinishing ? errors::success : errors::make_error_code(DaggyErrorProviderFailedToStop);
+    std::error_code result;
+    switch (state()) {
+    case DaggyProviderNotStarted:
+    case DaggyProviderFailedToStart:
+    case DaggyProviderFinished:
+        result = errors::make_error_code(DaggyErrorAlreadyFinished);
+        break;
+    case DaggyProviderStarting:
+    case DaggyProviderStarted:
+    case DaggyProviderFinishing:
+        disconnectAll();
+        break;
+
+    }
+    return result;
 }
 
 const QString& daggy::providers::CSsh2::type() const noexcept
@@ -93,7 +121,7 @@ void daggy::providers::CSsh2::disconnectAll()
 
     auto terminate_process = ssh2_client_->createProcess(kill_command_global);
     terminate_process->setObjectName(kill_command_id);
-    connect(terminate_process, &Ssh2Process::processStateChanged,
+    connect(terminate_process, &Ssh2Process::processStateChanged, ssh2_client_,
          [this](const Ssh2Process::ProcessStates state)
     {
       switch (state) {
@@ -173,7 +201,11 @@ void daggy::providers::CSsh2::onSsh2ProcessStateChanged(const int process_state)
         command_state = DaggyCommandStarting;
         break;
     case Ssh2Process::Started:
+    {
+        metaStream(command_id, DaggyStreamStandard, true);
+        metaStream(command_id, DaggyStreamError, true);
         command_state = DaggyCommandStarted;
+    }
         break;
     case Ssh2Process::FailedToStart:
         command_state = DaggyCommandFailedToStart;
@@ -191,8 +223,6 @@ void daggy::providers::CSsh2::onSsh2ProcessStateChanged(const int process_state)
 
     if (process_state == Ssh2Process::Finished) {
         if (command_properties.restart && state() == DaggyProviderStarted) {
-            metaStream(command_id, DaggyStreamStandard, true);
-            metaStream(command_id, DaggyStreamError, true);
             ssh2_process->open();
         } else
             ssh2_process->deleteLater();
@@ -232,8 +262,9 @@ void daggy::providers::CSsh2::startCommands()
     auto it = start_commands.begin();
     while (it != start_commands.end()) {
         Ssh2Process* ssh2_process = ssh2Process(it.key());
-        if (ssh2_process)
-            createProcess({it.key(), it.value()});
+        if (!ssh2_process)
+            ssh2_process = createProcess({it.key(), it.value()});
+        ssh2_process->open();
         it++;
     }
 }

@@ -83,6 +83,9 @@ using Source = QPair<QString, sources::Properties>;
 namespace sources {
 namespace convertors {
 
+DAGGYCORE_EXPORT std::optional<Sources> json(const QString& data);
+DAGGYCORE_EXPORT std::optional<Sources> yaml(const QString& data);
+
 DAGGYCORE_EXPORT std::optional<Sources> json(const QString& data, QString& error) noexcept;
 DAGGYCORE_EXPORT std::optional<Sources> yaml(const QString& data, QString& error) noexcept;
 

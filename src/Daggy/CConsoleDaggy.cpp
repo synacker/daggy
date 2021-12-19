@@ -21,24 +21,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "Precompiled.h"
-#include "CConsoleDaggy.h"
-#include "Common.h"
+#include "Precompiled.hpp"
+#include "CConsoleDaggy.hpp"
 
 #include <DaggyCore/Core.hpp>
-#include <DaggyCore/CSsh2DataProviderFabric.hpp>
-#include <DaggyCore/CLocalDataProvidersFabric.hpp>
-#include <DaggyCore/CYamlDataSourcesConvertor.hpp>
-#include <DaggyCore/CJsonDataSourcesConvertor.hpp>
-
-#include "CFileDataAggregator.h"
+#include <DaggyCore/aggregators/CConsole.hpp>
+#include <DaggyCore/aggregators/CFile.hpp>
+#include <DaggyCore/Types.hpp>
+#include <DaggyCore/Errors.hpp>
 
 using namespace daggy;
-using namespace daggyconv;
 
 CConsoleDaggy::CConsoleDaggy(QObject* parent)
     : QObject(parent)
-    , daggy_core_(new daggy::Core(this))
+    , daggy_core_(nullptr)
     , need_hard_stop_(false)
 {
     qApp->setApplicationName(DAGGY_NAME);
@@ -47,24 +43,37 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
     qApp->setOrganizationDomain(DAGGY_HOMEPAGE_URL);
 
     connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
-    connect(daggy_core_, &Core::stateChanged, this, [](Core::State state){
-        if (state == Core::DaggyFinished)
-            qApp->exit();
-    });
 }
 
-daggy::Result CConsoleDaggy::initialize()
+std::error_code CConsoleDaggy::prepare()
 {
+    if (daggy_core_)
+        return errors::success;
     const auto settings = parse();
-    daggy_core_->addDataAggregator(new CFileDataAggregator(settings.output_folder, settings.data_sources_name));
-    const auto result = daggy_core_->setDataSources(settings.data_source_text, settings.data_source_text_type);
-    if (result && settings.timeout > 0)
-        QTimer::singleShot(settings.timeout, this, &CConsoleDaggy::stop);
+    Sources sources;
+    switch (settings.data_source_text_type) {
+    case CConsoleDaggy::Json:
+        sources = std::move(*sources::convertors::json(settings.data_source_text));
+        break;
+    case CConsoleDaggy::Yaml:
+        sources = std::move(*sources::convertors::yaml(settings.data_source_text));
+        break;
+    }
 
-    return result;
+    daggy_core_ = new Core(std::move(sources), this);
+
+    connect(daggy_core_, &Core::stateChanged, this, &CConsoleDaggy::onDaggyCoreStateChanged);
+
+    auto file_aggregator = new aggregators::CFile(settings.output_folder, daggy_core_);
+    auto console_aggregator = new aggregators::CConsole(settings.output_folder, daggy_core_);
+
+    daggy_core_->connectAggregator(file_aggregator);
+    daggy_core_->connectAggregator(console_aggregator);
+
+    return daggy_core_->prepare();;
 }
 
-Result CConsoleDaggy::start()
+std::error_code CConsoleDaggy::start()
 {
     return daggy_core_->start();
 }
@@ -89,25 +98,23 @@ bool CConsoleDaggy::handleSystemSignal(const int signal)
     return false;
 }
 
-QStringList CConsoleDaggy::supportedConvertors() const
+const QStringList& CConsoleDaggy::supportedConvertors() const
 {
-    return
-    {
-        CJsonDataSourcesConvertor::convertor_type,
+    static thread_local QStringList formats = {
+        "json",
 #ifdef YAML_SUPPORT
-        CYamlDataSourcesConvertor::convertor_type
+        "yaml"
 #endif
     };
+    return formats;
 }
 
-QString CConsoleDaggy::textDataSourcesType(const QString& file_name) const
+CConsoleDaggy::TextType CConsoleDaggy::textFormatType(const QString& file_name) const
 {
+    CConsoleDaggy::TextType result = Json;
     const QString& extension = QFileInfo(file_name).suffix();
-    QString result = extension;
-#ifdef YAML_SUPPORT
-    if (extension == "yml")
-        result = CYamlDataSourcesConvertor::convertor_type;
-#endif
+    if (extension == "yml" || extension == "yaml")
+        result = Yaml;
     return result;
 }
 
@@ -131,7 +138,7 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     const QCommandLineOption input_format_option({"f", "format"},
                                                  "Source format",
                                                  supportedConvertors().join("|"),
-                                                 CJsonDataSourcesConvertor::convertor_type);
+                                                 supportedConvertors()[0]);
     const QCommandLineOption auto_complete_timeout({"t", "timeout"},
                                                    "Auto complete timeout",
                                                    "time in ms",
@@ -175,15 +182,14 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
 
     if (command_line_parser.isSet(input_format_option)) {
         const QString& format = command_line_parser.value(input_format_option);
-        if (format != CJsonDataSourcesConvertor::convertor_type ||
-            format != CYamlDataSourcesConvertor::convertor_type)
+        if (!supportedConvertors().contains(format.toLower()))
         {
             command_line_parser.showHelp(-1);
         } else {
-            result.data_source_text_type = format;
+            result.data_source_text_type = textFormatType(format);
         }
     } else {
-        result.data_source_text_type = textDataSourcesType(source_file_name);
+        result.data_source_text_type = textFormatType(source_file_name);
     }
 
     if (command_line_parser.isSet(auto_complete_timeout)) {
@@ -253,16 +259,16 @@ QString CConsoleDaggy::mustache(const QString& text, const QString& output_folde
     return QString::fromStdString(tmpl.render(variables));
 }
 
-void CConsoleDaggy::onDaggyCoreStateChanged(int state)
+void CConsoleDaggy::onDaggyCoreStateChanged(DaggyStates state)
 {
-    switch (static_cast<Core::State>(state)) {
-    case daggy::Core::DaggyNotStarted:
+    switch (state) {
+    case DaggyNotStarted:
         break;
-    case daggy::Core::DaggyStarted:
+    case DaggyStarted:
         break;
-    case daggy::Core::DaggyFinishing:
+    case DaggyFinishing:
         break;
-    case daggy::Core::DaggyFinished:
+    case DaggyFinished:
         qApp->exit();
         break;
     }

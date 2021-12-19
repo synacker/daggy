@@ -63,8 +63,6 @@ endif()
 ADD_BINARY_META(LIB)
 SET_RPATH(LIB)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 add_library(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 

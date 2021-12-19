@@ -25,9 +25,10 @@ SOFTWARE.
 
 #include <QObject>
 
-#include <DaggyCore/Result.hpp>
+#include <DaggyCore/Types.hpp>
 
-#include "ISystemSignalHandler.h"
+
+#include "ISystemSignalHandler.hpp"
 
 class QCoreApplication;
 
@@ -42,8 +43,8 @@ class CConsoleDaggy : public QObject,
 public:
     CConsoleDaggy(QObject* parent = nullptr);
 
-    daggy::Result initialize();
-    daggy::Result start();
+    std::error_code prepare();
+    std::error_code start();
     void stop();
 
     bool isError() const;
@@ -53,16 +54,21 @@ signals:
     void interrupt(const int signal);
 
 private slots:
-    void onDaggyCoreStateChanged(int state);
+    void onDaggyCoreStateChanged(DaggyStates state);
 
 private:
+    enum TextType {
+        Json,
+        Yaml
+    };
+
     bool handleSystemSignal(const int signal);
 
-    QStringList supportedConvertors() const;
-    QString textDataSourcesType(const QString& file_name) const;
+    const QStringList& supportedConvertors() const;
+    TextType textFormatType(const QString& file_name) const;
 
     struct Settings {
-        QString data_source_text_type;
+        TextType data_source_text_type;
         QString data_source_text;
         QString output_folder;
         QString data_sources_name;

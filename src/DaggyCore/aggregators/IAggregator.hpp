@@ -26,7 +26,7 @@ SOFTWARE.
 #include "daggycore_export.h"
 #include <QObject>
 
-#include "Sources.hpp"
+#include "../Sources.hpp"
 
 namespace daggy {
 namespace aggregators {

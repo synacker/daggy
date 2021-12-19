@@ -1,9 +1,5 @@
-#include "Precompiled.h"
-#include <DaggyCore/Core.hpp>
-#include <DaggyCore/CSsh2DataProviderFabric.hpp>
-
-#include "CFileDataAggregator.h"
-#include "CConsoleDaggy.h"
+#include "Precompiled.hpp"
+#include "CConsoleDaggy.hpp"
 
 using namespace daggy;
 
@@ -11,11 +7,13 @@ int main(int argc, char** argv)
 try {
     QCoreApplication app(argc, argv);
     CConsoleDaggy* console_daggy = new CConsoleDaggy(&app);
-    auto result = console_daggy->initialize();
-    if (result)
-        result = console_daggy->start();
-    if (!result)
-        throw std::runtime_error(result.detailed_error_message());
+    auto error = console_daggy->prepare();
+    if (error)
+        throw std::system_error(error);
+
+    error = console_daggy->start();
+    if (error)
+        throw std::system_error(error);
 
     return app.exec();
 }

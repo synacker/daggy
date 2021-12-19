@@ -25,7 +25,7 @@ SOFTWARE.
 
 #include <QObject>
 
-#include "Sources.hpp"
+#include "../Sources.hpp"
 
 namespace daggy {
 namespace providers {

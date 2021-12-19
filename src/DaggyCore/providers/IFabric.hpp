@@ -26,8 +26,8 @@ SOFTWARE.
 #include <utility>
 #include <system_error>
 
-#include "Sources.hpp"
-#include "Result.hpp"
+#include "../Sources.hpp"
+#include "../Result.hpp"
 
 class QObject;
 

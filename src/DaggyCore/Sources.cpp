@@ -377,3 +377,21 @@ std::optional<daggy::Sources> daggy::sources::convertors::yaml(const QString& da
     return {};
 }
 #endif
+
+std::optional<daggy::Sources> daggy::sources::convertors::json(const QString& data)
+{
+    QString error;
+    auto result = json(data, error);
+    if (!result)
+        throw std::runtime_error(error.toStdString());
+    return result;
+}
+
+std::optional<daggy::Sources> daggy::sources::convertors::yaml(const QString& data)
+{
+    QString error;
+    auto result = yaml(data, error);
+    if (!result)
+        throw std::runtime_error(error.toStdString());
+    return result;
+}

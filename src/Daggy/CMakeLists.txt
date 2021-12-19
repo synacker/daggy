@@ -8,9 +8,7 @@ set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
 
 set(SOURCES ${SOURCES}
     main.cpp
-    CFileDataAggregator.cpp
     CConsoleDaggy.cpp
-    Common.cpp
 )
 
 if (WIN32)
@@ -33,6 +31,6 @@ SET_RPATH()
 
 add_executable(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET} PRIVATE DaggyCore)
-target_precompile_headers(${TARGET} PRIVATE Precompiled.h)
+target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
 
 install(TARGETS ${TARGET} RUNTIME)

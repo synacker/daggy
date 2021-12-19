@@ -35,7 +35,6 @@ class DAGGYCORE_EXPORT CFile : public IAggregator
     Q_OBJECT
 public:
     CFile(QString output_folder,
-          QString sources_name,
           QObject* parent = nullptr);
     ~CFile();
 

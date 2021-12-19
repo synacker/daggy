@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #pragma once
 #include "IAggregator.hpp"
+#include <QMetaEnum>
 
 namespace daggy {
 namespace aggregators {

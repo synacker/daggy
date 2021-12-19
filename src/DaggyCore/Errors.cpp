@@ -50,6 +50,8 @@ public:
         case DaggyErrorCommandRead: return "Command read error";
         case DaggyErrorProviderFailedToStart: return "Provider failed to start";
         case DaggyErrorProviderFailedToStop: return "Provider failed to stop";
+        case DaggyErrorProviderAlreadyStarted: return "Provider already started";
+        case DaggyErrorProviderAlreadyFinished: return "Provider already finished";
         case DaggyErrorAlreadyStarted: return "Daggy already started";
         case DaggyErrorAlreadyFinished: return "Daggy already finished";
         case DaggyErrorInternal: return "Daggy internal error";

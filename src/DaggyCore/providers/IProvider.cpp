@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "Precompiled.hpp"
+#include "../Precompiled.hpp"
 #include "daggycore_export.h"
 #include "IProvider.hpp"
 
@@ -81,20 +81,24 @@ void daggy::providers::IProvider::setState(DaggyProviderStates state)
 
 daggy::sources::commands::streams::Meta daggy::providers::IProvider::metaStream(const QString& id, DaggyStreamTypes type, bool reset)
 {
+    daggy::sources::commands::streams::Meta result;
     const auto& properties = getCommandProperties(id);
-    QString meta_stream_id = QString("%1%2").arg(id, type);
+    QString meta_stream_id = QString("%1%2").arg(id).arg(type);
     if (reset)
         streams_meta_.remove(meta_stream_id);
-    else if (!streams_meta_.contains(meta_stream_id))
-    {
-        const auto now = std::chrono::steady_clock::now();
-        streams_meta_.insert(meta_stream_id, {now,  properties.extension, type, 0, now});
-    }
     else
     {
-        auto& meta = streams_meta_[meta_stream_id];
-        meta.seq_num++;
-        meta.time = std::chrono::steady_clock::now();
+        if (streams_meta_.contains(meta_stream_id))
+        {
+            auto& meta = streams_meta_[meta_stream_id];
+            meta.seq_num++;
+            meta.time = std::chrono::steady_clock::now();
+        } else
+        {
+            const auto now = std::chrono::steady_clock::now();
+            streams_meta_.insert(meta_stream_id, {now,  properties.extension, type, 0, now});
+        }
+        result = streams_meta_[meta_stream_id];
     }
-    return streams_meta_[meta_stream_id];
+    return result;
 }

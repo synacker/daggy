@@ -43,6 +43,8 @@ enum DaggyErrors {
     DaggyErrorNullCommand,
     DaggyErrorProviderFailedToStart,
     DaggyErrorProviderFailedToStop,
+    DaggyErrorProviderAlreadyStarted,
+    DaggyErrorProviderAlreadyFinished,
     DaggyErrorAlreadyStarted,
     DaggyErrorAlreadyFinished,
     DaggyErrorInternal

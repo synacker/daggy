@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "Precompiled.hpp"
+#include "../Precompiled.hpp"
 #include "CFile.hpp"
 
 namespace  {
@@ -30,7 +30,6 @@ const size_t max_open_files = 1000;
 
 
 daggy::aggregators::CFile::CFile(QString output_folder,
-                                 QString sources_name,
                                  QObject* parent)
     : IAggregator(parent)
     , output_folder_(std::move(output_folder))
@@ -121,7 +120,7 @@ QString daggy::aggregators::CFile::name(const QString& provider_id, const QStrin
         result = QString("%1/%2-%3.%4").arg(output_folder_, provider_id, command_id, extension);
         break;
     case DaggyStreamError:
-        result = QString("%1/%2-%3.$4.%5").arg(output_folder_, provider_id, command_id, "err", extension);
+        result = QString("%1/%2-%3.%4.%5").arg(output_folder_, provider_id, command_id, "err", extension);
         break;
     }
     return result;
