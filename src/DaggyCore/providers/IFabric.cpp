@@ -43,7 +43,7 @@ daggy::Result<daggy::providers::IProvider*> daggy::providers::IFabric::create(co
     if (properties.type != type()) {
         return
         {
-            errors::make_error_code(DaggyErrorIncorrectProviderType),
+            errors::make_error_code(DaggyErrorSourceIncorrectProviderType),
             QString("Source %1 has incorrect provider type %2 - type %3 is required").arg(source.first, properties.type, type())
         };
     }

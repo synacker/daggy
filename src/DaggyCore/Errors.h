@@ -29,25 +29,20 @@ extern "C" {
 
 enum DaggyErrors {
     DaggyErrorSuccess,
-    DaggyErrorCannotConnectAggregator,
-    DaggyErrorCannotPrepareProviders,
-    DaggyErrorConvertion,
-    DaggyErrorWrongSourceParameter,
-    DaggyErrorIncorrectParameterName,
-    DaggyErrorIncorrectProviderType,
-    DaggyErrorProviderTypeAlreadyExists,
-    DaggyErrorConvertorTypeAlreadyExists,
-    DaggyErrorNotAllowed,
-    DaggyErrorDataProviderTypeIsNotSupported,
+    DaggyErrorAlreadyStarted,
+    DaggyErrorAlreadyFinished,
+    DaggyErrorInternal,
+    DaggyErrorSourceConvertion,
+    DaggyErrorSourceIncorrectProviderType,
+    DaggyErrorSourceNullCommand,
+    DaggyErrorSourceProviderTypeIsNotSupported,
     DaggyErrorCommandRead,
-    DaggyErrorNullCommand,
+    DaggyErrorAggregatorCannotConnect,
+    DaggyErrorProviderCannotPrepare,
     DaggyErrorProviderFailedToStart,
     DaggyErrorProviderFailedToStop,
     DaggyErrorProviderAlreadyStarted,
-    DaggyErrorProviderAlreadyFinished,
-    DaggyErrorAlreadyStarted,
-    DaggyErrorAlreadyFinished,
-    DaggyErrorInternal
+    DaggyErrorProviderAlreadyFinished
 };
 
 #ifdef __cplusplus

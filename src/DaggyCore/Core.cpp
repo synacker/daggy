@@ -50,7 +50,7 @@ Core::~Core()
     deleteAllProviders();
 }
 
-DaggyVersion Core::version() const
+DaggyVersion Core::version() const noexcept
 {
     return
     {
@@ -111,7 +111,7 @@ try
     auto providers = getProviders();
     if (providers.empty()) {
         setState(DaggyFinished);
-        return errors::make_error_code(DaggyErrorNullCommand);
+        return errors::make_error_code(DaggyErrorSourceNullCommand);
     }
 
     setState(DaggyStarted);
@@ -208,7 +208,7 @@ try {
         const auto& fabric = fabrics_map.find(properties.type);
 
         if (fabric == fabrics_map.cend()) {
-            throw std::system_error(errors::make_error_code(DaggyErrorDataProviderTypeIsNotSupported),
+            throw std::system_error(errors::make_error_code(DaggyErrorSourceProviderTypeIsNotSupported),
                                     QString("Data provider type %1 is not supported").arg(properties.type).toStdString());
         }
 
@@ -239,11 +239,11 @@ catch (const std::system_error& exception)
 } catch (const std::exception& exception)
 {
     error = QString::fromStdString(exception.what());
-    return errors::make_error_code(DaggyErrorCannotPrepareProviders);
+    return errors::make_error_code(DaggyErrorProviderCannotPrepare);
 } catch (...)
 {
     error = QString::fromStdString("unknown error");
-    return errors::make_error_code(DaggyErrorCannotPrepareProviders);
+    return errors::make_error_code(DaggyErrorProviderCannotPrepare);
 }
 
 void Core::onDataProviderStateChanged(DaggyProviderStates state)
@@ -323,7 +323,7 @@ void Core::setState(DaggyStates state)
 std::error_code Core::connectAggregator(aggregators::IAggregator* aggregator) noexcept
 try {
     if (!aggregator->isReady())
-        return errors::make_error_code(DaggyErrorCannotConnectAggregator);
+        return errors::make_error_code(DaggyErrorAggregatorCannotConnect);
 
     if (connect(this, &Core::dataProviderStateChanged, aggregator, &aggregators::IAggregator::onDataProviderStateChanged) &&
         connect(this, &Core::dataProviderError, aggregator, &aggregators::IAggregator::onDataProviderError) &&
@@ -334,9 +334,9 @@ try {
     )
         return errors::success;
 
-    return errors::make_error_code(DaggyErrorCannotConnectAggregator);
+    return errors::make_error_code(DaggyErrorAggregatorCannotConnect);
 }
 catch (...)
 {
-    return errors::make_error_code(DaggyErrorCannotConnectAggregator);
+    return errors::make_error_code(DaggyErrorAggregatorCannotConnect);
 }

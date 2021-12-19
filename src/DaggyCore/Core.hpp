@@ -55,7 +55,7 @@ public:
          QObject* parent = nullptr);
     ~Core();
 
-    DaggyVersion version() const;
+    DaggyVersion version() const noexcept;
 
     const Sources& sources() const;
 

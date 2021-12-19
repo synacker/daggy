@@ -59,7 +59,7 @@ daggy::Result<daggy::sources::Commands> getCommands(const QVariantMap& commands_
         if (commands_map[command_id].metaType() != QMetaType(QMetaType::QVariantMap))
             return
             {
-                daggy::errors::make_error_code(DaggyErrorConvertion),
+                daggy::errors::make_error_code(DaggyErrorSourceConvertion),
                 QString("%1 command is not a map").arg(command_id)
             };
         const QVariantMap& command_map = commands_map[command_id].toMap();
@@ -68,7 +68,7 @@ daggy::Result<daggy::sources::Commands> getCommands(const QVariantMap& commands_
             if (!command_map.contains(field)) {
                 return
                 {
-                    daggy::errors::make_error_code(DaggyErrorConvertion),
+                    daggy::errors::make_error_code(DaggyErrorSourceConvertion),
                     QString("%1 command don't have required %2 field").arg(command_id, field)
                 };
             }
@@ -76,7 +76,7 @@ daggy::Result<daggy::sources::Commands> getCommands(const QVariantMap& commands_
             {
                 return
                 {
-                    daggy::errors::make_error_code(DaggyErrorConvertion),
+                    daggy::errors::make_error_code(DaggyErrorSourceConvertion),
                     QString("%1 command have incorrect type for %2 field").arg(command_id, field)
                 };
             }

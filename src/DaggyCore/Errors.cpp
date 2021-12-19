@@ -38,15 +38,11 @@ public:
     std::string message(int ev) const override {
         switch (static_cast<DaggyErrors>(ev)) {
         case DaggyErrorSuccess: return "Success";
-        case DaggyErrorCannotConnectAggregator: return "Cannot connect aggregator";
-        case DaggyErrorCannotPrepareProviders: return "Cannot prepare providers";
-        case DaggyErrorIncorrectParameterName: return "Incorrect field name";
-        case DaggyErrorWrongSourceParameter: return "Wrong parameter type";
-        case DaggyErrorIncorrectProviderType: return "Incorrect provider type";
-        case DaggyErrorProviderTypeAlreadyExists: return "The parent of object is not nullptr";
-        case DaggyErrorNotAllowed: return "Operation is not allowed in current state";
-        case DaggyErrorDataProviderTypeIsNotSupported: return "Data provider type is not supported";
-        case DaggyErrorNullCommand: return "Null command";
+        case DaggyErrorAggregatorCannotConnect: return "Cannot connect aggregator";
+        case DaggyErrorProviderCannotPrepare: return "Cannot prepare providers";
+        case DaggyErrorSourceIncorrectProviderType: return "Incorrect provider type";
+        case DaggyErrorSourceProviderTypeIsNotSupported: return "Data provider type is not supported";
+        case DaggyErrorSourceNullCommand: return "Null command";
         case DaggyErrorCommandRead: return "Command read error";
         case DaggyErrorProviderFailedToStart: return "Provider failed to start";
         case DaggyErrorProviderFailedToStop: return "Provider failed to stop";

@@ -58,7 +58,7 @@ daggy::Result<Ssh2Settings> convert(const QVariantMap& parameters)
     for (const auto& field : parameters_field) {
         if (parameters.contains(field.first) && parameters[field.first].metaType() != QMetaType(field.second))
             return {
-                daggy::errors::make_error_code(DaggyErrorConvertion),
+                daggy::errors::make_error_code(DaggyErrorSourceConvertion),
                 QString("Parameters field '%1' has invalid type").arg(field.first)
             };
     }
