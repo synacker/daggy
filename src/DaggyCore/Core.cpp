@@ -24,54 +24,33 @@ SOFTWARE.
 #include "Precompiled.hpp"
 #include "Core.hpp"
 
-#include "IDataProviderFabric.hpp"
-#include "IDataAggregator.hpp"
-#include "IDataProvider.hpp"
-#include "IDataSourceConvertor.hpp"
-
-#include "CLocalDataProvidersFabric.hpp"
+#include "providers/IProvider.hpp"
+#include "providers/CLocalFabric.hpp"
+#include "providers/CLocal.hpp"
 
 #ifdef SSH2_SUPPORT
-#include "CSsh2DataProviderFabric.hpp"
+#include "providers/CSsh2Fabric.hpp"
+#include "providers/CSsh2.hpp"
 #endif
 
-#include "CJsonDataSourcesConvertor.hpp"
-
-#ifdef YAML_SUPPORT
-#include "CYamlDataSourcesConvertor.hpp"
-#endif
+#include "aggregators/IAggregator.hpp"
 
 using namespace daggy;
 
-Core::Core(DataSources data_sources,
-                     QObject* parent)
+Core::Core(Sources sources,
+           QObject* parent)
     : QObject(parent)
-    , data_sources_(std::move(data_sources))
-    , state_(NotStarted)
+    , sources_(std::move(sources))
+    , state_(DaggyNotStarted)
 {
-    addDataProvidersFabric(std::make_unique<CLocalDataProvidersFabric>());
-#ifdef SSH2_SUPPORT
-    addDataProvidersFabric(std::make_unique<CSsh2DataProviderFabric>());
-#endif
-
-    data_convertors_[daggyconv::CJsonDataSourcesConvertor::convertor_type] = std::make_unique<daggyconv::CJsonDataSourcesConvertor>();
-#ifdef YAML_SUPPORT
-    data_convertors_[daggyconv::CYamlDataSourcesConvertor::convertor_type] = std::make_unique<daggyconv::CYamlDataSourcesConvertor>();
-#endif
-}
-
-Core::Core(QObject* parent)
-    : Core({}, parent)
-{
-
 }
 
 Core::~Core()
 {
-
+    deleteAllProviders();
 }
 
-Core::Version Core::version() const
+DaggyVersion Core::version() const
 {
     return
     {
@@ -85,53 +64,28 @@ Core::Version Core::version() const
     };
 }
 
-void Core::setDataSources(DataSources data_sources)
+const Sources& Core::sources() const
 {
-    data_sources_ = std::move(data_sources);
+    return sources_;
 }
 
-Result Core::setDataSources
-(
-        const QString& data_sources_text,
-        const QString& text_format_type
-)
-{
-    const auto convertor = getConvertor(text_format_type);
-    if (!convertor)
-        return
-        {
-            DaggyErrors::ConvertError,
-            QString("%1 convertion type is not supported").arg(text_format_type).toStdString()
-        };
-    const auto convertion = convertor->convert(data_sources_text);
-    if (!convertion)
-        return convertion.result();
-
-    setDataSources(convertion.value());
-    return Result::success;
-}
-
-const DataSources& Core::dataSources() const
-{
-    return data_sources_;
-}
 
 int Core::activeDataProvidersCount() const
 {
     int result = 0;
-    for (IDataProvider* provider : getProviders())
+    for (providers::IProvider* provider : getProviders())
         if (isActiveProvider(provider))
             result++;
     return result;
 }
 
-bool Core::isActiveProvider(const IDataProvider* const provider) const
+bool Core::isActiveProvider(const providers::IProvider* const provider) const
 {
     bool result = false;
     switch (provider->state()) {
-    case IDataProvider::NotStarted:
-    case IDataProvider::FailedToStart:
-    case IDataProvider::Finished:
+    case DaggyProviderNotStarted:
+    case DaggyProviderFailedToStart:
+    case DaggyProviderFinished:
         result = false;
         break;
     default:
@@ -140,79 +94,174 @@ bool Core::isActiveProvider(const IDataProvider* const provider) const
     return result;
 }
 
-Result Core::start()
+void Core::deleteAllProviders()
 {
-    for (auto data_aggreagator : getAggregators()) {
-        const auto result = data_aggreagator->prepare();
-        if (!result)
-            return result;
+    auto providers = getProviders();
+    for (auto provider : providers)
+        delete provider;
+}
+
+std::error_code Core::start() noexcept
+try
+{
+    if (state() == DaggyStarted || state() == DaggyFinishing)
+        return errors::make_error_code(DaggyErrorAlreadyStarted);
+
+    auto providers = getProviders();
+    if (providers.empty()) {
+        setState(DaggyFinished);
+        return errors::make_error_code(DaggyErrorNullCommand);
     }
 
-    auto data_providers = getProviders();
-    if (data_providers.empty()) {
-        for (const auto& data_source : qAsConst(data_sources_)) {
-            auto result = createProvider(data_source);
-            if (!result)
-                return result;
-        }
-    }
-    data_providers = getProviders();
-    if (data_providers.empty()) {
-        setState(Finished);
-        return Result::success;
-    }
-
-    setState(Started);
-    for (IDataProvider* provider : data_providers) {
+    setState(DaggyStarted);
+    for (providers::IProvider* provider : providers) {
         provider->start();
     }
 
-    return Result::success;
+    return errors::success;
 }
-
-void Core::stop()
+catch (const std::system_error& exception)
 {
-    if (state_ != Started) {
-        return;
-    }
-
-    const auto data_providers = getProviders();
-    if (data_providers.empty() || activeDataProvidersCount() == 0) {
-        setState(Finished);
-        return;
-    }
-
-    setState(Finishing);
-    for (IDataProvider* provider : data_providers)
-        provider->stop();
+    return exception.code();
+}
+catch (...) {
+    return errors::make_error_code(DaggyErrorInternal);
 }
 
+std::error_code Core::stop() noexcept
+try {
+    if (state() == DaggyNotStarted || state() == DaggyFinished)
+        return errors::make_error_code(DaggyErrorAlreadyFinished);
 
+    const auto& data_providers = getProviders();
+    if (data_providers.empty() || activeDataProvidersCount() == 0) {
+        setState(DaggyFinished);
+        return errors::success;
+    }
 
-Core::State Core::state() const
+    setState(DaggyFinishing);
+    for (providers::IProvider* provider : data_providers)
+        provider->stop();
+    return errors::success;
+}
+catch (const std::system_error& exception)
+{
+    return exception.code();
+}
+catch (...)
+{
+    return errors::make_error_code(DaggyErrorInternal);
+}
+
+DaggyStates Core::state() const noexcept
 {
     return state_;
 }
 
-void Core::onDataProviderStateChanged(const IDataProvider::State state)
+std::error_code Core::prepare()
+{
+    QString message;
+    auto error = prepare(message);
+    if (error)
+        throw std::runtime_error(message.toStdString());
+    return error;
+}
+
+std::error_code Core::prepare(std::span<providers::IFabric*> fabrics)
+{
+    QString message;
+    auto error = prepare(std::move(fabrics), message);
+    if (error)
+        throw std::runtime_error(message.toStdString());
+    return error;
+}
+
+std::error_code Core::prepare(QString& error) noexcept
+{
+    return prepare({}, error);
+}
+
+std::error_code Core::prepare(std::span<providers::IFabric*> fabrics, QString& error) noexcept
+try {
+    const auto& providers = getProviders();
+    if (!providers.isEmpty())
+        return errors::success;
+
+    std::unordered_map<QString, providers::IFabric*> fabrics_map;
+    static thread_local providers::CLocalFabric local_fabric;
+    fabrics_map[providers::CLocal::provider_type] = &local_fabric;
+
+#ifdef SSH2_SUPPORT
+    static thread_local providers::CSsh2Fabric ssh2_fabric;
+    fabrics_map[providers::CSsh2::provider_type] = &ssh2_fabric;
+#endif
+
+    for (const auto& fabric : fabrics)
+        fabrics_map[fabric->type()] = fabric;
+
+    auto source = sources_.cbegin();
+    while(source != sources_.cend()) {
+        const auto& source_id = source.key();
+        const auto& properties = source.value();
+
+        const auto& fabric = fabrics_map.find(properties.type);
+
+        if (fabric == fabrics_map.cend()) {
+            throw std::system_error(errors::make_error_code(DaggyErrorDataProviderTypeIsNotSupported),
+                                    QString("Data provider type %1 is not supported").arg(properties.type).toStdString());
+        }
+
+        auto provider = fabric->second->create({source_id, properties}, this);
+        if (!provider) {
+            throw std::system_error(provider.error,
+                                    provider.message.toStdString());
+        }
+
+        connect(*provider, &providers::IProvider::stateChanged, this, &Core::onDataProviderStateChanged);
+        connect(*provider, &providers::IProvider::error, this, &Core::onDataProviderError);
+
+        connect(*provider, &providers::IProvider::commandStateChanged, this, &Core::onCommandStateChanged);
+        connect(*provider, &providers::IProvider::commandError, this, &Core::onCommandError);
+        connect(*provider, &providers::IProvider::commandStream, this, &Core::onCommandStream);
+
+        (*provider)->setObjectName(source_id);
+
+        source++;
+    }
+    return errors::success;
+}
+catch (const std::system_error& exception)
+{
+    deleteAllProviders();
+    error = QString::fromStdString(exception.what());
+    return exception.code();
+} catch (const std::exception& exception)
+{
+    error = QString::fromStdString(exception.what());
+    return errors::make_error_code(DaggyErrorCannotPrepareProviders);
+} catch (...)
+{
+    error = QString::fromStdString("unknown error");
+    return errors::make_error_code(DaggyErrorCannotPrepareProviders);
+}
+
+void Core::onDataProviderStateChanged(DaggyProviderStates state)
 {
     const QString& provider_id = sender()->objectName();
     emit dataProviderStateChanged(provider_id,
                                   state);
 
-    const DataSource& data_source = data_sources_[provider_id];
-    if (state == IDataProvider::Finished &&
-        data_source.reconnect &&
-        state_ == Started)
+    const auto& source = sources_[provider_id];
+    if (state == DaggyProviderFinished &&
+        source.reconnect &&
+        state_ == DaggyStarted)
     {
-        IDataProvider* provider = getProvider(provider_id);
+        auto* provider = getProvider(provider_id);
         provider->start();
     }
 
     if (activeDataProvidersCount() == 0) {
-        for (auto data_aggregator : getAggregators())
-            data_aggregator->free();
-        setState(Finished);
+        setState(DaggyFinished);
     }
 }
 
@@ -223,7 +272,7 @@ void Core::onDataProviderError(std::error_code error_code)
 }
 
 void Core::onCommandStateChanged(QString command_id,
-                                      Command::State state,
+                                      DaggyCommandStates state,
                                       int exit_code)
 {
     emit commandStateChanged(sender()->objectName(),
@@ -233,7 +282,7 @@ void Core::onCommandStateChanged(QString command_id,
 }
 
 void Core::onCommandStream(QString command_id,
-                                Command::Stream stream)
+                                sources::commands::Stream stream)
 {
     emit commandStream(sender()->objectName(),
                        command_id,
@@ -241,76 +290,27 @@ void Core::onCommandStream(QString command_id,
 }
 
 void Core::onCommandError(QString command_id,
-                               std::error_code error_code)
+                          std::error_code error_code)
 {
     emit commandError(sender()->objectName(),
                       command_id,
                       error_code);
 }
 
-IDataProviderFabric* Core::getFabric(const QString& type) const
+QList<providers::IProvider*> Core::getProviders() const
 {
-    IDataProviderFabric* result = nullptr;
-    if (data_provider_fabrics_.find(type) != data_provider_fabrics_.end())
-        result = data_provider_fabrics_.at(type).get();
-    return result;
+    return findChildren<providers::IProvider*>();
 }
 
-daggyconv::IDataSourceConvertor* Core::getConvertor(const QString& type) const
+providers::IProvider* Core::getProvider(const QString& provider_id) const
 {
-    daggyconv::IDataSourceConvertor* result = nullptr;
-    if (data_convertors_.find(type) != data_convertors_.end())
-        result = data_convertors_.at(type).get();
-    return result;
-}
-
-QList<IDataAggregator*> Core::getAggregators() const
-{
-    return findChildren<IDataAggregator*>();
-}
-
-QList<IDataProvider*> Core::getProviders() const
-{
-    return findChildren<IDataProvider*>();
-}
-
-IDataProvider* Core::getProvider(const QString& provider_id) const
-{
-    IDataProvider* result = nullptr;
+    providers::IProvider* result = nullptr;
     if (!provider_id.isEmpty())
-        result = findChild<IDataProvider*>(provider_id);
+        result = findChild<providers::IProvider*>(provider_id);
     return result;
 }
 
-Result Core::createProvider(const DataSource& data_source)
-{
-    IDataProviderFabric* fabric = getFabric(data_source.type);
-    if (fabric == nullptr) {
-        return
-        {
-            DaggyErrors::DataProviderTypeIsNotSupported,
-            QString("Data provider type %1 is not supported")
-                    .arg(data_source.type).toStdString()
-        };
-    }
-    auto create_provider = fabric->create(data_source, this);
-    if (!create_provider) {
-        return create_provider.result();
-    }
-
-    connect(create_provider.value(), &IDataProvider::stateChanged, this, &Core::onDataProviderStateChanged);
-    connect(create_provider.value(), &IDataProvider::error, this, &Core::onDataProviderError);
-
-    connect(create_provider.value(), &IDataProvider::commandStateChanged, this, &Core::onCommandStateChanged);
-    connect(create_provider.value(), &IDataProvider::commandError, this, &Core::onCommandError);
-    connect(create_provider.value(), &IDataProvider::commandStream, this, &Core::onCommandStream);
-
-    create_provider.value()->setObjectName(data_source.id);
-
-    return create_provider.result();
-}
-
-void Core::setState(Core::State state)
+void Core::setState(DaggyStates state)
 {
     if (state_ == state)
         return;
@@ -319,34 +319,23 @@ void Core::setState(Core::State state)
     emit stateChanged(state_);
 }
 
+std::error_code Core::connectAggregator(aggregators::IAggregator* aggregator) noexcept
+try {
+    if (!aggregator->isReady())
+        return errors::make_error_code(DaggyErrorCannotConnectAggregator);
 
-Result Core::addDataProvidersFabric(std::unique_ptr<IDataProviderFabric> new_fabric)
-{
-    if (data_provider_fabrics_.find(new_fabric->type) != data_provider_fabrics_.end())
-        return Result{DaggyErrors::ProviderTypeAlreadyExists};
-    const auto type = new_fabric->type;
-    data_provider_fabrics_[type] = std::move(new_fabric);
-    return Result::success;
+    if (connect(this, &Core::dataProviderStateChanged, aggregator, &aggregators::IAggregator::onDataProviderStateChanged) &&
+        connect(this, &Core::dataProviderError, aggregator, &aggregators::IAggregator::onDataProviderError) &&
+        connect(this, &Core::commandStateChanged, aggregator, &aggregators::IAggregator::onCommandStateChanged) &&
+        connect(this, &Core::commandError, aggregator, &aggregators::IAggregator::onCommandError) &&
+        connect(this, &Core::commandStream, aggregator, &aggregators::IAggregator::onCommandStream) &&
+        connect(this, &Core::stateChanged, aggregator, &aggregators::IAggregator::onDaggyStateChanged)
+    )
+        return errors::success;
+
+    return errors::make_error_code(DaggyErrorCannotConnectAggregator);
 }
-
-Result Core::addDataAggregator(IDataAggregator* aggregator)
+catch (...)
 {
-    aggregator->setParent(this);
-    connect(this, &Core::dataProviderStateChanged, aggregator, &IDataAggregator::onDataProviderStateChanged);
-    connect(this, &Core::dataProviderError, aggregator, &IDataAggregator::onDataProviderError);
-
-    connect(this, &Core::commandStateChanged, aggregator, &IDataAggregator::onCommandStateChanged);
-    connect(this, &Core::commandError, aggregator, &IDataAggregator::onCommandError);
-    connect(this, &Core::commandStream, aggregator, &IDataAggregator::onCommandStream);
-
-    return Result::success;
-}
-
-Result Core::addDataSourceConvertor(std::unique_ptr<daggyconv::IDataSourceConvertor> convertor)
-{
-    if (data_convertors_.find(convertor->type) != data_convertors_.end())
-        return Result{DaggyErrors::ConvertorTypeAlreadyExists};
-    const auto type = convertor->type;
-    data_convertors_[type] = std::move(convertor);
-    return Result::success;
+    return errors::make_error_code(DaggyErrorCannotConnectAggregator);
 }

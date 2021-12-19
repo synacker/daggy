@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2020 Mikhail Milovidov
+Copyright (c) 2021 Mikhail Milovidov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,31 +23,22 @@ SOFTWARE.
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
-#include <QRegularExpression>
+#include "IFabric.hpp"
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+namespace daggy {
+namespace providers {
 
-#include <QProcess>
+class CLocalFabric : public IFabric
+{
+public:
+    CLocalFabric();
 
-#include <QMetaType>
-#include <QMetaEnum>
+    const QString& type() const override;
 
-#include <QDebug>
+protected:
+    Result<IProvider*> createProvider(const Source& source, QObject* parent) override;
+};
 
-#include <atomic>
+}
+}
 
-#ifdef SSH2_SUPPORT
-#include <libssh2.h>
-#include <errno.h>
-#endif
-
-#ifdef YAML_SUPPORT
-#include <yaml-cpp/yaml.h>
-#include <yaml-cpp/node/node.h>
-#endif

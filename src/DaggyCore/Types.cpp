@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2020 Mikhail Milovidov
+Copyright (c) 2021 Mikhail Milovidov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,33 +21,5 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
-
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
-#include <QRegularExpression>
-
-#include <QJsonParseError>
-#include <QJsonDocument>
-
-#include <QProcess>
-
-#include <QMetaType>
-#include <QMetaEnum>
-
-#include <QDebug>
-
-#include <atomic>
-
-#ifdef SSH2_SUPPORT
-#include <libssh2.h>
-#include <errno.h>
-#endif
-
-#ifdef YAML_SUPPORT
-#include <yaml-cpp/yaml.h>
-#include <yaml-cpp/node/node.h>
-#endif
+#include "Precompiled.hpp"
+#include "Types.hpp"

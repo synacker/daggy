@@ -25,34 +25,31 @@ SOFTWARE.
 
 #include "daggycore_export.h"
 
+#include <optional>
+#include <chrono>
 #include <QString>
 #include <QByteArray>
 #include <QVariantMap>
 
+#include "Types.h"
+
 namespace daggy {
 namespace sources {
-namespace command {
+namespace commands {
+namespace streams {
+struct Meta {
+    std::chrono::time_point<std::chrono::steady_clock> start_time;
+    QString extension;
+    DaggyStreamTypes type;
 
-enum State {
-    NotStarted,
-    Starting,
-    Started,
-    FailedToStart,
-    Finishing,
-    Finished
-};
-
-namespace stream {
-enum Type {
-    Standard,
-    Error
+    std::uint64_t seq_num;
+    std::chrono::time_point<std::chrono::steady_clock> time;
 };
 }
 
 struct Stream {
-    QString extension;
-    QByteArray data;
-    stream::Type type;
+    streams::Meta meta;
+    QByteArray part;
 };
 
 struct DAGGYCORE_EXPORT Properties {
@@ -65,8 +62,8 @@ struct DAGGYCORE_EXPORT Properties {
 };
 }
 
-using Commands = std::map<QString, command::Properties>;
-using Command = Commands::value_type;
+using Commands = QMap<QString, commands::Properties>;
+using Command = QPair<QString, commands::Properties>;
 
 struct DAGGYCORE_EXPORT Properties {
     QString type;
@@ -79,16 +76,24 @@ struct DAGGYCORE_EXPORT Properties {
 };
 }
 
-using Sources = std::map<QString, sources::Properties>;
-using Source = Sources::value_type;
+using Sources = QMap<QString, sources::Properties>;
+using Source = QPair<QString, sources::Properties>;
+
+
+namespace sources {
+namespace convertors {
+
+DAGGYCORE_EXPORT std::optional<Sources> json(const QString& data, QString& error) noexcept;
+DAGGYCORE_EXPORT std::optional<Sources> yaml(const QString& data, QString& error) noexcept;
+
+}
+}
 }
 
-Q_ENUMS(daggy::sources::command::stream::Type daggy::sources::command::State)
-
-Q_DECLARE_METATYPE(daggy::sources::command::Properties)
+Q_DECLARE_METATYPE(daggy::sources::commands::Properties)
 Q_DECLARE_METATYPE(daggy::sources::Properties)
 
-Q_DECLARE_METATYPE(daggy::sources::command::Stream)
+Q_DECLARE_METATYPE(daggy::sources::commands::Stream)
 Q_DECLARE_METATYPE(daggy::sources::Command);
 Q_DECLARE_METATYPE(daggy::sources::Commands);
 Q_DECLARE_METATYPE(daggy::Source);

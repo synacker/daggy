@@ -23,31 +23,49 @@ SOFTWARE.
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
-#include <QRegularExpression>
+#include <QIODevice>
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+#include "Ssh2Channel.hpp"
 
-#include <QProcess>
+namespace qtssh2 {
 
-#include <QMetaType>
-#include <QMetaEnum>
+class Ssh2Process : public Ssh2Channel
+{
+    Q_OBJECT
+    Q_ENUMS(ProcessStates)
+    Q_PROPERTY(ProcessStates processState READ processState NOTIFY processStateChanged)
+public:
+    enum ProcessStates {
+        NotStarted,
+        Starting,
+        Started,
+        FailedToStart,
+        Finishing,
+        Finished
+    };
 
-#include <QDebug>
 
-#include <atomic>
+    ProcessStates processState() const;
+    void checkIncomingData() override;
 
-#ifdef SSH2_SUPPORT
-#include <libssh2.h>
-#include <errno.h>
-#endif
+signals:
+    void processStateChanged(ProcessStates processState);
 
-#ifdef YAML_SUPPORT
-#include <yaml-cpp/yaml.h>
-#include <yaml-cpp/node/node.h>
-#endif
+protected:
+    Ssh2Process(const QString& command,
+                Ssh2Client* ssh2_client);
+
+private slots:
+    void onSsh2ChannelStateChanged(const ChannelStates& state);
+
+private:
+    void setSsh2ProcessState(ProcessStates ssh2_process_state);
+    std::error_code execSsh2Process();
+
+    const QString command_;
+    ProcessStates ssh2_process_state_;
+
+    friend class Ssh2Client;
+};
+
+}

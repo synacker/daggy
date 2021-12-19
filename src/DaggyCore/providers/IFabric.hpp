@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2020 Mikhail Milovidov
+Copyright (c) 2021 Mikhail Milovidov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,31 +23,35 @@ SOFTWARE.
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
-#include <QRegularExpression>
+#include <utility>
+#include <system_error>
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+#include "Sources.hpp"
+#include "Result.hpp"
 
-#include <QProcess>
+class QObject;
 
-#include <QMetaType>
-#include <QMetaEnum>
+namespace daggy {
 
-#include <QDebug>
+namespace providers {
+class IProvider;
 
-#include <atomic>
+class DAGGYCORE_EXPORT IFabric
+{
+public:
+    IFabric();
+    virtual ~IFabric();
 
-#ifdef SSH2_SUPPORT
-#include <libssh2.h>
-#include <errno.h>
-#endif
+    virtual const QString& type() const = 0;
+    Result<IProvider*> create(const Source& source,
+                              QObject* parent);
 
-#ifdef YAML_SUPPORT
-#include <yaml-cpp/yaml.h>
-#include <yaml-cpp/node/node.h>
-#endif
+protected:
+    virtual Result<IProvider*> createProvider(const Source& source,
+                                              QObject* parent) = 0;
+};
+
+
+}
+}
+

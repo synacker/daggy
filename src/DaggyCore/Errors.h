@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2020 Mikhail Milovidov
+Copyright (c) 2021 Mikhail Milovidov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,31 +23,31 @@ SOFTWARE.
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
-#include <QRegularExpression>
-
-#include <QJsonParseError>
-#include <QJsonDocument>
-
-#include <QProcess>
-
-#include <QMetaType>
-#include <QMetaEnum>
-
-#include <QDebug>
-
-#include <atomic>
-
-#ifdef SSH2_SUPPORT
-#include <libssh2.h>
-#include <errno.h>
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#ifdef YAML_SUPPORT
-#include <yaml-cpp/yaml.h>
-#include <yaml-cpp/node/node.h>
+enum DaggyErrors {
+    DaggyErrorSuccess,
+    DaggyErrorCannotConnectAggregator,
+    DaggyErrorCannotPrepareProviders,
+    DaggyErrorConvertion,
+    DaggyErrorWrongSourceParameter,
+    DaggyErrorIncorrectParameterName,
+    DaggyErrorIncorrectProviderType,
+    DaggyErrorProviderTypeAlreadyExists,
+    DaggyErrorConvertorTypeAlreadyExists,
+    DaggyErrorNotAllowed,
+    DaggyErrorDataProviderTypeIsNotSupported,
+    DaggyErrorCommandRead,
+    DaggyErrorNullCommand,
+    DaggyErrorProviderFailedToStart,
+    DaggyErrorProviderFailedToStop,
+    DaggyErrorAlreadyStarted,
+    DaggyErrorAlreadyFinished,
+    DaggyErrorInternal
+};
+
+#ifdef __cplusplus
+}
 #endif

@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2020 Mikhail Milovidov
+Copyright (c) 2021 Mikhail Milovidov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,31 +23,21 @@ SOFTWARE.
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
-#include <QRegularExpression>
+#include "daggycore_export.h"
+#include "Errors.h"
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+#include <system_error>
 
-#include <QProcess>
+namespace daggy {
+namespace errors {
+DAGGYCORE_EXPORT extern const std::error_code success;
 
-#include <QMetaType>
-#include <QMetaEnum>
+DAGGYCORE_EXPORT const std::error_category& category() noexcept;
+DAGGYCORE_EXPORT std::error_code make_error_code(DaggyErrors error) noexcept;
+}
+}
 
-#include <QDebug>
-
-#include <atomic>
-
-#ifdef SSH2_SUPPORT
-#include <libssh2.h>
-#include <errno.h>
-#endif
-
-#ifdef YAML_SUPPORT
-#include <yaml-cpp/yaml.h>
-#include <yaml-cpp/node/node.h>
-#endif
+namespace std {
+template <>
+struct is_error_code_enum<DaggyErrors>: public true_type {};
+}

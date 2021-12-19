@@ -4,62 +4,29 @@ find_package(Qt6 COMPONENTS Core Network REQUIRED)
 
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
 
-set(SSH2_SOURCES
-    Ssh2Client.cpp
-    Ssh2Types.cpp
-    Ssh2Process.cpp
-    Ssh2Channel.cpp
-    Ssh2Types.cpp
-    Ssh2Debug.cpp
-    CSsh2DataProvider.cpp
-    CSsh2DataProviderFabric.cpp
-)
-
-set(SSH2_PUBLIC
-    CSsh2DataProviderFabric.h
-)
-
-set(YAML_PUBLIC
-    CYamlDataSourcesConvertor.h
-)
-
 set(INCLUDE_PUBLIC_HEADERS
-    CJsonDataSourcesConvertor.h
-    CYamlDataSourcesConvertor.h
-    CLocalDataProvider.h
-    CSsh2DataProviderFabric.h
-    Command.h
-    Common.h
     Core.hpp
-    IDataAggregator.h
-    IDataProviderFabric.h
-    IDataSourceConvertor.h
-    Result.h
+    Result.hpp
+    Sources.hpp
+    Types.hpp
+    providers/IProvider.hpp
+    providers/IFabric.hpp
+    aggregators/IAggregator.hpp
     ${CMAKE_BINARY_DIR}/exports/daggycore_export.h
 )
 
-set(YAML_SOURCES
-    CYamlDataSourcesConvertor.cpp
-)
-
 set(SOURCES ${SOURCES}
-    IDataProvider.cpp
-    IDataAggregator.cpp
-    IDataProviderFabric.cpp
-    Common.cpp
     Core.cpp
-    Result.cpp
-    CJsonDataSourcesConvertor.cpp
-    IDataSourceConvertor.cpp
-    CLocalDataProvider.cpp
-    CLocalDataProvidersFabric.cpp
-    DataSource.cpp
-    Command.cpp
     Sources.cpp
+    Errors.cpp
+    providers/IProvider.cpp
+    providers/CLocal.cpp
+    providers/IFabric.cpp
+    providers/CLocalFabric.cpp
+    aggregators/IAggregator.cpp
+    aggregators/CFile.cpp
+    aggregators/CConsole.cpp
 )
-qt6_wrap_cpp(MOC_SOURCES Command.hpp)
-
-
 
 set(LINK_LIBRARIES
     Qt6::Core Qt6::Network
@@ -76,26 +43,35 @@ if (SSH2_SUPPORT)
         set(LINK_LIBRARIES ${LINK_LIBRARIES} ssh2 crypto)
     endif()
 
-    list(APPEND SOURCES ${SSH2_SOURCES})
-    list(APPEND INCLUDE_HEADERS ${SSH2_PUBLIC})
+    set(SOURCES ${SOURCES}
+        providers/ssh2/Ssh2Client.cpp
+        providers/ssh2/Ssh2Types.cpp
+        providers/ssh2/Ssh2Process.cpp
+        providers/ssh2/Ssh2Channel.cpp
+        providers/ssh2/Ssh2Types.cpp
+        providers/ssh2/Ssh2Debug.cpp
+        providers/CSsh2.cpp
+        providers/CSsh2Fabric.cpp
+    )
 endif()
 
 if(YAML_SUPPORT)
     find_package(yaml-cpp REQUIRED)
     set(LINK_LIBRARIES ${LINK_LIBRARIES} yaml-cpp)
-    list(APPEND SOURCES ${YAML_SOURCES})
-    list(APPEND INCLUDE_HEADERS ${YAML_PUBLIC})
 endif()
 
 ADD_BINARY_META(LIB)
 SET_RPATH(LIB)
 
-add_library(${TARGET} ${SOURCES} ${MOC_SOURCES})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+add_library(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
 include(GenerateExportHeader)
 generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/daggycore_export.h)
 target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
+
 
 if(UNIX)
     if (BUILD_SHARED_LIBS)
@@ -106,7 +82,7 @@ if(UNIX)
     endif()
 else()
     install(TARGETS ${TARGET} ARCHIVE COMPONENT devel)
-    if (NOT DAGGY_CORE_STATIC)
+    if (BUILD_SHARED_LIBS)
         install(TARGETS ${TARGET} RUNTIME COMPONENT application)
         install(TARGETS ${TARGET} RUNTIME COMPONENT devel)
     endif()

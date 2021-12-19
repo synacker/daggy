@@ -23,33 +23,70 @@ SOFTWARE.
 */
 #pragma once
 #include <system_error>
+#include <utility>
+#include <optional>
+#include <QString>
 
 #include "daggycore_export.h"
+#include "Errors.hpp"
 
 namespace daggy {
 
-class DAGGYCORE_EXPORT Result : public std::error_code
+template<typename Data>
+class Result
 {
 public:
-    static const std::error_code success;
+    Result() = delete;
+    Result(Data data)
+        : data_(std::move(data))
+        , error(errors::success)
+    {}
 
-    Result();
-    Result(std::error_code error_code);
-    Result(std::error_code error_code,
-           std::string detailed_error_message);
+    Result(std::error_code error,
+           QString message = QString())
+        : data_{}
+        , error(std::move(error))
+        , message(std::move(message))
+    {}
 
-    Result(const Result& other) = default;
-    Result(Result&& other) = default;
+    Result(const Result&) = delete;
+    Result(Result&&) = default;
 
-    Result& operator=(const Result& other) = default;
-    Result& operator=(Result&& other) = default;
+    operator bool() const
+    {
+        return !error;
+    }
 
-    operator bool() const;
+    Data&& operator*() {
+        return std::move(data_.operator*());
+    }
 
-    const std::string& detailed_error_message() const;
+    const Data& operator *() const {
+        return data_.operator*();
+    }
+
+    const Data* operator->() const {
+        return data_.operator->();
+    }
+
+    Data* operator->() {
+        return data_.operator->();
+    }
+
+    const Data* data() const {
+        return &data_.value();
+    }
+
+    Data* data() {
+        return &data_.value();
+    }
+
+    const std::error_code error;
+    const QString message;
 
 private:
-    std::string detailed_error_message_;
+    std::optional<Data> data_;
 };
+
 
 }

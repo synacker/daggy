@@ -21,33 +21,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
+#include "Precompiled.hpp"
+#include "Ssh2Debug.hpp"
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
-#include <QRegularExpression>
+#include "Ssh2Types.hpp"
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+using namespace qtssh2;
 
-#include <QProcess>
+bool qtssh2::checkSsh2Error(const std::error_code& error_code)
+{
+    return error_code == ssh2_success || error_code == Ssh2Error::TryAgain;
+}
 
-#include <QMetaType>
-#include <QMetaEnum>
-
-#include <QDebug>
-
-#include <atomic>
-
-#ifdef SSH2_SUPPORT
-#include <libssh2.h>
-#include <errno.h>
-#endif
-
-#ifdef YAML_SUPPORT
-#include <yaml-cpp/yaml.h>
-#include <yaml-cpp/node/node.h>
-#endif
+void qtssh2::debugSsh2Error(const int ssh2_method_result)
+{
+    qDebug() << "Ssh2 error: " << ssh2_method_result;
+}

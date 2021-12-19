@@ -23,31 +23,11 @@ SOFTWARE.
 */
 #pragma once
 
-#include <QDir>
-#include <QString>
-#include <QStandardPaths>
-#include <QHostAddress>
-#include <QTimer>
-#include <QRegularExpression>
+#include <system_error>
 
-#include <QJsonParseError>
-#include <QJsonDocument>
+namespace qtssh2 {
 
-#include <QProcess>
+void debugSsh2Error(const int ssh2_method_result);
+bool checkSsh2Error(const std::error_code& error_code);
 
-#include <QMetaType>
-#include <QMetaEnum>
-
-#include <QDebug>
-
-#include <atomic>
-
-#ifdef SSH2_SUPPORT
-#include <libssh2.h>
-#include <errno.h>
-#endif
-
-#ifdef YAML_SUPPORT
-#include <yaml-cpp/yaml.h>
-#include <yaml-cpp/node/node.h>
-#endif
+}

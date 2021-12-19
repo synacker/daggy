@@ -48,7 +48,7 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
 
     connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
     connect(daggy_core_, &Core::stateChanged, this, [](Core::State state){
-        if (state == Core::Finished)
+        if (state == Core::DaggyFinished)
             qApp->exit();
     });
 }
@@ -256,13 +256,13 @@ QString CConsoleDaggy::mustache(const QString& text, const QString& output_folde
 void CConsoleDaggy::onDaggyCoreStateChanged(int state)
 {
     switch (static_cast<Core::State>(state)) {
-    case daggy::Core::NotStarted:
+    case daggy::Core::DaggyNotStarted:
         break;
-    case daggy::Core::Started:
+    case daggy::Core::DaggyStarted:
         break;
-    case daggy::Core::Finishing:
+    case daggy::Core::DaggyFinishing:
         break;
-    case daggy::Core::Finished:
+    case daggy::Core::DaggyFinished:
         qApp->exit();
         break;
     }
