@@ -36,7 +36,7 @@ public:
     Q_ENUM(ConsoleMessageType)
 
     CConsole(QString name,
-             QObject* parent);
+             QObject* parent = nullptr);
 
     bool isReady() const override;
 

@@ -18,7 +18,7 @@ SET_GIT_VERSION()
 
 option(SSH2_SUPPORT "ssh2 data provider support" ON)
 option(YAML_SUPPORT "yaml data sources support" ON)
-option(DAGGY_CONSOLE "daggy console application" ON)
+option(CONSOLE "daggy console application" ON)
 option(BUILD_SHARED_LIBS ON)
 
 
@@ -30,14 +30,14 @@ if(YAML_SUPPORT)
     add_definitions(-DYAML_SUPPORT)
 endif()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR}/exports)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 include(compiler)
 
 enable_testing()
 
 add_subdirectory(DaggyCore)
-if(DAGGY_CONSOLE)
+if(CONSOLE)
     add_subdirectory(Daggy)
 endif()
 

@@ -2,17 +2,24 @@ set(TARGET DaggyCore)
 
 find_package(Qt6 COMPONENTS Core Network REQUIRED)
 
-set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
-
-set(INCLUDE_PUBLIC_HEADERS
+set(INCLUDE_BASE_HEADERS
     Core.hpp
     Result.hpp
     Sources.hpp
+    Types.h
     Types.hpp
+    daggycore_export.h
+)
+
+set(INCLUDE_PROVIDERS_HEADERS
     providers/IProvider.hpp
     providers/IFabric.hpp
+)
+
+set(INCLUDE_AGGREGATORS_HEADERS
     aggregators/IAggregator.hpp
-    ${CMAKE_BINARY_DIR}/exports/daggycore_export.h
+    aggregators/CFile.hpp
+    aggregators/CConsole.hpp
 )
 
 set(SOURCES ${SOURCES}
@@ -67,23 +74,20 @@ add_library(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
 include(GenerateExportHeader)
-generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/daggycore_export.h)
+generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_CURRENT_SOURCE_DIR}/daggycore_export.h)
 target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
 
 
 if(UNIX)
-    if (BUILD_SHARED_LIBS)
-        install(TARGETS ${TARGET} LIBRARY COMPONENT application)
-        install(TARGETS ${TARGET} LIBRARY COMPONENT devel)
-    else()
-        install(TARGETS ${TARGET} LIBRARY COMPONENT devel)
-    endif()
+    install(TARGETS ${TARGET} LIBRARY)
 else()
-    install(TARGETS ${TARGET} ARCHIVE COMPONENT devel)
+    install(TARGETS ${TARGET} ARCHIVE)
     if (BUILD_SHARED_LIBS)
-        install(TARGETS ${TARGET} RUNTIME COMPONENT application)
-        install(TARGETS ${TARGET} RUNTIME COMPONENT devel)
+        install(TARGETS ${TARGET} RUNTIME)
+        install(TARGETS ${TARGET} RUNTIME)
     endif()
 endif()
 
-install(FILES ${INCLUDE_PUBLIC_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET} COMPONENT devel)
+install(FILES ${INCLUDE_BASE_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET})
+install(FILES ${INCLUDE_AGGREGATORS_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET}/aggregators)
+install(FILES ${INCLUDE_PROVIDERS_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET}/providers)
