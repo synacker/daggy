@@ -95,31 +95,6 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_SYSTEM_NAME}-${CPACK_
 include(CPack)
 include(CPackIFW)
 
-cpack_add_component_group(Daggy 
-                          DISPLAY_NAME "Daggy"
-                          DESCRIPTION "Daggy components"
-                          EXPANDED)
-
-cpack_add_component(application
-                    DISPLAY_NAME "Daggy Console"
-                    DESCRIPTION "Daggy console application"
-                    GROUP Daggy
-                    )
-cpack_add_component(devel
-                    DISPLAY_NAME "Daggy-devel"
-                    DESCRIPTION "Daggy devel lib"
-                    GROUP Daggy
-                    DISABLED)
-
-if(PACKAGE_DEPS)
-    cpack_add_component(deps
-                        DISPLAY_NAME "Daggy-deps"
-                        DESCRIPTION "Daggy deps"
-                        GROUP Daggy
-                        HIDDEN
-                        REQUIRED)
-endif()
-
 cpack_ifw_configure_component_group(Daggy
                                     FORCED_INSTALLATION REQUIRES_ADMIN_RIGHTS
                                     NAME Daggy

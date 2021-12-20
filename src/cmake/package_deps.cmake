@@ -1,7 +1,6 @@
 if(UNIX AND NOT APPLE)
     install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/daggy/
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/daggy
-            COMPONENT deps
             FILES_MATCHING
             PATTERN libQt6Network.so*
             PATTERN libQt6Core.so*
@@ -12,7 +11,6 @@ if(UNIX AND NOT APPLE)
 elseif(APPLE)
     install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/daggy/
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/daggy
-            COMPONENT deps
             FILES_MATCHING
             PATTERN libQt6Network*dylib
             PATTERN libQt6Core*dylib
@@ -26,8 +24,7 @@ else()
         execute_process(COMMAND powershell wget -UseBasicParsing -OutFile ${VC_REDIST} 'https://aka.ms/vs/16/release/vc_redist.x64.exe')
     endif()
     install(FILES ${VC_REDIST}
-            DESTINATION vcredist
-            COMPONENT deps)
+            DESTINATION vcredist)
     install(FILES
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Qt6Network.dll
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Qt6Core.dll
@@ -35,6 +32,5 @@ else()
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/yaml-cpp.dll
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libcrypto-1_1-x64.dll
             ${CMAKE_CURRENT_LIST_DIR}/daggyenv.bat
-            DESTINATION ${CMAKE_INSTALL_BINDIR}
-            COMPONENT deps)
+            DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
