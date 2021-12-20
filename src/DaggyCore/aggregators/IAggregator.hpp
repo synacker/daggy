@@ -23,7 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
-#include "daggycore_export.h"
+#include "../daggycore_export.h"
 #include <QObject>
 
 #include "../Sources.hpp"

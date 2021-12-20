@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "../Precompiled.hpp"
-#include "daggycore_export.h"
 #include "IProvider.hpp"
 
 daggy::providers::IProvider::IProvider(sources::Commands commands,

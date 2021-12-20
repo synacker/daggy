@@ -4,8 +4,6 @@ find_package(Qt6 COMPONENTS Core REQUIRED)
 
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME application)
 
-
-
 set(SOURCES ${SOURCES}
     main.cpp
     CConsoleDaggy.cpp

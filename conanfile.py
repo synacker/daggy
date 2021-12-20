@@ -34,20 +34,19 @@ class DaggyConan(ConanFile):
     options = {
         "ssh2_support": [True, False],
         "yaml_support": [True, False],
-        "daggy_console": [True, False],
+        "console": [True, False],
         "shared": [True, False],
         "fPIC": [True, False]
     }
     default_options = {
         "ssh2_support": True,
         "yaml_support": True,
-        "daggy_console": True,
+        "console": True,
         "shared": True,
         "fPIC": True
     }
     generators = "cmake", "cmake_paths", "cmake_find_package"
-    exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*"]
-    export_sources = ["src/*"]
+    exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*", "LICENSE", "README.md"]
 
     _cmake = None
 
@@ -62,7 +61,7 @@ class DaggyConan(ConanFile):
         self.options["yaml-cpp"].shared = self.options.shared
 
     def requirements(self):
-        self.requires("qt/6.2.1")
+        self.requires("qt/6.2.2")
         self.requires("kainjow-mustache/4.1")
 
         if self.options.yaml_support:
@@ -83,7 +82,8 @@ class DaggyConan(ConanFile):
         self._cmake = CMake(self)
         self._cmake.definitions["SSH2_SUPPORT"] = self.options.ssh2_support
         self._cmake.definitions["YAML_SUPPORT"] = self.options.yaml_support
-        self._cmake.definitions["DAGGY_CONSOLE"] = self.options.daggy_console
+        self._cmake.definitions["console"] = self.options.console
+        self._cmake.definitions["PACKAGE_DEPS"] = True
         self._cmake.definitions["VERSION"] = self.version
         self._cmake.definitions["CMAKE_INSTALL_LIBDIR"] = self._libdir()
         if self.options.shared:
