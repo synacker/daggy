@@ -3,10 +3,30 @@
 #include <DaggyCore/aggregators/CFile.hpp>
 #include <DaggyCore/aggregators/CConsole.hpp>
 
-int main() 
+#include <QCoreApplication>
+#include <QTimer>
+
+namespace {
+constexpr const char* yaml_data = R"YAML(
+aliases:
+    - &my_commands
+        ping1:
+            exec: ping 127.0.0.1
+            extension: log
+        ping2:
+            exec: ping 127.0.0.1
+            extension: log
+sources:
+    localhost:
+        type: local
+        commands: *my_commands
+)YAML";
+}
+
+int main(int argc, char** argv) 
 {
-    daggy::Sources sources;
-    daggy::Core core(std::move(sources));
+    QCoreApplication app(argc, argv);
+    daggy::Core core(*daggy::sources::convertors::yaml(yaml_data));
 
     daggy::aggregators::CFile file_aggregator("test");
     daggy::aggregators::CConsole console_aggregator("test");
@@ -14,5 +34,24 @@ int main()
     core.connectAggregator(&file_aggregator);
     core.connectAggregator(&console_aggregator);
 
-    return 0;
+    QObject::connect(&core, &daggy::Core::stateChanged, &core,
+    [&](DaggyStates state){
+        if(state == DaggyFinished)
+            app.quit();      
+    });
+
+    QTimer::singleShot(3000, &core, [&]()
+    {
+        core.stop();
+    });
+
+    QTimer::singleShot(5000, &core, [&]()
+    {
+        app.exit(-1);
+    });
+
+    core.prepare();
+    core.start();
+
+    return app.exec();
 }
