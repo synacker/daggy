@@ -52,10 +52,10 @@ std::error_code CConsoleDaggy::prepare()
     const auto settings = parse();
     Sources sources;
     switch (settings.data_source_text_type) {
-    case CConsoleDaggy::Json:
+    case Json:
         sources = std::move(*sources::convertors::json(settings.data_source_text));
         break;
-    case CConsoleDaggy::Yaml:
+    case Yaml:
         sources = std::move(*sources::convertors::yaml(settings.data_source_text));
         break;
     }
@@ -103,9 +103,9 @@ bool CConsoleDaggy::handleSystemSignal(const int signal)
     return false;
 }
 
-const QStringList& CConsoleDaggy::supportedConvertors() const
+const QVector<QString>& CConsoleDaggy::supportedConvertors() const
 {
-    static thread_local QStringList formats = {
+    static thread_local QVector<QString> formats = {
         "json",
 #ifdef YAML_SUPPORT
         "yaml"
@@ -114,9 +114,9 @@ const QStringList& CConsoleDaggy::supportedConvertors() const
     return formats;
 }
 
-CConsoleDaggy::TextType CConsoleDaggy::textFormatType(const QString& file_name) const
+DaggySourcesTextTypes CConsoleDaggy::textFormatType(const QString& file_name) const
 {
-    CConsoleDaggy::TextType result = Json;
+    DaggySourcesTextTypes result = Json;
     const QString& extension = QFileInfo(file_name).suffix();
     if (extension == "yml" || extension == "yaml")
         result = Yaml;

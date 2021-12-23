@@ -45,6 +45,11 @@ enum DaggyErrors {
     DaggyErrorProviderAlreadyFinished
 };
 
+struct DaggyError {
+    int error;
+    const char* category;
+};
+
 #ifdef __cplusplus
 }
 #endif

@@ -38,12 +38,12 @@ namespace sources {
 namespace commands {
 namespace streams {
 struct Meta {
-    std::chrono::time_point<std::chrono::steady_clock> start_time;
+    std::chrono::time_point<std::chrono::system_clock> start_time;
     QString extension;
     DaggyStreamTypes type;
 
     std::uint64_t seq_num;
-    std::chrono::time_point<std::chrono::steady_clock> time;
+    std::chrono::time_point<std::chrono::system_clock> time;
 };
 }
 

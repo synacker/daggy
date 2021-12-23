@@ -4,8 +4,11 @@ find_package(Qt6 COMPONENTS Core Network REQUIRED)
 
 set(INCLUDE_BASE_HEADERS
     Core.hpp
+    Core.h
     Result.hpp
     Sources.hpp
+    Errors.h
+    Errors.hpp
     Types.h
     Types.hpp
     daggycore_export.h
@@ -24,6 +27,7 @@ set(INCLUDE_AGGREGATORS_HEADERS
 
 set(SOURCES ${SOURCES}
     Core.cpp
+    core_ansi_c.cpp
     Sources.cpp
     Errors.cpp
     providers/IProvider.cpp
@@ -33,6 +37,7 @@ set(SOURCES ${SOURCES}
     aggregators/IAggregator.cpp
     aggregators/CFile.cpp
     aggregators/CConsole.cpp
+    aggregators/CCallback.cpp
 )
 
 set(LINK_LIBRARIES

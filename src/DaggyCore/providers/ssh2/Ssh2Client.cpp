@@ -253,7 +253,7 @@ void Ssh2Client::addChannel(Ssh2Channel* channel)
     disconnect(channel);
     emit channelsCountChanged(channelsCount());
     connect(channel, &Ssh2Channel::channelStateChanged, this, &Ssh2Client::onChannelStateChanged);
-    connect(channel, &Ssh2Channel::destroyed, [this](QObject*){
+    connect(channel, &Ssh2Channel::destroyed, channel, [this](QObject*){
         emit channelsCountChanged(channelsCount());
     });
 }

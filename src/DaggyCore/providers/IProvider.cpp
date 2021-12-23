@@ -91,10 +91,10 @@ daggy::sources::commands::streams::Meta daggy::providers::IProvider::metaStream(
         {
             auto& meta = streams_meta_[meta_stream_id];
             meta.seq_num++;
-            meta.time = std::chrono::steady_clock::now();
+            meta.time = std::chrono::system_clock::now();
         } else
         {
-            const auto now = std::chrono::steady_clock::now();
+            const auto now = std::chrono::system_clock::now();
             streams_meta_.insert(meta_stream_id, {now,  properties.extension, type, 0, now});
         }
         result = streams_meta_[meta_stream_id];
