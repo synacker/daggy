@@ -30,6 +30,24 @@ SOFTWARE.
 
 namespace {
 
+class ThreadFunction : public QRunnable
+{
+public:
+    ThreadFunction(libdaggy_thread_function function,
+                   void* parameter)
+        : function_(function)
+        , parameter_(parameter)
+    {}
+
+    void run() override {
+        function_(parameter_);
+    }
+
+private:
+    libdaggy_thread_function function_;
+    void* parameter_;
+};
+
 std::unique_ptr<QCoreApplication> application = nullptr;
 
 DaggyErrors safe_call(std::function<DaggyErrors ()> function)
@@ -158,4 +176,9 @@ void libdaggy_app_stop()
 {
     if (application)
         application->quit();
+}
+
+void libdaggy_run_in_thread(libdaggy_thread_function function, void* parameter)
+{
+    QThreadPool::globalInstance()->start(new ThreadFunction(function, parameter));
 }

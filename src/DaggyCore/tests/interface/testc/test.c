@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <pthread.h>
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -28,11 +27,11 @@ const char* json_data =
 }"
 ;
 
-void* quit_after_time(void* seconds)
+int quit_after_time(void* seconds)
 {
     sleep(*(unsigned int*)(seconds));
     libdaggy_app_stop();
-    return NULL;
+    return 0;
 }
 
 void on_daggy_state_changed(DaggyCore core, DaggyStates state);
@@ -57,9 +56,8 @@ int main(int argc, char** argv)
                                 on_command_stream,
                                 on_command_error);
     libdaggy_core_start(core);
-    pthread_t thread;
     unsigned int time = 5;
-    pthread_create(&thread, NULL, quit_after_time, &time);
+    libdaggy_run_in_thread(quit_after_time, &time);
     return libdaggy_app_exec();
 }
 

@@ -93,6 +93,8 @@ struct {
 
 typedef void* DaggyCore;
 
+typedef int (*libdaggy_thread_function)(void*);
+
 typedef void (*libdaggy_on_daggy_state_changed)(DaggyCore, DaggyStates);
 
 typedef void (*libdaggy_on_provider_state_changed)(DaggyCore, const char*, DaggyProviderStates);

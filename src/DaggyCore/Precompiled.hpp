@@ -38,6 +38,7 @@ SOFTWARE.
 #include <QCoreApplication>
 #include <QMetaType>
 #include <QMetaEnum>
+#include <QThreadPool>
 
 #include <QDebug>
 
