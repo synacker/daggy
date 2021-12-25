@@ -26,6 +26,7 @@ SOFTWARE.
 #include <memory>
 #include <unordered_map>
 #include <span>
+#include <system_error>
 
 #include <QMap>
 #include <QObject>
@@ -49,7 +50,7 @@ class DAGGYCORE_EXPORT Core : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(DaggyStates state READ state NOTIFY stateChanged)
-    Q_PROPERTY(Sources sources READ sources)
+    Q_PROPERTY(Sources sources READ sources CONSTANT)
 public:
     Core(Sources sources,
          QObject* parent = nullptr);
