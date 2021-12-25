@@ -153,7 +153,7 @@ int libdaggy_app_exec()
         application.reset(nullptr);
         return result;
     }
-    return std::numeric_limits<int>::min();
+    return std::numeric_limits<int>().min();
 }
 void libdaggy_app_stop()
 {
