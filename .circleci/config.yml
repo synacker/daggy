@@ -93,7 +93,7 @@ jobs:
                                           - ~/build
                         - run:
                                   name: Conan install
-                                  command: conan install ../daggy --build=missing -s os_version=10.1.18362.1
+                                  command: conan install ../daggy --build=missing -o circleci=True
                         - save_cache:
                                   key: conan-data-qt6.2.2-{{ arch }}
                                   paths:

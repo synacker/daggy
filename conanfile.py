@@ -30,20 +30,22 @@ class DaggyConan(ConanFile):
     license = "MIT"
     url = "https://daggy.dev"
     description = "Data Aggregation Utilty - aggregation and stream data via remote and local processes."
-    settings = "os", "os_version", "compiler", "build_type", "arch"
+    settings = "os", "compiler", "build_type", "arch"
     options = {
         "ssh2_support": [True, False],
         "yaml_support": [True, False],
         "console": [True, False],
         "shared": [True, False],
-        "fPIC": [True, False]
+        "fPIC": [True, False],
+        "circleci": [True, False]
     }
     default_options = {
         "ssh2_support": True,
         "yaml_support": True,
         "console": True,
         "shared": True,
-        "fPIC": True
+        "fPIC": True,
+        "circleci": False
     }
     generators = "cmake", "cmake_paths", "cmake_find_package"
     exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*", "LICENSE", "README.md"]
@@ -57,8 +59,11 @@ class DaggyConan(ConanFile):
         self.options.fPIC = self.options.shared
         self.options["qt"].shared = self.options.shared
         self.options["openssl"].shared = self.options.shared
-        self.options["libssh2"].shared = self.options.shared
-        self.options["yaml-cpp"].shared = self.options.shared
+        
+        if self.options.ssh2_support:
+            self.options["libssh2"].shared = self.options.shared
+        if self.options.yaml_support:
+            self.options["yaml-cpp"].shared = self.options.shared
 
     def requirements(self):
         self.requires("qt/6.2.2")
@@ -80,6 +85,10 @@ class DaggyConan(ConanFile):
         if self._cmake:
             return self._cmake
         self._cmake = CMake(self)
+        if self.settings.build_os == "Windows":
+            if self.options.circleci:
+                self._cmake.definitions["CMAKE_SYSTEM_VERSION"] = "10.1.18362.1"
+        
         self._cmake.definitions["SSH2_SUPPORT"] = self.options.ssh2_support
         self._cmake.definitions["YAML_SUPPORT"] = self.options.yaml_support
         self._cmake.definitions["console"] = self.options.console
