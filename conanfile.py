@@ -30,7 +30,7 @@ class DaggyConan(ConanFile):
     license = "MIT"
     url = "https://daggy.dev"
     description = "Data Aggregation Utilty - aggregation and stream data via remote and local processes."
-    settings = "os", "compiler", "build_type", "arch"
+    settings = "os", "os_version", "compiler", "build_type", "arch"
     options = {
         "ssh2_support": [True, False],
         "yaml_support": [True, False],
