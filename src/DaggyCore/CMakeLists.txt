@@ -25,6 +25,12 @@ set(INCLUDE_AGGREGATORS_HEADERS
     aggregators/CConsole.hpp
 )
 
+set(HEADERS
+    ${INCLUDE_BASE_HEADERS}
+    ${INCLUDE_PROVIDERS_HEADERS}
+    ${INCLUDE_AGGREGATORS_HEADERS}
+)
+
 set(SOURCES ${SOURCES}
     Core.cpp
     core_ansi_c.cpp
@@ -46,6 +52,7 @@ set(LINK_LIBRARIES
 
 add_subdirectory(tests/local)
 add_subdirectory(tests/pingpong)
+add_subdirectory(tests/interface)
 
 if (SSH2_SUPPORT)
     if(CONAN_BUILD)
@@ -75,7 +82,7 @@ endif()
 ADD_BINARY_META(LIB)
 SET_RPATH(LIB)
 
-add_library(${TARGET} ${SOURCES})
+add_library(${TARGET} ${SOURCES} ${HEADERS})
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
 include(GenerateExportHeader)

@@ -48,6 +48,10 @@ DAGGYCORE_EXPORT DaggyErrors libdaggy_connect_aggregator(DaggyCore core,
                                                          libdaggy_on_command_stream on_command_stream,
                                                          libdaggy_on_command_error on_command_error);
 
+
+DAGGYCORE_EXPORT void libdaggy_app_create(int argc, char** argv);
+DAGGYCORE_EXPORT int libdaggy_app_exec();
+DAGGYCORE_EXPORT void libdaggy_app_stop();
 #ifdef __cplusplus
 }
 #endif

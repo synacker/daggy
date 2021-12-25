@@ -30,18 +30,7 @@ SOFTWARE.
 
 namespace {
 
-class Application : public QRunnable
-{
-public:
-    void run() override {
-        int argc = 1;
-        const char* app_name = "ansi_c_app";
-        QCoreApplication app(argc, const_cast<char**>(&app_name));
-        app.exec();
-    }
-};
-
-static std::uint64_t cores_count = 0;
+std::unique_ptr<QCoreApplication> application = nullptr;
 
 DaggyErrors safe_call(std::function<DaggyErrors ()> function)
 try {
@@ -67,6 +56,9 @@ DaggyErrors libdaggy_core_create(const char* sources,
 {
     return safe_call([=]()
     {
+        if (!application)
+            return DaggyErrorInternal;
+
         daggy::Sources parsed_sources;
         switch (text_type) {
         case Json:
@@ -77,12 +69,14 @@ DaggyErrors libdaggy_core_create(const char* sources,
             break;
 
         };
-
-        if (cores_count == 0) {
-            QThreadPool::globalInstance()->start(new Application);
+        auto core_object = new daggy::Core(std::move(parsed_sources));
+        QObject::connect(application.get(), &QCoreApplication::aboutToQuit, core_object, &daggy::Core::stop);
+        auto error = core_object->prepare();
+        if (error)
+        {
+            throw std::system_error(std::move(error));
         }
-        cores_count++;
-        *core = new daggy::Core(std::move(parsed_sources));
+        *core = core_object;
         return DaggyErrorSuccess;
     });
 }
@@ -116,9 +110,6 @@ void libdaggy_core_destroy(DaggyCore* core)
 {
     safe_call([=]()
     {
-        cores_count--;
-        if (cores_count == 0)
-            qApp->exit();
         auto core_object = static_cast<daggy::Core*>(*core);
         delete core_object;
         *core = nullptr;
@@ -143,6 +134,29 @@ DaggyErrors libdaggy_connect_aggregator(DaggyCore core,
                                                                      on_command_stream,
                                                                      on_command_error,
                                                                      core_object);
+        core_object->connectAggregator(callback_aggregator);
         return DaggyErrorSuccess;
     });
+}
+
+void libdaggy_app_create(int argc, char** argv)
+{
+    if (!application)
+        application = std::make_unique<QCoreApplication>(argc, argv);
+}
+
+int libdaggy_app_exec()
+{
+    if (application)
+    {
+        auto result = application->exec();
+        application.reset(nullptr);
+        return result;
+    }
+    return std::numeric_limits<int>::min();
+}
+void libdaggy_app_stop()
+{
+    if (application)
+        application->quit();
 }

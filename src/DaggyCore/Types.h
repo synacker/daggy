@@ -32,40 +32,40 @@ SOFTWARE.
 extern "C" {
 #endif
 
-enum DaggyProviderStates {
+typedef enum {
     DaggyProviderNotStarted,
     DaggyProviderStarting,
     DaggyProviderFailedToStart,
     DaggyProviderStarted,
     DaggyProviderFinishing,
     DaggyProviderFinished
-};
+} DaggyProviderStates;
 
-enum DaggyCommandStates {
+typedef enum {
     DaggyCommandNotStarted,
     DaggyCommandStarting,
     DaggyCommandStarted,
     DaggyCommandFailedToStart,
     DaggyCommandFinishing,
     DaggyCommandFinished
-};
+} DaggyCommandStates ;
 
-enum DaggyStreamTypes {
+typedef enum {
     DaggyStreamStandard,
     DaggyStreamError
-};
+} DaggyStreamTypes;
 
-enum DaggyStates {
+typedef enum {
     DaggyNotStarted,
     DaggyStarted,
     DaggyFinishing,
     DaggyFinished
-};
+} DaggyStates;
 
-enum DaggySourcesTextTypes {
+typedef enum {
     Json,
     Yaml
-};
+} DaggySourcesTextTypes;
 
 struct {
     time_t start_time;
@@ -82,10 +82,10 @@ struct {
 
 struct {
     const char* full;
-    const std::uint16_t major;
-    const std::uint16_t minor;
-    const std::uint16_t patch;
-    const std::uint16_t build;
+    const uint16_t major;
+    const uint16_t minor;
+    const uint16_t patch;
+    const uint16_t build;
     const char* postfix;
     const char* vendor;
     const char* commit;
