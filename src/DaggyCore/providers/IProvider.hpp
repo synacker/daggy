@@ -34,7 +34,7 @@ class DAGGYCORE_EXPORT IProvider : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(DaggyProviderStates state READ state NOTIFY stateChanged)
-    Q_PROPERTY(sources::Commands commands READ commands)
+    Q_PROPERTY(sources::Commands commands READ commands CONSTANT)
 public:
     IProvider(sources::Commands commands,
               QObject* parent = nullptr);

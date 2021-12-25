@@ -2,7 +2,7 @@
 version: 2.1
 # Use a package of configuration called an orb.
 orbs:
-        win: circleci/windows@2.4.0
+        win: circleci/windows@2.4.1
 jobs:
         gcc-10_x64:
                 docker:
@@ -78,9 +78,6 @@ jobs:
                         - run:
                                   name: Install or update conan
                                   command: pip install conan --upgrade
-                        - run:
-                                  name: Add conan remote
-                                  command: $(conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan) -or $(true)
                         - restore_cache:
                                   key: build_dir-{{arch}}
                         - run:
@@ -96,7 +93,7 @@ jobs:
                                           - ~/build
                         - run:
                                   name: Conan install
-                                  command: conan install ../daggy --build=missing
+                                  command: conan install ../daggy --build=missing -o circleci=True
                         - save_cache:
                                   key: conan-data-qt6.2.2-{{ arch }}
                                   paths:

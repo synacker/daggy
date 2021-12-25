@@ -27,7 +27,7 @@ SOFTWARE.
 extern "C" {
 #endif
 
-enum DaggyErrors {
+typedef enum {
     DaggyErrorSuccess,
     DaggyErrorAlreadyStarted,
     DaggyErrorAlreadyFinished,
@@ -43,7 +43,12 @@ enum DaggyErrors {
     DaggyErrorProviderFailedToStop,
     DaggyErrorProviderAlreadyStarted,
     DaggyErrorProviderAlreadyFinished
-};
+} DaggyErrors;
+
+typedef struct  {
+    int error;
+    const char* category;
+} DaggyError;
 
 #ifdef __cplusplus
 }

@@ -58,18 +58,13 @@ private slots:
     void onDaggyCoreStateChanged(DaggyStates state);
 
 private:
-    enum TextType {
-        Json,
-        Yaml
-    };
-
     bool handleSystemSignal(const int signal);
 
-    const QStringList& supportedConvertors() const;
-    TextType textFormatType(const QString& file_name) const;
+    const QVector<QString>& supportedConvertors() const;
+    DaggySourcesTextTypes textFormatType(const QString& file_name) const;
 
     struct Settings {
-        TextType data_source_text_type;
+        DaggySourcesTextTypes data_source_text_type;
         QString data_source_text;
         QString output_folder;
         QString data_sources_name;

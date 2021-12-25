@@ -23,50 +23,86 @@ SOFTWARE.
 */
 #pragma once
 
+#include <time.h>
+#include <stdint.h>
+
+#include "Errors.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-enum DaggyProviderStates {
+typedef enum {
     DaggyProviderNotStarted,
     DaggyProviderStarting,
     DaggyProviderFailedToStart,
     DaggyProviderStarted,
     DaggyProviderFinishing,
     DaggyProviderFinished
-};
+} DaggyProviderStates;
 
-enum DaggyCommandStates {
+typedef enum {
     DaggyCommandNotStarted,
     DaggyCommandStarting,
     DaggyCommandStarted,
     DaggyCommandFailedToStart,
     DaggyCommandFinishing,
     DaggyCommandFinished
-};
+} DaggyCommandStates ;
 
-enum DaggyStreamTypes {
+typedef enum {
     DaggyStreamStandard,
     DaggyStreamError
-};
+} DaggyStreamTypes;
 
-enum DaggyStates {
+typedef enum {
     DaggyNotStarted,
     DaggyStarted,
     DaggyFinishing,
     DaggyFinished
-};
+} DaggyStates;
+
+typedef enum {
+    Json,
+    Yaml
+} DaggySourcesTextTypes;
+
+struct {
+    time_t start_time;
+    const char* extension;
+    DaggyStreamTypes type;
+
+    uint64_t seq_num;
+    time_t time;
+
+    const uint8_t* data;
+    int64_t size;
+
+} typedef DaggyStream;
 
 struct {
     const char* full;
-    const std::uint16_t major;
-    const std::uint16_t minor;
-    const std::uint16_t patch;
-    const std::uint16_t build;
+    const uint16_t major;
+    const uint16_t minor;
+    const uint16_t patch;
+    const uint16_t build;
     const char* postfix;
     const char* vendor;
     const char* commit;
 } typedef DaggyVersion;
+
+typedef void* DaggyCore;
+
+typedef int (*libdaggy_thread_function)(void*);
+
+typedef void (*libdaggy_on_daggy_state_changed)(DaggyCore, DaggyStates);
+
+typedef void (*libdaggy_on_provider_state_changed)(DaggyCore, const char*, DaggyProviderStates);
+typedef void (*libdaggy_on_provider_error)(DaggyCore, const char*, DaggyError);
+
+typedef void (*libdaggy_on_command_state_changed)(DaggyCore, const char*, const char*, DaggyCommandStates, int);
+typedef void (*libdaggy_on_command_stream)(DaggyCore, const char*, const char*, DaggyStream);
+typedef void (*libdaggy_on_command_error)(DaggyCore, const char*, const char*, DaggyError);
 
 #ifdef __cplusplus
 }

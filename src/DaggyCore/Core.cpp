@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include "Precompiled.hpp"
 #include "Core.hpp"
+#include "Core.h"
 
 #include "providers/IProvider.hpp"
 #include "providers/CLocalFabric.hpp"

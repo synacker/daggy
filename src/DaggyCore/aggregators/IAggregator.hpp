@@ -25,6 +25,7 @@ SOFTWARE.
 
 #include "../daggycore_export.h"
 #include <QObject>
+#include <system_error>
 
 #include "../Sources.hpp"
 

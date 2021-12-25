@@ -22,4 +22,5 @@ class DaggyTestConan(ConanFile):
     def test(self):
         if not tools.cross_building(self):
             os.chdir("bin")
-            self.run(".%stest" % os.sep)
+            self.run(".%stestcpp" % os.sep)
+            self.run(".%stestc" % os.sep)
