@@ -2,7 +2,7 @@
 version: 2.1
 # Use a package of configuration called an orb.
 orbs:
-        win: circleci/windows@2.4.0
+        win: circleci/windows@2.4.1
 jobs:
         gcc-10_x64:
                 docker:
