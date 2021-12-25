@@ -27,9 +27,23 @@ const char* json_data =
 }"
 ;
 
-int quit_after_time(void* seconds)
+void sleep_ms(int milliseconds)
 {
-    sleep(*(unsigned int*)(seconds));
+    #ifdef WIN32
+        Sleep(milliseconds);
+    #elif _POSIX_C_SOURCE >= 199309L
+        struct timespec ts;
+        ts.tv_sec = milliseconds / 1000;
+        ts.tv_nsec = (milliseconds % 1000) * 1000000;
+        nanosleep(&ts, NULL);
+    #else
+        usleep(milliseconds * 1000);
+    #endif
+}
+
+int quit_after_time(void* msec)
+{
+    sleep_ms(*(int*)(msec));
     libdaggy_app_stop();
     return 0;
 }
@@ -56,7 +70,7 @@ int main(int argc, char** argv)
                                 on_command_stream,
                                 on_command_error);
     libdaggy_core_start(core);
-    unsigned int time = 5;
+    int time = 5000;
     libdaggy_run_in_thread(quit_after_time, &time);
     return libdaggy_app_exec();
 }
