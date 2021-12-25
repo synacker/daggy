@@ -79,6 +79,10 @@ if(YAML_SUPPORT)
     set(LINK_LIBRARIES ${LINK_LIBRARIES} yaml-cpp)
 endif()
 
+if(WIN32)
+    add_definitions(-DNOMINMAX)
+endif()
+
 ADD_BINARY_META(LIB)
 SET_RPATH(LIB)
 
