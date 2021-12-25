@@ -85,7 +85,7 @@ class DaggyConan(ConanFile):
         if self._cmake:
             return self._cmake
         self._cmake = CMake(self)
-        if self.settings.build_os == "Windows":
+        if self.settings.os == "Windows":
             if self.options.circleci:
                 self._cmake.definitions["CMAKE_SYSTEM_VERSION"] = "10.1.18362.1"
         
