@@ -162,6 +162,10 @@ void libdaggy_app_create(int argc, char** argv)
     if (!application)
         application = std::make_unique<QCoreApplication>(argc, argv);
 }
+
+#ifdef _WIN32
+#define NOMINMAX
+#endif
 int libdaggy_app_exec()
 {
     if (application)
