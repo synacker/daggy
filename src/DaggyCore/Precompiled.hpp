@@ -42,6 +42,7 @@ SOFTWARE.
 #include <QDebug>
 
 #include <atomic>
+#include <limits>
 
 #ifdef SSH2_SUPPORT
 #include <libssh2.h>
