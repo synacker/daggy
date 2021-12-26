@@ -101,7 +101,8 @@ const QString& daggy::providers::CSsh2Fabric::type() const
     return CSsh2::provider_type;
 }
 
-daggy::Result<daggy::providers::IProvider*> daggy::providers::CSsh2Fabric::createProvider(const Source& source,
+daggy::Result<daggy::providers::IProvider*> daggy::providers::CSsh2Fabric::createProvider(const QString& session,
+                                                                                          const Source& source,
                                                                                           QObject* parent)
 {
     const auto parameters = convert(source.second.parameters);
@@ -119,7 +120,8 @@ daggy::Result<daggy::providers::IProvider*> daggy::providers::CSsh2Fabric::creat
     else
         host = QHostAddress(properties.host);
 
-    return new CSsh2(std::move(host),
+    return new CSsh2(session,
+                     std::move(host),
                      std::move(*parameters),
                      properties.commands,
                      parent);

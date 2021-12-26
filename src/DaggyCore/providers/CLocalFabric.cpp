@@ -37,7 +37,7 @@ const QString& daggy::providers::CLocalFabric::type() const
     return CLocal::provider_type;
 }
 
-daggy::Result<daggy::providers::IProvider*> daggy::providers::CLocalFabric::createProvider(const Source& source, QObject* parent)
+daggy::Result<daggy::providers::IProvider*> daggy::providers::CLocalFabric::createProvider(const QString& session, const Source& source, QObject* parent)
 {
-    return new CLocal(source.second.commands, parent);
+    return new CLocal(session, source.second.commands, parent);
 }

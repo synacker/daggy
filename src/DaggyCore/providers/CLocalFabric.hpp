@@ -36,7 +36,7 @@ public:
     const QString& type() const override;
 
 protected:
-    Result<IProvider*> createProvider(const Source& source, QObject* parent) override;
+    Result<IProvider*> createProvider(const QString& session, const Source& source, QObject* parent) override;
 };
 
 }

@@ -44,11 +44,12 @@ const QString daggy::providers::CSsh2::provider_type("ssh2");
 
 using namespace qtssh2;
 
-daggy::providers::CSsh2::CSsh2(QHostAddress host,
+daggy::providers::CSsh2::CSsh2(const QString& session,
+                               QHostAddress host,
                                const Ssh2Settings& ssh2_settings,
                                sources::Commands commands,
                                QObject* parent)
-    : IProvider(std::move(commands), parent)
+    : IProvider(session, std::move(commands), parent)
     , host_(std::move(host))
     , port_(ssh2_settings.port)
     , ssh2_client_(new Ssh2Client(ssh2_settings, this))
@@ -58,10 +59,11 @@ daggy::providers::CSsh2::CSsh2(QHostAddress host,
     connect(ssh2_client_, &Ssh2Client::ssh2Error, this, &CSsh2::error);
 }
 
-daggy::providers::CSsh2::CSsh2(QHostAddress host,
+daggy::providers::CSsh2::CSsh2(const QString& session,
+                               QHostAddress host,
                                sources::Commands commands,
                                QObject* parent)
-    : CSsh2(std::move(host), Ssh2Settings(), std::move(commands), parent)
+    : CSsh2(session, std::move(host), Ssh2Settings(), std::move(commands), parent)
 {
 
 }

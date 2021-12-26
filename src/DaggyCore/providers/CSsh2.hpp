@@ -38,11 +38,13 @@ class CSsh2 : public IProvider
 {
     Q_OBJECT
 public:
-    CSsh2(QHostAddress host,
+    CSsh2(const QString& session,
+          QHostAddress host,
           const qtssh2::Ssh2Settings& ssh2_settings,
           sources::Commands commands,
           QObject *parent = nullptr);
-    CSsh2(QHostAddress host,
+    CSsh2(const QString& session,
+          QHostAddress host,
           sources::Commands commands,
           QObject *parent = nullptr);
     ~CSsh2();

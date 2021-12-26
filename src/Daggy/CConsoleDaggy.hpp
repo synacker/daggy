@@ -78,8 +78,6 @@ private:
     QString getTextFromFile(QString file_path) const;
     QString homeFolder() const;
 
-    QString generateOutputFolder(const QString& data_sources_name) const;
-
     QString mustache(const QString& text, const QString& output_folder) const;
 
     QThread file_thread_;

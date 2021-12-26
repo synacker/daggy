@@ -36,6 +36,7 @@ class DAGGYCORE_EXPORT CFile : public IAggregator
 public:
     CFile(QString output_folder,
           QObject* parent = nullptr);
+    CFile(QObject* parent = nullptr);
     ~CFile();
 
     bool isReady() const override;
@@ -55,7 +56,8 @@ private slots:
     void write();
 
 private:
-    QString name(const QString& provider_id,
+    QString name(const QString& session,
+                 const QString& provider_id,
                  const QString& command_id,
                  DaggyStreamTypes type,
                  const QString& extension) const;

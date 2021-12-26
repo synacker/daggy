@@ -48,6 +48,7 @@ public:
         case DaggyErrorProviderFailedToStop: return "Provider failed to stop";
         case DaggyErrorProviderAlreadyStarted: return "Provider already started";
         case DaggyErrorProviderAlreadyFinished: return "Provider already finished";
+        case DaggyErrorStreamCorrupted: return "Stream corrupted";
         case DaggyErrorAlreadyStarted: return "Daggy already started";
         case DaggyErrorAlreadyFinished: return "Daggy already finished";
         case DaggyErrorInternal: return "Daggy internal error";

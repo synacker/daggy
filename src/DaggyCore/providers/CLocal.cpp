@@ -27,9 +27,9 @@ SOFTWARE.
 
 const QString daggy::providers::CLocal::provider_type("local");
 
-daggy::providers::CLocal::CLocal(sources::Commands commands,
+daggy::providers::CLocal::CLocal(const QString& session, sources::Commands commands,
                                  QObject* parent)
-    : IProvider(std::move(commands), parent)
+    : IProvider(session, std::move(commands), parent)
 {
 
 }

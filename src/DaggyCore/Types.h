@@ -68,6 +68,7 @@ typedef enum {
 } DaggySourcesTextTypes;
 
 struct {
+    const char* session;
     time_t start_time;
     const char* extension;
     DaggyStreamTypes type;
@@ -82,10 +83,10 @@ struct {
 
 struct {
     const char* full;
-    const uint16_t major;
-    const uint16_t minor;
-    const uint16_t patch;
-    const uint16_t build;
+    uint16_t major;
+    uint16_t minor;
+    uint16_t patch;
+    uint16_t build;
     const char* postfix;
     const char* vendor;
     const char* commit;

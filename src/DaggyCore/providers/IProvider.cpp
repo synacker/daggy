@@ -24,9 +24,11 @@ SOFTWARE.
 #include "../Precompiled.hpp"
 #include "IProvider.hpp"
 
-daggy::providers::IProvider::IProvider(sources::Commands commands,
+daggy::providers::IProvider::IProvider(const QString& session,
+                                       sources::Commands commands,
                                        QObject* parent)
     : QObject(parent)
+    , session_(session)
     , commands_(std::move(commands))
     , state_(DaggyProviderNotStarted)
 {
@@ -95,7 +97,7 @@ daggy::sources::commands::streams::Meta daggy::providers::IProvider::metaStream(
         } else
         {
             const auto now = std::chrono::system_clock::now();
-            streams_meta_.insert(meta_stream_id, {now,  properties.extension, type, 0, now});
+            streams_meta_.insert(meta_stream_id, {session_, now,  properties.extension, type, 0, now});
         }
         result = streams_meta_[meta_stream_id];
     }

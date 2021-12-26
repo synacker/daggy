@@ -38,6 +38,7 @@ namespace sources {
 namespace commands {
 namespace streams {
 struct Meta {
+    QString session;
     std::chrono::time_point<std::chrono::system_clock> start_time;
     QString extension;
     DaggyStreamTypes type;

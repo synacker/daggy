@@ -37,7 +37,7 @@ daggy::providers::IFabric::~IFabric()
 
 }
 
-daggy::Result<daggy::providers::IProvider*> daggy::providers::IFabric::create(const Source& source, QObject* parent)
+daggy::Result<daggy::providers::IProvider*> daggy::providers::IFabric::create(const QString& session, const Source& source, QObject* parent)
 {
     const auto& properties = source.second;
     if (properties.type != type()) {
@@ -47,5 +47,5 @@ daggy::Result<daggy::providers::IProvider*> daggy::providers::IFabric::create(co
             QString("Source %1 has incorrect provider type %2 - type %3 is required").arg(source.first, properties.type, type())
         };
     }
-    return createProvider(source, parent);
+    return createProvider(session, source, parent);
 }

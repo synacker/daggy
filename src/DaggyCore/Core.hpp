@@ -51,14 +51,20 @@ class DAGGYCORE_EXPORT Core : public QObject
     Q_OBJECT
     Q_PROPERTY(DaggyStates state READ state NOTIFY stateChanged)
     Q_PROPERTY(Sources sources READ sources CONSTANT)
+    Q_PROPERTY(DaggyVersion version READ version CONSTANT)
+    Q_PROPERTY(QString session READ session CONSTANT)
 public:
     Core(Sources sources,
+         QObject* parent = nullptr);
+    Core(QString session,
+         Sources sources,
          QObject* parent = nullptr);
     ~Core();
 
     DaggyVersion version() const noexcept;
 
-    const Sources& sources() const;
+    const Sources& sources() const noexcept;
+    const QString& session() const noexcept;
 
     std::error_code start() noexcept;
     std::error_code stop() noexcept;
@@ -117,6 +123,7 @@ private:
 
     void deleteAllProviders();
 
+    const QString session_;
     Sources sources_;
     DaggyStates state_;
 };
