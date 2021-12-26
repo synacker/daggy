@@ -60,14 +60,16 @@ std::error_code CConsoleDaggy::prepare()
         break;
     }
 
-    daggy_core_ = new Core(std::move(sources), this);
+    const QString& session = QDateTime::currentDateTime().toString("dd-MM-yy_hh-mm-ss-zzz") + "_" + settings.data_sources_name;
+
+    daggy_core_ = new Core(session, std::move(sources), this);
 
     connect(daggy_core_, &Core::stateChanged, this, &CConsoleDaggy::onDaggyCoreStateChanged);
 
     auto file_aggregator = new aggregators::CFile(settings.output_folder);
     file_aggregator->moveToThread(&file_thread_);
     connect(this, &CConsoleDaggy::destroyed, file_aggregator, &aggregators::CFile::deleteLater);
-    auto console_aggregator = new aggregators::CConsole(settings.output_folder, daggy_core_);
+    auto console_aggregator = new aggregators::CConsole(session, daggy_core_);
 
     daggy_core_->connectAggregator(file_aggregator);
     daggy_core_->connectAggregator(console_aggregator);
@@ -202,7 +204,7 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     }
 
     if (result.output_folder.isEmpty())
-        result.output_folder = generateOutputFolder(result.data_sources_name);
+        result.output_folder = QDir::currentPath();
     result.data_source_text = mustache(result.data_source_text, result.output_folder);
 
     return result;
@@ -243,12 +245,6 @@ QString CConsoleDaggy::getTextFromFile(QString file_path) const
 QString CConsoleDaggy::homeFolder() const
 {
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-}
-
-QString CConsoleDaggy::generateOutputFolder(const QString& data_sources_name) const
-{
-    const QString current_date = QDateTime::currentDateTime().toString("dd-MM-yy_hh-mm-ss-zzz");
-    return current_date + "_" + data_sources_name;
 }
 
 QString CConsoleDaggy::mustache(const QString& text, const QString& output_folder) const
