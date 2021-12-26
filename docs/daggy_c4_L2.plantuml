@@ -1,0 +1,43 @@
+@startuml C4_Elements
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+AddElementTag("user_defined", $borderColor="red", $shape=RoundedBoxShape(), $legendText="user defined, extendable entities")
+AddRelTag("qtsignals", $lineColor="green", $lineStyle = DashedLine(), $legendText="Qt Core Signals. Stream structured sequential parts")
+
+Person(aggregator, "Streams Aggregator", "Save and storage streams")
+Person(viewer, "Streams Viewer", "View of streams")
+
+System_Ext(system_local_environment, "Local environment", "Sources of local data")
+System_Ext(system_remote_environment, "Remote environment", "Sources of remote data")
+System_Ext(system_user_defined_environment, "Environment", "Sources of user data", $tags="user_defined")
+System(system_daggy, "Daggy Software", "Streams generation")
+
+System_Boundary(system_daggy, "Daggy Software"){
+    Container(provider_local, "Local Sources Provider", "Qt Core Processes")
+    Container(provider_ssh2, "Ssh2 Sources Provider", "ssh2 channels")
+    Container(provider_user, "Sources Provider", "user commands", $tags="user_defined")
+    Container(core, "Core", "C11 or Qt C++20 Interface")
+    Container(aggregator_file, "File Aggregator", "Qt C++20 Object")
+    Container(aggregator_console, "Console Aggregator", "Qt C++20 Object")
+    Container(aggregator_user, "Aggregator", "Qt C++20 Object", $tags="user_defined")
+}
+
+Rel(system_local_environment, provider_local, "Data", "process channels")
+Rel(system_remote_environment, provider_ssh2, "Data", "ssh2")
+Rel(system_user_defined_environment, provider_user, "Data", "user protocol")
+
+Rel(provider_local, core, "Local Streams", "", $tags="qtsignals")
+Rel(provider_ssh2, core, "Remote Streams", "", $tags="qtsignals")
+Rel(provider_user, core, "User Streams", "", $tags="qtsignals")
+
+Rel(core, aggregator_file, "All Streams", "", $tags="qtsignals")
+Rel(core, aggregator_console, "All Streams", "", $tags="qtsignals")
+Rel(core, aggregator_user, "All Streams", "", $tags="qtsignals")
+
+Rel(aggregator_file, aggregator, "Streams", "files")
+Rel(aggregator_console, aggregator, "Streams", "console output")
+Rel(aggregator_user, aggregator, "Streams", "user artefact")
+Rel_R(core, viewer, "All Streams", "", $tags="qtsignals")
+
+SHOW_LEGEND()
+@enduml
