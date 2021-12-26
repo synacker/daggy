@@ -94,7 +94,8 @@ void daggy::aggregators::CCallback::onCommandStream(QString provider_id, QString
     if (on_command_stream_)
     {
         auto core = sender();
-        on_command_stream_(core, qPrintable(provider_id), qPrintable(command_id), {std::chrono::system_clock::to_time_t(stream.meta.start_time),
+        on_command_stream_(core, qPrintable(provider_id), qPrintable(command_id), {qPrintable(stream.meta.session),
+                                                                                   std::chrono::system_clock::to_time_t(stream.meta.start_time),
                                                                                    qPrintable(stream.meta.extension),
                                                                                    stream.meta.type,
                                                                                    stream.meta.seq_num,

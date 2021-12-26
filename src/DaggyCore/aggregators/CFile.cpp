@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include "../Precompiled.hpp"
 #include "CFile.hpp"
+#include <DaggyCore/Errors.hpp>
 
 namespace  {
 const size_t max_open_files = 1000;
@@ -35,6 +36,12 @@ daggy::aggregators::CFile::CFile(QString output_folder,
     , output_folder_(std::move(output_folder))
 {
     connect(this, &CFile::nextWrite, this, &CFile::write, Qt::QueuedConnection);
+}
+
+daggy::aggregators::CFile::CFile(QObject* parent)
+    : CFile(QDir::currentPath(), parent)
+{
+
 }
 
 daggy::aggregators::CFile::~CFile()
@@ -68,7 +75,16 @@ void daggy::aggregators::CFile::onCommandError(QString provider_id, QString comm
 
 void daggy::aggregators::CFile::onCommandStream(QString provider_id, QString command_id, sources::commands::Stream stream)
 {
-    const auto& file_name = name(provider_id, command_id, stream.meta.type, stream.meta.extension);
+    const auto& file_name = name(stream.meta.session, provider_id, command_id, stream.meta.type, stream.meta.extension);
+    if (!streams_.contains(file_name))
+    {
+        auto stream_dir = QFileInfo(file_name).absoluteDir();
+        if (!stream_dir.exists() && !QDir().mkpath(stream_dir.absolutePath()))
+        {
+            onCommandError(provider_id, command_id, errors::make_error_code(DaggyErrorStreamCorrupted));
+            return;
+        }
+    }
     streams_[file_name].append(std::move(stream.part));
     emit nextWrite();
 }
@@ -111,15 +127,15 @@ void daggy::aggregators::CFile::write()
         emit nextWrite();
 }
 
-QString daggy::aggregators::CFile::name(const QString& provider_id, const QString& command_id, DaggyStreamTypes type, const QString& extension) const
+QString daggy::aggregators::CFile::name(const QString& session, const QString& provider_id, const QString& command_id, DaggyStreamTypes type, const QString& extension) const
 {
     QString result;
     switch (type) {
     case DaggyStreamStandard:
-        result = QString("%1/%2-%3.%4").arg(output_folder_, provider_id, command_id, extension);
+        result = QString("%1/%2/%3-%4.%5").arg(output_folder_, session, provider_id, command_id, extension);
         break;
     case DaggyStreamError:
-        result = QString("%1/%2-%3.%4.%5").arg(output_folder_, provider_id, command_id, "err", extension);
+        result = QString("%1/%2/%3-%4.%5.%6").arg(output_folder_, session, provider_id, command_id, "err", extension);
         break;
     }
     return result;

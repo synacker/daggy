@@ -43,11 +43,13 @@ public:
     virtual ~IFabric();
 
     virtual const QString& type() const = 0;
-    Result<IProvider*> create(const Source& source,
+    Result<IProvider*> create(const QString& session,
+                              const Source& source,
                               QObject* parent);
 
 protected:
-    virtual Result<IProvider*> createProvider(const Source& source,
+    virtual Result<IProvider*> createProvider(const QString& session,
+                                              const Source& source,
                                               QObject* parent) = 0;
 };
 

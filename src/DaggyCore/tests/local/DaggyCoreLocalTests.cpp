@@ -216,6 +216,7 @@ void DaggyCoreLocalTests::startAndTerminateTest()
     QCOMPARE(sources, test_sources);
 
     Core core(std::move(sources));
+    const auto& session = core.session();
     QCOMPARE(core.prepare(error), errors::success);
 
     QVERIFY(core.state() == DaggyNotStarted);
@@ -258,6 +259,7 @@ void DaggyCoreLocalTests::startAndTerminateTest()
         auto command_id = command_stream[1].toString();
         auto stream = command_stream[2].value<sources::commands::Stream>();
         QVERIFY(!stream.part.isEmpty());
+        QCOMPARE(stream.meta.session, session);
         streams[command_id].push_back(stream);
     }
 

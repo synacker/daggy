@@ -32,7 +32,8 @@ class CLocal : public IProvider
 {
     Q_OBJECT
 public:
-    CLocal(sources::Commands commands,
+    CLocal(const QString& session,
+           sources::Commands commands,
            QObject *parent = nullptr);
     ~CLocal();
 

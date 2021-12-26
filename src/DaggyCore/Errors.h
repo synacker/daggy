@@ -32,6 +32,7 @@ typedef enum {
     DaggyErrorAlreadyStarted,
     DaggyErrorAlreadyFinished,
     DaggyErrorInternal,
+    DaggyErrorStreamCorrupted,
     DaggyErrorSourceConvertion,
     DaggyErrorSourceIncorrectProviderType,
     DaggyErrorSourceNullCommand,
