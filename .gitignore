@@ -26,3 +26,7 @@ CMakeLists.txt.user.*
 .DS_Store
 
 src/DaggyCore/daggycore_export.h
+
+src/html/
+
+src/latex/
