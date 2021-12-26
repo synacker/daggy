@@ -1,0 +1,17 @@
+@startuml Daggy Provider States
+[*] --> NotStarted
+NotStarted : Commands are not started
+NotStarted --> Starting
+Starting : Provider connecting to sources
+Starting --> Started
+Started : All commands are starting
+Starting --> FailedToStart
+FailedToStart : Provider cannot connect to sources
+Started --> Finishing
+Finishing : All commands are finishing
+Finishing --> Finished
+Finished : All commands are finished. 
+Finished: Provider disconnect from sources.
+Finished --> [*]
+FailedToStart --> [*]
+@enduml

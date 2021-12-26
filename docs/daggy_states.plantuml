@@ -1,0 +1,12 @@
+@startuml Daggy Core States
+[*] --> NotStarted
+NotStarted : Providers are not started
+NotStarted --> Started
+Started : All providers are starting
+NotStarted --> Finished
+Started --> Finishing
+Finishing : All providers are finishing
+Finishing --> Finished
+Finished : All providers are finished
+Finished --> [*]
+@enduml
