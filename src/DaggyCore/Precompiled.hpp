@@ -39,6 +39,7 @@ SOFTWARE.
 #include <QMetaType>
 #include <QMetaEnum>
 #include <QThreadPool>
+#include <QUuid>
 
 #include <QDebug>
 

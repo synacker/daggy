@@ -40,10 +40,19 @@ using namespace daggy;
 
 Core::Core(Sources sources,
            QObject* parent)
+    : Core(QUuid::createUuid().toString(), std::move(sources), parent)
+{
+}
+
+Core::Core(QString session,
+           Sources sources,
+           QObject* parent)
     : QObject(parent)
+    , session_(std::move(session))
     , sources_(std::move(sources))
     , state_(DaggyNotStarted)
 {
+
 }
 
 Core::~Core()
@@ -66,9 +75,14 @@ DaggyVersion Core::version() const noexcept
     };
 }
 
-const Sources& Core::sources() const
+const Sources& Core::sources() const noexcept
 {
     return sources_;
+}
+
+const QString& Core::session() const noexcept
+{
+    return session_;
 }
 
 
@@ -213,7 +227,7 @@ try {
                                     QString("Data provider type %1 is not supported").arg(properties.type).toStdString());
         }
 
-        auto provider = fabric->second->create({source_id, properties}, this);
+        auto provider = fabric->second->create(session_, {source_id, properties}, this);
         if (!provider) {
             throw std::system_error(provider.error,
                                     provider.message.toStdString());

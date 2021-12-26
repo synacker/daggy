@@ -24,5 +24,4 @@ SOFTWARE.
 #pragma once
 #include "Types.h"
 
-
-
+Q_DECLARE_METATYPE(DaggyVersion)
