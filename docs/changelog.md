@@ -4,11 +4,17 @@ description: Dagyy changelog
 
 # Changelog
 
+## [2.1.0](https://github.com/synacker/daggy/releases/tag/2.1.0)
+
+### New Features
+
+* **Daggy Core** C/C++ interface
+
 ## [2.0.0](https://github.com/synacker/daggy/releases/tag/2.0.0)
 
 ### New Features
 
-* Full support for **ssh2** protocol \(ssh 1.0 is deprecated\)
+* Full support for **ssh2** protocol (ssh 1.0 is deprecated)
 * Added environment variables in **Data Aggregation Sources**
 * Added devel library - **libDaggyCore**
 
@@ -62,8 +68,6 @@ description: Dagyy changelog
 
 * Data Aggregation via ssh 1.0
 * Data Aggregation via local processes
-
-
 
 
 

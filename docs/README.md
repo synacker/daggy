@@ -1,63 +1,60 @@
+# About Daggy
+
 [![synacker](https://circleci.com/gh/synacker/daggy.svg?style=svg)](https://circleci.com/gh/synacker/daggy)
 
-<p align="center">
-  <img width="256" height="256" src="daggy_logo.svg">
-  <br/>
-  <b>Daggy - Data Aggregation Utility and C/C++ developer library for data streams catching</b>
-</p>
+![](daggy\_logo.svg)\
+**Daggy - Data Aggregation Utility and C/C++ developer library for data streams catching**
 
-**Daggy** main goals are server-less, cross-platform, simplicity and ease-of-use. 
+**Daggy** main goals are server-less, cross-platform, simplicity and ease-of-use.
 
 **Daggy** can be helpful for developers, QA, DevOps and engineers for debug, analyze and control any data streams, including requests and responses, in distributed network systems, for example, based on micro-service architecture.
 
-- [Introduction and goal concepts](#introduction-and-goal-concepts)
-  - [Daggy High Level Design](#daggy-high-level-design)
-  - [Basic terms](#basic-terms)
-- [Getting Started](#getting-started)
-  - [Getting Daggy](#getting-daggy)
-    - [Download and install Windows, Linux, MacOS](#download-and-install-windows-linux-macos)
-    - [Fedora](#fedora)
-    - [Build from source](#build-from-source)
-      - [Environment requirenments](#environment-requirenments)
-      - [Build steps](#build-steps)
-        - [Make install for system library](#make-install-for-system-library)
-        - [Conan create for conan package](#conan-create-for-conan-package)
-      - [Check installation of Daggy Core C++20 interface](#check-installation-of-daggy-core-c20-interface)
-      - [Check installation of Daggy Core C11 interface](#check-installation-of-daggy-core-c11-interface)
-      - [Check installation of Daggy Console application](#check-installation-of-daggy-console-application)
-  - [Getting Started data aggregation and streaming with Daggy Console Application](#getting-started-data-aggregation-and-streaming-with-daggy-console-application)
-    - [Simple Data Aggregation Sources](#simple-data-aggregation-sources)
-      - [Create simple.yaml](#create-simpleyaml)
-      - [Run daggy](#run-daggy)
-      - [Check console output](#check-console-output)
-      - [Tailing streams from Simple Data Source](#tailing-streams-from-simple-data-source)
-      - [Stop data aggregation and streaming](#stop-data-aggregation-and-streaming)
-      - [Investigate aggregated data](#investigate-aggregated-data)
-    - [Example of Data Aggregation Sources with multiple commands and remote data aggregation and streaming](#example-of-data-aggregation-sources-with-multiple-commands-and-remote-data-aggregation-and-streaming)
+* [Introduction and goal concepts](./#introduction-and-goal-concepts)
+  * [Daggy High Level Design](./#daggy-high-level-design)
+  * [Basic terms](./#basic-terms)
+* [Getting Started](./#getting-started)
+  * [Getting Daggy](./#getting-daggy)
+    * [Download and install Windows, Linux, MacOS](./#download-and-install-windows-linux-macos)
+    * [Fedora](./#fedora)
+    * [Build from source](./#build-from-source)
+      * [Environment requirenments](./#environment-requirenments)
+      * [Build steps](./#build-steps)
+        * [Make install for system library](./#make-install-for-system-library)
+        * [Conan create for conan package](./#conan-create-for-conan-package)
+      * [Check installation of Daggy Core C++20 interface](./#check-installation-of-daggy-core-c20-interface)
+      * [Check installation of Daggy Core C11 interface](./#check-installation-of-daggy-core-c11-interface)
+      * [Check installation of Daggy Console application](./#check-installation-of-daggy-console-application)
+  * [Getting Started data aggregation and streaming with Daggy Console Application](./#getting-started-data-aggregation-and-streaming-with-daggy-console-application)
+    * [Simple Data Aggregation Sources](./#simple-data-aggregation-sources)
+      * [Create simple.yaml](./#create-simpleyaml)
+      * [Run daggy](./#run-daggy)
+      * [Check console output](./#check-console-output)
+      * [Tailing streams from Simple Data Source](./#tailing-streams-from-simple-data-source)
+      * [Stop data aggregation and streaming](./#stop-data-aggregation-and-streaming)
+      * [Investigate aggregated data](./#investigate-aggregated-data)
+    * [Example of Data Aggregation Sources with multiple commands and remote data aggregation and streaming](./#example-of-data-aggregation-sources-with-multiple-commands-and-remote-data-aggregation-and-streaming)
 
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+[_Table of contents generated with markdown-toc_](http://ecotrust-canada.github.io/markdown-toc/)
 
-
-# Introduction and goal concepts
+## Introduction and goal concepts
 
 The **Daggy Project** consist of:
+
 1. **Core** - library for streams aggregation and catching
 2. **Daggy** - console application for aggregation streams into files
 
-## Daggy High Level Design
+### Daggy High Level Design
 
-<p align="center">
-  <img src="daggy_hld.svg">
-  <br/>
-  <b>Daggy High Level Design</b>
-</p>
+![](daggy\_hld.svg)\
+**Daggy High Level Design**
 
-## Basic terms
-The main goal of Daggy Software System is obtaining the data from **envorinments** that located in **sources** to **streams** into **aggregators** and via **providers**. 
+### Basic terms
+
+The main goal of Daggy Software System is obtaining the data from **envorinments** that located in **sources** to **streams** into **aggregators** and via **providers**.
 
 **Environment** contains data for **streams**. Out of box, **Core** supports local and remote environments, but can be extended by **user defined environments**. **Local Environment** is located on the same host, that **Daggy Core** instance. **Remote Environment** is located on the different from **Daggy Core** instance host. **User defined environment** can be located anywhere, likes databases, network disks, etc.
 
-**Sources** are declarations, how to obtain the data from **environments**. It descirbes, which kind of data need to be conveted to **streams** and which **provider** will need. 
+**Sources** are declarations, how to obtain the data from **environments**. It descirbes, which kind of data need to be conveted to **streams** and which **provider** will need.
 
 There is example of **sources** that contains once **local environment** and once **remote environment**:
 
@@ -86,46 +83,47 @@ sources:
         commands: *my_commands
 ```
 
-The **streams** from **local environment** are generates via **local provider** (looks at ```type: local```).
+The **streams** from **local environment** are generates via **local provider** (looks at `type: local`).
 
-The **streams** from **remote environment** are generates via **ssh2 provider** (looks at ```type: ssh2```).
+The **streams** from **remote environment** are generates via **ssh2 provider** (looks at `type: ssh2`).
 
 Out of box **Core** provides **local and ssh2 providers**. Both providers obtains the data for **streams** from processes - the **local provider** runs local process and generates streams from process channels (_stdin_ and _stdout_). **Ssh2 provider** runs remote processes via _ssh2_ protocol and also generates **streams** from process channels. The Daggy Core can be extended by **user defined provider** that will generate streams, for example, from http environment.
 
-**Providers** generates **streams** partially. The each part has unique _seq_num_ value, uninterruptedly and consistently. It means, that full data from **stream** can be obtain by adding parts of **stream** in _seq_num_ ascending order.
+**Providers** generate **streams** by parts via **commands**. The each part has unique _seq\_num_ value, uninterruptedly and consistently. It means, that full data from **stream** can be obtain by adding parts of **stream** in _seq\_num_ ascending order. Each **stream** can be generated by **command**.
 
 The **Core** translates **streams** from any count of providers in once **Core Streams Session**. The **streams** from **Core Streams Session** can be aggregated by **aggregators** or viewed by **user**.
 
 Out of box, the **Core** provides several types of **aggregators**:
+
 1. _File_ - aggregates streams into files at runtime, as data arrives. This aggregator is used by **Daggy Console Application**.
 2. _Console_ - aggreagates streams into console output. This aggregator is used by **Daggy Console Application**.
 3. _Callback_ - aggregates streams into ANSI C11 callbacks. This aggregator is used by **Core ANSI C11 Interface**.
 
 The **Core** library can be extended by **user defined aggregators**.
 
-# Getting Started
+## Getting Started
 
-## Getting Daggy
+### Getting Daggy
 
-### Download and install Windows, Linux, MacOS
+#### Download and install Windows, Linux, MacOS
 
 Download archives with binaries or installation packages from last [release](https://github.com/synacker/daggy/releases/)
 
-### Fedora
+#### Fedora
 
 ```bash
 sudo dnf install daggy daggy-devel
 ```
 
-### Build from source
+#### Build from source
 
-#### Environment requirenments
+**Environment requirenments**
 
-[Conan](https://conan.io/), [cmake](https://cmake.org/), [git](https://git-scm.com/) and C++20 compiler.
+[Conan](https://conan.io), [cmake](https://cmake.org), [git](https://git-scm.com) and C++20 compiler.
 
-#### Build steps
+**Build steps**
 
-##### Make install for system library
+**Make install for system library**
 
 ```bash
 git clone https://github.com/synacker/daggy.git
@@ -136,7 +134,7 @@ conan build ../daggy
 cmake install
 ```
 
-##### Conan create for conan package
+**Conan create for conan package**
 
 ```bash
 git clone https://github.com/synacker/daggy.git
@@ -145,9 +143,10 @@ cd build
 conan create ../daggy --build=missing
 ```
 
-#### Check installation of Daggy Core C++20 interface
+**Check installation of Daggy Core C++20 interface**
 
-```C++
+{% code title="test.cpp" %}
+```cpp
 #include <DaggyCore/Core.hpp>
 #include <DaggyCore/Sources.hpp>
 #include <DaggyCore/aggregators/CFile.hpp>
@@ -212,9 +211,12 @@ int main(int argc, char** argv)
     return app.exec();
 }
 ```
+{% endcode %}
 
-#### Check installation of Daggy Core C11 interface
-```C
+**Check installation of Daggy Core C11 interface**
+
+{% code title="test.c" %}
+```c
 #include <stdio.h>
 #ifdef _WIN32
 #include <Windows.h>
@@ -321,10 +323,10 @@ void on_command_error(DaggyCore core, const char* provider_id, const char* comma
 {
     printf("Command %s in provider %s has error. Code: %d, Category: %s\n", command_id, provider_id, error.error, error.category);
 }
-
 ```
+{% endcode %}
 
-#### Check installation of Daggy Console application
+**Check installation of Daggy Console application**
 
 ```bash
 daggy --help
@@ -343,11 +345,11 @@ Arguments:
   file                        data aggregation sources file
 ```
 
-## Getting Started data aggregation and streaming with Daggy Console Application
+### Getting Started data aggregation and streaming with Daggy Console Application
 
-### Simple Data Aggregation Sources
+#### Simple Sources
 
-#### Create simple.yaml
+**Create simple.yaml**
 
 ```yaml
 sources:
@@ -359,14 +361,15 @@ sources:
                 extension: log
 ```
 
-#### Run daggy
+**Run daggy**
+
 ```bash
 daggy simple.yaml
 ```
 
-#### Check console output
+**Check console output**
 
-```text
+```
 23:07:23:977 | AppStat  | Start aggregation in 01-04-20_23-07-23-977_simple
 23:07:23:977 | ProvStat | localhost       | New state: Started
 23:07:23:977 | CommStat | localhost       | pingYa          | New state: Starting
@@ -375,9 +378,9 @@ daggy simple.yaml
 
 _There are all commands from **simple.yaml/simple.json** are streams in **01-04-20\_23-07-23-977\_simple** with output files_
 
-#### Tailing streams from Simple Data Source
+**Tailing streams from Simple Data Source**
 
-```text
+```
 tail -f 01-04-20_23-07-23-977_simple/*
 64 bytes from ya.ru (87.250.250.242): icmp_seq=99 ttl=249 time=21.2 ms
 64 bytes from ya.ru (87.250.250.242): icmp_seq=100 ttl=249 time=18.8 ms
@@ -392,11 +395,11 @@ tail -f 01-04-20_23-07-23-977_simple/*
 64 bytes from ya.ru (87.250.250.242): icmp_seq=109 ttl=249 time=21.1 ms
 ```
 
-#### Stop data aggregation and streaming
+**Stop data aggregation and streaming**
 
 _Type **CTRL+C** for stopping data aggregation and streaming. Type **CTRL+C** twice for hard stop application, without waiting cancelation of child local and remote processes._
 
-```text
+```
 23:07:23:977 | AppStat  | Start aggregation in 01-04-20_23-07-23-977_simple
 23:07:23:977 | ProvStat | localhost       | New state: Started
 23:07:23:977 | CommStat | localhost       | pingYa          | New state: Starting
@@ -407,14 +410,14 @@ _Type **CTRL+C** for stopping data aggregation and streaming. Type **CTRL+C** tw
 23:17:56:668 | AppStat  | Stop aggregation in 01-04-20_23-07-23-977_simple
 ```
 
-#### Investigate aggregated data
+**Investigate aggregated data**
 
 ```bash
 ls -l 01-04-20_23-07-23-977_simple/
 -rw-r--r-- 1 muxa muxa 45574 апр  1 23:17 localhost-pingYa.log
 ```
 
-### Example of Data Aggregation Sources with multiple commands and remote data aggregation and streaming
+#### Example of Data Aggregation Sources with multiple commands and remote data aggregation and streaming
 
 ```yaml
 aliases:  

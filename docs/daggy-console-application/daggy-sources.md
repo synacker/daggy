@@ -2,7 +2,7 @@
 description: How to setup data sources for Daggy
 ---
 
-# Data Aggregation Sources
+# Daggy Sources
 
 ## Supported formats
 
@@ -41,64 +41,19 @@ sources:
 {% endtab %}
 {% endtabs %}
 
-Each config conatins map of hosts. Host \(data source\) parameters is next:
+Each config conatins map of hosts. Host (data source) parameters is next:
 
-<table>
-  <thead>
-    <tr>
-      <th style="text-align:center">Parameter</th>
-      <th style="text-align:center">Type</th>
-      <th style="text-align:left">Description</th>
-      <th style="text-align:left">Is Requiered</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align:center"><b>type</b>
-      </td>
-      <td style="text-align:center">string</td>
-      <td style="text-align:left">
-        <p></p>
-        <p>Type of connection to host. <b>Daggy</b> supportes <code>local</code> and <code>ssh</code> host
-          connection types</p>
-      </td>
-      <td style="text-align:left">Yes</td>
-    </tr>
-    <tr>
-      <td style="text-align:center"><b>commands</b>
-      </td>
-      <td style="text-align:center">array</td>
-      <td style="text-align:left">Array of commands for simultaneous launch</td>
-      <td style="text-align:left">Yes</td>
-    </tr>
-    <tr>
-      <td style="text-align:center"><b>parameters</b>
-      </td>
-      <td style="text-align:center">map</td>
-      <td style="text-align:left">Connection parameters</td>
-      <td style="text-align:left">Required for <b>ssh2</b>  <b>type</b>
-      </td>
-    </tr>
-    <tr>
-      <td style="text-align:center"><b>host</b>
-      </td>
-      <td style="text-align:center">string</td>
-      <td style="text-align:left">Host address</td>
-      <td style="text-align:left">No. For <b>ssh2</b> is 127.0.0.1 by default</td>
-    </tr>
-    <tr>
-      <td style="text-align:center"><b>reconnect</b>
-      </td>
-      <td style="text-align:center">boolean</td>
-      <td style="text-align:left">true, if need reconnect connection</td>
-      <td style="text-align:left">No</td>
-    </tr>
-  </tbody>
-</table>
+|    Parameter   |   Type  | Description                                                                                                                              | Is Requiered                             |
+| :------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+|    **type**    |  string | <p></p><p>Type of connection to host. <strong>Daggy</strong> supportes <code>local</code> and <code>ssh</code> host connection types</p> | Yes                                      |
+|  **commands**  |  array  | Array of commands for simultaneous launch                                                                                                | Yes                                      |
+| **parameters** |   map   | Connection parameters                                                                                                                    | Required for **ssh2** **type**           |
+|    **host**    |  string | Host address                                                                                                                             | No. For **ssh2** is 127.0.0.1 by default |
+|  **reconnect** | boolean | true, if need reconnect connection                                                                                                       | No                                       |
 
-## Data Sources Types
+## Daggy Sources Types
 
-**Daggy** supportes `local` and `ssh2` \(remote\) host connection types.
+**Daggy** supportes `local` and `ssh2` (remote) host connection types.
 
 ### Local type
 
@@ -178,19 +133,19 @@ remotehost:
 {% endtab %}
 {% endtabs %}
 
-#### SSH type additional parameters
+#### SSH2 type additional parameters
 
 * **host** - remote host ip address or url
 * **connection** - map of ssh connection parameters. Includes next parameters
 
-| Connection Parameter | Type | Description | Default value |
-| :---: | :---: | :--- | :--- |
-| **user** | string | _ssh2_ connection login | Current user |
-| **passphrase** | string | _ssh2_ connection password. If field is not empty, then will be used password authentication for _ssh2_ connection. In other case, will be used public key authentication  |  |
-| **key** | string | path to private key for _ssh2_ connection | `~/.ssh/id_rsa` |
-| **keyphrase** | string | passphrase for private key file |  |
-| **port** | integer | _ssh2_ connection port | 22 |
-| **timeout** | integer | limit to establish _ssh2_ connection, in milliseconds | 1000 |
+| Connection Parameter |   Type  | Description                                                                                                                                                                | Default value   |
+| :------------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+|       **user**       |  string | _ssh2_ connection login                                                                                                                                                    | Current user    |
+|    **passphrase**    |  string | _ssh2_ connection password. If field is not empty, then will be used password authentication for _ssh2_ connection. In other case, will be used public key authentication  |                 |
+|        **key**       |  string | path to private key for _ssh2_ connection                                                                                                                                  | `~/.ssh/id_rsa` |
+|     **keyphrase**    |  string | passphrase for private key file                                                                                                                                            |                 |
+|       **port**       | integer | _ssh2_ connection port                                                                                                                                                     | 22              |
+|      **timeout**     | integer | limit to establish _ssh2_ connection, in milliseconds                                                                                                                      | 1000            |
 
 ### Commands
 
@@ -228,12 +183,12 @@ Each command must contain:
 
 ### Mustache syntax
 
-YAML/JSON **Data Aggregation Sources** are support [mustache syntax](https://mustache.github.io/):
+YAML/JSON **Data Aggregation Sources** are support [mustache syntax](https://mustache.github.io):
 
 * _env\_\*_ - template for environment variable, where \* is environment variable name.
 * _output\_folder_ - output folder path
 
-### Example of **using** mustache syntax in **Data Aggregation Sources**
+### Example of **using** mustache syntax in **Daggy Sources**
 
 {% tabs %}
 {% tab title="YAML" %}
@@ -350,5 +305,4 @@ sources:
 {% endtab %}
 {% endtabs %}
 
-  
-
+&#x20;&#x20;
