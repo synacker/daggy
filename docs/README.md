@@ -1,8 +1,13 @@
+---
+description: Common information about Daggy and Getting Started
+---
+
 # About Daggy
 
-[![synacker](https://circleci.com/gh/synacker/daggy.svg?style=svg)](https://circleci.com/gh/synacker/daggy)
+![Daggy CircleCI build](https://circleci.com/gh/synacker/daggy.svg?style=svg)
 
-![](daggy\_logo.svg)\
+![Daggy - Data Aggregation Utility and C/C++ developer library for data streams catching](daggy\_logo.svg)
+
 **Daggy - Data Aggregation Utility and C/C++ developer library for data streams catching**
 
 **Daggy** main goals are server-less, cross-platform, simplicity and ease-of-use.
