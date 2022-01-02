@@ -37,6 +37,7 @@ class DaggyConan(ConanFile):
         "console": [True, False],
         "shared": [True, False],
         "fPIC": [True, False],
+        "package_deps": [True, False],
         "circleci": [True, False]
     }
     default_options = {
@@ -45,6 +46,7 @@ class DaggyConan(ConanFile):
         "console": True,
         "shared": True,
         "fPIC": True,
+        "package_deps": False,
         "circleci": False
     }
     generators = "cmake", "cmake_paths", "cmake_find_package"
@@ -92,7 +94,7 @@ class DaggyConan(ConanFile):
         self._cmake.definitions["SSH2_SUPPORT"] = self.options.ssh2_support
         self._cmake.definitions["YAML_SUPPORT"] = self.options.yaml_support
         self._cmake.definitions["console"] = self.options.console
-        self._cmake.definitions["PACKAGE_DEPS"] = True
+        self._cmake.definitions["PACKAGE_DEPS"] = self.options.package_deps
         self._cmake.definitions["VERSION"] = self.version
         self._cmake.definitions["CMAKE_INSTALL_LIBDIR"] = self._libdir()
         if self.options.shared:

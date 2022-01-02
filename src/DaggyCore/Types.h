@@ -35,8 +35,8 @@ extern "C" {
 typedef enum {
     DaggyProviderNotStarted,
     DaggyProviderStarting,
-    DaggyProviderFailedToStart,
     DaggyProviderStarted,
+    DaggyProviderFailedToStart,
     DaggyProviderFinishing,
     DaggyProviderFinished
 } DaggyProviderStates;

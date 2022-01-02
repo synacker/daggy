@@ -1,0 +1,16 @@
+@startuml Daggy Command States
+[*] --> NotStarted
+NotStarted : Command is not started
+NotStarted --> Starting
+Starting : Command is starting
+Starting --> Started
+Started : Command is started
+Starting --> FailedToStart
+FailedToStart : Command is failed to start
+Started --> Finishing
+Finishing : Command is finishing
+Finishing --> Finished
+Finished : Command is finished. 
+Finished --> [*]
+FailedToStart --> [*]
+@enduml
