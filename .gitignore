@@ -30,3 +30,5 @@ src/DaggyCore/daggycore_export.h
 src/html/
 
 src/latex/
+
+src/inline_umlgraph_cache_all.pu
