@@ -4,9 +4,9 @@ description: Common information about Daggy and Getting Started
 
 # About Daggy
 
-![Daggy CircleCI build](https://circleci.com/gh/synacker/daggy.svg?style=svg)
+![Daggy build](https://circleci.com/gh/synacker/daggy.svg?style=svg)
 
-![Daggy - Data Aggregation Utility and C/C++ developer library for data streams catching](daggy\_logo.svg)
+![Daggy ](daggy\_logo.svg)
 
 **Daggy - Data Aggregation Utility and C/C++ developer library for data streams catching**
 
