@@ -47,9 +47,9 @@ The **Daggy Project** consist of:
 ## Daggy High Level Design
 
 <p align="center">
-  <img width="256" height="256" src="docs/daggy_hld.svg">
+  <img src="docs/daggy_hld.svg">
   <br/>
-  <b>Daggy - Data Aggregation Utility and C/C++ developer library for data streams catching</b>
+  <b>Daggy High Level Design</b>
 </p>
 
 ## Basic terms
