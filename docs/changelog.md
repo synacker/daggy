@@ -4,6 +4,12 @@ description: Dagyy changelog
 
 # Changelog
 
+## [2.1.1](https://github.com/synacker/daggy/releases/tag/2.1.1)
+
+### Fixed
+
+* Build fixes for mainteners&#x20;
+
 ## [2.1.0](https://github.com/synacker/daggy/releases/tag/2.1.0)
 
 ### New Features
