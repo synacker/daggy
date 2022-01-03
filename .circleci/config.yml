@@ -18,7 +18,7 @@ jobs:
                                   key: conan-data-qt6.2.2-gcc10-{{ arch }}
                         - run:
                                   name: Conan install
-                                  command: conan install ../daggy --build=missing
+                                  command: conan install ../daggy --build=missing -o package_deps=True
                         - save_cache:
                                   key: conan-data-qt6.2.2-gcc10-{{ arch }}
                                   paths:
@@ -93,7 +93,7 @@ jobs:
                                           - ~/build
                         - run:
                                   name: Conan install
-                                  command: conan install ../daggy --build=missing -o circleci=True
+                                  command: conan install ../daggy --build=missing -o circleci=True -o package_deps=True
                         - save_cache:
                                   key: conan-data-qt6.2.2-{{ arch }}
                                   paths:
@@ -158,7 +158,7 @@ jobs:
                                           - ~/QtIFW
                         - run:
                                   name: Conan install
-                                  command: conan install ../daggy --build=missing -o shared=False
+                                  command: conan install ../daggy --build=missing -o shared=False -o package_deps=True
                         - save_cache:
                                   key: conan-data-qt6.2.2-{{ arch }}
                                   paths:
