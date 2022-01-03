@@ -14,5 +14,5 @@ set(SOURCES
 SET_RPATH()
 
 qt6_add_executable(${TARGET} ${SOURCES})
-target_link_libraries(${TARGET} PRIVATE DaggyCore Qt6::Test)
+target_link_libraries(${TARGET} PRIVATE DaggyCore)
 target_precompile_headers(${TARGET} PRIVATE Precompiled.h)
