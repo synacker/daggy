@@ -4,7 +4,7 @@ description: Common information about Daggy and Getting Started
 
 # About Daggy
 
-![Daggy build](https://circleci.com/gh/synacker/daggy.svg?style=svg)
+[![synacker](https://circleci.com/gh/synacker/daggy.svg?style=svg)](https://circleci.com/gh/synacker/daggy)
 
 ![Daggy ](daggy\_logo.svg)
 
