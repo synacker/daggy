@@ -6,13 +6,21 @@ description: Common information about Daggy and Getting Started
 
 [![synacker](https://circleci.com/gh/synacker/daggy.svg?style=svg)](https://circleci.com/gh/synacker/daggy)
 
-![Daggy ](daggy\_logo.svg)
+![Daggy](daggy\_logo.svg)
 
 **Daggy - Data Aggregation Utility and C/C++ developer library for data streams catching**
 
 **Daggy** main goals are server-less, cross-platform, simplicity and ease-of-use.
 
 **Daggy** can be helpful for developers, QA, DevOps and engineers for debug, analyze and control any data streams, including requests and responses, in distributed network systems, for example, based on micro-service architecture.
+
+{% hint style="info" %}
+In short terms, daggy run local or remote processes at the same time, simultaneously read output from processes, stream and aggregate them under once session
+{% endhint %}
+
+{% embed url="https://youtu.be/oeNSwv9oYDc" %}
+Daggy Screencast
+{% endembed %}
 
 * [Introduction and goal concepts](./#introduction-and-goal-concepts)
   * [Daggy High Level Design](./#daggy-high-level-design)
