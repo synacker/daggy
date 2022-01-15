@@ -85,6 +85,7 @@ ADD_BINARY_META(LIB)
 SET_RPATH(LIB)
 
 add_library(${TARGET} ${SOURCES} ${HEADERS})
+set_property(TARGET ${TARGET} PROPERTY CXX_STANDARD 20)
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
 include(GenerateExportHeader)
