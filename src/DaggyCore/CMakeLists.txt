@@ -50,7 +50,6 @@ set(LINK_LIBRARIES
     Qt6::Core Qt6::Network
 )
 
-include(CTest)
 if (BUILD_TESTING)
     add_subdirectory(tests/local)
     add_subdirectory(tests/pingpong)
