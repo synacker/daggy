@@ -25,7 +25,9 @@ SOFTWARE.
 
 #include <memory>
 #include <unordered_map>
+#if __cplusplus > 201703L
 #include <span>
+#endif
 #include <system_error>
 
 #include <QMap>
@@ -72,11 +74,16 @@ public:
     DaggyStates state() const noexcept;
 
     std::error_code prepare();
-    std::error_code prepare(std::span<providers::IFabric*> fabrics);
 
     std::error_code prepare(QString& error) noexcept;
-    std::error_code prepare(std::span<providers::IFabric*> fabrics, QString& error) noexcept;
 
+    std::error_code prepare(std::vector<providers::IFabric*> fabrics);
+    std::error_code prepare(std::vector<providers::IFabric*> fabrics, QString& error) noexcept;
+
+#if __cplusplus > 201703L
+    std::error_code prepare(std::span<providers::IFabric*> fabrics);
+    std::error_code prepare(std::span<providers::IFabric*> fabrics, QString& error) noexcept;
+#endif
     std::error_code connectAggregator(aggregators::IAggregator* aggregator) noexcept;
 
 signals:
@@ -111,6 +118,7 @@ private slots:
                         std::error_code error_code);
 
 private:
+    std::error_code prepare(providers::IFabric** fabrics, const size_t size, QString& error) noexcept;
     providers::IFabric* getFabric(const QString& type) const;
 
     QList<providers::IProvider*> getProviders() const;

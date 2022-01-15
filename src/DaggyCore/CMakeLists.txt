@@ -50,6 +50,7 @@ set(LINK_LIBRARIES
     Qt6::Core Qt6::Network
 )
 
+include(CTest)
 if (BUILD_TESTING)
     add_subdirectory(tests/local)
     add_subdirectory(tests/pingpong)
@@ -85,7 +86,6 @@ ADD_BINARY_META(LIB)
 SET_RPATH(LIB)
 
 add_library(${TARGET} ${SOURCES} ${HEADERS})
-set_property(TARGET ${TARGET} PROPERTY CXX_STANDARD 20)
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
 include(GenerateExportHeader)

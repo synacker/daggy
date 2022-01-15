@@ -34,7 +34,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 include(compiler)
 
-enable_testing()
+include(CTest)
 
 add_subdirectory(DaggyCore)
 if(CONSOLE)

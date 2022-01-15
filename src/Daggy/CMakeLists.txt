@@ -26,7 +26,6 @@ ADD_BINARY_META()
 SET_RPATH()
 
 add_executable(${TARGET} ${SOURCES})
-set_property(TARGET ${TARGET} PROPERTY CXX_STANDARD 20)
 target_link_libraries(${TARGET} PRIVATE DaggyCore)
 target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
 
