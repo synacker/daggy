@@ -1,24 +1,28 @@
 macro(SET_RPATH)
+    set(options LIB)
+    cmake_parse_arguments(RPATH_ENV
+                          "${options}"
+                          ""
+                          ""
+                          ${ARGN}
+    )
     if(CONAN_BUILD)
-        set(options LIB)
-        cmake_parse_arguments(BINARY_META
-                              "${options}"
-                              ""
-                              ""
-                              ${ARGN}
-        )
-        if (NOT LIB)
+        if (NOT RPATH_ENV_LIB)
             if(APPLE)
-                set(CMAKE_INSTALL_RPATH "@executable_path/../${CMAKE_INSTALL_LIBDIR}/;@executable_path/../${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}")
+                set(CMAKE_INSTALL_RPATH "@executable_path/../${CMAKE_INSTALL_LIBDIR}")
             elseif(UNIX)
-                set(CMAKE_INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME};$ORIGIN/../${CMAKE_INSTALL_LIBDIR};")
+                set(CMAKE_INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
             endif()
         elseif(BUILD_SHARED_LIBS)
             if(APPLE)
-                set(CMAKE_INSTALL_RPATH "@executable_path/${PROJECT_NAME}")
+                set(CMAKE_INSTALL_RPATH "@executable_path")
             elseif(UNIX)
-                set(CMAKE_INSTALL_RPATH "$ORIGIN/${PROJECT_NAME};")
+                set(CMAKE_INSTALL_RPATH "$ORIGIN")
             endif()
-        endif ()
+        endif()
+        if (PACKAGE_DEPS AND CMAKE_INSTALL_RPATH)
+            set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH};${CMAKE_INSTALL_RPATH}/${PROJECT_NAME}")
+        endif()
     endif()
 endmacro()
+

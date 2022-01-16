@@ -28,25 +28,24 @@ from git_version import GitVersion
 class DaggyConan(ConanFile):
     name = "daggy"
     license = "MIT"
-    url = "https://daggy.dev"
-    description = "Data Aggregation Utilty - aggregation and stream data via remote and local processes."
+    homepage = "https://daggy.dev"
+    url = "https://github.com/synacker/daggy"
+    description = "Data Aggregation Utility and C/C++ developer library for data streams catching."
     settings = "os", "compiler", "build_type", "arch"
     options = {
-        "ssh2_support": [True, False],
-        "yaml_support": [True, False],
-        "console": [True, False],
+        "with_ssh2": [True, False],
+        "with_yaml": [True, False],
+        "with_console": [True, False],
         "shared": [True, False],
         "fPIC": [True, False],
-        "package_deps": [True, False],
         "circleci": [True, False]
     }
     default_options = {
-        "ssh2_support": True,
-        "yaml_support": True,
-        "console": True,
+        "with_ssh2": True,
+        "with_yaml": True,
+        "with_console": True,
         "shared": True,
         "fPIC": True,
-        "package_deps": False,
         "circleci": False
     }
     generators = "cmake", "cmake_paths", "cmake_find_package"
@@ -59,22 +58,16 @@ class DaggyConan(ConanFile):
 
     def configure(self):
         self.options.fPIC = self.options.shared
-        self.options["qt"].shared = self.options.shared
-        self.options["openssl"].shared = self.options.shared
+        self.options["qt"].shared = True
         
-        if self.options.ssh2_support:
-            self.options["libssh2"].shared = self.options.shared
-        if self.options.yaml_support:
-            self.options["yaml-cpp"].shared = self.options.shared
-
     def requirements(self):
         self.requires("qt/6.2.2")
         self.requires("kainjow-mustache/4.1")
 
-        if self.options.yaml_support:
+        if self.options.with_yaml:
             self.requires("yaml-cpp/0.7.0")
 
-        if self.options.ssh2_support:
+        if self.options.with_ssh2:
             self.requires("libssh2/1.10.0")
 
     def _libdir(self):
@@ -91,12 +84,14 @@ class DaggyConan(ConanFile):
             if self.options.circleci:
                 self._cmake.definitions["CMAKE_SYSTEM_VERSION"] = "10.1.18362.1"
         
-        self._cmake.definitions["SSH2_SUPPORT"] = self.options.ssh2_support
-        self._cmake.definitions["YAML_SUPPORT"] = self.options.yaml_support
-        self._cmake.definitions["console"] = self.options.console
-        self._cmake.definitions["PACKAGE_DEPS"] = self.options.package_deps
+        self._cmake.definitions["SSH2_SUPPORT"] = self.options.with_ssh2
+        self._cmake.definitions["YAML_SUPPORT"] = self.options.with_yaml
+        self._cmake.definitions["CONSOLE"] = self.options.with_console
+        self._cmake.definitions["PACKAGE_DEPS"] = True
         self._cmake.definitions["VERSION"] = self.version
         self._cmake.definitions["CMAKE_INSTALL_LIBDIR"] = self._libdir()
+        self._cmake.definitions["BUILD_TESTING"] = True
+        self._cmake.definitions["CONAN_BUILD"] = True
         if self.options.shared:
             self._cmake.definitions["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
             self._cmake.definitions["CMAKE_CXX_VISIBILITY_PRESET"] = "hidden"

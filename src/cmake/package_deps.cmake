@@ -25,12 +25,15 @@ else()
     endif()
     install(FILES ${VC_REDIST}
             DESTINATION vcredist)
+     install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+            DESTINATION ${CMAKE_INSTALL_BINDIR}
+            FILES_MATCHING
+            PATTERN Qt6Network.dll
+            PATTERN Qt6Core.dll
+            PATTERN libssh2.dll
+            PATTERN yaml-cpp.dll
+            PATTERN libcrypto-1_1-x64.dll)
     install(FILES
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Qt6Network.dll
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Qt6Core.dll
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libssh2.dll
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/yaml-cpp.dll
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libcrypto-1_1-x64.dll
             ${CMAKE_CURRENT_LIST_DIR}/daggyenv.bat
             DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
