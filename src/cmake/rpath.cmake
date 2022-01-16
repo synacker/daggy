@@ -1,19 +1,20 @@
 macro(SET_RPATH)
+    set(options LIB)
+    cmake_parse_arguments(RPATH_ENV
+                          "${options}"
+                          ""
+                          ""
+                          ${ARGN}
+    )
     if(CONAN_BUILD)
-        set(options LIB)
-        cmake_parse_arguments(BINARY_META
-                              "${options}"
-                              ""
-                              ""
-                              ${ARGN}
-        )
-        if (NOT LIB)
+        if (NOT RPATH_ENV_LIB)
             if(APPLE)
                 set(CMAKE_INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}")
             elseif(UNIX)
                 set(CMAKE_INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
             endif()
         elseif(BUILD_SHARED_LIBS)
+            message("Here!!111 LIB")
             if(APPLE)
                 set(CMAKE_INSTALL_RPATH "@loader_path")
             elseif(UNIX)
