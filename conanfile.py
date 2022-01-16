@@ -58,14 +58,8 @@ class DaggyConan(ConanFile):
 
     def configure(self):
         self.options.fPIC = self.options.shared
-        self.options["qt"].shared = self.options.shared
-        self.options["openssl"].shared = self.options.shared
+        self.options["qt"].shared = True
         
-        if self.options.with_ssh2:
-            self.options["libssh2"].shared = self.options.shared
-        if self.options.with_yaml:
-            self.options["yaml-cpp"].shared = self.options.shared
-
     def requirements(self):
         self.requires("qt/6.2.2")
         self.requires("kainjow-mustache/4.1")
