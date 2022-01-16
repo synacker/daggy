@@ -50,9 +50,11 @@ set(LINK_LIBRARIES
     Qt6::Core Qt6::Network
 )
 
-add_subdirectory(tests/local)
-add_subdirectory(tests/pingpong)
-add_subdirectory(tests/interface)
+if (BUILD_TESTING)
+    add_subdirectory(tests/local)
+    add_subdirectory(tests/pingpong)
+    add_subdirectory(tests/interface)
+endif()
 
 if (SSH2_SUPPORT)
     if(CONAN_BUILD)

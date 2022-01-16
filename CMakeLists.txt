@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22.0)
+cmake_minimum_required(VERSION 3.21.0)
 project(daggy
         DESCRIPTION "Data Aggregation Utility"
         HOMEPAGE_URL https://daggy.dev
@@ -12,7 +12,5 @@ include(conan)
 
 option(CONAN_BUILD "build with conan" ON)
 option(PACKAGE_DEPS "include daggy deps into package" ON)
-
-enable_testing()
 
 add_subdirectory(src)

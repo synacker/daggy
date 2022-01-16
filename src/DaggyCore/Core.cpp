@@ -183,6 +183,26 @@ std::error_code Core::prepare()
     return error;
 }
 
+std::error_code Core::prepare(QString& error) noexcept
+{
+    return prepare(nullptr, 0, error);
+}
+
+std::error_code Core::prepare(std::vector<providers::IFabric*> fabrics)
+{
+    QString message;
+    auto error = prepare(std::move(fabrics), message);
+    if (error)
+        throw std::runtime_error(message.toStdString());
+    return error;
+}
+
+std::error_code Core::prepare(std::vector<providers::IFabric*> fabrics, QString& error) noexcept
+{
+    return prepare(fabrics.data(), fabrics.size(), error);
+}
+
+#if __cplusplus > 201703L
 std::error_code Core::prepare(std::span<providers::IFabric*> fabrics)
 {
     QString message;
@@ -192,74 +212,11 @@ std::error_code Core::prepare(std::span<providers::IFabric*> fabrics)
     return error;
 }
 
-std::error_code Core::prepare(QString& error) noexcept
-{
-    return prepare({}, error);
-}
-
 std::error_code Core::prepare(std::span<providers::IFabric*> fabrics, QString& error) noexcept
-try {
-    const auto& providers = getProviders();
-    if (!providers.isEmpty())
-        return errors::success;
-
-    std::unordered_map<QString, providers::IFabric*> fabrics_map;
-    static thread_local providers::CLocalFabric local_fabric;
-    fabrics_map[providers::CLocal::provider_type] = &local_fabric;
-
-#ifdef SSH2_SUPPORT
-    static thread_local providers::CSsh2Fabric ssh2_fabric;
-    fabrics_map[providers::CSsh2::provider_type] = &ssh2_fabric;
+{
+    return prepare(fabrics.data(), fabrics.size(), error);
+}
 #endif
-
-    for (const auto& fabric : fabrics)
-        fabrics_map[fabric->type()] = fabric;
-
-    auto source = sources_.cbegin();
-    while(source != sources_.cend()) {
-        const auto& source_id = source.key();
-        const auto& properties = source.value();
-
-        const auto& fabric = fabrics_map.find(properties.type);
-
-        if (fabric == fabrics_map.cend()) {
-            throw std::system_error(errors::make_error_code(DaggyErrorSourceProviderTypeIsNotSupported),
-                                    QString("Data provider type %1 is not supported").arg(properties.type).toStdString());
-        }
-
-        auto provider = fabric->second->create(session_, {source_id, properties}, this);
-        if (!provider) {
-            throw std::system_error(provider.error,
-                                    provider.message.toStdString());
-        }
-
-        connect(*provider, &providers::IProvider::stateChanged, this, &Core::onDataProviderStateChanged);
-        connect(*provider, &providers::IProvider::error, this, &Core::onDataProviderError);
-
-        connect(*provider, &providers::IProvider::commandStateChanged, this, &Core::onCommandStateChanged);
-        connect(*provider, &providers::IProvider::commandError, this, &Core::onCommandError);
-        connect(*provider, &providers::IProvider::commandStream, this, &Core::onCommandStream);
-
-        (*provider)->setObjectName(source_id);
-
-        source++;
-    }
-    return errors::success;
-}
-catch (const std::system_error& exception)
-{
-    deleteAllProviders();
-    error = QString::fromStdString(exception.what());
-    return exception.code();
-} catch (const std::exception& exception)
-{
-    error = QString::fromStdString(exception.what());
-    return errors::make_error_code(DaggyErrorProviderCannotPrepare);
-} catch (...)
-{
-    error = QString::fromStdString("unknown error");
-    return errors::make_error_code(DaggyErrorProviderCannotPrepare);
-}
 
 void Core::onDataProviderStateChanged(DaggyProviderStates state)
 {
@@ -311,6 +268,70 @@ void Core::onCommandError(QString command_id,
     emit commandError(sender()->objectName(),
                       command_id,
                       error_code);
+}
+
+std::error_code Core::prepare(providers::IFabric** fabrics, const size_t size, QString& error) noexcept
+try {
+    const auto& providers = getProviders();
+    if (!providers.isEmpty())
+        return errors::success;
+
+    std::unordered_map<QString, providers::IFabric*> fabrics_map;
+    static thread_local providers::CLocalFabric local_fabric;
+    fabrics_map[providers::CLocal::provider_type] = &local_fabric;
+
+#ifdef SSH2_SUPPORT
+    static thread_local providers::CSsh2Fabric ssh2_fabric;
+    fabrics_map[providers::CSsh2::provider_type] = &ssh2_fabric;
+#endif
+    if (fabrics)
+        for (size_t index = 0; index < size; index++)
+            fabrics_map[fabrics[index]->type()] = fabrics[index];
+
+    auto source = sources_.cbegin();
+    while(source != sources_.cend()) {
+        const auto& source_id = source.key();
+        const auto& properties = source.value();
+
+        const auto& fabric = fabrics_map.find(properties.type);
+
+        if (fabric == fabrics_map.cend()) {
+            throw std::system_error(errors::make_error_code(DaggyErrorSourceProviderTypeIsNotSupported),
+                                    QString("Data provider type %1 is not supported").arg(properties.type).toStdString());
+        }
+
+        auto provider = fabric->second->create(session_, {source_id, properties}, this);
+        if (!provider) {
+            throw std::system_error(provider.error,
+                                    provider.message.toStdString());
+        }
+
+        connect(*provider, &providers::IProvider::stateChanged, this, &Core::onDataProviderStateChanged);
+        connect(*provider, &providers::IProvider::error, this, &Core::onDataProviderError);
+
+        connect(*provider, &providers::IProvider::commandStateChanged, this, &Core::onCommandStateChanged);
+        connect(*provider, &providers::IProvider::commandError, this, &Core::onCommandError);
+        connect(*provider, &providers::IProvider::commandStream, this, &Core::onCommandStream);
+
+        (*provider)->setObjectName(source_id);
+
+        source++;
+    }
+    return errors::success;
+}
+catch (const std::system_error& exception)
+{
+    deleteAllProviders();
+    error = QString::fromStdString(exception.what());
+    return exception.code();
+} catch (const std::exception& exception)
+{
+    error = QString::fromStdString(exception.what());
+    return errors::make_error_code(DaggyErrorProviderCannotPrepare);
+} catch (...)
+{
+    error = QString::fromStdString("unknown error");
+    return errors::make_error_code(DaggyErrorProviderCannotPrepare);
 }
 
 QList<providers::IProvider*> Core::getProviders() const
