@@ -13,4 +13,6 @@ include(conan)
 option(CONAN_BUILD "build with conan" ON)
 option(PACKAGE_DEPS "include daggy deps into package" ON)
 
+include(CTest)
+
 add_subdirectory(src)
