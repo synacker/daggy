@@ -132,7 +132,7 @@ sudo dnf install daggy daggy-devel
 
 **Environment requirenments**
 
-[Conan](https://conan.io), [cmake](https://cmake.org), [git](https://git-scm.com) and C++20 compiler.
+[Conan](https://conan.io), [cmake](https://cmake.org), [git](https://git-scm.com) and C++17/20 compiler.
 
 **Build steps**
 
@@ -156,7 +156,7 @@ cd build
 conan create ../daggy --build=missing
 ```
 
-**Check installation of Daggy Core C++20 interface**
+**Check installation of Daggy Core C++17/20 interface**
 
 {% code title="test.cpp" %}
 ```cpp
