@@ -71,7 +71,7 @@ class DaggyConan(ConanFile):
             raise ConanInvalidConfiguration("Shared Qt lib is required.") 
     
     def build_requirements(self):
-        self.build_requires("cmake/3.21.3")
+        self.build_requires("cmake/3.22.0")
 
     def requirements(self):
         self.requires("openssl/1.1.1m")
