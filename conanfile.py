@@ -74,6 +74,7 @@ class DaggyConan(ConanFile):
         self.build_requires("cmake/3.21.3")
 
     def requirements(self):
+        self.requires("openssl/1.1.1m")
         self.requires("qt/6.2.2")
         self.requires("kainjow-mustache/4.1")
 
