@@ -29,9 +29,6 @@ jobs:
                         - store_test_results:
                                   path: tests
                         - run:
-                                  name: Pack artefacts
-                                  command: cpack
-                        - run:
                                   name: Move artefacts
                                   command: |
                                           mkdir /tmp/linux_artifacts
@@ -102,9 +99,6 @@ jobs:
                         - store_test_results:
                                   path: tests
                         - run:
-                                  name: Pack artefacts
-                                  command: '& "c:/Program Files/CMake/bin/cpack.exe"'
-                        - run:
                                   name: Move artefacts
                                   command: |
                                           mkdir windows_artifacts
@@ -156,9 +150,6 @@ jobs:
                                   command: conan build ../daggy
                         - store_test_results:
                                   path: tests
-                        - run:
-                                  name: Pack artefacts
-                                  command: cpack
                         - run:
                                   name: Move artefacts
                                   command: |

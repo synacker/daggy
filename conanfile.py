@@ -117,6 +117,8 @@ class DaggyConan(ConanFile):
         cmake = self._configure()
         cmake.build()
         self.run("ctest -C Release --output-on-failure --output-junit tests/local_tests.xml", run_environment=True)
+        self.run("cpack", run_environment=True)
+        
 
     def package(self):
         cmake = self._configure()
