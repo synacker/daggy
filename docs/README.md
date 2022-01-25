@@ -151,7 +151,7 @@ conan create ../daggy --build=missing
 {% code title="conanfile.py" %}
 ```python
 def requirements(self):
-    self.requires("daggy/2.1.2")p
+    self.requires("daggy/2.1.2")
 ```
 {% endcode %}
 
