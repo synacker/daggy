@@ -26,14 +26,8 @@ jobs:
                         - run:
                                   name: Conan build
                                   command: conan build ../daggy
-                        - run:
-                                  name: Run local tests
-                                  command: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
                         - store_test_results:
                                   path: tests
-                        - run:
-                                  name: Pack artefacts
-                                  command: cpack
                         - run:
                                   name: Move artefacts
                                   command: |
@@ -49,9 +43,6 @@ jobs:
                 environment:
                         CONAN_USER_HOME: ~/
                 steps:
-                        - run:
-                                  name: Install CMake
-                                  command: choco install --yes cmake -installargs 'ADD_CMAKE_TO_PATH=""System""'
                         - restore_cache:
                                   key: QtIFW-4.2.0-{{ arch }}
                         - run:
@@ -105,14 +96,8 @@ jobs:
                         - run:
                                   name: Conan build
                                   command: conan build ../daggy
-                        - run:
-                                  name: Run local tests
-                                  command: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
                         - store_test_results:
                                   path: tests
-                        - run:
-                                  name: Pack artefacts
-                                  command: '& "c:/Program Files/CMake/bin/cpack.exe"'
                         - run:
                                   name: Move artefacts
                                   command: |
@@ -135,9 +120,6 @@ jobs:
                         - run:
                                   name: Install Conan
                                   command: pip3 install conan
-                        - run:
-                                  name: Install cmake
-                                  command: brew install cmake
                         - run:
                                   name: Install wget
                                   command: brew install wget
@@ -166,14 +148,8 @@ jobs:
                         - run:
                                   name: Conan build
                                   command: conan build ../daggy
-                        - run:
-                                  name: Run local tests
-                                  command: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
                         - store_test_results:
                                   path: tests
-                        - run:
-                                  name: Pack artefacts
-                                  command: cpack
                         - run:
                                   name: Move artefacts
                                   command: |

@@ -45,7 +45,7 @@ class DaggyConan(ConanFile):
         "with_yaml": True,
         "with_console": True,
         "shared": True,
-        "fPIC": True,
+        "fPIC": False,
         "circleci": False
     }
     generators = "cmake", "cmake_paths", "cmake_find_package"
@@ -56,11 +56,25 @@ class DaggyConan(ConanFile):
     def set_version(self):
         self.version = GitVersion().full_version()
 
-    def configure(self):
-        self.options.fPIC = self.options.shared
+    def config_options(self):
+        if self.settings.os == "Windows":
+            del self.options.fPIC
+
         self.options["qt"].shared = True
-        
+
+    def configure(self):
+        if self.options.shared:
+            del self.options.fPIC
+
+    def validate(self):
+        if not self.options["qt"].shared: 
+            raise ConanInvalidConfiguration("Shared Qt lib is required.") 
+    
+    def build_requirements(self):
+        self.build_requires("cmake/3.22.0")
+
     def requirements(self):
+        self.requires("openssl/1.1.1m")
         self.requires("qt/6.2.2")
         self.requires("kainjow-mustache/4.1")
 
@@ -102,6 +116,9 @@ class DaggyConan(ConanFile):
     def build(self):
         cmake = self._configure()
         cmake.build()
+        self.run("ctest -C Release --output-on-failure --output-junit tests/local_tests.xml", run_environment=True)
+        self.run("cpack", run_environment=True)
+        
 
     def package(self):
         cmake = self._configure()
