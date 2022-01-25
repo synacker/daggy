@@ -26,9 +26,6 @@ jobs:
                         - run:
                                   name: Conan build
                                   command: conan build ../daggy
-                        - run:
-                                  name: Run local tests
-                                  command: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
                         - store_test_results:
                                   path: tests
                         - run:
@@ -102,9 +99,6 @@ jobs:
                         - run:
                                   name: Conan build
                                   command: conan build ../daggy
-                        - run:
-                                  name: Run local tests
-                                  command: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
                         - store_test_results:
                                   path: tests
                         - run:
@@ -160,9 +154,6 @@ jobs:
                         - run:
                                   name: Conan build
                                   command: conan build ../daggy
-                        - run:
-                                  name: Run local tests
-                                  command: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
                         - store_test_results:
                                   path: tests
                         - run:
