@@ -128,15 +128,15 @@ Download archives with binaries or installation packages from last [release](htt
 sudo dnf install daggy daggy-devel
 ```
 
-#### Build from source
-
 **Environment requirenments**
 
 [Conan](https://conan.io), [cmake](https://cmake.org), [git](https://git-scm.com) and C++17/20 compiler.
 
-**Build steps**
+#### **Make install for system library**
 
-**Make install for system library**
+{% hint style="info" %}
+**Build requirenments:** [Conan](https://conan.io), [cmake](https://cmake.org), [git](https://git-scm.com) and C++17/20 compiler.
+{% endhint %}
 
 ```bash
 git clone https://github.com/synacker/daggy.git
@@ -156,7 +156,16 @@ cd build
 conan create ../daggy --build=missing
 ```
 
-**Check installation of Daggy Core C++17/20 interface**
+#### Add as conan package dependency
+
+{% code title="conanfile.py" %}
+```python
+def requirements(self):
+    self.requires("daggy/2.1.2")p
+```
+{% endcode %}
+
+### Check installation of Daggy Core C++17/20 interface
 
 {% code title="test.cpp" %}
 ```cpp
@@ -226,7 +235,7 @@ int main(int argc, char** argv)
 ```
 {% endcode %}
 
-**Check installation of Daggy Core C11 interface**
+### **Check installation of Daggy Core C11 interface**
 
 {% code title="test.c" %}
 ```c
@@ -339,7 +348,7 @@ void on_command_error(DaggyCore core, const char* provider_id, const char* comma
 ```
 {% endcode %}
 
-**Check installation of Daggy Console application**
+### **Check installation of Daggy Console application**
 
 ```bash
 daggy --help
@@ -358,9 +367,9 @@ Arguments:
   file                        data aggregation sources file
 ```
 
-### Getting Started data aggregation and streaming with Daggy Console Application
+## Getting Started data aggregation and streaming with Daggy Console Application
 
-#### Simple Sources
+### Simple Sources
 
 **Create simple.yaml**
 
