@@ -22,26 +22,24 @@ In short terms, daggy run local or remote processes at the same time, simultaneo
 Daggy Screencast
 {% endembed %}
 
-  - [About Daggy](#about-daggy)
-  * [Introduction and goal concepts](#introduction-and-goal-concepts)
-    + [Daggy High Level Design](#daggy-high-level-design)
-    + [Basic terms](#basic-terms)
-  * [Getting Started](#getting-started)
-    + [Getting Daggy](#getting-daggy)
-      - [Download and install Windows, Linux, MacOS](#download-and-install-windows--linux--macos)
-      - [Fedora](#fedora)
-      - [**Make install for system library**](#--make-install-for-system-library--)
-      - [Add as conan package dependency](#add-as-conan-package-dependency)
-    + [Check installation of Daggy Core C++17/20 interface](#check-installation-of-daggy-core-c--17-20-interface)
-    + [**Check installation of Daggy Core C11 interface**](#--check-installation-of-daggy-core-c11-interface--)
-    + [**Check installation of Daggy Console application**](#--check-installation-of-daggy-console-application--)
-  * [Getting Started data aggregation and streaming with Daggy Console Application](#getting-started-data-aggregation-and-streaming-with-daggy-console-application)
-    + [Simple Sources](#simple-sources)
-      - [Example of Data Aggregation Sources with multiple commands and remote data aggregation and streaming](#example-of-data-aggregation-sources-with-multiple-commands-and-remote-data-aggregation-and-streaming)
+* [About Daggy](./#about-daggy)
+* [Introduction and goal concepts](./#introduction-and-goal-concepts)
+  * [Daggy High Level Design](./#daggy-high-level-design)
+  * [Basic terms](./#basic-terms)
+* [Getting Started](./#getting-started)
+  * [Getting Daggy](./#getting-daggy)
+    * [Download and install Windows, Linux, MacOS](./#download-and-install-windows--linux--macos)
+    * [Fedora](./#fedora)
+    * [**Make install for system library**](./#--make-install-for-system-library--)
+    * [Add as conan package dependency](./#add-as-conan-package-dependency)
+  * [Check installation of Daggy Core C++17/20 interface](./#check-installation-of-daggy-core-c--17-20-interface)
+  * [**Check installation of Daggy Core C11 interface**](./#--check-installation-of-daggy-core-c11-interface--)
+  * [**Check installation of Daggy Console application**](./#--check-installation-of-daggy-console-application--)
+* [Getting Started data aggregation and streaming with Daggy Console Application](./#getting-started-data-aggregation-and-streaming-with-daggy-console-application)
+  * [Simple Sources](./#simple-sources)
+    * [Example of Data Aggregation Sources with multiple commands and remote data aggregation and streaming](./#example-of-data-aggregation-sources-with-multiple-commands-and-remote-data-aggregation-and-streaming)
 
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
-
+[_Table of contents generated with markdown-toc_](http://ecotrust-canada.github.io/markdown-toc/)
 
 ## Introduction and goal concepts
 
@@ -122,7 +120,7 @@ Download archives with binaries or installation packages from last [release](htt
 sudo dnf install daggy daggy-devel
 ```
 
-#### **Make install for system library**
+#### Make install for system library
 
 {% hint style="info" %}
 **Build requirenments:** [Conan](https://conan.io), [cmake](https://cmake.org), [git](https://git-scm.com) and C++17/20 compiler.
@@ -147,6 +145,8 @@ conan create ../daggy --build=missing
 ```
 
 #### Add as conan package dependency
+
+Get daggy [from conan-center](https://conan.io/center/daggy).
 
 {% code title="conanfile.py" %}
 ```python
@@ -225,7 +225,7 @@ int main(int argc, char** argv)
 ```
 {% endcode %}
 
-### **Check installation of Daggy Core C11 interface**
+### Check installation of Daggy Core C11 interface
 
 {% code title="test.c" %}
 ```c
@@ -338,7 +338,7 @@ void on_command_error(DaggyCore core, const char* provider_id, const char* comma
 ```
 {% endcode %}
 
-### **Check installation of Daggy Console application**
+### Check installation of Daggy Console application
 
 ```bash
 daggy --help

@@ -4,6 +4,12 @@ description: Dagyy changelog
 
 # Changelog
 
+## [2.1.2](https://github.com/synacker/daggy/releases/tag/2.1.2)
+
+### Fixed
+
+* Build fixes for conan package
+
 ## [2.1.1](https://github.com/synacker/daggy/releases/tag/2.1.1)
 
 ### Fixed
