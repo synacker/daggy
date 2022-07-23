@@ -6,7 +6,7 @@ orbs:
 jobs:
         gcc-10_x64:
                 docker:
-                        - image: synacker2/daggy_linux_gcc10_debian:3.0.1
+                        - image: synacker2/daggy_gcc10:latest
                           user: daggy
                 environment:
                         CONAN_USER_HOME: ~/
