@@ -6,7 +6,7 @@ orbs:
 jobs:
         gcc-10_x64:
                 docker:
-                        - image: synacker2/daggy_linux_gcc10_debian:3.0.1
+                        - image: synacker2/daggy_gcc10:latest
                           user: daggy
                 environment:
                         CONAN_USER_HOME: ~/
@@ -15,12 +15,12 @@ jobs:
                         - checkout:
                                   path: ~/daggy
                         - restore_cache:
-                                  key: conan-data-qt6.2.2-gcc10-{{ arch }}
+                                  key: conan-data-qt6.3.1-gcc10-{{ arch }}
                         - run:
                                   name: Conan install
                                   command: conan install ../daggy --build=missing
                         - save_cache:
-                                  key: conan-data-qt6.2.2-gcc10-{{ arch }}
+                                  key: conan-data-qt6.3.1-gcc10-{{ arch }}
                                   paths:
                                           - ~/.conan/data
                         - run:
@@ -44,17 +44,17 @@ jobs:
                         CONAN_USER_HOME: ~/
                 steps:
                         - restore_cache:
-                                  key: QtIFW-4.2.0-{{ arch }}
+                                  key: QtIFW-4.3.0-{{ arch }}
                         - run:
                                   name: Install QtIFW
                                   command: |
                                           if ( -not(Test-Path C:\QtIFW) ) {
                                               $ProgressPreference = 'SilentlyContinue'
-                                              wget -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.2.0/QtInstallerFramework-windows-x86-4.2.0.exe'
+                                              wget -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.3.0/QtInstallerFramework-windows-x86-4.3.0.exe'
                                               ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
                                           }
                         - save_cache:
-                                  key: QtIFW-4.2.0-{{ arch }}
+                                  key: QtIFW-4.3.0-{{ arch }}
                                   paths:
                                           - C:\QtIFW
                         - run:
@@ -63,7 +63,7 @@ jobs:
                         - checkout:
                                   path: ~/daggy
                         - restore_cache:
-                                  key: conan-data-qt6.2.2-{{ arch }}
+                                  key: conan-data-qt6.3.1-{{ arch }}
                         - restore_cache:
                                   key: conan-{{ arch }}
                         - run:
@@ -86,7 +86,7 @@ jobs:
                                   name: Conan install
                                   command: conan install ../daggy --build=missing -o circleci=True
                         - save_cache:
-                                  key: conan-data-qt6.2.2-{{ arch }}
+                                  key: conan-data-qt6.3.1-{{ arch }}
                                   paths:
                                           - ~/.conan/data
                         - save_cache:
@@ -116,7 +116,7 @@ jobs:
                         - checkout:
                                   path: ~/daggy
                         - restore_cache:
-                                  key: conan-data-qt6.2.2-{{ arch }}
+                                  key: conan-data-qt6.3.1-{{ arch }}
                         - run:
                                   name: Install Conan
                                   command: pip3 install conan
@@ -124,25 +124,25 @@ jobs:
                                   name: Install wget
                                   command: brew install wget
                         - restore_cache:
-                                  key: QtIFW-4.2.0_{{ arch }}
+                                  key: QtIFW-4.3.0_{{ arch }}
                         - run:
                                   name: Install QtIFW
                                   command: |
                                           if [[ ! -d ~/QtIFW ]]
                                           then
-                                              wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.2.0/QtInstallerFramework-macOS-x64-4.2.0.dmg'
+                                              wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.3.0/QtInstallerFramework-macOS-x64-4.3.0.dmg'
                                               sudo hdiutil attach ~/QtInstallerFramework-mac-x64.dmg
-                                              /Volumes/QtInstallerFramework-macOS-x64-4.2.0/QtInstallerFramework-macOS-x64-4.2.0.app/Contents/MacOS/QtInstallerFramework-macOS-x64-4.2.0 --am --al -c --root ~/QtIFW install   
+                                              /Volumes/QtInstallerFramework-macOS-x64-4.3.0/QtInstallerFramework-macOS-x64-4.3.0.app/Contents/MacOS/QtInstallerFramework-macOS-x64-4.3.0 --am --al -c --root ~/QtIFW install   
                                           fi
                         - save_cache:
-                                  key: QtIFW-4.2.0_{{ arch }}
+                                  key: QtIFW-4.3.0_{{ arch }}
                                   paths:
                                           - ~/QtIFW
                         - run:
                                   name: Conan install
                                   command: conan install ../daggy --build=missing
                         - save_cache:
-                                  key: conan-data-qt6.2.2-{{ arch }}
+                                  key: conan-data-qt6.3.1-{{ arch }}
                                   paths:
                                           - ~/.conan/data
                         - run:
