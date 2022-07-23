@@ -17,5 +17,7 @@ SET_RPATH()
 
 qt6_add_executable(${TARGET} ${SOURCES})
 add_test(NAME ${TARGET} COMMAND ${TARGET} WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
+set_tests_properties(${TARGET} PROPERTIES ENVIRONMENT "PATH=${PATH}:${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
+
 target_link_libraries(${TARGET} PRIVATE DaggyCore Qt6::Test)
 target_precompile_headers(${TARGET} PRIVATE Precompiled.h)
