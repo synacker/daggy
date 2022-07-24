@@ -118,7 +118,7 @@ jobs:
 
       - name: Conan build
         working-directory: build
-        run: conan build ..
+        run: conan build -s compiler.version=16 ..
 
       - name: Tests
         working-directory: build
