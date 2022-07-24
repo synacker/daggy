@@ -11,6 +11,7 @@ jobs:
       - run: ls -la ${{github.workspace}}
 
       - name: Cache conan packages
+        uses: actions/cache@v3
         with:
           path: $HOME/.conan/data
           key: conan-data
