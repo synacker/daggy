@@ -21,7 +21,6 @@ jobs:
         run: mkdir build
 
       - name: Conan config
-        working-directory: build
         run: conan config install CI/conan
 
       - name: Conan install
@@ -113,7 +112,6 @@ jobs:
               ls C:\QtIFW
 
       - name: Conan config
-        working-directory: build
         run: conan config install CI/conan
 
       - name: Conan install
