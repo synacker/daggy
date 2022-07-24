@@ -15,5 +15,4 @@ jobs:
           key: conan-data
 
       - name: Conan install
-        working-directory: build
         run: conan install ${{github.workspace}} --build=missing
