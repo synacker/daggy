@@ -90,6 +90,7 @@ jobs:
                   $ProgressPreference = 'SilentlyContinue'
                   Invoke-WebRequest -UseBasicParsing -OutFile downloads/vc_redist-x64.exe 'https://aka.ms/vs/16/release/vc_redist.x64.exe'
               }
+              ls downloads
 
       - name: Make build dir
         run: mkdir build
