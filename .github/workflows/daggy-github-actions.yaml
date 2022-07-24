@@ -15,4 +15,4 @@ jobs:
           key: conan-data
 
       - name: Conan install
-        run: conan install ${{github.workspace}} --build=missing
+        run: conan install ${{github.workspace}}/daggy --build=missing
