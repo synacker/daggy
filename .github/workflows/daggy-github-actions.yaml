@@ -63,7 +63,7 @@ jobs:
           path: |
             ~/.conan/data
             c:\.conan\
-          key: conan-data
+          key: conan-data-msvs16
 
       - name: Cache QtIFW
         uses: actions/cache@v3
@@ -110,7 +110,7 @@ jobs:
 
       - name: Conan install
         working-directory: build
-        run: conan install .. --build=missing
+        run: conan install -s compiler.version=16 .. --build=missing
 
       - name: Conan remove build folders
         working-directory: build
@@ -128,3 +128,15 @@ jobs:
         uses: mikepenz/action-junit-report@v3.2.0
         with:
           report_paths: build/tests/local_tests.xml
+
+      - name: Packaging
+        working-directory: build
+        run: cpack
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: daggy_win_x64
+          path: |
+            build/*.exe
+            build/*.zip
