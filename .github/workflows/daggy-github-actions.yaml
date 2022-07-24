@@ -48,5 +48,47 @@ jobs:
             build/*.deb
             build/*.rpm
             build/*.zip
+  windows-msvs2019:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Cache conan packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.conan/data
+            c:\.conan\
+          key: conan-data
 
+      - name: Cache QtIFW
+        uses: actions/cache@v3
+        with:
+          path: C:\QtIFW
+          key: qt-ifw
 
+      - name: Cache vc_redist
+        uses: actions/cache@v3
+        with:
+          path: downloads
+          key: vc_redist
+
+      - uses: actions/setup-python@v4
+        with:
+          cache: 'pip'
+      - run: pip install -r $GITHUB_WORKSPACE/CI/python/requirenments.txt
+
+      - name: Download vc_redist
+        run: |
+              if ( -not(Test-Path downloads/vc_redist-x64.exe) ) {
+                  $ProgressPreference = 'SilentlyContinue'
+                  wget -UseBasicParsing -OutFile ~/downloads/vc_redist-x64.exe 'https://aka.ms/vs/16/release/vc_redist.x64.exe'
+              }
+
+      - name: Make build dir
+        run: mkdir build
+
+      - name: Move vc_redist
+        run: mv downloads/vc_redist-x64.exe build/
