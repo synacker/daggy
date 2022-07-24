@@ -6,8 +6,8 @@ jobs:
     container: 
       image: docker.io/synacker2/daggy_gcc10
     steps:
+      - uses: docker://synacker2/daggy_gcc10
       - uses: actions/checkout@v3
-      - uses: docker.io/synacker2/daggy_gcc10
       - run: ls -la ${{github.workspace}}
 
       - name: Cache conan packages
