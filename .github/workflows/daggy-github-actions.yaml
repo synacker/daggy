@@ -4,8 +4,6 @@ jobs:
   linux_x64-gcc10:
     runs-on: ubuntu-latest
     container: docker.io/synacker2/daggy_gcc10
-    env:
-      CONAN_USER_HOME: ${{env.GITHUB_WORKSPACE}}/conan
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -16,7 +14,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            ${{env.CONAN_USER_HOME}}/.conan/data
+            $HOME/.conan/data
 
       - name: Conan install
         working-directory: build
