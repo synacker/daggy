@@ -17,6 +17,9 @@ jobs:
       - name: Make build dir
         run: mkdir build
 
+      - name: Git setup
+        run: git config --global --add safe.directory $(realpath .)
+
       - name: Conan install
         working-directory: build
         run: conan install $GITHUB_WORKSPACE --build=missing
