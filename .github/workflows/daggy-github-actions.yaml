@@ -40,19 +40,12 @@ jobs:
         working-directory: build
         run: cpack
 
-      - uses: actions/upload-artifact@v3
-        with: 
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with: daggy_linux_x64
           path: |
             build/*.deb
-
-      - uses: actions/upload-artifact@v3
-        with: 
-          path: |
             build/*.rpm
-
-      - uses: actions/upload-artifact@v3
-        with: 
-          path: |
             build/*.zip
 
 
