@@ -1,11 +1,11 @@
 name: GitHub Actions Demo
-on: push
+on: pull_request
 jobs:
   linux_x64-gcc10:
     runs-on: ubuntu-latest
     env:
       GITHUB_WORKSPACE: /home/daggy 
-      CONAN_USER_HOME: ${{GITHUB_WORKSPACE}}
+      CONAN_USER_HOME: ${{env.GITHUB_WORKSPACE}}
     container: 
       image: docker.io/synacker2/daggy_gcc10
       options: --user daggy
