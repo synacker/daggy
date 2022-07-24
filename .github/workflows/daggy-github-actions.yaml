@@ -7,11 +7,12 @@ jobs:
       image: docker.io/synacker2/daggy_gcc10
     steps:
       - uses: actions/checkout@v3
-      - name: Print current working dir
-        run: |
-          echo $PWD
-          ls -la $PWD
-          echo $GITHUB_WORKSPACE
-          ls -la $GITHUB_WORKSPACE
 
-     
+      - name: Cache conan packages
+        uses: actions/cache@v3
+        with:
+          path: $HOME/.conan/data
+          key: conan-data
+
+      - name: Conan install
+        run: conan install $GITHUB_WORKSPACE --build=missing
