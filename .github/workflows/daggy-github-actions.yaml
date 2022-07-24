@@ -2,6 +2,7 @@ name: GitHub Actions Demo
 on: pull_request
 jobs:
   linux_x64-gcc10:
+    if: ${{ false }}  # disable for now
     runs-on: ubuntu-latest
     container: 
       image: docker.io/synacker2/daggy_gcc10
@@ -84,7 +85,7 @@ jobs:
         run: |
               if ( -not(Test-Path downloads/vc_redist-x64.exe) ) {
                   $ProgressPreference = 'SilentlyContinue'
-                  wget -UseBasicParsing -OutFile ~/downloads/vc_redist-x64.exe 'https://aka.ms/vs/16/release/vc_redist.x64.exe'
+                  Invoke-WebRequest -UseBasicParsing -OutFile ~/downloads/vc_redist-x64.exe 'https://aka.ms/vs/16/release/vc_redist.x64.exe'
               }
 
       - name: Make build dir
