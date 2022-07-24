@@ -14,11 +14,11 @@ jobs:
           path: $HOME/.conan/data
           key: conan-data
 
+      - name: Git setup
+        run: git status
+
       - name: Make build dir
         run: mkdir build
-
-      - name: Git setup
-        run: git config --global --add safe.directory $(realpath .)
 
       - name: Conan install
         working-directory: build
