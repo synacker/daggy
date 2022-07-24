@@ -31,11 +31,9 @@ jobs:
         working-directory: build
         run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
-      - name: Publish Test Report
-        working-directory: build
-        uses: mikepenz/action-junit-report@v3
-        with:
-          report_paths: tests/local_tests.xml
+      - name: JUnit Report Action
+        uses: mikepenz/action-junit-report@v3.2.0
+          report_paths: build/tests/local_tests.xml
 
       - name: Packaging
         working-directory: build
@@ -43,11 +41,10 @@ jobs:
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
-        working-directory: build
         with:
           path: |
-            *.deb
-            *.rpm
-            *.zip
+            build/*.deb
+            build/*.rpm
+            build/*.zip
 
 
