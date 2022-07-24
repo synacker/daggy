@@ -51,10 +51,3 @@ RUN tar -xvf /tmp/cmake-3.23.1.tar.gz -C /tmp && cd /tmp/cmake-3.23.1 && ./boots
 RUN pip3 install conan
 
 RUN setcap cap_net_raw+ep /bin/ping
-
-RUN useradd -s /bin/bash daggy
-RUN mkdir -p /home/daggy/.conan
-RUN chown -R daggy /home/daggy
-
-USER daggy
-WORKDIR /home/daggy

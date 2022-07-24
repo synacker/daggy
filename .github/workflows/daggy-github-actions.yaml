@@ -3,23 +3,21 @@ on: pull_request
 jobs:
   linux_x64-gcc10:
     runs-on: ubuntu-latest
+    container: docker.io/synacker2/daggy_gcc10
     env:
-      GITHUB_WORKSPACE: /home/daggy 
-      CONAN_USER_HOME: /home/daggy
-    container: 
-      image: docker.io/synacker2/daggy_gcc10
-      options: --user daggy
-    
+      CONAN_USER_HOME: ${{env.GITHUB_WORKSPACE}}/conan
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+        with:
+          path: daggy
         
       - name: Cache conan packages
         uses: actions/cache@v3
         with:
           path: |
-            .conan/data
+            ${{env.CONAN_USER_HOME}}/.conan/data
 
       - name: Conan install
         working-directory: build
-        run: conan install ../daggy --build=missing
+        run: conan install ${{env.GITHUB_WORKSPACE}}/daggy --build=missing
