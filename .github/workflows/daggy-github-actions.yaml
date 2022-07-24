@@ -18,4 +18,4 @@ jobs:
 
       - name: Conan install
         working-directory: build
-        run: conan install ${GITHUB_WORKSPACE}/daggy --build=missing
+        run: conan install ${{github.workspace}}/daggy --build=missing
