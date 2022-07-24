@@ -15,7 +15,7 @@ jobs:
           key: conan-data
 
       - name: Git setup
-        run: git status
+        run: git init && git pull
 
       - name: Make build dir
         run: mkdir build
