@@ -78,7 +78,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           cache: 'pip'
-      - run: pip install -r %GITHUB_WORKSPACE%/CI/python/requirenments.txt
+      - run: pip install -r CI/python/requirenments.txt
 
       - name: Download vc_redist
         run: |
