@@ -112,6 +112,10 @@ jobs:
         working-directory: build
         run: conan install .. --build=missing
 
+      - name: Conan remove build folders
+        working-directory: build
+        run: conan remove * --builds --force
+
       - name: Conan build
         working-directory: build
         run: conan build ..
