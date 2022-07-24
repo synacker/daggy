@@ -49,6 +49,7 @@ jobs:
             build/*.deb
             build/*.rpm
             build/*.zip
+
   windows-msvs2019:
     runs-on: windows-latest
     steps:
@@ -74,7 +75,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/downloads
-          key: vc_redist
+          key: vc_redist17
 
       - name: Cache python pip
         uses: actions/cache@v3
@@ -88,7 +89,7 @@ jobs:
         run: |
               if ( -not(Test-Path ~/downloads/vc_redist-x64.exe) ) {
                   $ProgressPreference = 'SilentlyContinue'
-                  Invoke-WebRequest -UseBasicParsing -OutFile ~/downloads/vc_redist-x64.exe 'https://aka.ms/vs/16/release/vc_redist.x64.exe'
+                  Invoke-WebRequest -UseBasicParsing -OutFile ~/downloads/vc_redist-x64.exe 'https://aka.ms/vs/17/release/vc_redist.x64.exe'
               }
               ls ~/downloads
 
@@ -110,3 +111,7 @@ jobs:
       - name: Conan install
         working-directory: build
         run: conan install .. --build=missing
+
+      - name: Conan build
+        working-directory: build
+        run: conan build ..
