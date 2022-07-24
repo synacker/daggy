@@ -7,15 +7,14 @@ jobs:
       image: docker.io/synacker2/daggy_gcc10
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Cache conan packages
         uses: actions/cache@v3
         with:
           path: $HOME/.conan/data
           key: conan-data
-
-      - name: Git setup
-        run: git init && git pull
 
       - name: Make build dir
         run: mkdir build
