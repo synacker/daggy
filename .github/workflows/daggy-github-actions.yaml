@@ -20,9 +20,13 @@ jobs:
       - name: Make build dir
         run: mkdir build
 
+      - name: Conan config
+        working-directory: build
+        run: conan config install CI/conan
+
       - name: Conan install
         working-directory: build
-        run: conan install $GITHUB_WORKSPACE --build=missing
+        run: conan install $GITHUB_WORKSPACE --build=missing -pr=linux-gcc10_x64
 
       - name: Conan build
         working-directory: build
@@ -108,9 +112,13 @@ jobs:
               }
               ls C:\QtIFW
 
+      - name: Conan config
+        working-directory: build
+        run: conan config install CI/conan
+
       - name: Conan install
         working-directory: build
-        run: conan install -s compiler.version=16 .. --build=missing
+        run: conan install .. --build=missing -pr=win-msvs2019_x64
 
       - name: Conan remove build folders
         working-directory: build
@@ -118,7 +126,7 @@ jobs:
 
       - name: Conan build
         working-directory: build
-        run: conan build -s compiler.version=16 ..
+        run: conan build ..
 
       - name: Tests
         working-directory: build
