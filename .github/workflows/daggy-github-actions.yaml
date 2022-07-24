@@ -14,5 +14,8 @@ jobs:
           path: $HOME/.conan/data
           key: conan-data
 
+      - name: Ls workspace
+        run: ls -la ${{github.workspace}}
+
       - name: Conan install
-        run: conan install ${{github.workspace}}/daggy --build=missing
+        run: conan install ${{github.workspace}} --build=missing
