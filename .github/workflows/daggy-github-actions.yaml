@@ -115,3 +115,12 @@ jobs:
       - name: Conan build
         working-directory: build
         run: conan build ..
+
+      - name: Tests
+        working-directory: build
+        run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+
+      - name: JUnit Report Action
+        uses: mikepenz/action-junit-report@v3.2.0
+        with:
+          report_paths: build/tests/local_tests.xml
