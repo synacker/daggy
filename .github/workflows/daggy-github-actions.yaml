@@ -79,7 +79,7 @@ jobs:
       - name: Cache python pip
         uses: actions/cache@v3
         with:
-          path: ~/.cache/pip
+          path: ~\AppData\Local\pip\Cache
           key: pip_cache
       
       - run: pip install conan
@@ -106,3 +106,7 @@ jobs:
                   ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
               }
               ls C:\QtIFW
+
+      - name: Conan install
+        working-directory: build
+        run: conan install .. --build=missing
