@@ -13,7 +13,7 @@ jobs:
       - name: Cache conan packages
         uses: actions/cache@v3
         with:
-          path: $HOME/.conan/data
+          path: ~/.conan/data
           key: conan-data
 
       - name: Make build dir
