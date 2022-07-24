@@ -21,6 +21,9 @@ jobs:
         working-directory: build
         run: conan install $GITHUB_WORKSPACE --build=missing
 
+      - name: ls conan data
+        run: ls -la $HOME/data
+
       - name: Conan build
         working-directory: build
         run: conan build $GITHUB_WORKSPACE
