@@ -15,4 +15,9 @@ jobs:
           key: conan-data
 
       - name: Conan install
+        working_directory: build
         run: conan install $GITHUB_WORKSPACE --build=missing
+
+      - name: Conan build
+        working_directory: build
+        run: conan build $GITHUB_WORKSPACE
