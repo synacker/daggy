@@ -42,7 +42,8 @@ jobs:
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
-        with: daggy_linux_x64
+        with: 
+          name: daggy_linux_x64
           path: |
             build/*.deb
             build/*.rpm
