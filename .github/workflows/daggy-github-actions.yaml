@@ -14,16 +14,11 @@ jobs:
           path: $HOME/.conan/data
           key: conan-data
 
-      - name: Make build dir
-        run: mkdir build
-
       - name: Conan install
         working-directory: build
         run: conan install $GITHUB_WORKSPACE --build=missing
 
       - name: ls conan data
-        run: ls -la $HOME/data
+        run: ls -la $HOME/.conan/data
 
-      - name: Conan build
-        working-directory: build
-        run: conan build $GITHUB_WORKSPACE
+      
