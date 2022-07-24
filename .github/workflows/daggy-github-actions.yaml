@@ -5,15 +5,17 @@ jobs:
     runs-on: ubuntu-latest
     container: 
       image: docker.io/synacker2/daggy_gcc10
-      steps:
-        - uses: actions/checkout@v3
-        - run: ls -la ${{github.workspace}}
+    steps:
+      - uses: actions/checkout@v3
+      - run: ls -la ${{github.workspace}}
+        uses: docker.io/synacker2/daggy_gcc10
 
-        - name: Cache conan packages
-          uses: actions/cache@v3
-          with:
-            path: $HOME/.conan/data
-            key: conan-data
+      - name: Cache conan packages
+        uses: actions/cache@v3
+        with:
+          path: $HOME/.conan/data
+          key: conan-data
 
-        - name: Conan install
-          run: conan install ${{github.workspace}} --build=missing
+      - name: Conan install
+        run: conan install ${{github.workspace}} --build=missing
+        uses: docker.io/synacker2/daggy_gcc10
