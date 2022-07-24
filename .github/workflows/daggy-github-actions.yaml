@@ -1,10 +1,11 @@
 name: GitHub Actions Demo
-on: pull_request
+on: push
 jobs:
   linux_x64-gcc10:
     runs-on: ubuntu-latest
     env:
-      CONAN_USER_HOME: /home/daggy
+      GITHUB_WORKSPACE: /home/daggy 
+      CONAN_USER_HOME: ${{GITHUB_WORKSPACE}}
     container: 
       image: docker.io/synacker2/daggy_gcc10
       options: --user daggy
@@ -12,14 +13,14 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-        working-directory: ${{env.CONAN_USER_HOME}}
+        path: daggy
         
       - name: Cache conan packages
         uses: actions/cache@v3
         with:
           path: |
-            ${{env.CONAN_USER_HOME}}/.conan/data
+            .conan/data
 
       - name: Conan install
-        working-directory: ${{env.CONAN_USER_HOME}}/build
+        working-directory: build
         run: conan install ../daggy --build=missing
