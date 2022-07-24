@@ -40,12 +40,19 @@ jobs:
         working-directory: build
         run: cpack
 
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
-        with:
+      - uses: actions/upload-artifact@v3
+        with: 
           path: |
             build/*.deb
+
+      - uses: actions/upload-artifact@v3
+        with: 
+          path: |
             build/*.rpm
+
+      - uses: actions/upload-artifact@v3
+        with: 
+          path: |
             build/*.zip
 
 
