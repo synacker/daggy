@@ -1,0 +1,25 @@
+name: GitHub Actions Demo
+on: pull_request
+jobs:
+  linux_x64-gcc10:
+    runs-on: ubuntu-latest
+    env:
+      CONAN_USER_HOME: /home/daggy
+    container: 
+      image: docker.io/synacker2/daggy_gcc10
+      options: --user daggy
+    
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        working-directory: ${{env.CONAN_USER_HOME}}
+        
+      - name: Cache conan packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{env.CONAN_USER_HOME}}/.conan/data
+
+      - name: Conan install
+        working-directory: ${{env.CONAN_USER_HOME}}/build
+        run: conan install ../daggy --build=missing
