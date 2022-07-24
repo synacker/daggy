@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_WORKSPACE: /home/daggy 
-      CONAN_USER_HOME: ${{env.GITHUB_WORKSPACE}}
+      CONAN_USER_HOME: /home/daggy
     container: 
       image: docker.io/synacker2/daggy_gcc10
       options: --user daggy
