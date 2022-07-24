@@ -5,8 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     container: docker.io/synacker2/daggy_gcc10
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         
       - name: Cache conan packages
         uses: actions/cache@v3
