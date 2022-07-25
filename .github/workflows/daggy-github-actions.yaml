@@ -27,6 +27,10 @@ jobs:
         working-directory: build
         run: conan install $GITHUB_WORKSPACE --build=missing -pr=linux-gcc10_x64
 
+      - name: Conan remove build folders
+        working-directory: build
+        run: conan remove '*' --builds --src --force
+
       - name: Conan build
         working-directory: build
         run: conan build $GITHUB_WORKSPACE
@@ -121,7 +125,7 @@ jobs:
 
       - name: Conan remove build folders
         working-directory: build
-        run: conan remove * --builds --force
+        run: conan remove '*' --builds --src --force
 
       - name: Conan build
         working-directory: build
