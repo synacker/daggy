@@ -209,6 +209,18 @@ jobs:
         working-directory: build
         run: conan build ..
 
+      - name: ls bin build artefacts
+        working-directory: build
+        run: ls bin
+
+      - name: ls lib build artefacts
+        working-directory: build
+        run: ls lib
+
+      - name: list deps
+        working-directory: build
+        run: otool -l bin/DaggyCoreLocalTests 
+
       - name: Tests
         working-directory: build
         run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
