@@ -11,7 +11,7 @@ set(SOURCES
     main.cpp
 )
 
-SET_RPATH()
+include(rpath_bin)
 
 qt6_add_executable(${TARGET} ${SOURCES})
 target_link_libraries(${TARGET} PRIVATE DaggyCore)

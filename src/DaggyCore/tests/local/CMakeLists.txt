@@ -13,7 +13,7 @@ set(SOURCES
 )
 
 
-SET_RPATH()
+include(rpath_bin)
 
 qt6_add_executable(${TARGET} ${SOURCES})
 add_test(NAME ${TARGET} COMMAND ${TARGET} WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})

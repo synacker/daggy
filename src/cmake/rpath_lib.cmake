@@ -1,0 +1,5 @@
+if(APPLE)
+    set(CMAKE_INSTALL_RPATH "@loader_path/${PROJECT_NAME}")
+elseif(UNIX)
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/${PROJECT_NAME}")
+endif()

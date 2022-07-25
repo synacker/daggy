@@ -82,7 +82,7 @@ if(YAML_SUPPORT)
 endif()
 
 ADD_BINARY_META(LIB)
-SET_RPATH(LIB)
+include(rpath_lib)
 
 add_library(${TARGET} ${SOURCES} ${HEADERS})
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
