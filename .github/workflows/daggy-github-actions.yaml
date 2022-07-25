@@ -211,7 +211,7 @@ jobs:
 
       - name: list deps
         working-directory: build
-        run: otool -l bin/DaggyCoreLocalTests | grep LC_RPATH -A2
+        run: otool -l bin/DaggyCoreLocalTests
 
       - name: daggy version
         working-directory: build
