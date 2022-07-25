@@ -195,33 +195,33 @@ jobs:
 
       - name: Conan install
         working-directory: build
-        run: conan install .. --build=missing
+        run: conan install .. --build=missing -pr=macos-clang13_x64
 
       - name: Conan remove build folders
         working-directory: build
         run: conan remove '*' --builds --src --force
 
-      # - name: Conan build
-      #   working-directory: build
-      #   run: conan build ..
+       - name: Conan build
+         working-directory: build
+         run: conan build ..
 
-      # - name: Tests
-      #   working-directory: build
-      #   run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+       - name: Tests
+         working-directory: build
+         run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
-      # - name: JUnit Report Action
-      #   uses: mikepenz/action-junit-report@v3.2.0
-      #   with:
-      #     report_paths: build/tests/local_tests.xml
+       - name: JUnit Report Action
+         uses: mikepenz/action-junit-report@v3.2.0
+         with:
+           report_paths: build/tests/local_tests.xml
 
-      # - name: Packaging
-      #   working-directory: build
-      #   run: cpack
+       - name: Packaging
+         working-directory: build
+         run: cpack
 
-      # - name: Archive production artifacts
-      #   uses: actions/upload-artifact@v3
-      #   with: 
-      #     name: daggy_macos_x64
-      #     path: |
-      #       build/*.dmg
-      #       build/*.zip
+       - name: Archive production artifacts
+         uses: actions/upload-artifact@v3
+         with: 
+           name: daggy_macos_x64
+           path: |
+             build/*.dmg
+             build/*.zip
