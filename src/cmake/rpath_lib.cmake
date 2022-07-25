@@ -1,5 +1,5 @@
 if(APPLE)
-    set_target_properties(${TARGET} PROPERTIES INSTALL_RPATH “@loader_path/${PROJECT_NAME}”)
+    set_target_properties(${TARGET} PROPERTIES INSTALL_RPATH "@loader_path/${PROJECT_NAME}")
 elseif(UNIX)
     set_target_properties(${TARGET} PROPERTIES INSTALL_RPATH "$ORIGIN/${PROJECT_NAME}")
 endif()
