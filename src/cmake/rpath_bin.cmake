@@ -1,5 +1,6 @@
 if(APPLE)
     set_target_properties(${TARGET} PROPERTIES INSTALL_RPATH "@executable_path/../${CMAKE_INSTALL_LIBDIR};@executable_path/../${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}")
+    message("HERE!!1111 !!11!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 elseif(UNIX)
     set_target_properties(${TARGET} PROPERTIES INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}:$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}")
 endif()
