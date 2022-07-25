@@ -209,13 +209,9 @@ jobs:
         working-directory: build
         run: conan build ..
 
-      - name: ls bin build artefacts
+      - name: daggy version
         working-directory: build
-        run: ls bin
-
-      - name: ls lib build artefacts
-        working-directory: build
-        run: ls lib
+        run: bin/daggy --version
 
       - name: list deps
         working-directory: build
