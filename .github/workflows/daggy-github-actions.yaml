@@ -1,7 +1,7 @@
 name: GitHub Actions Demo
 on: pull_request
 jobs:
-  linux_x64-gcc10:
+  linux_x64-gcc10_x64:
     if: ${{ false }}  # disable for now
     runs-on: ubuntu-latest
     container: 
@@ -53,7 +53,7 @@ jobs:
             build/*.rpm
             build/*.zip
 
-  windows-msvs2019:
+  windows-msvs2019_x64:
     if: ${{ false }}  # disable for now
     runs-on: windows-latest
     steps:
@@ -148,7 +148,7 @@ jobs:
             build/*.exe
             build/*.zip
 
-  macos-clang14:
+  macos-clang13_x64:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
@@ -199,7 +199,7 @@ jobs:
 
       - name: Conan remove build folders
         working-directory: build
-        run: conan remove '*'' --builds --src --force
+        run: conan remove '*' --builds --src --force
 
       # - name: Conan build
       #   working-directory: build
