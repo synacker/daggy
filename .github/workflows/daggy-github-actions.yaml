@@ -2,7 +2,6 @@ name: GitHub Actions Demo
 on: pull_request
 jobs:
   linux-gcc10_x64:
-    if: ${{ false }}  # disable for now
     runs-on: ubuntu-latest
     container: 
       image: docker.io/synacker2/daggy_gcc10
@@ -58,7 +57,6 @@ jobs:
             build/*.zip
 
   win-msvs2019_x64:
-    if: ${{ false }}  # disable for now
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
@@ -85,13 +83,14 @@ jobs:
           path: ~/downloads
           key: vc_redist17
 
-      - name: Cache python pip
-        uses: actions/cache@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
         with:
-          path: ~\AppData\Local\pip\Cache
-          key: pip_cache
-      
-      - run: pip install conan
+          python-version: '3.10'
+          cache: pip
+
+      - run: pip install -r requirements.txt
+      - run: conan --version
 
       - name: Download vc_redist
         run: |
