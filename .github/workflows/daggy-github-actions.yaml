@@ -175,6 +175,7 @@ jobs:
           cache: pip
 
       - run: pip install -r requirements.txt
+      - run: conan --version
 
       - name: Make build dir
         run: mkdir build
@@ -198,7 +199,7 @@ jobs:
 
       - name: Conan remove build folders
         working-directory: build
-        run: conan remove * --builds --src --force
+        run: conan remove '*'' --builds --src --force
 
       # - name: Conan build
       #   working-directory: build
