@@ -1,3 +1,5 @@
+set(MACOSX_RPATH False)
+
 macro(SET_RPATH)
     set(options LIB)
     cmake_parse_arguments(RPATH_ENV
