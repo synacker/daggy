@@ -1,0 +1,238 @@
+name: GitHub Actions Demo
+on: pull_request
+jobs:
+  linux-gcc10_x64:
+    runs-on: ubuntu-latest
+    container: 
+      image: docker.io/synacker2/daggy_gcc10
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Cache conan packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.conan/data
+          key: conan-data-gcc10
+
+      - name: Make build dir
+        run: mkdir build
+
+      - name: Conan config
+        run: conan config install CI/conan
+
+      - name: Conan install
+        working-directory: build
+        run: conan install $GITHUB_WORKSPACE --build=missing -pr=linux-gcc10_x64
+
+      - name: Conan remove build folders
+        working-directory: build
+        run: conan remove '*' --builds --src --force
+
+      - name: Conan build
+        working-directory: build
+        run: conan build $GITHUB_WORKSPACE
+
+      - name: Tests
+        working-directory: build
+        run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+
+      - name: linux-gcc10_x64 Tests Report
+        uses: mikepenz/action-junit-report@v3.2.0
+        with:
+          report_paths: build/tests/local_tests.xml
+
+      - name: Packaging
+        working-directory: build
+        run: cpack
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: daggy_linux_x64
+          path: |
+            build/*.deb
+            build/*.rpm
+            build/*.zip
+
+  win-msvs2019_x64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Cache conan packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.conan/data
+            c:\.conan\
+          key: conan-data-msvs2019
+
+      - name: Cache QtIFW
+        uses: actions/cache@v3
+        with:
+          path: C:\QtIFW
+          key: qt-ifw
+
+      - name: Cache vc_redist
+        uses: actions/cache@v3
+        with:
+          path: ~/downloads
+          key: vc_redist17
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: pip
+
+      - run: pip install -r requirements.txt
+      - run: conan --version
+
+      - name: Download vc_redist
+        run: |
+              if ( -not(Test-Path ~/downloads/vc_redist-x64.exe) ) {
+                  $ProgressPreference = 'SilentlyContinue'
+                  Invoke-WebRequest -UseBasicParsing -OutFile ~/downloads/vc_redist-x64.exe 'https://aka.ms/vs/17/release/vc_redist.x64.exe'
+              }
+              ls ~/downloads
+
+      - name: Make build dir
+        run: mkdir build
+
+      - name: Move vc_redist
+        run: mv ~/downloads/vc_redist-x64.exe build/
+
+      - name: Install QtIFW
+        run: |
+              if ( -not(Test-Path C:\QtIFW) ) {
+                  $ProgressPreference = 'SilentlyContinue'
+                  Invoke-WebRequest -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.3.0/QtInstallerFramework-windows-x86-4.3.0.exe'
+                  ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
+              }
+              ls C:\QtIFW
+
+      - name: Conan config
+        run: conan config install CI/conan
+
+      - name: Conan install
+        working-directory: build
+        run: conan install .. --build=missing -pr=win-msvs2019_x64
+
+      - name: Conan remove build folders
+        working-directory: build
+        run: conan remove '*' --builds --src --force
+
+      - name: Conan build
+        working-directory: build
+        run: conan build ..
+
+      - name: Tests
+        working-directory: build
+        run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+
+      - name: win-msvs2019_x64 Tests Report
+        uses: mikepenz/action-junit-report@v3.2.0
+        with:
+          report_paths: build/tests/local_tests.xml
+
+      - name: Packaging
+        working-directory: build
+        run: cpack
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: daggy_win_x64
+          path: |
+            build/*.exe
+            build/*.zip
+
+  macos-clang13_x64:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Cache conan packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.conan/data
+          key: conan-data-clang13
+
+      - name: Cache QtIFW
+        uses: actions/cache@v3
+        with:
+          path: ~/QtIFW
+          key: qt-ifw
+      
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: pip
+
+      - run: pip install -r requirements.txt
+      - run: conan --version
+
+      - name: Make build dir
+        run: mkdir build
+
+      - name: Install QtIFW
+        run: |
+              if [[ ! -d ~/QtIFW ]]
+              then
+                  wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.3.0/QtInstallerFramework-macOS-x64-4.3.0.dmg'
+                  sudo hdiutil attach ~/QtInstallerFramework-mac-x64.dmg
+                  /Volumes/QtInstallerFramework-macOS-x64-4.3.0/QtInstallerFramework-macOS-x64-4.3.0.app/Contents/MacOS/QtInstallerFramework-macOS-x64-4.3.0 --am --al -c --root ~/QtIFW install   
+              fi
+              ls ~/QtIFW
+
+      - name: Conan config
+        run: conan config install CI/conan
+
+      - name: Conan install
+        working-directory: build
+        run: conan install .. --build=missing -pr=macos-clang13_x64
+
+      - name: Conan remove build folders
+        working-directory: build
+        run: conan remove '*' --builds --src --force
+
+      - name: Conan build
+        working-directory: build
+        run: conan build ..
+
+      - name: list deps
+        working-directory: build
+        run: otool -l bin/DaggyCoreLocalTests
+
+      - name: daggy version
+        working-directory: build
+        run: bin/daggy --version
+
+      - name: Tests
+        working-directory: build
+        run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+
+      - name: macos-clang13_x64 Tests Report
+        uses: mikepenz/action-junit-report@v3.2.0
+        with:
+          report_paths: build/tests/local_tests.xml
+
+      - name: Packaging
+        working-directory: build
+        run: cpack
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: daggy_macos_x64
+          path: |
+            build/*.dmg
+            build/*.zip
