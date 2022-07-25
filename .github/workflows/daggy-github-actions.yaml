@@ -209,13 +209,13 @@ jobs:
         working-directory: build
         run: conan build ..
 
-      - name: daggy version
-        working-directory: build
-        run: bin/daggy --version
-
       - name: list deps
         working-directory: build
         run: otool -l bin/DaggyCoreLocalTests 
+
+      - name: daggy version
+        working-directory: build
+        run: bin/daggy --version
 
       - name: Tests
         working-directory: build
