@@ -9,7 +9,7 @@ if(NOT EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 endif()
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 
-conan_basic_setup(TARGETS NO_OUTPUT_DIRS)
+conan_basic_setup(TARGETS NO_OUTPUT_DIRS KEEP_RPATHS)
 if(WIN32)
     conan_set_vs_runtime()
 endif()
