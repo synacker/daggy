@@ -40,7 +40,4 @@ if(CONSOLE)
     add_subdirectory(Daggy)
 endif()
 
-include(pack)
-
-
 

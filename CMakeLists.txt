@@ -5,6 +5,8 @@ project(daggy
         LANGUAGES CXX
 )
 
+include(src/cmake/version.cmake)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_PREFIX_PATH ${CONAN_QT_ROOT})
 
@@ -16,3 +18,5 @@ option(PACKAGE_DEPS "include daggy deps into package" ON)
 include(CTest)
 
 add_subdirectory(src)
+
+include(pack)

@@ -54,7 +54,7 @@ class DaggyConan(ConanFile):
     _cmake = None
 
     def set_version(self):
-        self.version = GitVersion().full_version()
+        self.version = GitVersion().version
 
     def config_options(self):
         if self.settings.os == "Windows":
