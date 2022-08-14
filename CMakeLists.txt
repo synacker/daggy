@@ -6,6 +6,7 @@ project(daggy
 )
 
 include(src/cmake/version.cmake)
+SET_GIT_VERSION()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_PREFIX_PATH ${CONAN_QT_ROOT})

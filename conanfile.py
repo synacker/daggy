@@ -54,7 +54,7 @@ class DaggyConan(ConanFile):
     _cmake = None
 
     def set_version(self):
-        self.version = GitVersion().version
+        self.version = GitVersion().tag
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -103,7 +103,6 @@ class DaggyConan(ConanFile):
         self._cmake.definitions["YAML_SUPPORT"] = self.options.with_yaml
         self._cmake.definitions["CONSOLE"] = self.options.with_console
         self._cmake.definitions["PACKAGE_DEPS"] = True
-        self._cmake.definitions["VERSION"] = self.version
         self._cmake.definitions["CMAKE_INSTALL_LIBDIR"] = self._libdir()
         self._cmake.definitions["BUILD_TESTING"] = True
         self._cmake.definitions["CONAN_BUILD"] = True

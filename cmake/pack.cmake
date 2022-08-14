@@ -1,7 +1,7 @@
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_VENDOR ${PROJECT_VENDOR})
-set(CPACK_PACKAGE_CONTACT milovidovmikhail@gmail.com)
-set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION_FULL})
+set(CPACK_PACKAGE_CONTACT synacker@yandex.ru)
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
@@ -12,15 +12,15 @@ if(WIN32)
     set(CPACK_IFW_ROOT "C:/QtIFW")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_NAME})
 
-    set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.ico")
-    set(CPACK_IFW_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.ico")
+    set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/icons/daggy.ico")
+    set(CPACK_IFW_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/icons/daggy.ico")
 elseif(APPLE)
     set(CPACK_GENERATOR ZIP IFW)
     set(CPACK_IFW_ROOT "~/QtIFW")
 
     set(CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_NAME})
-    set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.icns")
-    set(CPACK_IFW_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.icns")
+    set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/icons/daggy.icns")
+    set(CPACK_IFW_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/icons/daggy.icns")
 else()
     set(CPACK_GENERATOR DEB RPM ZIP)
 
@@ -62,7 +62,6 @@ set(CPACK_IFW_PACKAGE_NAME ${CPACK_PACKAGE_NAME})
 
 if(PACKAGE_DEPS)
     include(package_deps)
-    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} deps)
 endif()
 
 IF(${CPACK_SYSTEM_NAME} MATCHES Windows)
@@ -93,10 +92,10 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_SYSTEM_NAME}-${CPACK_
 include(CPack)
 include(CPackIFW)
 
-cpack_ifw_configure_component_group(Daggy
-                                    FORCED_INSTALLATION REQUIRES_ADMIN_RIGHTS
-                                    NAME Daggy
-                                    DISPLAY_NAME Daggy components
-                                    SCRIPT ${CMAKE_CURRENT_LIST_DIR}/installscript.qs
-                                    LICENSES MIT ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
-                                    )
+cpack_ifw_configure_component(daggy
+                              FORCED_INSTALLATION REQUIRES_ADMIN_RIGHTS
+                              NAME Daggy
+                              DISPLAY_NAME Daggy components
+                              SCRIPT ${CMAKE_CURRENT_LIST_DIR}/installscript.qs
+                              LICENSES MIT ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
+                              )

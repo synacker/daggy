@@ -98,7 +98,6 @@ else()
     install(TARGETS ${TARGET} ARCHIVE)
     if (BUILD_SHARED_LIBS)
         install(TARGETS ${TARGET} RUNTIME)
-        install(TARGETS ${TARGET} RUNTIME)
     endif()
 endif()
 
