@@ -2,7 +2,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
 if(UNIX AND NOT APPLE)
     install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/daggy/
-            DESTINATION .
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/daggy/
             FILES_MATCHING
             PATTERN libQt6Network.so*
             PATTERN libQt6Core.so*
@@ -12,7 +12,7 @@ if(UNIX AND NOT APPLE)
     )
 elseif(APPLE)
     install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/daggy/
-            DESTINATION .
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/daggy/
             FILES_MATCHING
             PATTERN libQt6Network*dylib
             PATTERN libQt6Core*dylib
