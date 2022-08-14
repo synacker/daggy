@@ -3,7 +3,7 @@ include (CMakeParseArguments)
 macro(SET_GIT_VERSION)
     cmake_parse_arguments(GIT_VERSION
                           ""
-                          "${args}"
+                          ""
                           ""
                           ${ARGN}
     )
@@ -56,9 +56,14 @@ macro(SET_GIT_VERSION)
                 OUTPUT_STRIP_TRAILING_WHITESPACE
         )
 
+        if (NOT GIT_DEFAULT_BRANCH)
+            set(GIT_DEFAULT_BRANCH master)
+        endif()
+
         string(REGEX REPLACE "^v" "" VERSION ${VERSION})
         set(VERSION ${VERSION}.${BUILD_NUMBER})
-        if (NOT GIT_VERSION_POSTFIX STREQUAL ${GIT_DEFAULT_BRANCH})
+
+        if (NOT (GIT_VERSION_POSTFIX STREQUAL ${GIT_DEFAULT_BRANCH} OR GIT_VERSION_POSTFIX MATCHES "release/.*"))
             set(VERSION ${VERSION}-${GIT_VERSION_POSTFIX})
         endif()
     endif()
