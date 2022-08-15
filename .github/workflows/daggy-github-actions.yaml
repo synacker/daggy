@@ -110,7 +110,7 @@ jobs:
         run: |
               if ( -not(Test-Path C:\QtIFW) ) {
                   $ProgressPreference = 'SilentlyContinue'
-                  Invoke-WebRequest -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.3.0/QtInstallerFramework-windows-x86-4.3.0.exe'
+                  Invoke-WebRequest -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.4.1/QtInstallerFramework-windows-x86-4.4.1.exe'
                   ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
               }
               ls C:\QtIFW
@@ -146,7 +146,7 @@ jobs:
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with: 
-          name: daggy_win_x64
+          name: daggy_win_x64 
           path: |
             build/*.exe
             build/*.zip
@@ -187,9 +187,9 @@ jobs:
         run: |
               if [[ ! -d ~/QtIFW ]]
               then
-                  wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.3.0/QtInstallerFramework-macOS-x64-4.3.0.dmg'
+                  wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.4.1/QtInstallerFramework-macOS-x64-4.4.1.dmg'
                   sudo hdiutil attach ~/QtInstallerFramework-mac-x64.dmg
-                  /Volumes/QtInstallerFramework-macOS-x64-4.3.0/QtInstallerFramework-macOS-x64-4.3.0.app/Contents/MacOS/QtInstallerFramework-macOS-x64-4.3.0 --am --al -c --root ~/QtIFW install   
+                  /Volumes/QtInstallerFramework-macOS-x64-4.4.1/QtInstallerFramework-macOS-x64-4.4.1.app/Contents/MacOS/QtInstallerFramework-macOS-x64-4.4.1 --am --al -c --root ~/QtIFW install   
               fi
               ls ~/QtIFW
 
