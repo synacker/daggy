@@ -20,7 +20,7 @@ jobs:
         id: conan-data-gcc10
         with:
           path: ~/.conan/data
-          key: ${{ runner.os }}-${{ hashFiles('build/conan.lock') }}
+          key: conan-data-gcc10
 
       - run: conan --version
 
@@ -79,21 +79,21 @@ jobs:
           path: |
             ~/.conan/data
             c:\.conan\
-          key: ${{ runner.os }}-${{ hashFiles('build/conan.lock') }}
+          key: conan-data-msvs2019
 
       - name: Cache QtIFW
         uses: actions/cache@v3
         id: qt-ifw4
         with:
           path: C:\QtIFW
-          key: ${{ runner.os }}-${{ hashFiles('C:/QtIFW/*') }}
+          key: qt-ifw4
 
       - name: Cache vc_redist
         uses: actions/cache@v3
         id: vc_redist17
         with:
           path: ~/downloads
-          key: ${{ runner.os }}-${{ hashFiles('~/downloads/vc_redist-x64.exe') }}
+          key: vc_redist17
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
@@ -176,7 +176,7 @@ jobs:
         id: conan-data-clang13
         with:
           path: ~/.conan/data
-          key: ${{ runner.os }}-${{ hashFiles('build/conan.lock') }}
+          key: conan-data-clang13
       
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
