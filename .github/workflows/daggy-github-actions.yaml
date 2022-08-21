@@ -16,6 +16,8 @@ jobs:
           path: ~/.conan/data
           key: conan-data-gcc10
 
+      - run: conan --version
+
       - name: Make build dir
         run: mkdir build
 
@@ -164,12 +166,6 @@ jobs:
           path: |
             ~/.conan/data
           key: conan-data-clang13
-
-      - name: Cache QtIFW
-        uses: actions/cache@v3
-        with:
-          path: ~/QtIFW
-          key: qt-ifw4.4.1
       
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
@@ -182,16 +178,6 @@ jobs:
 
       - name: Make build dir
         run: mkdir build
-
-      - name: Install QtIFW
-        run: |
-              if [[ ! -d ~/QtIFW ]]
-              then
-                  wget -O ~/QtInstallerFramework-mac-x64.dmg 'https://download.qt.io/official_releases/qt-installer-framework/4.4.1/QtInstallerFramework-macOS-x64-4.4.1.dmg'
-                  sudo hdiutil attach ~/QtInstallerFramework-mac-x64.dmg
-                  /Volumes/QtInstallerFramework-macOS-x64-4.4.1/QtInstallerFramework-macOS-x64-4.4.1.app/Contents/MacOS/QtInstallerFramework-macOS-x64-4.4.1 --am --al -c --root ~/QtIFW install   
-              fi
-              ls ~/QtIFW
 
       - name: Conan config
         run: conan config install CI/conan
