@@ -46,10 +46,10 @@ jobs:
         run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
       - name: linux-gcc10_x64 Tests Report
-        summary: linux-gcc10_x64 Tests Report
         uses: mikepenz/action-junit-report@v3.2.0
         with:
           report_paths: build/tests/local_tests.xml
+          summary: linux-gcc10_x64 Tests Report
 
       - name: Packaging
         working-directory: build
@@ -143,10 +143,10 @@ jobs:
         run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
       - name: win-msvs2019_x64 Tests Report
-        summary: win-msvs2019_x64 Tests Report
         uses: mikepenz/action-junit-report@v3.2.0
         with:
           report_paths: build/tests/local_tests.xml
+          summary: win-msvs2019_x64 Tests Report
 
       - name: Packaging
         working-directory: build
@@ -214,10 +214,10 @@ jobs:
         run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
       - name: macos-clang13_x64 Tests Report
-        summary: macos-clang13_x64 Tests Report
         uses: mikepenz/action-junit-report@v3.2.0
         with:
           report_paths: build/tests/local_tests.xml
+          summary: macos-clang13_x64 Tests Report
 
       - name: Packaging
         working-directory: build
