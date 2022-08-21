@@ -1,22 +1,21 @@
 include (CMakeParseArguments)
 
 macro(SET_GIT_VERSION)
-    set(args PATTERN POSTFIX EXPORT)
     cmake_parse_arguments(GIT_VERSION
                           ""
-                          "${args}"
+                          ""
                           ""
                           ${ARGN}
     )
+    find_package(Git)
     if(NOT VERSION)
-        if (NOT GIT_VERSION_PATTERN)
-            set(GIT_VERSION_PATTERN [0-9]*.[0-9]*.[0-9]*)
+        if (NOT GIT_FOUND)
+            message(FATAL_ERROR "Git not found")
         endif()
-        find_package(Git REQUIRED)
         execute_process(COMMAND
                 "${GIT_EXECUTABLE}"
                 describe
-                --match ${GIT_VERSION_PATTERN}
+                --match v[0-9]*
                 --abbrev=0
                 --tags
                 WORKING_DIRECTORY
@@ -47,26 +46,40 @@ macro(SET_GIT_VERSION)
 
         execute_process(COMMAND
                 "${GIT_EXECUTABLE}"
+                config
+                --get
+                init.defaultBranch
+                WORKING_DIRECTORY
+                "${CMAKE_CURRENT_SOURCE_DIR}"
+                OUTPUT_VARIABLE
+                GIT_DEFAULT_BRANCH
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+
+        if (NOT GIT_DEFAULT_BRANCH)
+            set(GIT_DEFAULT_BRANCH master)
+        endif()
+
+        string(REGEX REPLACE "^v" "" VERSION ${VERSION})
+        set(VERSION ${VERSION}.${BUILD_NUMBER})
+
+        if (NOT (GIT_VERSION_POSTFIX STREQUAL ${GIT_DEFAULT_BRANCH} OR GIT_VERSION_POSTFIX MATCHES "release/.*"))
+            set(VERSION ${VERSION}-${GIT_VERSION_POSTFIX})
+        endif()
+    endif()
+
+    if (GIT_FOUND)
+        execute_process(COMMAND
+                "${GIT_EXECUTABLE}"
                 rev-parse
                 HEAD
                 WORKING_DIRECTORY
                 "${CMAKE_CURRENT_SOURCE_DIR}"
                 OUTPUT_VARIABLE
-                GIT_VERSION_COMMIT
+                PROJECT_VERSION_COMMIT
                 OUTPUT_STRIP_TRAILING_WHITESPACE
         )
-
-        set(VERSION ${VERSION}.${BUILD_NUMBER})
-        if (GIT_VERSION_POSTFIX STREQUAL "master")
-            unset(GIT_VERSION_POSTFIX)
-        endif()
     endif()
-
-    if (GIT_VERSION_POSTFIX)
-        set(VERSION ${VERSION}-${GIT_VERSION_POSTFIX})
-    endif()
-
-    set(PROJECT_VERSION_COMMIT ${GIT_VERSION_COMMIT})
 
     set(PROJECT_VERSION_FULL ${VERSION})
     string(REPLACE "-" ";" VERSION_LIST ${PROJECT_VERSION_FULL})
