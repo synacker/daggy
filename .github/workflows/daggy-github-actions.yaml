@@ -83,7 +83,7 @@ jobs:
 
       - name: Cache QtIFW
         uses: actions/cache@v3
-        id: qt-ifw4.4.1
+        id: qt-ifw4
         with:
           path: C:\QtIFW
           key: ${{ hashFiles('C:/QtIFW/*') }}
