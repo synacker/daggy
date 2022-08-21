@@ -3,8 +3,7 @@ description: Common information about Daggy and Getting Started
 ---
 
 # About Daggy
-
-[![synacker](https://circleci.com/gh/synacker/daggy.svg?style=svg)](https://circleci.com/gh/synacker/daggy)
+![Daggy Workflow](https://github.com/synacker/daggy/actions/workflows/daggy-github-actions.yaml/badge.svg)
 
 ![Daggy](daggy\_logo.svg)
 
