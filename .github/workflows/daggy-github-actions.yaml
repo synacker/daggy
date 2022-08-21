@@ -17,6 +17,7 @@ jobs:
 
       - name: Cache conan packages
         uses: actions/cache@v3
+        id: conan-data-gcc10
         with:
           path: ~/.conan/data
           key: conan-data-gcc10
@@ -73,6 +74,7 @@ jobs:
       
       - name: Cache conan packages
         uses: actions/cache@v3
+        id: conan-data-msvs2019
         with:
           path: |
             ~/.conan/data
@@ -81,12 +83,14 @@ jobs:
 
       - name: Cache QtIFW
         uses: actions/cache@v3
+        id: qt-ifw4
         with:
           path: C:\QtIFW
-          key: qt-ifw4.4.1
+          key: qt-ifw4
 
       - name: Cache vc_redist
         uses: actions/cache@v3
+        id: vc_redist17
         with:
           path: ~/downloads
           key: vc_redist17
@@ -169,9 +173,9 @@ jobs:
       
       - name: Cache conan packages
         uses: actions/cache@v3
+        id: conan-data-clang13
         with:
-          path: |
-            ~/.conan/data
+          path: ~/.conan/data
           key: conan-data-clang13
       
       - name: Set up Python 3.10
