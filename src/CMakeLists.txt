@@ -29,6 +29,10 @@ if(YAML_SUPPORT)
     add_definitions(-DYAML_SUPPORT)
 endif()
 
+if(CONAN_BUILD)
+    add_definitions(-DCONAN_BUILD)
+endif()
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 include(compiler)
