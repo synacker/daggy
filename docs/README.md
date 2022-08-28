@@ -3,6 +3,7 @@ description: Common information about Daggy and Getting Started
 ---
 
 # About Daggy
+
 ![Daggy Workflow](https://github.com/synacker/daggy/actions/workflows/daggy-github-actions.yaml/badge.svg)
 
 ![Daggy](daggy\_logo.svg)
@@ -109,17 +110,30 @@ The **Core** library can be extended by **user defined aggregators**.
 
 ### Getting Daggy
 
-#### Download and install Windows, Linux, MacOS
-
-Download archives with binaries or installation packages from last [release](https://github.com/synacker/daggy/releases/)
-
 #### Fedora
 
 ```bash
 sudo dnf install daggy daggy-devel
 ```
 
-#### Make install for system library
+#### Windows
+
+Download installer or portable version from [releases page](https://github.com/synacker/daggy/releases).
+
+#### Linux
+
+Download rpm/deb or portable version from [releases page](https://github.com/synacker/daggy/releases).
+
+#### MacOS
+
+Download portable version from [releases page](https://github.com/synacker/daggy/releases) or install via homebrew:
+
+```shell
+brew tap synacker/daggy
+brew install --build-from-source daggy
+```
+
+#### Install from source with conan
 
 {% hint style="info" %}
 **Build requirenments:** [Conan](https://conan.io), [cmake](https://cmake.org), [git](https://git-scm.com) and C++17/20 compiler.
@@ -131,16 +145,20 @@ mkdir build
 cd build
 conan install ../daggy --build=missing -o package_deps=True
 conan build ../daggy
-cmake install
 ```
 
-**Conan create for conan package**
+#### **Install from source with cmake (choose for maintainers)**
+
+{% hint style="info" %}
+**System dependencies:** qt6 (Core and Network), libssh2, libyaml-cpp, kainjow-mustache
+{% endhint %}
 
 ```bash
 git clone https://github.com/synacker/daggy.git
 mkdir build
 cd build
-conan create ../daggy --build=missing
+cmake -DVERSION=2.1.3 ../daggy/src -DBUILD_SHARED_LIBS=ON
+cmake --build .
 ```
 
 #### Add as conan package dependency
