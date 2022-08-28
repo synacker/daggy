@@ -4,6 +4,14 @@ description: Dagyy changelog
 
 # Changelog
 
+## [2.1.3](https://github.com/synacker/daggy/releases/tag/2.1.3)
+
+### Fixed
+
+* Updated Qt version
+* Some fixes for maintainers
+
+
 ## [2.1.2](https://github.com/synacker/daggy/releases/tag/2.1.2)
 
 ### Fixed

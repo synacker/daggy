@@ -22,24 +22,26 @@ In short terms, daggy run local or remote processes at the same time, simultaneo
 Daggy Screencast
 {% endembed %}
 
-* [About Daggy](./#about-daggy)
-* [Introduction and goal concepts](./#introduction-and-goal-concepts)
-  * [Daggy High Level Design](./#daggy-high-level-design)
-  * [Basic terms](./#basic-terms)
-* [Getting Started](./#getting-started)
-  * [Getting Daggy](./#getting-daggy)
-    * [Download and install Windows, Linux, MacOS](./#download-and-install-windows--linux--macos)
-    * [Fedora](./#fedora)
-    * [Make install for system library](./#--make-install-for-system-library--)
-    * [Add as conan package dependency](./#add-as-conan-package-dependency)
-  * [Check installation of Daggy Core C++17/20 interface](./#check-installation-of-daggy-core-c--17-20-interface)
-  * [Check installation of Daggy Core C11 interface](./#--check-installation-of-daggy-core-c11-interface--)
-  * [Check installation of Daggy Console application](./#--check-installation-of-daggy-console-application--)
-* [Getting Started data aggregation and streaming with Daggy Console Application](./#getting-started-data-aggregation-and-streaming-with-daggy-console-application)
-  * [Simple Sources](./#simple-sources)
-    * [Example of Data Aggregation Sources with multiple commands and remote data aggregation and streaming](./#example-of-data-aggregation-sources-with-multiple-commands-and-remote-data-aggregation-and-streaming)
+- [Introduction and goal concepts](#introduction-and-goal-concepts)
+  * [Daggy High Level Design](#daggy-high-level-design)
+  * [Basic terms](#basic-terms)
+- [Getting Started](#getting-started)
+  * [Getting Daggy](#getting-daggy)
+    + [Fedora](#fedora)
+    + [Windows](#windows)
+    + [Linux](#linux)
+    + [MacOS](#macos)
+    + [Install from source with conan](#install-from-source-with-conan)
+    + [Install from source with cmake (choose for maintainers)](#--install-from-source-with-cmake--choose-for-maintainers---)
+    + [Add as conan package dependency](#add-as-conan-package-dependency)
+  * [Check installation of Daggy Core C++17/20 interface](#check-installation-of-daggy-core-c--17-20-interface)
+  * [Check installation of Daggy Core C11 interface](#check-installation-of-daggy-core-c11-interface)
+  * [Check installation of Daggy Console application](#check-installation-of-daggy-console-application)
+- [Getting Started data aggregation and streaming with Daggy Console Application](#getting-started-data-aggregation-and-streaming-with-daggy-console-application)
+  * [Simple Sources](#simple-sources)
+    + [Example of Data Aggregation Sources with multiple commands and remote data aggregation and streaming](#example-of-data-aggregation-sources-with-multiple-commands-and-remote-data-aggregation-and-streaming)
 
-[_Table of contents generated with markdown-toc_](http://ecotrust-canada.github.io/markdown-toc/)
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 ## Introduction and goal concepts
 
@@ -147,7 +149,7 @@ conan install ../daggy --build=missing -o package_deps=True
 conan build ../daggy
 ```
 
-#### **Install from source with cmake (choose for maintainers)**
+#### Install from source with cmake (choose for maintainers)
 
 {% hint style="info" %}
 **System dependencies:** qt6 (Core and Network), libssh2, libyaml-cpp, kainjow-mustache
