@@ -21,8 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
-
-from conans import ConanFile, CMake
+from conan import ConanFile
 from git_version import GitVersion
 
 class DaggyConan(ConanFile):
@@ -48,7 +47,7 @@ class DaggyConan(ConanFile):
         "fPIC": False,
         "circleci": False
     }
-    generators = "cmake", "cmake_paths", "cmake_find_package"
+    generators = "CMakeToolchain", "CMakeDeps"
     exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*", "LICENSE", "README.md"]
 
     _cmake = None
@@ -65,25 +64,19 @@ class DaggyConan(ConanFile):
     def configure(self):
         if self.options.shared:
             del self.options.fPIC
-
-    def validate(self):
-        if not self.options["qt"].shared: 
-            raise ConanInvalidConfiguration("Shared Qt lib is required.") 
     
     def build_requirements(self):
-        self.build_requires("cmake/3.23.1")
+        self.build_requires("cmake/[>=3.23.1]")
 
     def requirements(self):
-        self.requires("libiconv/1.17")
-        self.requires("openssl/1.1.1q")
-        self.requires("qt/6.3.1")
-        self.requires("kainjow-mustache/4.1")
+        self.requires("qt/[>=6.3.1]")
+        self.requires("kainjow-mustache/[>=4.1]")
 
         if self.options.with_yaml:
-            self.requires("yaml-cpp/0.7.0")
+            self.requires("yaml-cpp/[>=0.7.0]")
 
         if self.options.with_ssh2:
-            self.requires("libssh2/1.10.0")
+            self.requires("libssh2/[>=1.10.0]")
 
     def _libdir(self):
         result = "lib"
