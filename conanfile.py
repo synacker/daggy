@@ -21,7 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
+import os
 from conan import ConanFile
+from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps, cmake_layout
+from conan.tools.files import copy
 from git_version import GitVersion
 
 class DaggyConan(ConanFile):
@@ -47,7 +50,7 @@ class DaggyConan(ConanFile):
         "fPIC": False,
         "circleci": False
     }
-    generators = "CMakeToolchain", "CMakeDeps"
+    generators = "CMakeDeps"
     exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*", "LICENSE", "README.md"]
 
     _cmake = None
@@ -66,17 +69,54 @@ class DaggyConan(ConanFile):
             del self.options.fPIC
     
     def build_requirements(self):
-        self.build_requires("cmake/[>=3.23.1]")
+        self.build_requires("cmake/[>=3.27.7]")
 
     def requirements(self):
-        self.requires("qt/[>=6.3.1]")
+        self.requires("qt/[>=6.6.0]")
         self.requires("kainjow-mustache/[>=4.1]")
 
         if self.options.with_yaml:
-            self.requires("yaml-cpp/[>=0.7.0]")
+            self.requires("yaml-cpp/[>=0.8.0]")
 
         if self.options.with_ssh2:
-            self.requires("libssh2/[>=1.10.0]")
+            self.requires("libssh2/[>=1.11.0]")
+
+    def layout(self):
+        self.folders.source = "src"
+        self.folders.build = "."
+        self.folders.generators = os.path.join(self.folders.build, "conan")
+        self.folders.imports = os.path.join(self.folders.generators, "imports")
+
+    def generate(self):
+        libdir = os.path.join(self.folders.build, self._libdir(), self.name)
+        bindir = os.path.join(self.folders.build, "bin")
+        for dep in self.dependencies.values():
+            if self.settings.os == "Windows":
+                print(dep.name)
+                if dep.cpp_info.bindirs:
+                    copy(self, "*.dll", dep.cpp_info.bindirs[0], bindir) 
+                if dep.cpp_info.libdirs:
+                    copy(self, "*.dll", dep.cpp_info.libdirs[0], bindir)
+            elif self.settings.os == "Linux":
+                if dep.cpp_info.libdirs:
+                    copy(self, "*.so.*", dep.cpp_info.libdirs[0], libdir)
+            else:
+                if dep.cpp_info.libdirs:
+                    copy(self, "*.dylib", dep.cpp_info.libdirs[0], libdir)
+
+        tc = CMakeToolchain(self)
+        tc.variables["SSH2_SUPPORT"] = self.options.with_ssh2
+        tc.variables["YAML_SUPPORT"] = self.options.with_yaml
+        tc.variables["CONSOLE"] = self.options.with_console
+        tc.variables["PACKAGE_DEPS"] = True
+        tc.variables["CMAKE_INSTALL_LIBDIR"] = self._libdir()
+        tc.variables["BUILD_TESTING"] = True
+        tc.variables["CONAN_BUILD"] = True
+        if self.options.shared:
+            tc.variables["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
+            tc.variables["CMAKE_CXX_VISIBILITY_PRESET"] = "hidden"
+            tc.variables["CMAKE_VISIBILITY_INLINES_HIDDEN"] = 1
+        tc.generate()
 
     def _libdir(self):
         result = "lib"
@@ -84,46 +124,19 @@ class DaggyConan(ConanFile):
             result = "lib64"
         return result
 
-    def _configure(self):
-        if self._cmake:
-            return self._cmake
-        self._cmake = CMake(self)
-        if self.settings.os == "Windows":
-            if self.options.circleci:
-                self._cmake.definitions["CMAKE_SYSTEM_VERSION"] = "10.1.18362.1"
-        
-        self._cmake.definitions["SSH2_SUPPORT"] = self.options.with_ssh2
-        self._cmake.definitions["YAML_SUPPORT"] = self.options.with_yaml
-        self._cmake.definitions["CONSOLE"] = self.options.with_console
-        self._cmake.definitions["PACKAGE_DEPS"] = True
-        self._cmake.definitions["CMAKE_INSTALL_LIBDIR"] = self._libdir()
-        self._cmake.definitions["BUILD_TESTING"] = True
-        self._cmake.definitions["CONAN_BUILD"] = True
-        if self.options.shared:
-            self._cmake.definitions["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
-            self._cmake.definitions["CMAKE_CXX_VISIBILITY_PRESET"] = "hidden"
-            self._cmake.definitions["CMAKE_VISIBILITY_INLINES_HIDDEN"] = 1
-        self._cmake.configure()
-        return self._cmake
+    
 
     def build(self):
-        cmake = self._configure()
+        cmake = CMake(self)
+        cmake.configure()
         cmake.build()
         
 
     def package(self):
-        cmake = self._configure()
+        cmake = CMake(self)
+        cmake.configure()
         cmake.install()
 
     def package_info(self):
         self.cpp_info.libs = ["DaggyCore"]
         self.cpp_info.libdirs = [self._libdir()]
-
-    def imports(self):
-        if self.settings.os == "Windows":
-            self.copy("*.dll", src="@bindirs", dst="bin")
-            self.copy("*.dll", src="@libdirs", dst="bin")
-        elif self.settings.os == "Linux":
-            self.copy("*.so.*", src="@libdirs", dst="{}/{}".format(self._libdir(), self.name))
-        else:
-            self.copy("*.dylib", src="@libdirs", dst="{}/{}".format(self._libdir(), self.name))
