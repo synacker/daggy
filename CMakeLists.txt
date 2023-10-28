@@ -21,10 +21,8 @@ include(${CMAKE_BINARY_DIR}/conan.cmake)
 
 conan_cmake_autodetect(settings)
 
-conan_cmake_install(PATH_OR_REFERENCE ${CMAKE_CURRENT_SOURCE_DIR}
-                    BUILD missing
-                    REMOTE conancenter
-                    SETTINGS ${settings})
+
+
 
 include(CTest)
 add_subdirectory(src)

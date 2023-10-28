@@ -92,10 +92,11 @@ class DaggyConan(ConanFile):
         self.cpp.bindirs = ["bin"]
 
         self.cpp.includedirs = ["src"]
+        cmake_layout(self)
 
     def generate(self):
-        libdir = os.path.normpath(os.path.join(self.folders.build, self.cpp.libdirs[0], self.name))
-        bindir = os.path.normpath(os.path.join(self.folders.build, self.cpp.bindirs[0]))
+        libdir = os.path.normpath(os.path.join(self.build_folder, self.cpp.libdirs[0], self.name))
+        bindir = os.path.normpath(os.path.join(self.build_folder, self.cpp.bindirs[0]))
         for dep in self.dependencies.values():
             if self.settings.os == "Windows":
                 if dep.cpp_info.bindirs:
@@ -104,7 +105,6 @@ class DaggyConan(ConanFile):
                     copy(self, "*.dll", dep.cpp_info.libdirs[0], bindir)
             elif self.settings.os == "Linux":
                 if dep.cpp_info.libdirs:
-                    print(f'{dep.cpp_info.libdirs[0]}-{libdir}')
                     copy(self, "*.so.*", dep.cpp_info.libdirs[0], libdir)
             else:
                 if dep.cpp_info.libdirs:
