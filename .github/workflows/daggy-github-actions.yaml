@@ -28,7 +28,7 @@ jobs:
         run: conan config install CI/conan
 
       - name: Conan install
-        run: conan install . --build=missing -pr=linux-gcc10_x64 --output-folder=.
+        run: conan install . --build=missing --profile:build=linux-gcc10_x64 --output-folder=.
 
       - name: Conan remove build folders
         run: conan remove '*' --builds --src --force
@@ -125,7 +125,7 @@ jobs:
         run: conan config install CI/conan
 
       - name: Conan install
-        run: conan install . --build=missing -pr=win-msvs2019_x64 --output_folder=.
+        run: conan install . --build=missing --profile:build=win-msvs2019_x64 --output_folder=.
 
       - name: Conan remove build folders
         working-directory: build
@@ -186,7 +186,7 @@ jobs:
         run: conan config install CI/conan
 
       - name: Conan install
-        run: conan install . --build=missing -pr=macos-clang13_x64 --output_folder=.
+        run: conan install . --build=missing --profile:build=macos-clang13_x64 --output_folder=.
 
       - name: Conan remove build folders
         run: conan remove '*' --builds --src --force
