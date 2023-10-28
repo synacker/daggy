@@ -69,7 +69,8 @@ class DaggyConan(ConanFile):
             del self.options.fPIC
     
     def build_requirements(self):
-        self.build_requires("cmake/[>=3.27.7]")
+        self.tool_requires("cmake/[>=3.27.7]")
+        self.tool_requires("gtest/[>=1.13.0]")
 
     def requirements(self):
         self.requires("qt/[>=6.6.0]")
@@ -82,10 +83,15 @@ class DaggyConan(ConanFile):
             self.requires("libssh2/[>=1.11.0]")
 
     def layout(self):
-        self.folders.source = "src"
+        self.folders.source = "."
         self.folders.build = "."
-        self.folders.generators = os.path.join(self.folders.build, "conan")
-        self.folders.imports = os.path.join(self.folders.generators, "imports")
+        self.folders.generators = self.folders.build
+        self.folders.imports = self.folders.build
+
+        self.cpp.libdirs = [self._libdir()]
+        self.cpp.bindir = ["bin"]
+
+        self.cpp.includedirs = ["src"]
 
     def generate(self):
         libdir = os.path.join(self.folders.build, self._libdir(), self.name)
@@ -105,6 +111,7 @@ class DaggyConan(ConanFile):
                     copy(self, "*.dylib", dep.cpp_info.libdirs[0], libdir)
 
         tc = CMakeToolchain(self)
+        tc.variables["CMAKE_BINARY_DIR"] = self.folders.build
         tc.variables["SSH2_SUPPORT"] = self.options.with_ssh2
         tc.variables["YAML_SUPPORT"] = self.options.with_yaml
         tc.variables["CONSOLE"] = self.options.with_console
@@ -112,6 +119,7 @@ class DaggyConan(ConanFile):
         tc.variables["CMAKE_INSTALL_LIBDIR"] = self._libdir()
         tc.variables["BUILD_TESTING"] = True
         tc.variables["CONAN_BUILD"] = True
+        
         if self.options.shared:
             tc.variables["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
             tc.variables["CMAKE_CXX_VISIBILITY_PRESET"] = "hidden"
