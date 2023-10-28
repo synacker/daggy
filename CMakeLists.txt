@@ -1,28 +1,16 @@
-cmake_minimum_required(VERSION 3.21.0)
+# This cmake only for developing daggy
+cmake_minimum_required(VERSION 3.24.0)
+set(CMAKE_PROJECT_TOP_LEVEL_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/cmake/conan_provider.cmake")
+set(QT_CREATOR_SKIP_CONAN_SETUP ON)
+
 project(daggy
         DESCRIPTION "Data Aggregation Utility"
         HOMEPAGE_URL https://github.com/synacker/daggy
         LANGUAGES CXX
 )
 
-cmake_minimum_required(VERSION 3.21.0)
-
 option(CONAN_BUILD "build with conan" ON)
-option(PACKAGE_DEPS "include daggy deps into package" ON)
-
-if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-  message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-  file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake"
-                "${CMAKE_BINARY_DIR}/conan.cmake"
-                TLS_VERIFY ON)
-endif()
-
-include(${CMAKE_BINARY_DIR}/conan.cmake)
-
-conan_cmake_autodetect(settings)
-
-
-
+option(PACKAGE_DEPS "include daggy deps into package" OFF)
 
 include(CTest)
 add_subdirectory(src)

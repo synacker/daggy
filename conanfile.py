@@ -67,7 +67,7 @@ class DaggyConan(ConanFile):
     def configure(self):
         if self.options.shared:
             del self.options.fPIC
-    
+        
     def build_requirements(self):
         self.tool_requires("cmake/3.27.7")
         self.tool_requires("gtest/1.13.0")
@@ -80,7 +80,7 @@ class DaggyConan(ConanFile):
             self.requires("yaml-cpp/0.8.0")
 
         if self.options.with_ssh2:
-            self.requires("libssh2/1.11.0")
+            self.requires("libssh2/1.11.0")        
 
     def layout(self):
         self.folders.source = "src"
@@ -93,7 +93,7 @@ class DaggyConan(ConanFile):
 
         self.cpp.includedirs = ["src"]
         cmake_layout(self)
-
+        
     def generate(self):
         libdir = os.path.normpath(os.path.join(self.build_folder, self.cpp.libdirs[0], self.name))
         bindir = os.path.normpath(os.path.join(self.build_folder, self.cpp.bindirs[0]))
@@ -111,7 +111,6 @@ class DaggyConan(ConanFile):
                     copy(self, "*.dylib", dep.cpp_info.libdirs[0], libdir)
 
         tc = CMakeToolchain(self)
-        tc.variables["CMAKE_BINARY_DIR"] = self.folders.build
         tc.variables["CMAKE_INSTALL_LIBDIR"] = self.cpp.libdirs[0]
         tc.variables["SSH2_SUPPORT"] = self.options.with_ssh2
         tc.variables["YAML_SUPPORT"] = self.options.with_yaml
