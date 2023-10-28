@@ -19,31 +19,25 @@ jobs:
         uses: actions/cache@v3
         id: conan-data-gcc10
         with:
-          path: ~/.conan/data
+          path: ~/.conan2/p
           key: conan-data-gcc10
 
       - run: conan --version
-
-      - name: Make build dir
-        run: mkdir build
 
       - name: Conan config
         run: conan config install CI/conan
 
       - name: Conan install
-        working-directory: build
-        run: conan install $GITHUB_WORKSPACE --build=missing -pr=linux-gcc10_x64
+        run: conan install . --build=missing -pr=linux-gcc10_x64 --output-folder=.
 
       - name: Conan remove build folders
-        working-directory: build
         run: conan remove '*' --builds --src --force
 
       - name: Conan build
-        working-directory: build
-        run: conan build $GITHUB_WORKSPACE
+        run: conan build . --output-folder=.
 
       - name: Tests
-        working-directory: build
+        working-directory: build/Release
         run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
       - name: linux-gcc10_x64 Tests Report
@@ -53,7 +47,7 @@ jobs:
           summary: linux-gcc10_x64 Tests Report
 
       - name: Packaging
-        working-directory: build
+        working-directory: build/Release
         run: cpack
 
       - name: Archive production artifacts
@@ -77,8 +71,8 @@ jobs:
         id: conan-data-msvs2019
         with:
           path: |
-            ~/.conan/data
-            c:\.conan\
+            ~/.conan2/p
+            c:\.conan2\
           key: conan-data-msvs2019
 
       - name: Cache QtIFW
@@ -122,7 +116,7 @@ jobs:
         run: |
               if ( -not(Test-Path C:\QtIFW) ) {
                   $ProgressPreference = 'SilentlyContinue'
-                  Invoke-WebRequest -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.4.1/QtInstallerFramework-windows-x64-4.4.1.exe'
+                  Invoke-WebRequest -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.6.0/QtInstallerFramework-windows-x64-4.6.0.exe'
                   ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
               }
               ls C:\QtIFW
@@ -131,19 +125,17 @@ jobs:
         run: conan config install CI/conan
 
       - name: Conan install
-        working-directory: build
-        run: conan install .. --build=missing -pr=win-msvs2019_x64
+        run: conan install . --build=missing -pr=win-msvs2019_x64 --output_folder=.
 
       - name: Conan remove build folders
         working-directory: build
         run: conan remove '*' --builds --src --force
 
       - name: Conan build
-        working-directory: build
-        run: conan build ..
+        run: conan build . --output_folder=.
 
       - name: Tests
-        working-directory: build
+        working-directory: build/Release
         run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
       - name: win-msvs2019_x64 Tests Report
@@ -153,7 +145,7 @@ jobs:
           summary: win-msvs2019_x64 Tests Report
 
       - name: Packaging
-        working-directory: build
+        working-directory: build/Release
         run: cpack
 
       - name: Archive production artifacts
@@ -175,7 +167,7 @@ jobs:
         uses: actions/cache@v3
         id: conan-data-clang13
         with:
-          path: ~/.conan/data
+          path: ~/.conan2/p
           key: conan-data-clang13
       
       - name: Set up Python 3.10
@@ -194,27 +186,20 @@ jobs:
         run: conan config install CI/conan
 
       - name: Conan install
-        working-directory: build
-        run: conan install .. --build=missing -pr=macos-clang13_x64
+        run: conan install . --build=missing -pr=macos-clang13_x64 --output_folder=.
 
       - name: Conan remove build folders
-        working-directory: build
         run: conan remove '*' --builds --src --force
 
       - name: Conan build
-        working-directory: build
-        run: conan build ..
-
-      - name: list deps
-        working-directory: build
-        run: otool -l bin/DaggyCoreLocalTests
+        run: conan build .
 
       - name: daggy version
-        working-directory: build
+        working-directory: build/Release
         run: bin/daggy --version
 
       - name: Tests
-        working-directory: build
+        working-directory: build/Release
         run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
       - name: macos-clang13_x64 Tests Report
@@ -224,7 +209,7 @@ jobs:
           summary: macos-clang13_x64 Tests Report
 
       - name: Packaging
-        working-directory: build
+        working-directory: build/Release
         run: cpack
 
       - name: Archive production artifacts
