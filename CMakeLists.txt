@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21.0)
 project(daggy
         DESCRIPTION "Data Aggregation Utility"
-        HOMEPAGE_URL https://daggy.dev
+        HOMEPAGE_URL https://github.com/synacker/daggy
         LANGUAGES CXX
 )
 
