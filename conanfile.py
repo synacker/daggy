@@ -51,7 +51,7 @@ class DaggyConan(ConanFile):
         "circleci": False
     }
     generators = "CMakeDeps"
-    exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*", "LICENSE", "README.md"]
+    exports = ["git_version.py", "src/*"]
 
     _cmake = None
 
@@ -94,8 +94,8 @@ class DaggyConan(ConanFile):
         self.cpp.includedirs = ["src"]
 
     def generate(self):
-        libdir = os.path.join(self.folders.build, self.cpp.libdirs[0], self.name)
-        bindir = os.path.join(self.folders.build, self.cpp.bindirs[0])
+        libdir = os.path.normpath(os.path.join(self.folders.build, self.cpp.libdirs[0], self.name))
+        bindir = os.path.normpath(os.path.join(self.folders.build, self.cpp.bindirs[0]))
         for dep in self.dependencies.values():
             if self.settings.os == "Windows":
                 if dep.cpp_info.bindirs:
@@ -104,6 +104,7 @@ class DaggyConan(ConanFile):
                     copy(self, "*.dll", dep.cpp_info.libdirs[0], bindir)
             elif self.settings.os == "Linux":
                 if dep.cpp_info.libdirs:
+                    print(f'{dep.cpp_info.libdirs[0]}-{libdir}')
                     copy(self, "*.so.*", dep.cpp_info.libdirs[0], libdir)
             else:
                 if dep.cpp_info.libdirs:

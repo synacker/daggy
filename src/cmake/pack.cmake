@@ -12,15 +12,15 @@ if(WIN32)
     set(CPACK_IFW_ROOT "C:/QtIFW")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_NAME})
 
-    set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/icons/daggy.ico")
-    set(CPACK_IFW_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/icons/daggy.ico")
+    set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.ico")
+    set(CPACK_IFW_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.ico")
 elseif(APPLE)
     set(CPACK_GENERATOR ZIP)
     set(CPACK_IFW_ROOT "~/QtIFW")
 
     set(CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_NAME})
-    set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/icons/daggy.icns")
-    set(CPACK_IFW_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/icons/daggy.icns")
+    set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.icns")
+    set(CPACK_IFW_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.icns")
 else()
     set(CPACK_GENERATOR DEB RPM ZIP)
 
@@ -28,12 +28,12 @@ else()
 endif()
 
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
-set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/src/desc/readme.txt")
-set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_CURRENT_SOURCE_DIR}/src/desc/welcome.txt")
-set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/desc/package_description.txt")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/desc/readme.txt")
+set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_CURRENT_SOURCE_DIR}/desc/welcome.txt")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/desc/package_description.txt")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Data Aggregation Utility")
 
-set(CPACK_PACKAGE_HOMEPAGE_URL "https://daggy.dev")
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/synacker/daggy")
 
 
 # TGZ specific
@@ -51,9 +51,9 @@ set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/docs/README.md")
 
-set(CPACK_IFW_PRODUCT_URL "https://daggy.dev")
-set(CPACK_IFW_PACKAGE_WINDOW_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/icons/daggy.png")
-set(CPACK_IFW_PACKAGE_LOGO "${CMAKE_CURRENT_SOURCE_DIR}/src/icons/daggy.svg")
+set(CPACK_IFW_PRODUCT_URL "https://github.com/synacker/daggy")
+set(CPACK_IFW_PACKAGE_WINDOW_ICON "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.png")
+set(CPACK_IFW_PACKAGE_LOGO "${CMAKE_CURRENT_SOURCE_DIR}/icons/daggy.svg")
 set(CPACK_IFW_PACKAGE_WIZARD_STYLE "Modern")
 set(CPACK_IFW_TARGET_DIRECTORY "@ApplicationsDirX64@/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
 set(CPACK_IFW_PACKAGE_STYLE_SHEET ${CMAKE_CURRENT_LIST_DIR}/installer.qss)
@@ -97,5 +97,5 @@ cpack_ifw_configure_component(daggy
                               NAME Daggy
                               DISPLAY_NAME Daggy components
                               SCRIPT ${CMAKE_CURRENT_LIST_DIR}/installscript.qs
-                              LICENSES MIT ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
+                              LICENSES MIT LICENSE
                               )
