@@ -127,14 +127,14 @@ jobs:
         run: conan config install CI/conan
 
       - name: Conan install
-        run: conan install . --build=missing --profile:build=win-msvs2019_x64 --output_folder=.
+        run: conan install . --build=missing --profile:build=win-msvs2019_x64 -of .
 
       - name: Conan remove build folders
         working-directory: build
         run: conan remove '*' --builds --src --force
 
       - name: Conan build
-        run: conan build . --output_folder=.
+        run: conan build . -of .
 
       - name: Tests
         working-directory: build/Release
@@ -189,7 +189,7 @@ jobs:
         run: conan config install CI/conan
 
       - name: Conan install
-        run: conan install . --build=missing --profile:build=macos-clang13_x64 --output_folder=.
+        run: conan install . --build=missing --profile:build=macos-clang13_x64 -of .
 
       - name: Conan remove build folders
         run: conan remove '*' --builds --src --force
