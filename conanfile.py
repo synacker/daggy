@@ -39,16 +39,14 @@ class DaggyConan(ConanFile):
         "with_yaml": [True, False],
         "with_console": [True, False],
         "shared": [True, False],
-        "fPIC": [True, False],
-        "circleci": [True, False]
+        "fPIC": [True, False]
     }
     default_options = {
         "with_ssh2": True,
         "with_yaml": True,
         "with_console": True,
         "shared": True,
-        "fPIC": False,
-        "circleci": False
+        "fPIC": False
     }
     generators = "CMakeDeps"
     exports = ["git_version.py", "src/*"]
@@ -63,10 +61,6 @@ class DaggyConan(ConanFile):
             del self.options.fPIC
 
         self.options["qt"].shared = True
-
-    def configure(self):
-        if self.options.shared:
-            del self.options.fPIC
         
     def build_requirements(self):
         self.tool_requires("cmake/3.27.7")
