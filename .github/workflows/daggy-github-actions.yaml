@@ -174,18 +174,15 @@ jobs:
           path: ~/.conan2/p
           key: conan-data-clang13
       
-      - name: Set up Python 3.10
+      - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11'
           cache: pip
 
       - run: pip install -r requirements.txt
       - run: conan --version
       - run: conan profile detect
-
-      - name: Make build dir
-        run: mkdir build
 
       - name: Conan config
         run: conan config install CI/conan
