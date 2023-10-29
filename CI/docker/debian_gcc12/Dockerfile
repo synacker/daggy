@@ -51,7 +51,8 @@ RUN apt-get install -y \
                         libice-dev \ 
                         libsm-dev \ 
                         libxau-dev \ 
-                        libxaw7-dev 
+                        libxaw7-dev \
+                        libxcb-cursor-dev
                      
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.27.7/cmake-3.27.7.tar.gz -O /tmp/cmake-3.27.7.tar.gz
