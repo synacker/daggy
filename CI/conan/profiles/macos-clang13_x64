@@ -4,4 +4,5 @@ arch=x86_64
 compiler=apple-clang
 compiler.version=13
 compiler.cppstd=17
+compiler.libcxx=libc++
 build_type=Release
