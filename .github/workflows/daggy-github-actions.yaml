@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  linux-gcc10_x64:
+  linux-gcc12_x64:
     runs-on: ubuntu-latest
     container: 
       image: docker.io/synacker2/daggy_gcc12
