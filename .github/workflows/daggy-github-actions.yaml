@@ -9,18 +9,18 @@ jobs:
   linux-gcc10_x64:
     runs-on: ubuntu-latest
     container: 
-      image: docker.io/synacker2/daggy_gcc10
+      image: docker.io/synacker2/daggy_gcc12
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Cache conan packages
         uses: actions/cache@v3
-        id: conan-data-gcc10
+        id: conan-data-gcc12
         with:
           path: ~/.conan2/p
-          key: conan-data-gcc10
+          key: conan-data-gcc12
 
       - run: conan --version
       - run: conan profile detect
@@ -29,10 +29,10 @@ jobs:
         run: conan config install CI/conan
 
       - name: Conan install
-        run: conan install . --build=missing --profile:build=linux-gcc10_x64 --output-folder=.
+        run: conan install . --build=missing --profile:build=linux-gcc12_x64 --output-folder=.
 
       - name: Conan remove build folders
-        run: conan remove '*' --builds --src --force
+        run: conan cache clean "*" --source --build --temp --download
 
       - name: Conan build
         run: conan build . --output-folder=.
@@ -42,10 +42,10 @@ jobs:
         run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
       - name: linux-gcc10_x64 Tests Report
-        uses: mikepenz/action-junit-report@v3.2.0
+        uses: mikepenz/action-junit-report@v4
         with:
           report_paths: build/tests/local_tests.xml
-          summary: linux-gcc10_x64 Tests Report
+          summary: linux-gcc12_x64 Tests Report
 
       - name: Packaging
         working-directory: build/Release
@@ -60,165 +60,165 @@ jobs:
             build/*.rpm
             build/*.zip
 
-  win-msvs2019_x64:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # win-msvs2019_x64:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
       
-      - name: Cache conan packages
-        uses: actions/cache@v3
-        id: conan-data-msvs2019
-        with:
-          path: |
-            ~/.conan2/p
-            c:\.conan2\
-          key: conan-data-msvs2019
+  #     - name: Cache conan packages
+  #       uses: actions/cache@v3
+  #       id: conan-data-msvs2019
+  #       with:
+  #         path: |
+  #           ~/.conan2/p
+  #           c:\.conan2\
+  #         key: conan-data-msvs2019
 
-      - name: Cache QtIFW
-        uses: actions/cache@v3
-        id: qt-ifw4
-        with:
-          path: C:\QtIFW
-          key: qt-ifw4
+  #     - name: Cache QtIFW
+  #       uses: actions/cache@v3
+  #       id: qt-ifw4
+  #       with:
+  #         path: C:\QtIFW
+  #         key: qt-ifw4
 
-      - name: Cache vc_redist
-        uses: actions/cache@v3
-        id: vc_redist17
-        with:
-          path: ~/downloads
-          key: vc_redist17
+  #     - name: Cache vc_redist
+  #       uses: actions/cache@v3
+  #       id: vc_redist17
+  #       with:
+  #         path: ~/downloads
+  #         key: vc_redist17
 
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-          cache: pip
+  #     - name: Set up Python 3.10
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.10'
+  #         cache: pip
 
-      - run: pip install -r requirements.txt
-      - run: conan --version
-      - run: conan profile detect
+  #     - run: pip install -r requirements.txt
+  #     - run: conan --version
+  #     - run: conan profile detect
 
-      - name: Download vc_redist
-        run: |
-              if ( -not(Test-Path ~/downloads/vc_redist-x64.exe) ) {
-                  $ProgressPreference = 'SilentlyContinue'
-                  Invoke-WebRequest -UseBasicParsing -OutFile ~/downloads/vc_redist-x64.exe 'https://aka.ms/vs/17/release/vc_redist.x64.exe'
-              }
-              ls ~/downloads
+  #     - name: Download vc_redist
+  #       run: |
+  #             if ( -not(Test-Path ~/downloads/vc_redist-x64.exe) ) {
+  #                 $ProgressPreference = 'SilentlyContinue'
+  #                 Invoke-WebRequest -UseBasicParsing -OutFile ~/downloads/vc_redist-x64.exe 'https://aka.ms/vs/17/release/vc_redist.x64.exe'
+  #             }
+  #             ls ~/downloads
 
-      - name: Make build dir
-        run: mkdir build
+  #     - name: Make build dir
+  #       run: mkdir build
 
-      - name: Move vc_redist
-        run: mv ~/downloads/vc_redist-x64.exe build/
+  #     - name: Move vc_redist
+  #       run: mv ~/downloads/vc_redist-x64.exe build/
 
-      - name: Install QtIFW
-        run: |
-              if ( -not(Test-Path C:\QtIFW) ) {
-                  $ProgressPreference = 'SilentlyContinue'
-                  Invoke-WebRequest -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.6.0/QtInstallerFramework-windows-x64-4.6.0.exe'
-                  ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
-              }
-              ls C:\QtIFW
+  #     - name: Install QtIFW
+  #       run: |
+  #             if ( -not(Test-Path C:\QtIFW) ) {
+  #                 $ProgressPreference = 'SilentlyContinue'
+  #                 Invoke-WebRequest -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.6.0/QtInstallerFramework-windows-x64-4.6.0.exe'
+  #                 ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
+  #             }
+  #             ls C:\QtIFW
 
-      - name: Conan config
-        run: conan config install CI/conan
+  #     - name: Conan config
+  #       run: conan config install CI/conan
 
-      - name: Conan install
-        run: conan install . --build=missing --profile:build=win-msvs2019_x64 -of .
+  #     - name: Conan install
+  #       run: conan install . --build=missing --profile:build=win-msvs2019_x64 -of .
 
-      - name: Conan remove build folders
-        working-directory: build
-        run: conan remove '*' --builds --src --force
+  #     - name: Conan remove build folders
+  #       working-directory: build
+  #       run: conan cache clean "*" --source --build --temp --download
 
-      - name: Conan build
-        run: conan build . -of .
+  #     - name: Conan build
+  #       run: conan build . -of .
 
-      - name: Tests
-        working-directory: build/Release
-        run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+  #     - name: Tests
+  #       working-directory: build/Release
+  #       run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
-      - name: win-msvs2019_x64 Tests Report
-        uses: mikepenz/action-junit-report@v3.2.0
-        with:
-          report_paths: build/tests/local_tests.xml
-          summary: win-msvs2019_x64 Tests Report
+  #     - name: win-msvs2019_x64 Tests Report
+  #       uses: mikepenz/action-junit-report@v4
+  #       with:
+  #         report_paths: build/tests/local_tests.xml
+  #         summary: win-msvs2019_x64 Tests Report
 
-      - name: Packaging
-        working-directory: build/Release
-        run: cpack
+  #     - name: Packaging
+  #       working-directory: build/Release
+  #       run: cpack
 
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
-        with: 
-          name: daggy_win_x64 
-          path: |
-            build/*.exe
-            build/*.zip
+  #     - name: Archive production artifacts
+  #       uses: actions/upload-artifact@v3
+  #       with: 
+  #         name: daggy_win_x64 
+  #         path: |
+  #           build/*.exe
+  #           build/*.zip
 
-  macos-clang13_x64:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # macos-clang13_x64:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
       
-      - name: Cache conan packages
-        uses: actions/cache@v3
-        id: conan-data-clang13
-        with:
-          path: ~/.conan2/p
-          key: conan-data-clang13
+  #     - name: Cache conan packages
+  #       uses: actions/cache@v3
+  #       id: conan-data-clang13
+  #       with:
+  #         path: ~/.conan2/p
+  #         key: conan-data-clang13
       
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-          cache: pip
+  #     - name: Set up Python 3.10
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.10'
+  #         cache: pip
 
-      - run: pip install -r requirements.txt
-      - run: conan --version
-      - run: conan profile detect
+  #     - run: pip install -r requirements.txt
+  #     - run: conan --version
+  #     - run: conan profile detect
 
-      - name: Make build dir
-        run: mkdir build
+  #     - name: Make build dir
+  #       run: mkdir build
 
-      - name: Conan config
-        run: conan config install CI/conan
+  #     - name: Conan config
+  #       run: conan config install CI/conan
 
-      - name: Conan install
-        run: conan install . --build=missing --profile:build=macos-clang13_x64 -of .
+  #     - name: Conan install
+  #       run: conan install . --build=missing --profile:build=macos-clang13_x64 -of .
 
-      - name: Conan remove build folders
-        run: conan remove '*' --builds --src --force
+  #     - name: Conan remove build folders
+  #       run: conan cache clean "*" --source --build --temp --download
 
-      - name: Conan build
-        run: conan build .
+  #     - name: Conan build
+  #       run: conan build .
 
-      - name: daggy version
-        working-directory: build/Release
-        run: bin/daggy --version
+  #     - name: daggy version
+  #       working-directory: build/Release
+  #       run: bin/daggy --version
 
-      - name: Tests
-        working-directory: build/Release
-        run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+  #     - name: Tests
+  #       working-directory: build/Release
+  #       run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
-      - name: macos-clang13_x64 Tests Report
-        uses: mikepenz/action-junit-report@v3.2.0
-        with:
-          report_paths: build/tests/local_tests.xml
-          summary: macos-clang13_x64 Tests Report
+  #     - name: macos-clang13_x64 Tests Report
+  #       uses: mikepenz/action-junit-report@v4
+  #       with:
+  #         report_paths: build/tests/local_tests.xml
+  #         summary: macos-clang13_x64 Tests Report
 
-      - name: Packaging
-        working-directory: build/Release
-        run: cpack
+  #     - name: Packaging
+  #       working-directory: build/Release
+  #       run: cpack
 
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
-        with: 
-          name: daggy_macos_x64
-          path: |
-            build/*.dmg
-            build/*.zip
+  #     - name: Archive production artifacts
+  #       uses: actions/upload-artifact@v3
+  #       with: 
+  #         name: daggy_macos_x64
+  #         path: |
+  #           build/*.dmg
+  #           build/*.zip
