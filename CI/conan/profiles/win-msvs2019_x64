@@ -2,5 +2,5 @@
 os=Windows
 arch=x86_64
 compiler=msvc
-compiler.version=170
+compiler.version=193
 build_type=Release

@@ -37,7 +37,7 @@ jobs:
         run: conan cache clean "*" --source --build --temp --download
 
       - name: Conan build
-        run: conan build . --output-folder=.
+        run: conan build . --profile:build=linux-gcc12_x64 --profile:host=linux-gcc12_x64 --build=missing --output-folder=.
 
       - name: Tests
         working-directory: build/Release
@@ -71,12 +71,12 @@ jobs:
       
   #     - name: Cache conan packages
   #       uses: actions/cache@v3
-  #       id: conan-data-msvs2019
+  #       id: conan-data-msvc
   #       with:
   #         path: |
   #           ~/.conan2/p
   #           c:\.conan2\
-  #         key: conan-data-msvs2019
+  #         key: conan-data-msvc
 
   #     - name: Cache QtIFW
   #       uses: actions/cache@v3
@@ -92,10 +92,10 @@ jobs:
   #         path: ~/downloads
   #         key: vc_redist17
 
-  #     - name: Set up Python 3.10
+  #     - name: Set up Python 3.11
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: '3.10'
+  #         python-version: '3.11'
   #         cache: pip
 
   #     - run: pip install -r requirements.txt
