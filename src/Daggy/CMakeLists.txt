@@ -17,6 +17,11 @@ else()
     )
 endif()
 
+if (CONAN_BUILD)
+    find_package(kainjow_mustache REQUIRED)
+    include_directories(${kainjow_mustache_INCLUDE_DIRS})
+endif()
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_sources.yaml ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_sources.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
 
