@@ -37,7 +37,7 @@ jobs:
         run: conan cache clean "*" --source --build --temp --download
 
       - name: git add safe dir
-        run: git config --global --add safe.directory %GITHUB_WORKSPACE%
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
 
       - name: Conan build
         run: conan build . --profile:build=linux-gcc12_x64 --profile:host=linux-gcc12_x64 --build=missing --output-folder=.
@@ -139,7 +139,7 @@ jobs:
         run: conan cache clean "*" --source --build --temp --download
 
       - name: git add safe dir
-        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+        run: git config --global --add safe.directory %GITHUB_WORKSPACE%
 
       - name: Conan build
         run: conan build . --profile:build=win-msvc193_x64 --profile:host=win-msvc193_x64 --build=missing -of .
