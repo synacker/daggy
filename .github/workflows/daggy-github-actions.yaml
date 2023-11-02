@@ -36,31 +36,31 @@ jobs:
       - name: Conan cache clean
         run: conan cache clean "*" --source --build --temp --download
 
-      # - name: Conan build
-      #   run: conan build . --profile:build=linux-gcc12_x64 --profile:host=linux-gcc12_x64 --build=missing --output-folder=.
+      - name: Conan build
+        run: conan build . --profile:build=linux-gcc12_x64 --profile:host=linux-gcc12_x64 --build=missing --output-folder=.
 
-      # - name: Tests
-      #   working-directory: build/Release
-      #   run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+      - name: Tests
+        working-directory: build/Release
+        run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
-      # - name: linux-gcc12_x64 Tests Report
-      #   uses: mikepenz/action-junit-report@v4
-      #   with:
-      #     report_paths: build/tests/local_tests.xml
-      #     summary: linux-gcc12_x64 Tests Report
+      - name: linux-gcc12_x64 Tests Report
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: build/Release/tests/local_tests.xml
+          summary: linux-gcc12_x64 Tests Report
 
-      # - name: Packaging
-      #   working-directory: build/Release
-      #   run: cpack
+      - name: Packaging
+        working-directory: build/Release
+        run: cpack
 
-      # - name: Archive production artifacts
-      #   uses: actions/upload-artifact@v3
-      #   with: 
-      #     name: daggy_linux_x64
-      #     path: |
-      #       build/*.deb
-      #       build/*.rpm
-      #       build/*.zip
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: daggy_linux_x64
+          path: |
+            build/Release/*.deb
+            build/Release/*.rpm
+            build/Release/*.zip
 
   win-msvc193_x64:
     runs-on: windows-latest
@@ -135,30 +135,30 @@ jobs:
         working-directory: build
         run: conan cache clean "*" --source --build --temp --download
 
-      # - name: Conan build
-      #   run: conan build . -of .
+      - name: Conan build
+        run: conan build . --profile:build=win-msvc193_x64 --profile:host=win-msvc193_x64 --build=missing -of .
 
-      # - name: Tests
-      #   working-directory: build/Release
-      #   run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+      - name: Tests
+        working-directory: build/Release
+        run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
-      # - name: win-msvc193_x64 Tests Report
-      #   uses: mikepenz/action-junit-report@v4
-      #   with:
-      #     report_paths: build/tests/local_tests.xml
-      #     summary: win-msvc193_x64 Tests Report
+      - name: win-msvc193_x64 Tests Report
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: build/Release/tests/local_tests.xml
+          summary: win-msvc193_x64 Tests Report
 
-      # - name: Packaging
-      #   working-directory: build/Release
-      #   run: cpack
+      - name: Packaging
+        working-directory: build/Release
+        run: cpack
 
-      # - name: Archive production artifacts
-      #   uses: actions/upload-artifact@v3
-      #   with: 
-      #     name: daggy_win_x64 
-      #     path: |
-      #       build/*.exe
-      #       build/*.zip
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: daggy_win_x64 
+          path: |
+            build/Release/*.exe
+            build/Release/*.zip
 
   macos-clang13_x64:
     runs-on: macos-latest
@@ -193,31 +193,31 @@ jobs:
       - name: Conan remove build folders
         run: conan cache clean "*" --source --build --temp --download
 
-      # - name: Conan build
-      #   run: conan build .
+      - name: Conan build
+        run: conan build . --profile:build=macos-clang13_x64 --profile:host=macos-clang13_x64 --build=missing -of .
 
-      # - name: daggy version
-      #   working-directory: build/Release
-      #   run: bin/daggy --version
+      - name: daggy version
+        working-directory: build/Release
+        run: bin/daggy --version
 
-      # - name: Tests
-      #   working-directory: build/Release
-      #   run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+      - name: Tests
+        working-directory: build/Release
+        run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
-      # - name: macos-clang13_x64 Tests Report
-      #   uses: mikepenz/action-junit-report@v4
-      #   with:
-      #     report_paths: build/tests/local_tests.xml
-      #     summary: macos-clang13_x64 Tests Report
+      - name: macos-clang13_x64 Tests Report
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: build/Release/tests/local_tests.xml
+          summary: macos-clang13_x64 Tests Report
 
-      # - name: Packaging
-      #   working-directory: build/Release
-      #   run: cpack
+      - name: Packaging
+        working-directory: build/Release
+        run: cpack
 
-      # - name: Archive production artifacts
-      #   uses: actions/upload-artifact@v3
-      #   with: 
-      #     name: daggy_macos_x64
-      #     path: |
-      #       build/*.dmg
-      #       build/*.zip
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: daggy_macos_x64
+          path: |
+            build/Release/*.dmg
+            build/Release/*.zip
