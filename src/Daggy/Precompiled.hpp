@@ -18,11 +18,7 @@
 #include <ostream>
 #include <set>
 
-#ifdef CONAN_BUILD
-#include <kainjow/mustache.hpp>
-#else
 #include <mustache.hpp>
-#endif
 
 #ifdef Q_OS_WIN
 #include <windows.h>
