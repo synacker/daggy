@@ -36,6 +36,9 @@ jobs:
       - name: Conan cache clean
         run: conan cache clean "*" --source --build --temp --download
 
+      - name: git add safe dir
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE/daggy
+
       - name: Conan build
         run: conan build . --profile:build=linux-gcc12_x64 --profile:host=linux-gcc12_x64 --build=missing --output-folder=.
 
