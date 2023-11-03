@@ -77,16 +77,10 @@ class DaggyConan(ConanFile):
             self.requires("libssh2/1.11.0")        
 
     def layout(self):
-        self.folders.source = "src"
-        self.folders.build = "."
-        self.folders.generators = self.folders.build
-        self.folders.imports = self.folders.build
-
         self.cpp.libdirs = ["lib"]
         self.cpp.bindirs = ["bin"]
 
-        self.cpp.includedirs = ["src"]
-        cmake_layout(self)
+        cmake_layout(self, src_folder=self.folders.source)
         
     def generate(self):
         libdir = os.path.normpath(os.path.join(self.build_folder, self.cpp.libdirs[0], self.name))

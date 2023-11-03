@@ -1,5 +1,8 @@
 # This cmake only for developing daggy
 cmake_minimum_required(VERSION 3.24.0)
+
+message(WARNING "This CMakeLists.txt only for developing")
+
 set(CMAKE_PROJECT_TOP_LEVEL_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/cmake/conan_provider.cmake")
 set(QT_CREATOR_SKIP_CONAN_SETUP ON)
 
@@ -10,6 +13,7 @@ project(daggy
 )
 
 option(CONAN_BUILD "build with conan" ON)
+add_definitions(-DCONAN_BUILD)
 option(PACKAGE_DEPS "include daggy deps into package" OFF)
 
 include(CTest)
