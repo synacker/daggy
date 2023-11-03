@@ -17,9 +17,11 @@ else()
     )
 endif()
 
+set(LINK_LIBRARIES DaggyCore)
+
 if (CONAN_BUILD)
     find_package(kainjow_mustache REQUIRED)
-    include_directories(${kainjow_mustache_INCLUDE_DIRS})
+    set(LINK_LIBRARIES ${LINK_LIBRARIES} kainjow_mustache::kainjow_mustache)
 endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_sources.yaml ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
@@ -31,7 +33,7 @@ ADD_BINARY_META()
 
 add_executable(${TARGET} ${SOURCES})
 include(rpath_bin)
-target_link_libraries(${TARGET} PRIVATE DaggyCore)
+target_link_libraries(${TARGET} PRIVATE ${LINK_LIBRARIES})
 target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
 
 install(TARGETS ${TARGET} RUNTIME)

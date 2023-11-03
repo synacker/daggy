@@ -67,6 +67,9 @@ class DaggyConan(ConanFile):
 
         self.options["qt"].shared = True
         
+        if self.settings.os == "Windows":
+            self.options["libssh2"].shared = True
+        
     def build_requirements(self):
         self.tool_requires("cmake/3.27.7")
         self.tool_requires("gtest/1.13.0")
