@@ -28,6 +28,7 @@ from conan.tools.files import copy
 from conan.tools.build import check_min_cppstd
 from git_version import GitVersion
 
+required_conan_version = ">=2.0"
 class DaggyConan(ConanFile):
     name = "daggy"
     license = "MIT"
