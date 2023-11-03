@@ -77,6 +77,8 @@ class DaggyConan(ConanFile):
             self.requires("libssh2/1.11.0")        
 
     def layout(self):
+        self.folders.source = "src"
+
         self.cpp.libdirs = ["lib"]
         self.cpp.bindirs = ["bin"]
 
