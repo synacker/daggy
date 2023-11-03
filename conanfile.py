@@ -21,10 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
-
-from conans import ConanFile, CMake
+import os
+from conan import ConanFile
+from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps, cmake_layout
+from conan.tools.files import copy
+from conan.tools.build import check_min_cppstd
 from git_version import GitVersion
 
+required_conan_version = ">=2.0"
 class DaggyConan(ConanFile):
     name = "daggy"
     license = "MIT"
@@ -37,100 +41,99 @@ class DaggyConan(ConanFile):
         "with_yaml": [True, False],
         "with_console": [True, False],
         "shared": [True, False],
-        "fPIC": [True, False],
-        "circleci": [True, False]
+        "fPIC": [True, False]
     }
     default_options = {
         "with_ssh2": True,
         "with_yaml": True,
         "with_console": True,
         "shared": True,
-        "fPIC": False,
-        "circleci": False
+        "fPIC": False
     }
-    generators = "cmake", "cmake_paths", "cmake_find_package"
-    exports = ["CMakeLists.txt", "git_version.py", "cmake/*", "src/*", "LICENSE", "README.md"]
+    generators = "CMakeDeps"
+    exports = ["git_version.py", "src/*"]
 
     _cmake = None
 
     def set_version(self):
         self.version = GitVersion().tag
 
+    def validate(self):
+        check_min_cppstd(self, "17")
+
     def config_options(self):
         if self.settings.os == "Windows":
             del self.options.fPIC
 
         self.options["qt"].shared = True
-
-    def configure(self):
-        if self.options.shared:
-            del self.options.fPIC
-
-    def validate(self):
-        if not self.options["qt"].shared: 
-            raise ConanInvalidConfiguration("Shared Qt lib is required.") 
-    
+        
+        if self.settings.os == "Windows":
+            self.options["libssh2"].shared = True
+        
     def build_requirements(self):
-        self.build_requires("cmake/3.23.1")
+        self.tool_requires("cmake/3.27.7")
+        self.tool_requires("gtest/1.13.0")
 
     def requirements(self):
-        self.requires("libiconv/1.17")
-        self.requires("openssl/1.1.1q")
-        self.requires("qt/6.3.1")
+        self.requires("qt/6.6.0")
         self.requires("kainjow-mustache/4.1")
 
         if self.options.with_yaml:
-            self.requires("yaml-cpp/0.7.0")
+            self.requires("yaml-cpp/0.8.0")
 
         if self.options.with_ssh2:
-            self.requires("libssh2/1.10.0")
+            self.requires("libssh2/1.11.0")        
 
-    def _libdir(self):
-        result = "lib"
-        if self.settings.arch == "x86_64" and self.settings.os == "Linux":
-            result = "lib64"
-        return result
+    def layout(self):
+        self.folders.source = "src"
 
-    def _configure(self):
-        if self._cmake:
-            return self._cmake
-        self._cmake = CMake(self)
-        if self.settings.os == "Windows":
-            if self.options.circleci:
-                self._cmake.definitions["CMAKE_SYSTEM_VERSION"] = "10.1.18362.1"
+        self.cpp.libdirs = ["lib"]
+        self.cpp.bindirs = ["bin"]
+
+        cmake_layout(self, src_folder=self.folders.source)
         
-        self._cmake.definitions["SSH2_SUPPORT"] = self.options.with_ssh2
-        self._cmake.definitions["YAML_SUPPORT"] = self.options.with_yaml
-        self._cmake.definitions["CONSOLE"] = self.options.with_console
-        self._cmake.definitions["PACKAGE_DEPS"] = True
-        self._cmake.definitions["CMAKE_INSTALL_LIBDIR"] = self._libdir()
-        self._cmake.definitions["BUILD_TESTING"] = True
-        self._cmake.definitions["CONAN_BUILD"] = True
+    def generate(self):
+        libdir = os.path.normpath(os.path.join(self.build_folder, self.cpp.libdirs[0], self.name))
+        bindir = os.path.normpath(os.path.join(self.build_folder, self.cpp.bindirs[0]))
+        for dep in self.dependencies.values():
+            if self.settings.os == "Windows":
+                if dep.cpp_info.bindirs:
+                    copy(self, "*.dll", dep.cpp_info.bindirs[0], bindir) 
+                if dep.cpp_info.libdirs:
+                    copy(self, "*.dll", dep.cpp_info.libdirs[0], bindir)
+            elif self.settings.os == "Linux":
+                if dep.cpp_info.libdirs:
+                    copy(self, "*.so.*", dep.cpp_info.libdirs[0], libdir)
+            else:
+                if dep.cpp_info.libdirs:
+                    copy(self, "*.dylib", dep.cpp_info.libdirs[0], libdir)
+
+        tc = CMakeToolchain(self)
+        tc.variables["CMAKE_INSTALL_LIBDIR"] = self.cpp.libdirs[0]
+        tc.variables["SSH2_SUPPORT"] = self.options.with_ssh2
+        tc.variables["YAML_SUPPORT"] = self.options.with_yaml
+        tc.variables["CONSOLE"] = self.options.with_console
+        tc.variables["PACKAGE_DEPS"] = True
+        tc.variables["BUILD_TESTING"] = True
+        tc.variables["CONAN_BUILD"] = True
+        
         if self.options.shared:
-            self._cmake.definitions["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
-            self._cmake.definitions["CMAKE_CXX_VISIBILITY_PRESET"] = "hidden"
-            self._cmake.definitions["CMAKE_VISIBILITY_INLINES_HIDDEN"] = 1
-        self._cmake.configure()
-        return self._cmake
+            tc.variables["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
+            tc.variables["CMAKE_CXX_VISIBILITY_PRESET"] = "hidden"
+            tc.variables["CMAKE_VISIBILITY_INLINES_HIDDEN"] = 1
+        tc.generate()    
 
     def build(self):
-        cmake = self._configure()
+        cmake = CMake(self)
+        cmake.configure()
         cmake.build()
         
 
     def package(self):
-        cmake = self._configure()
+        cmake = CMake(self)
+        cmake.configure()
         cmake.install()
 
     def package_info(self):
         self.cpp_info.libs = ["DaggyCore"]
         self.cpp_info.libdirs = [self._libdir()]
-
-    def imports(self):
-        if self.settings.os == "Windows":
-            self.copy("*.dll", src="@bindirs", dst="bin")
-            self.copy("*.dll", src="@libdirs", dst="bin")
-        elif self.settings.os == "Linux":
-            self.copy("*.so.*", src="@libdirs", dst="{}/{}".format(self._libdir(), self.name))
-        else:
-            self.copy("*.dylib", src="@libdirs", dst="{}/{}".format(self._libdir(), self.name))
