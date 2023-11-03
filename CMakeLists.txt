@@ -14,7 +14,7 @@ project(daggy
 
 option(CONAN_BUILD "build with conan" ON)
 add_definitions(-DCONAN_BUILD)
-option(PACKAGE_DEPS "include daggy deps into package" OFF)
+option(PACKAGE_DEPS "include daggy deps into package" ON)
 
 include(CTest)
 add_subdirectory(src)

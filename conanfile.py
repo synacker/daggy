@@ -25,6 +25,7 @@ import os
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps, cmake_layout
 from conan.tools.files import copy
+from conan.tools.build import check_min_cppstd
 from git_version import GitVersion
 
 class DaggyConan(ConanFile):
@@ -55,6 +56,9 @@ class DaggyConan(ConanFile):
 
     def set_version(self):
         self.version = GitVersion().tag
+
+    def validate(self):
+        check_min_cppstd(self, "17")
 
     def config_options(self):
         if self.settings.os == "Windows":
