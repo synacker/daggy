@@ -71,7 +71,8 @@ class GitVersion():
     
     @property
     def commit(self):
-        stream = os.popen("git rev-list {}.. --count".format(self.tag))
+        stream = os.popen("git rev-parse HEAD")
+        return stream.read().strip()
 
 
     def __str__(self):
@@ -82,6 +83,7 @@ class GitVersion():
         Branch: {self.branch}
         Build: {self.build}
         Standard: {self.standard}
+        Commit: {self.commit}
         """
 
 if __name__ == "__main__":
