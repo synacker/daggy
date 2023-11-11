@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 #include "Precompiled.h"
+#include <DaggyCore/version.h>
 
 int main(int argc, char** argv)
 {

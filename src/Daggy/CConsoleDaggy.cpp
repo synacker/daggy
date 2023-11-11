@@ -29,6 +29,7 @@ SOFTWARE.
 #include <DaggyCore/aggregators/CFile.hpp>
 #include <DaggyCore/Types.hpp>
 #include <DaggyCore/Errors.hpp>
+#include <DaggyCore/version.h>
 
 using namespace daggy;
 
@@ -37,10 +38,9 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
     , daggy_core_(nullptr)
     , need_hard_stop_(false)
 {
-    qApp->setApplicationName(DAGGY_NAME);
-    qApp->setApplicationVersion(DAGGY_VERSION_FULL);
+    qApp->setApplicationName("daggy");
+    qApp->setApplicationVersion(DAGGY_VERSION_STANDARD);
     qApp->setOrganizationName(DAGGY_VENDOR);
-    qApp->setOrganizationDomain(DAGGY_HOMEPAGE_URL);
 
     connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
 }

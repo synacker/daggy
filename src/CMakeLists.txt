@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include_directories(${CMAKE_BINARY_DIR}/exports/)
 
 include(version)
 SET_GIT_VERSION()
@@ -8,7 +9,7 @@ SET_GIT_VERSION()
 project(daggy
         DESCRIPTION "Data Aggregation Utility"
         HOMEPAGE_URL https://github.com/synacker/daggy
-        LANGUAGES CXX C
+        LANGUAGES CXX
         VERSION ${VERSION}
 )
 

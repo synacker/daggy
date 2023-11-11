@@ -7,7 +7,7 @@ extern const char* const @PROJECT_NAME_UPPER@_VERSION_COMMIT;
 
 extern const char* const @PROJECT_NAME_UPPER@_VENDOR;
 
-extern const unsigned short int @PROJECT_NAME_UPPER@_VERSION_MAJOR;
-extern const unsigned short int @PROJECT_NAME_UPPER@_VERSION_MINOR;
-extern const unsigned short int @PROJECT_NAME_UPPER@_VERSION_PATCH;
-extern const unsigned short int @PROJECT_NAME_UPPER@_VERSION_TWEAK;
+extern const unsigned short @PROJECT_NAME_UPPER@_VERSION_MAJOR;
+extern const unsigned short @PROJECT_NAME_UPPER@_VERSION_MINOR;
+extern const unsigned short @PROJECT_NAME_UPPER@_VERSION_PATCH;
+extern const unsigned short @PROJECT_NAME_UPPER@_VERSION_TWEAK;
