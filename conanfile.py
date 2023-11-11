@@ -56,12 +56,15 @@ class DaggyConan(ConanFile):
     _cmake = None
 
     def set_version(self):
-        self.version = GitVersion().tag
+        self.version = GitVersion().standard
 
     def validate(self):
         check_min_cppstd(self, "17")
 
     def config_options(self):
+        if not self.options.shared:
+            self.options.fPIC = True
+
         if self.settings.os == "Windows":
             del self.options.fPIC
 

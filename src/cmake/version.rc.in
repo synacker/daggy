@@ -22,10 +22,10 @@ VS_VERSION_INFO VERSIONINFO
             BEGIN
                 VALUE "CompanyName",      "@PROJECT_VENDOR@"
                 VALUE "FileDescription",  "@PROJECT_DESCRIPTION@"
-                VALUE "FileVersion",      "@PROJECT_VERSION_FULL@"
+                VALUE "FileVersion",      "@VERSION_COMMIT@"
                 VALUE "LegalCopyright",   "@PROJECT_COPYRIGTH@"
                 VALUE "ProductName",      "@TARGET@"
-                VALUE "ProductVersion",   "@PROJECT_VERSION_FULL@"
+                VALUE "ProductVersion",   "@VERSION@"
             END
         END
         BLOCK "VarFileInfo"

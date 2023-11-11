@@ -68,6 +68,11 @@ class GitVersion():
         if self.branch == self.default_branch or re.match("release/.*", self.branch):
             standard = f"{self.version}"
         return standard
+    
+    @property
+    def commit(self):
+        stream = os.popen("git rev-list {}.. --count".format(self.tag))
+
 
     def __str__(self):
         return f"""

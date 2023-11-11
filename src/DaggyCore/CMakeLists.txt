@@ -2,6 +2,8 @@ set(TARGET DaggyCore)
 
 find_package(Qt6 COMPONENTS Core Network REQUIRED)
 
+include(versionh)
+
 set(INCLUDE_BASE_HEADERS
     Core.hpp
     Core.h
@@ -80,8 +82,6 @@ if(YAML_SUPPORT)
     find_package(yaml-cpp REQUIRED)
     set(LINK_LIBRARIES ${LINK_LIBRARIES} yaml-cpp)
 endif()
-
-ADD_BINARY_META(LIB)
 
 add_library(${TARGET} ${SOURCES} ${HEADERS})
 include(rpath_lib)

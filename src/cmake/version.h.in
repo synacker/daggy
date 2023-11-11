@@ -1,0 +1,13 @@
+extern const char* const @PROJECT_NAME_UPPER@_VERSION_TAG;
+extern const char* const @PROJECT_NAME_UPPER@_VERSION;
+extern const char* const @PROJECT_NAME_UPPER@_VERSION_FULL;
+extern const char* const @PROJECT_NAME_UPPER@_VERSION_BRANCH;
+extern const char* const @PROJECT_NAME_UPPER@_VERSION_STANDARD;
+extern const char* const @PROJECT_NAME_UPPER@_VERSION_COMMIT;
+
+extern const char* const @PROJECT_NAME_UPPER@_VENDOR;
+
+extern const unsigned short int @PROJECT_NAME_UPPER@_VERSION_MAJOR;
+extern const unsigned short int @PROJECT_NAME_UPPER@_VERSION_MINOR;
+extern const unsigned short int @PROJECT_NAME_UPPER@_VERSION_PATCH;
+extern const unsigned short int @PROJECT_NAME_UPPER@_VERSION_TWEAK;
