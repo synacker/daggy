@@ -1,13 +1,14 @@
-extern const char* const @PROJECT_NAME_UPPER@_VERSION_TAG;
-extern const char* const @PROJECT_NAME_UPPER@_VERSION;
-extern const char* const @PROJECT_NAME_UPPER@_VERSION_FULL;
-extern const char* const @PROJECT_NAME_UPPER@_VERSION_BRANCH;
-extern const char* const @PROJECT_NAME_UPPER@_VERSION_STANDARD;
-extern const char* const @PROJECT_NAME_UPPER@_VERSION_COMMIT;
+const char* const @PROJECT_NAME_UPPER@_VERSION_TAG = "@VERSION_TAG@";
+const char* const @PROJECT_NAME_UPPER@_VERSION = "@VERSION@";
+const char* const @PROJECT_NAME_UPPER@_VERSION_FULL = "@VERSION_FULL@";
+const char* const @PROJECT_NAME_UPPER@_VERSION_BRANCH = "@VERSION_BRANCH@";
+const char* const @PROJECT_NAME_UPPER@_VERSION_STANDARD = "@VERSION_STANDARD@";
+const char* const @PROJECT_NAME_UPPER@_VERSION_COMMIT = "@VERSION_COMMIT@";
 
-extern const char* const @PROJECT_NAME_UPPER@_VENDOR;
+const char* const @PROJECT_NAME_UPPER@_VENDOR = "@PROJECT_VENDOR@";
+const char* const @PROJECT_NAME_UPPER@_COPYRIGTH = "@PROJECT_COPYRIGTH@";
 
-extern const unsigned short @PROJECT_NAME_UPPER@_VERSION_MAJOR;
-extern const unsigned short @PROJECT_NAME_UPPER@_VERSION_MINOR;
-extern const unsigned short @PROJECT_NAME_UPPER@_VERSION_PATCH;
-extern const unsigned short @PROJECT_NAME_UPPER@_VERSION_TWEAK;
+const unsigned short @PROJECT_NAME_UPPER@_VERSION_MAJOR = @PROJECT_VERSION_MAJOR@;
+const unsigned short @PROJECT_NAME_UPPER@_VERSION_MINOR = @PROJECT_VERSION_MINOR@;
+const unsigned short @PROJECT_NAME_UPPER@_VERSION_PATCH = @PROJECT_VERSION_PATCH@;
+const unsigned short @PROJECT_NAME_UPPER@_VERSION_TWEAK = @PROJECT_VERSION_TWEAK@;

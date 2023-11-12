@@ -53,10 +53,13 @@ class DaggyConan(ConanFile):
     generators = "CMakeDeps"
     exports = ["git_version.py", "src/*"]
 
+
+    _git_version = None
     _cmake = None
 
     def set_version(self):
-        self.version = GitVersion().standard
+        self._git_version = GitVersion()
+        self.version = self._git_version.standard
 
     def validate(self):
         check_min_cppstd(self, "17")
@@ -119,6 +122,7 @@ class DaggyConan(ConanFile):
         tc.variables["PACKAGE_DEPS"] = True
         tc.variables["BUILD_TESTING"] = True
         tc.variables["CONAN_BUILD"] = True
+        tc.variables["VERSION"] = self._git_version.version
         
         if self.options.shared:
             tc.variables["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
