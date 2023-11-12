@@ -7,8 +7,8 @@ macro(SET_GIT_VERSION)
                           ""
                           ${ARGN}
     )
-    find_package(Git REQUIRED)
-    if(NOT VERSION)
+    if(NOT DEFINED VERSION)
+        find_package(Git REQUIRED)
         if (NOT GIT_FOUND)
             message(FATAL_ERROR "Git not found")
         endif()
@@ -83,6 +83,7 @@ macro(SET_GIT_VERSION)
     message(STATUS
         "Version was set:\n"
         "Tag: ${VERSION_TAG}\n"
+        "Version: ${VERSION}\n"
         "Full: ${VERSION_FULL}\n"
         "Branch: ${VERSION_BRANCH}\n"
         "Build: ${VERSION_BUILD}\n"
