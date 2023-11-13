@@ -24,6 +24,7 @@ SOFTWARE.
 #include "Precompiled.hpp"
 #include "Core.hpp"
 #include "Core.h"
+#include "version.h"
 
 #include "providers/IProvider.hpp"
 #include "providers/CLocalFabric.hpp"
@@ -68,8 +69,8 @@ DaggyVersion Core::version() const noexcept
         DAGGY_VERSION_MAJOR,
         DAGGY_VERSION_MINOR,
         DAGGY_VERSION_PATCH,
-        DAGGY_VERSION_BUILD,
-        DAGGY_VERSION_POSTFIX,
+        DAGGY_VERSION_TWEAK,
+        DAGGY_VERSION_BRANCH,
         DAGGY_VENDOR,
         DAGGY_VERSION_COMMIT
     };

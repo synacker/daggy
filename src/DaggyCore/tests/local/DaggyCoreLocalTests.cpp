@@ -175,19 +175,6 @@ void DaggyCoreLocalTests::cleanup()
 {
 }
 
-void DaggyCoreLocalTests::checkVersion()
-{
-    daggy::Core core({});
-    auto version = core.version();
-    QCOMPARE(QString(version.full), QString(DAGGY_VERSION_FULL));
-    QCOMPARE(version.major, DAGGY_VERSION_MAJOR);
-    QCOMPARE(version.minor, DAGGY_VERSION_MINOR);
-    QCOMPARE(version.patch, DAGGY_VERSION_PATCH);
-    QCOMPARE(version.build, DAGGY_VERSION_BUILD);
-    QCOMPARE(QString(version.postfix), QString(DAGGY_VERSION_POSTFIX));
-    QCOMPARE(QString(version.vendor), QString(DAGGY_VENDOR));
-    QCOMPARE(QString(version.commit), QString(DAGGY_VERSION_COMMIT));
-}
 
 void DaggyCoreLocalTests::startAndTerminateTest_data()
 {

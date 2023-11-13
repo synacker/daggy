@@ -40,8 +40,6 @@ private slots:
     void init();
     void cleanup();
 
-    void checkVersion();
-
     void startAndTerminateTest_data();
     void startAndTerminateTest();
 

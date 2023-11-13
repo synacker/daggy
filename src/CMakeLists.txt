@@ -1,25 +1,26 @@
-cmake_minimum_required(VERSION 3.21.0)
+cmake_minimum_required(VERSION 3.24)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include_directories(${CMAKE_BINARY_DIR}/exports/)
+
+include(version)
+SET_GIT_VERSION()
+
 project(daggy
         DESCRIPTION "Data Aggregation Utility"
         HOMEPAGE_URL https://github.com/synacker/daggy
         LANGUAGES CXX
+        VERSION ${VERSION}
 )
 
+
 set(PROJECT_VENDOR synacker)
-set(PROJECT_COPYRIGTH "Copyright \\251 2021 Mikhail Milovidov. Some Rights Reserved")
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-include(version)
-include(metabin)
-SET_GIT_VERSION()
-
+set(PROJECT_COPYRIGTH "Copyright \\251 2023 Mikhail Milovidov. Some Rights Reserved")
 
 option(SSH2_SUPPORT "ssh2 data provider support" ON)
 option(YAML_SUPPORT "yaml data sources support" ON)
 option(CONSOLE "daggy console application" ON)
 option(BUILD_SHARED_LIBS ON)
-
 
 if(SSH2_SUPPORT)
     add_definitions(-DSSH2_SUPPORT)

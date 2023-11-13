@@ -53,15 +53,19 @@ class DaggyConan(ConanFile):
     generators = "CMakeDeps"
     exports = ["git_version.py", "src/*"]
 
+
     _cmake = None
 
     def set_version(self):
-        self.version = GitVersion().tag
+        self.version = GitVersion().standard
 
     def validate(self):
         check_min_cppstd(self, "17")
 
     def config_options(self):
+        if not self.options.shared:
+            self.options.fPIC = True
+
         if self.settings.os == "Windows":
             del self.options.fPIC
 
@@ -109,18 +113,19 @@ class DaggyConan(ConanFile):
                     copy(self, "*.dylib", dep.cpp_info.libdirs[0], libdir)
 
         tc = CMakeToolchain(self)
-        tc.variables["CMAKE_INSTALL_LIBDIR"] = self.cpp.libdirs[0]
-        tc.variables["SSH2_SUPPORT"] = self.options.with_ssh2
-        tc.variables["YAML_SUPPORT"] = self.options.with_yaml
-        tc.variables["CONSOLE"] = self.options.with_console
-        tc.variables["PACKAGE_DEPS"] = True
-        tc.variables["BUILD_TESTING"] = True
-        tc.variables["CONAN_BUILD"] = True
+        tc.cache_variables["CMAKE_INSTALL_LIBDIR"] = self.cpp.libdirs[0]
+        tc.cache_variables["SSH2_SUPPORT"] = self.options.with_ssh2
+        tc.cache_variables["YAML_SUPPORT"] = self.options.with_yaml
+        tc.cache_variables["CONSOLE"] = self.options.with_console
+        tc.cache_variables["PACKAGE_DEPS"] = True
+        tc.cache_variables["BUILD_TESTING"] = True
+        tc.cache_variables["CONAN_BUILD"] = True
+        tc.cache_variables["VERSION"] = GitVersion().version
         
         if self.options.shared:
-            tc.variables["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
-            tc.variables["CMAKE_CXX_VISIBILITY_PRESET"] = "hidden"
-            tc.variables["CMAKE_VISIBILITY_INLINES_HIDDEN"] = 1
+            tc.cache_variables["CMAKE_C_VISIBILITY_PRESET"] = "hidden"
+            tc.cache_variables["CMAKE_CXX_VISIBILITY_PRESET"] = "hidden"
+            tc.cache_variables["CMAKE_VISIBILITY_INLINES_HIDDEN"] = 1
         tc.generate()    
 
     def build(self):
