@@ -62,6 +62,14 @@ if (SSH2_SUPPORT)
             providers/ssh2/Ssh2Debug.cpp
             providers/CSsh2.cpp
             providers/CSsh2Fabric.cpp
+            providers/ssh2/Ssh2Client.hpp
+            providers/ssh2/Ssh2Types.hpp
+            providers/ssh2/Ssh2Process.hpp
+            providers/ssh2/Ssh2Channel.hpp
+            providers/ssh2/Ssh2Types.hpp
+            providers/ssh2/Ssh2Debug.hpp
+            providers/CSsh2.hpp
+            providers/CSsh2Fabric.hpp
     )
 endif()
 
