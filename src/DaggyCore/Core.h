@@ -24,7 +24,7 @@ SOFTWARE.
 
 #pragma once
 
-#include "daggycore_export.h"
+#include <DaggyCore/daggycore_export.h>
 
 #include "Types.h"
 #include "Errors.h"

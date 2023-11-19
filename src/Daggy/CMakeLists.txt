@@ -2,26 +2,34 @@ set(TARGET daggy)
 
 find_package(Qt6 COMPONENTS Core REQUIRED)
 
-set(SOURCES ${SOURCES}
-    main.cpp
-    CConsoleDaggy.cpp
+add_executable(${TARGET})
+include(rpath_bin)
+set_target_properties(${TARGET} PROPERTIES AUTOMOC ON)
+
+target_sources(${TARGET}
+    PRIVATE
+        main.cpp
+        CConsoleDaggy.cpp
 )
 
 if (WIN32)
-    set(SOURCES ${SOURCES}
-        ISystemSignalHandlerWin32.cpp
+    target_sources(${TARGET}
+        PRIVATE
+            ISystemSignalHandlerWin32.cpp
     )
 else()
-    set(SOURCES ${SOURCES}
-        ISystemSignalHandlerUnix.cpp
+    target_sources(${TARGET}
+        PRIVATE
+            ISystemSignalHandlerUnix.cpp
     )
+
 endif()
 
-set(LINK_LIBRARIES DaggyCore)
+target_link_libraries(${TARGET} PRIVATE DaggyCore)
 
 if (CONAN_BUILD)
     find_package(kainjow_mustache REQUIRED)
-    set(LINK_LIBRARIES ${LINK_LIBRARIES} kainjow_mustache::kainjow_mustache)
+    target_link_libraries(${TARGET} PRIVATE kainjow_mustache::kainjow_mustache)
 endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_sources.yaml ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
@@ -29,8 +37,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_sources.json ${CMAKE_RUNTIME_O
 
 add_definitions(-DAPP_ICON="${CMAKE_CURRENT_LIST_DIR}/../icons/daggy.ico")
 
-add_executable(${TARGET} ${SOURCES})
-include(rpath_bin)
+
 target_link_libraries(${TARGET} PRIVATE ${LINK_LIBRARIES})
 target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
 
