@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-include_directories(${CMAKE_BINARY_DIR}/exports/)
 
 include(version)
 SET_GIT_VERSION()
@@ -13,6 +12,8 @@ project(daggy
         VERSION ${VERSION}
 )
 
+set(CMAKE_BINARY_EXPORTS_DIR ${CMAKE_BINARY_DIR}/exports/)
+include_directories(${CMAKE_BINARY_EXPORTS_DIR})
 
 set(PROJECT_VENDOR synacker)
 set(PROJECT_COPYRIGTH "Copyright \\251 2023 Mikhail Milovidov. Some Rights Reserved")

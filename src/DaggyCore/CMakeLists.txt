@@ -2,8 +2,6 @@ set(TARGET DaggyCore)
 
 find_package(Qt6 COMPONENTS Core Network REQUIRED)
 
-include(versionh)
-
 set(INCLUDE_BASE_HEADERS
     Core.hpp
     Core.h
@@ -13,7 +11,6 @@ set(INCLUDE_BASE_HEADERS
     Errors.hpp
     Types.h
     Types.hpp
-    daggycore_export.h
 )
 
 set(INCLUDE_PROVIDERS_HEADERS
@@ -87,8 +84,13 @@ add_library(${TARGET} ${SOURCES} ${HEADERS})
 include(rpath_lib)
 target_link_libraries(${TARGET} ${LINK_LIBRARIES})
 
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
+configure_file(version.h.in ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/version.h @ONLY)
+
+
+
 include(GenerateExportHeader)
-generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_CURRENT_SOURCE_DIR}/daggycore_export.h)
+generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/daggycore_export.h)
 target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
 
 

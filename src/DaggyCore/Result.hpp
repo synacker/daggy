@@ -27,7 +27,7 @@ SOFTWARE.
 #include <optional>
 #include <QString>
 
-#include "daggycore_export.h"
+#include <DaggyCore/daggycore_export.h>
 #include "Errors.hpp"
 
 namespace daggy {
