@@ -1,52 +1,89 @@
 set(TARGET DaggyCore)
 
 find_package(Qt6 COMPONENTS Core Network REQUIRED)
+add_library(${TARGET})
 
-set(INCLUDE_BASE_HEADERS
-    Core.hpp
-    Core.h
-    Result.hpp
-    Sources.hpp
-    Errors.h
-    Errors.hpp
-    Types.h
-    Types.hpp
+include(rpath_lib)
+
+set_target_properties(${TARGET} PROPERTIES AUTOMOC ON)
+
+target_sources(${TARGET}
+    PRIVATE
+        Core.cpp
+        core_ansi_c.cpp
+        Sources.cpp
+        Errors.cpp
+        providers/IProvider.cpp
+        providers/CLocal.cpp
+        providers/IFabric.cpp
+        providers/CLocalFabric.cpp
+        aggregators/IAggregator.cpp
+        aggregators/CFile.cpp
+        aggregators/CConsole.cpp
+        aggregators/CCallback.cpp
+    PUBLIC
+    FILE_SET HEADERS
+    BASE_DIRS
+        ${CMAKE_CURRENT_LIST_DIR}/..
+    FILES
+        Core.hpp
+        Core.h
+        Result.hpp
+        Sources.hpp
+        Errors.h
+        Errors.hpp
+        Types.h
+        Types.hpp
+        providers/IProvider.hpp
+        providers/IFabric.hpp
+        aggregators/IAggregator.hpp
+        aggregators/CFile.hpp
+        aggregators/CConsole.hpp
 )
 
-set(INCLUDE_PROVIDERS_HEADERS
-    providers/IProvider.hpp
-    providers/IFabric.hpp
-)
+target_link_libraries(${TARGET} PUBLIC Qt6::Core Qt6::Network)
 
-set(INCLUDE_AGGREGATORS_HEADERS
-    aggregators/IAggregator.hpp
-    aggregators/CFile.hpp
-    aggregators/CConsole.hpp
-)
 
-set(HEADERS
-    ${INCLUDE_BASE_HEADERS}
-    ${INCLUDE_PROVIDERS_HEADERS}
-    ${INCLUDE_AGGREGATORS_HEADERS}
-)
+if (SSH2_SUPPORT)
+    if(CONAN_BUILD)
+        find_package(Libssh2 REQUIRED)
+        target_link_libraries(${TARGET} PUBLIC Libssh2::libssh2)
+    else()
+        target_link_libraries(${TARGET} PUBLIC ssh2 crypto)
+    endif()
 
-set(SOURCES ${SOURCES}
-    Core.cpp
-    core_ansi_c.cpp
-    Sources.cpp
-    Errors.cpp
-    providers/IProvider.cpp
-    providers/CLocal.cpp
-    providers/IFabric.cpp
-    providers/CLocalFabric.cpp
-    aggregators/IAggregator.cpp
-    aggregators/CFile.cpp
-    aggregators/CConsole.cpp
-    aggregators/CCallback.cpp
-)
+    target_sources(${TARGET}
+        PRIVATE
+            providers/ssh2/Ssh2Client.cpp
+            providers/ssh2/Ssh2Types.cpp
+            providers/ssh2/Ssh2Process.cpp
+            providers/ssh2/Ssh2Channel.cpp
+            providers/ssh2/Ssh2Types.cpp
+            providers/ssh2/Ssh2Debug.cpp
+            providers/CSsh2.cpp
+            providers/CSsh2Fabric.cpp
+    )
+endif()
 
-set(LINK_LIBRARIES
-    Qt6::Core Qt6::Network
+if(YAML_SUPPORT)
+    find_package(yaml-cpp REQUIRED)
+    target_link_libraries(${TARGET} PUBLIC yaml-cpp)
+endif()
+
+
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
+configure_file(version.h.in ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/version.h @ONLY)
+
+include(GenerateExportHeader)
+generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/daggycore_export.h)
+target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
+
+target_sources(${TARGET}
+    PUBLIC FILE_SET HEADERS
+    BASE_DIRS ${CMAKE_BINARY_EXPORTS_DIR}
+    FILES
+        ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/version.h
+        ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/daggycore_export.h
 )
 
 if (BUILD_TESTING)
@@ -54,45 +91,6 @@ if (BUILD_TESTING)
     add_subdirectory(tests/pingpong)
     add_subdirectory(tests/interface)
 endif()
-
-if (SSH2_SUPPORT)
-    if(CONAN_BUILD)
-        find_package(Libssh2 REQUIRED)
-        set(LINK_LIBRARIES ${LINK_LIBRARIES} Libssh2::libssh2)
-    else()
-        set(LINK_LIBRARIES ${LINK_LIBRARIES} ssh2 crypto)
-    endif()
-
-    set(SOURCES ${SOURCES}
-        providers/ssh2/Ssh2Client.cpp
-        providers/ssh2/Ssh2Types.cpp
-        providers/ssh2/Ssh2Process.cpp
-        providers/ssh2/Ssh2Channel.cpp
-        providers/ssh2/Ssh2Types.cpp
-        providers/ssh2/Ssh2Debug.cpp
-        providers/CSsh2.cpp
-        providers/CSsh2Fabric.cpp
-    )
-endif()
-
-if(YAML_SUPPORT)
-    find_package(yaml-cpp REQUIRED)
-    set(LINK_LIBRARIES ${LINK_LIBRARIES} yaml-cpp)
-endif()
-
-add_library(${TARGET} ${SOURCES} ${HEADERS})
-include(rpath_lib)
-target_link_libraries(${TARGET} ${LINK_LIBRARIES})
-
-string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
-configure_file(version.h.in ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/version.h @ONLY)
-
-
-
-include(GenerateExportHeader)
-generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/daggycore_export.h)
-target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
-
 
 if(UNIX)
     install(TARGETS ${TARGET} LIBRARY)
@@ -103,6 +101,4 @@ else()
     endif()
 endif()
 
-install(FILES ${INCLUDE_BASE_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET})
-install(FILES ${INCLUDE_AGGREGATORS_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET}/aggregators)
-install(FILES ${INCLUDE_PROVIDERS_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET}/providers)
+install(TARGETS ${TARGET} FILE_SET HEADERS)
