@@ -196,6 +196,10 @@ void DaggyCoreLocalTests::init()
 
 void DaggyCoreLocalTests::cleanup()
 {
+    auto path_env = QString(qgetenv("PATH"));
+    path_env = path_env.isEmpty() ? QCoreApplication::applicationDirPath() : QString("%1:%2").arg(path_env, QCoreApplication::applicationDirPath());
+    auto path = path_env.toStdString();
+    qputenv("PATH", path.c_str());
 }
 
 void DaggyCoreLocalTests::checkYamlParser()
