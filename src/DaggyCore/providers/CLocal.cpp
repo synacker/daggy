@@ -238,12 +238,15 @@ QProcess* daggy::providers::CLocal::startProcess(const sources::Command& command
 
     const auto& properties = command.second;
 
-    auto parameters = properties.exec.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
-    auto program = parameters.takeFirst();
+    const auto& parameters = properties.getParameters();
+    const auto& program = properties.exec;
     emit commandStateChanged(process->objectName(),
                              DaggyCommandStarting,
                              process->exitCode());
-    process->start(program, parameters);
+    if (parameters.empty())
+        process->startCommand(program);
+    else
+        process->start(program, parameters);
     return process;
 }
 
