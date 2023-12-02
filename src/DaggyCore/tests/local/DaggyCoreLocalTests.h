@@ -37,8 +37,7 @@ public:
     explicit DaggyCoreLocalTests(QObject *parent = nullptr);
 
 private slots:
-    void init();
-    void cleanup();
+    void initTestCase();
 
     void checkYamlParser();
 

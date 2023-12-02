@@ -190,11 +190,7 @@ DaggyCoreLocalTests::DaggyCoreLocalTests(QObject *parent)
 
 }
 
-void DaggyCoreLocalTests::init()
-{
-}
-
-void DaggyCoreLocalTests::cleanup()
+void DaggyCoreLocalTests::initTestCase()
 {
     auto path_env = QString(qgetenv("PATH"));
     path_env = path_env.isEmpty() ? QCoreApplication::applicationDirPath() : QString("%1:%2").arg(path_env, QCoreApplication::applicationDirPath());
