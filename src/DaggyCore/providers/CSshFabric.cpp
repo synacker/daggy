@@ -9,9 +9,9 @@ constexpr const char* g_configField = "config";
 constexpr const char* g_passphraseField = "passphrase";
 
 constexpr const std::pair<const char*, QMetaType::Type> parameters_field[] =
-    {
-        {g_configField, QMetaType::QString},
-        {g_passphraseField, QMetaType::QString},
+{
+    {g_configField, QMetaType::QString},
+    {g_passphraseField, QMetaType::QString},
 };
 
 daggy::Result<daggy::providers::CSsh::Settings> convert(const QVariantMap& parameters)
@@ -28,6 +28,8 @@ daggy::Result<daggy::providers::CSsh::Settings> convert(const QVariantMap& param
 
     if (parameters.contains(g_configField))
         result.ssh_config = parameters[g_configField].toString();
+    else
+        result.ssh_config = QDir::homePath() + "/.ssh/config";
 
     if (parameters.contains(g_passphraseField))
         result.passphrase = parameters[g_passphraseField].toString();

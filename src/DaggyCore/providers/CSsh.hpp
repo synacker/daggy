@@ -30,7 +30,7 @@ protected:
     void startProcess(QProcess* process, const QString& command) override;
 
 private:
-    const QString& host_;
+    const QString host_;
     const Settings settings_;
 };
 
