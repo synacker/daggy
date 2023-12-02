@@ -184,6 +184,25 @@ struct convert<QString>
     }
 };
 
+template<>
+struct convert<QStringList>
+{
+    static bool decode(const Node& node, QStringList& rhs)
+    {
+        if (!node.IsSequence())
+            return false;
+
+        rhs.clear();
+        const_iterator it = node.begin();
+        while (it != node.end())
+        {
+            rhs.push_back(it->as<QString>());
+            ++it;
+        }
+        return true;
+    }
+};
+
 template<class K, class V>
 struct convert<QMap<K, V>>
 {
@@ -250,6 +269,24 @@ bool daggy::sources::commands::Properties::operator==(const Properties& other) c
            exec == other.exec &&
            parameters == other.parameters &&
            restart == other.restart;
+}
+
+QStringList daggy::sources::commands::Properties::getParameters() const
+{
+    QStringList result;
+    for (const auto& option : parameters.keys())
+    {
+        result << option ;
+        const auto& value = parameters[option];
+        const auto& list = value.toStringList();
+        if (list.empty()) {
+            const auto& string_value = value.toString();
+            if (!string_value.isEmpty())
+                result << string_value;
+        } else
+            result << list;
+    }
+    return result;
 }
 
 

@@ -40,6 +40,8 @@ private slots:
     void init();
     void cleanup();
 
+    void checkYamlParser();
+
     void startAndTerminateTest_data();
     void startAndTerminateTest();
 

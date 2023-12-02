@@ -158,6 +158,29 @@ thread_local const Sources once_process_data_sources = {
 };
 
 
+constexpr const char* yaml_test = R"YAML(
+aliases:
+    - &my_commands
+        my_command:
+            exec: my_command 'with something' parameters
+            extension: log
+            parameters:
+                --exec: 'run something'
+                -v: True
+                -l: 10
+                --option: option
+                --list:
+                    - one
+                    - two
+                    - three
+                --flag:
+sources:
+    localhost:
+        type: test
+        host: my_host
+        commands: *my_commands
+)YAML";
+
 }
 
 
@@ -173,6 +196,35 @@ void DaggyCoreLocalTests::init()
 
 void DaggyCoreLocalTests::cleanup()
 {
+}
+
+void DaggyCoreLocalTests::checkYamlParser()
+{
+#ifdef YAML_SUPPORT
+    QString error;
+    Sources sources = std::move(*sources::convertors::yaml(yaml_test, error));
+    QVERIFY(error.isEmpty());
+
+    const auto& localhost = sources["localhost"];
+    QCOMPARE(localhost.type, "test");
+    QCOMPARE(localhost.host, "my_host");
+
+    QCOMPARE(localhost.commands.isEmpty(), false);
+
+    const auto& command = localhost.commands["my_command"];
+    QCOMPARE(command.exec, "my_command 'with something' parameters");
+    QCOMPARE(command.extension, "log");
+
+    const auto& parameters = command.parameters;
+    QCOMPARE(parameters.isEmpty(), false);
+    QCOMPARE(parameters["--exec"], "run something");
+    QCOMPARE(parameters["-v"], true);
+    QCOMPARE(parameters["-l"], 10);
+    QCOMPARE(parameters["--option"], "option");
+    QCOMPARE(parameters["--list"], QVariantList({"one", "two", "three"}));
+
+    QCOMPARE(command.getParameters(), QStringList({"--exec", "run something", "--flag", "--list", "one", "two", "three", "--option", "option", "-l", "10", "-v", "true"}));
+#endif
 }
 
 
