@@ -64,7 +64,8 @@ private:
 
     void startCommands();
 
-    void startProcess(QProcess* process, const QString& command);
+protected:
+    virtual void startProcess(QProcess* process, const QString& command);
 };
 
 }

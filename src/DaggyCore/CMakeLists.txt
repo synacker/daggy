@@ -15,8 +15,13 @@ target_sources(${TARGET}
         Errors.cpp
         providers/IProvider.cpp
         providers/CLocal.cpp
+        providers/CLocal.hpp
         providers/IFabric.cpp
         providers/CLocalFabric.cpp
+        providers/CSsh.cpp
+        providers/CSsh.hpp
+        providers/CSshFabric.cpp
+        providers/CSshFabric.hpp
         aggregators/IAggregator.cpp
         aggregators/CFile.cpp
         aggregators/CConsole.cpp
