@@ -5,6 +5,13 @@
 namespace {
 const QString g_type = "ssh";
 
+const char* g_ssh_control_config = R"CONFIG(
+
+Host *
+  ControlMaster auto
+  ControlPath %1/ssh_mux_%h_%p_%r_%2
+)CONFIG";
+
 constexpr const char* g_configField = "config";
 constexpr const char* g_passphraseField = "passphrase";
 
@@ -36,6 +43,27 @@ daggy::Result<daggy::providers::CSsh::Settings> convert(const QVariantMap& param
 
     return result;
 }
+
+std::error_code makeSessionSshConfig(QString& config_path, const QString& session)
+{
+    auto config_file = QFile(config_path);
+    config_file.open(QIODevice::ReadOnly);
+    QString ssh_config = config_file.readAll();
+    config_file.close();
+    ssh_config += QString(g_ssh_control_config).arg(QDir::tempPath(), session);
+
+    config_path = QDir::tempPath() + QString("/ssh_mux_config_%1").arg(session);
+    QSaveFile temp_ssh_config(config_path);
+    if (!temp_ssh_config.open(QIODevice::WriteOnly))
+        return daggy::errors::make_error_code(DaggyErrorInternal);
+
+    temp_ssh_config.write(qPrintable(ssh_config));
+    if (!temp_ssh_config.commit())
+        return daggy::errors::make_error_code(DaggyErrorInternal);
+
+    return daggy::errors::success;
+}
+
 }
 
 namespace daggy {
@@ -53,13 +81,17 @@ const QString& CSshFabric::type() const
 
 daggy::Result<IProvider*> CSshFabric::createProvider(const QString& session, const Source& source, QObject* parent)
 {
-    const auto parameters = convert(source.second.parameters);
+    auto parameters = convert(source.second.parameters);
     if (!parameters) {
         return
             {
                 parameters.error, parameters.message
             };
     }
+
+    auto error = makeSessionSshConfig(parameters->ssh_config, session);
+    if (error)
+        return {error, "Cannot create ssh session config"};
 
     const auto& properties = source.second;
 
