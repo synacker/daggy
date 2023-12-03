@@ -61,9 +61,10 @@ private:
 
 protected:
     virtual QProcess* startProcess(const daggy::sources::Command& command);
+    virtual void terminate(QProcess* process);
 
     void startCommands();
-    void terminate();
+    void terminateAll();
 
     QProcess* startProcess(const QString& process_name, const QString& exec, const QStringList& arguments);
 };

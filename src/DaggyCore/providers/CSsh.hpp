@@ -29,6 +29,7 @@ public:
 
 protected:
     QProcess* startProcess(const daggy::sources::Command& command) override;
+    void terminate(QProcess* process) override;
 
 private slots:
     void onMasterProcessError(QProcess::ProcessError error);

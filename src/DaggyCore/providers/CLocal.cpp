@@ -75,7 +75,7 @@ std::error_code daggy::providers::CLocal::stop() noexcept
     case DaggyProviderStarting:
     case DaggyProviderStarted:
     case DaggyProviderFinishing:
-        terminate();
+        terminateAll();
         break;
 
     }
@@ -197,7 +197,7 @@ void daggy::providers::CLocal::onProcessFinished(int exit_code, QProcess::ExitSt
     onProcessStop(process);
 }
 
-void daggy::providers::CLocal::terminate()
+void daggy::providers::CLocal::terminateAll()
 {
     if (state() != DaggyProviderStarted)
         return;
@@ -207,11 +207,9 @@ void daggy::providers::CLocal::terminate()
         for (QProcess* process : processes()) {
             switch (process->state()) {
             case QProcess::Running:
-#ifdef Q_OS_WIN
-                process->kill();
-#else
-                process->terminate();
-#endif
+            {
+                terminate(process);
+            }
                 break;
             case QProcess::Starting:
                 process->close();
@@ -228,6 +226,15 @@ QProcess* daggy::providers::CLocal::startProcess(const sources::Command& command
 {
     const auto& properties = command.second;
     return startProcess(command.first, properties.exec, properties.getParameters());
+}
+
+void daggy::providers::CLocal::terminate(QProcess* process)
+{
+#ifdef Q_OS_WIN
+    process->kill();
+#else
+    process->terminate();
+#endif
 }
 
 bool daggy::providers::CLocal::onProcessStop(QProcess* process)

@@ -45,6 +45,11 @@ QProcess* CSsh::startProcess(const sources::Command& command)
     return CLocal::startProcess(process_name, "ssh", makeSlaveArguments(command));
 }
 
+void CSsh::terminate(QProcess* process)
+{
+    process->kill();
+}
+
 void CSsh::onMasterProcessError(QProcess::ProcessError error)
 {
     switch (error) {
@@ -54,7 +59,7 @@ void CSsh::onMasterProcessError(QProcess::ProcessError error)
     case QProcess::ReadError:
     case QProcess::WriteError:
     case QProcess::UnknownError:
-        terminate();
+        terminateAll();
         stopMaster();
         break;
     }
@@ -94,10 +99,18 @@ QStringList CSsh::makeMasterArguments() const
 
 QStringList CSsh::makeSlaveArguments(const sources::Command& command) const
 {
-    QStringList result({"-tt", "-F", settings_.config});
+    QStringList result({"-F", settings_.config});
     if (!settings_.control.isEmpty())
         result << "-o" << QString("ControlPath=%1").arg(settings_.control);
-    result << host_ << command.second.exec;
+    result << host_;
+    QString exec = command.second.exec;
+    const auto& parameters = command.second.getParameters();
+    if (!parameters.isEmpty()) {
+        for (const auto& parameter : parameters) {
+            exec += " " + parameter;
+        }
+    }
+    result << exec;
     return result;
 }
 

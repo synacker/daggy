@@ -87,6 +87,7 @@ void CConsoleDaggy::stop()
 {
     if (need_hard_stop_) {
         qWarning() << "HARD STOP";
+        delete daggy_core_;
         qApp->exit();
     } else {
         daggy_core_->stop();
