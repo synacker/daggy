@@ -14,11 +14,13 @@ Host *
 
 constexpr const char* g_configField = "config";
 constexpr const char* g_passphraseField = "passphrase";
+constexpr const char* g_controlField = "control";
 
 constexpr const std::pair<const char*, QMetaType::Type> parameters_field[] =
 {
     {g_configField, QMetaType::QString},
     {g_passphraseField, QMetaType::QString},
+    {g_controlField, QMetaType::QString},
 };
 
 daggy::Result<daggy::providers::CSsh::Settings> convert(const QVariantMap& parameters)
@@ -34,12 +36,16 @@ daggy::Result<daggy::providers::CSsh::Settings> convert(const QVariantMap& param
     }
 
     if (parameters.contains(g_configField))
-        result.ssh_config = parameters[g_configField].toString();
+        result.config = parameters[g_configField].toString();
     else
-        result.ssh_config = QDir::homePath() + "/.ssh/config";
+        result.config = QDir::homePath() + "/.ssh/config";
 
     if (parameters.contains(g_passphraseField))
         result.passphrase = parameters[g_passphraseField].toString();
+
+    if (parameters.contains(g_controlField))
+        result.control = parameters[g_controlField].toString();
+
 
     return result;
 }
@@ -89,7 +95,7 @@ daggy::Result<IProvider*> CSshFabric::createProvider(const QString& session, con
             };
     }
 
-    auto error = makeSessionSshConfig(parameters->ssh_config, session);
+    auto error = makeSessionSshConfig(parameters->config, session);
     if (error)
         return {error, "Cannot create ssh session config"};
 

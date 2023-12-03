@@ -10,8 +10,9 @@ class CSsh : public CLocal
 public:
     struct Settings
     {
-        QString ssh_config;
+        QString config;
         QString passphrase;
+        QString control;
     };
 
     CSsh(const QString& session,
@@ -27,11 +28,22 @@ public:
     static const QString provider_type;
 
 protected:
-    void startProcess(QProcess* process, const QString& command) override;
+    QProcess* startProcess(const daggy::sources::Command& command) override;
+
+private slots:
+    void onMasterProcessError(QProcess::ProcessError error);
 
 private:
+    void startMaster();
+    void stopMaster();
+
+    QStringList makeMasterArguments() const;
+    QStringList makeSlaveArguments(const sources::Command& command) const;
+
     const QString host_;
     const Settings settings_;
+
+    QProcess* ssh_master_;
 };
 
 }

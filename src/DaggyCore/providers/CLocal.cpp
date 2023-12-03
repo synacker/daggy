@@ -226,28 +226,8 @@ void daggy::providers::CLocal::terminate()
 
 QProcess* daggy::providers::CLocal::startProcess(const sources::Command& command)
 {
-    QProcess* process = new QProcess(this);
-    process->setObjectName(command.first);
-
-    connect(process, &QProcess::destroyed, this, &CLocal::onProcessDestroyed);
-    connect(process, &QProcess::started, this, &CLocal::onProcessStart);
-    connect(process, &QProcess::errorOccurred, this, &CLocal::onProcessError);
-    connect(process, &QProcess::readyReadStandardOutput, this, qOverload<>(&CLocal::onProcessReadyReadStandard));
-    connect(process, &QProcess::readyReadStandardError, this,  qOverload<>(&CLocal::onProcessReadyReadError));
-    connect(process, &QProcess::finished, this, &CLocal::onProcessFinished);
-
     const auto& properties = command.second;
-
-    const auto& parameters = properties.getParameters();
-    const auto& program = properties.exec;
-    emit commandStateChanged(process->objectName(),
-                             DaggyCommandStarting,
-                             process->exitCode());
-    if (parameters.empty())
-        process->startCommand(program);
-    else
-        process->start(program, parameters);
-    return process;
+    return startProcess(command.first, properties.exec, properties.getParameters());
 }
 
 bool daggy::providers::CLocal::onProcessStop(QProcess* process)
@@ -296,15 +276,24 @@ void daggy::providers::CLocal::startCommands()
     }
 }
 
-void daggy::providers::CLocal::startProcess(QProcess* process, const QString& command)
+QProcess* daggy::providers::CLocal::startProcess(const QString& process_name, const QString& exec, const QStringList& arguments)
 {
-    const auto& id = process->objectName();
-    auto parameters = command.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
-    auto program = parameters.takeFirst();
-    metaStream(id, DaggyStreamStandard, true);
-    metaStream(id, DaggyStreamError, true);
-    emit commandStateChanged(id,
+    QProcess* process = new QProcess(this);
+    process->setObjectName(process_name);
+
+    connect(process, &QProcess::destroyed, this, &CLocal::onProcessDestroyed);
+    connect(process, &QProcess::started, this, &CLocal::onProcessStart);
+    connect(process, &QProcess::errorOccurred, this, &CLocal::onProcessError);
+    connect(process, &QProcess::readyReadStandardOutput, this, qOverload<>(&CLocal::onProcessReadyReadStandard));
+    connect(process, &QProcess::readyReadStandardError, this,  qOverload<>(&CLocal::onProcessReadyReadError));
+    connect(process, &QProcess::finished, this, &CLocal::onProcessFinished);
+
+    emit commandStateChanged(process->objectName(),
                              DaggyCommandStarting,
                              process->exitCode());
-    process->start(program, parameters, QIODevice::ReadOnly);
+    if (arguments.empty())
+        process->startCommand(exec);
+    else
+        process->start(exec, arguments);
+    return process;
 }

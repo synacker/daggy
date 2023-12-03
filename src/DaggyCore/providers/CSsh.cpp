@@ -7,22 +7,30 @@ namespace providers {
 
 const QString CSsh::provider_type = "ssh";
 
-CSsh::CSsh(const QString& session, QString host, Settings settings, sources::Commands commands, QObject *parent)
+CSsh::CSsh(const QString& session,
+           QString host,
+           Settings settings,
+           sources::Commands commands,
+           QObject *parent)
     : CLocal(session, std::move(commands), parent)
     , host_(std::move(host))
     , settings_(std::move(settings))
+    , ssh_master_(nullptr)
 {
 
 }
 
 std::error_code CSsh::start() noexcept
 {
-    return errors::success;
+    startMaster();
+    return CLocal::start();
 }
 
 std::error_code CSsh::stop() noexcept
 {
-    return errors::success;
+    auto result = CLocal::stop();
+    stopMaster();
+    return result;
 }
 
 const QString& CSsh::type() const noexcept
@@ -30,9 +38,67 @@ const QString& CSsh::type() const noexcept
     return provider_type;
 }
 
-void CSsh::startProcess(QProcess* process, const QString& command)
+QProcess* CSsh::startProcess(const sources::Command& command)
 {
+    const auto& process_name = command.first;
 
+    return CLocal::startProcess(process_name, "ssh", makeSlaveArguments(command));
+}
+
+void CSsh::onMasterProcessError(QProcess::ProcessError error)
+{
+    switch (error) {
+    case QProcess::FailedToStart:
+    case QProcess::Crashed:
+    case QProcess::Timedout:
+    case QProcess::ReadError:
+    case QProcess::WriteError:
+    case QProcess::UnknownError:
+        terminate();
+        stopMaster();
+        break;
+    }
+}
+
+void CSsh::startMaster()
+{
+    if (!ssh_master_ && settings_.control.isEmpty())
+    {
+        ssh_master_ = new QProcess(this);
+
+        ssh_master_->start("ssh", makeMasterArguments());
+        ssh_master_->waitForStarted();
+    }
+}
+
+void CSsh::stopMaster()
+{
+    if (ssh_master_) {
+        ssh_master_->terminate();
+        ssh_master_->waitForFinished();
+        ssh_master_->deleteLater();
+        ssh_master_ = nullptr;
+    }
+}
+
+QStringList CSsh::makeMasterArguments() const
+{
+    QStringList result;
+    if (!settings_.passphrase.isEmpty())
+        result << "-p" << settings_.passphrase;
+
+    result << "-F" << settings_.config << "-M" << host_;
+
+    return {"-M", host_};
+}
+
+QStringList CSsh::makeSlaveArguments(const sources::Command& command) const
+{
+    QStringList result({"-tt", "-F", settings_.config});
+    if (!settings_.control.isEmpty())
+        result << "-o" << QString("ControlPath=%1").arg(settings_.control);
+    result << host_ << command.second.exec;
+    return result;
 }
 
 }
