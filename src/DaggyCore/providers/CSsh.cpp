@@ -20,6 +20,16 @@ CSsh::CSsh(const QString& session,
 
 }
 
+CSsh::~CSsh()
+{
+    if (ssh_master_)
+    {
+        ssh_master_->kill();
+        ssh_master_->waitForFinished();
+        ssh_master_.reset();
+    }
+}
+
 std::error_code CSsh::start() noexcept
 {
     startMaster();
@@ -38,6 +48,12 @@ const QString& CSsh::type() const noexcept
     return provider_type;
 }
 
+const QString& CSsh::controlPath() const
+{
+    static const QString control_path = Settings::tempControlPath(session());
+    return settings_.control.isEmpty() ? control_path : settings_.control;
+}
+
 QProcess* CSsh::startProcess(const sources::Command& command)
 {
     const auto& process_name = command.first;
@@ -47,7 +63,7 @@ QProcess* CSsh::startProcess(const sources::Command& command)
 
 void CSsh::terminate(QProcess* process)
 {
-    process->kill();
+    process->terminate();
 }
 
 void CSsh::onMasterProcessError(QProcess::ProcessError error)
@@ -69,20 +85,21 @@ void CSsh::startMaster()
 {
     if (!ssh_master_ && settings_.control.isEmpty())
     {
-        ssh_master_ = new QProcess(this);
+        ssh_master_.reset(new QProcess());
 
         ssh_master_->start("ssh", makeMasterArguments());
         ssh_master_->waitForStarted();
+        ssh_master_->waitForReadyRead();
     }
 }
 
 void CSsh::stopMaster()
 {
     if (ssh_master_) {
+        QProcess::execute("ssh", {"-S", controlPath(), "-O", "exit", host_});
         ssh_master_->terminate();
         ssh_master_->waitForFinished();
-        ssh_master_->deleteLater();
-        ssh_master_ = nullptr;
+        ssh_master_.reset();
     }
 }
 
@@ -92,17 +109,16 @@ QStringList CSsh::makeMasterArguments() const
     if (!settings_.passphrase.isEmpty())
         result << "-p" << settings_.passphrase;
 
-    result << "-F" << settings_.config << "-M" << host_;
+    result << "-tt" << controlArguments()  << "-F" << settings_.config << "-M" << host_;
 
-    return {"-M", host_};
+    return result;
 }
 
 QStringList CSsh::makeSlaveArguments(const sources::Command& command) const
 {
-    QStringList result({"-F", settings_.config});
-    if (!settings_.control.isEmpty())
-        result << "-o" << QString("ControlPath=%1").arg(settings_.control);
-    result << host_;
+    QStringList result({"-tt", "-F", settings_.config});
+    result << controlArguments() << host_;
+
     QString exec = command.second.exec;
     const auto& parameters = command.second.getParameters();
     if (!parameters.isEmpty()) {
@@ -112,6 +128,30 @@ QStringList CSsh::makeSlaveArguments(const sources::Command& command) const
     }
     result << exec;
     return result;
+}
+
+QStringList CSsh::controlArguments() const
+{
+    return { "-o", "ControlMaster=auto", "-o", QString("ControlPath=%1").arg(controlPath())};
+}
+
+const QString& CSsh::Settings::tempPath()
+{
+    static const QString temp_path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.ssh/daggy";
+    QDir temp_dir(temp_path);
+    if (!temp_dir.exists())
+        temp_dir.mkpath(".");
+    return temp_path;
+}
+
+QString CSsh::Settings::tempConfigPath(const QString& session)
+{
+    return tempPath() + "/ssh_config_" + session;
+}
+
+QString CSsh::Settings::tempControlPath(const QString& session)
+{
+    return tempPath() + "/ssh_mux_" + session;
 }
 
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CLocal.hpp"
+#include <QScopedPointer>
 
 namespace daggy {
 namespace providers {
@@ -13,6 +14,10 @@ public:
         QString config;
         QString passphrase;
         QString control;
+
+        static const QString& tempPath();
+        static QString tempConfigPath(const QString& session);
+        static QString tempControlPath(const QString& session);
     };
 
     CSsh(const QString& session,
@@ -20,10 +25,13 @@ public:
          Settings settings,
          sources::Commands commands,
          QObject *parent = nullptr);
+    ~CSsh();
 
     std::error_code start() noexcept override;
     std::error_code stop() noexcept override;
     const QString& type() const noexcept override;
+
+    const QString& controlPath() const;
 
     static const QString provider_type;
 
@@ -41,10 +49,12 @@ private:
     QStringList makeMasterArguments() const;
     QStringList makeSlaveArguments(const sources::Command& command) const;
 
+    QStringList controlArguments() const;
+
     const QString host_;
     const Settings settings_;
 
-    QProcess* ssh_master_;
+    QScopedPointer<QProcess, QScopedPointerDeleteLater> ssh_master_;
 };
 
 }

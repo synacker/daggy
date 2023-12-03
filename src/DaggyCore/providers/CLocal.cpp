@@ -248,6 +248,7 @@ bool daggy::providers::CLocal::onProcessStop(QProcess* process)
         startProcess({command_id, properties});
         return true;
     }
+
     return false;
 }
 

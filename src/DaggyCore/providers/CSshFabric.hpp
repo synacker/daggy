@@ -16,6 +16,7 @@ public:
 
 protected:
     daggy::Result<IProvider*> createProvider(const QString& session, const Source& source, QObject* parent);
+
 };
 
 }
