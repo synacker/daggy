@@ -50,7 +50,7 @@ const QString& CSsh::type() const noexcept
 
 const QString& CSsh::controlPath() const
 {
-    static const QString control_path = Settings::tempControlPath(session());
+    static const QString control_path = Settings::tempControlPath(session()) + "_" + host_;
     return settings_.control.isEmpty() ? control_path : settings_.control;
 }
 
@@ -63,7 +63,7 @@ QProcess* CSsh::startProcess(const sources::Command& command)
 
 void CSsh::terminate(QProcess* process)
 {
-    process->terminate();
+    process->kill();
 }
 
 void CSsh::onMasterProcessError(QProcess::ProcessError error)
@@ -116,7 +116,7 @@ QStringList CSsh::makeMasterArguments() const
 
 QStringList CSsh::makeSlaveArguments(const sources::Command& command) const
 {
-    QStringList result({"-tt", "-F", settings_.config});
+    QStringList result({"-F", settings_.config});
     result << controlArguments() << host_;
 
     QString exec = command.second.exec;
