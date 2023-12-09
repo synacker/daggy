@@ -30,6 +30,9 @@ SOFTWARE.
 #include "providers/CLocalFabric.hpp"
 #include "providers/CLocal.hpp"
 
+#include "providers/CSshFabric.hpp"
+#include "providers/CSsh.hpp"
+
 #ifdef SSH2_SUPPORT
 #include "providers/CSsh2Fabric.hpp"
 #include "providers/CSsh2.hpp"
@@ -281,13 +284,17 @@ try {
     static thread_local providers::CLocalFabric local_fabric;
     fabrics_map[providers::CLocal::provider_type] = &local_fabric;
 
+    static thread_local providers::CSshFabric ssh_fabric;
+    fabrics_map[providers::CSsh::provider_type] = &ssh_fabric;
+
 #ifdef SSH2_SUPPORT
     static thread_local providers::CSsh2Fabric ssh2_fabric;
     fabrics_map[providers::CSsh2::provider_type] = &ssh2_fabric;
 #endif
-    if (fabrics)
+    if (fabrics) {
         for (size_t index = 0; index < size; index++)
             fabrics_map[fabrics[index]->type()] = fabrics[index];
+    }
 
     auto source = sources_.cbegin();
     while(source != sources_.cend()) {

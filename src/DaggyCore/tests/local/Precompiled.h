@@ -25,3 +25,4 @@ SOFTWARE.
 #pragma once
 
 #include <QtTest>
+#include <QCoreApplication>

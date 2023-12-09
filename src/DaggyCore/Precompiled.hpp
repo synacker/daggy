@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include <QDir>
+#include <QSaveFile>
 #include <QString>
 #include <QStandardPaths>
 #include <QHostAddress>

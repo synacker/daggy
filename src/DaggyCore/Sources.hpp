@@ -60,6 +60,8 @@ struct DAGGYCORE_EXPORT Properties {
     bool restart = false;
 
     bool operator==(const Properties& other) const;
+
+    QStringList getParameters() const;
 };
 }
 

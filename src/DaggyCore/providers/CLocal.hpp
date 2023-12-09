@@ -54,17 +54,19 @@ private slots:
     void onProcessFinished(int exit_code, QProcess::ExitStatus);
 
 private:
-    void terminate();
-
-    QProcess* startProcess(const daggy::sources::Command& command);
     bool onProcessStop(QProcess* process);
 
     QList<QProcess*> processes() const;
     int activeProcessesCount() const;
 
-    void startCommands();
+protected:
+    virtual QProcess* startProcess(const daggy::sources::Command& command);
+    virtual void terminate(QProcess* process);
 
-    void startProcess(QProcess* process, const QString& command);
+    void startCommands();
+    void terminateAll();
+
+    QProcess* startProcess(const QString& process_name, const QString& exec, const QStringList& arguments);
 };
 
 }

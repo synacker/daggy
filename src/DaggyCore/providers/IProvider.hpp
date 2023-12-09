@@ -54,6 +54,8 @@ public:
 
     int restartCommandsCount() const noexcept;
 
+    const QString& session() const;
+
 signals:
     void stateChanged(DaggyProviderStates state);
 

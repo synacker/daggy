@@ -71,6 +71,11 @@ int daggy::providers::IProvider::restartCommandsCount() const noexcept
     return result;
 }
 
+const QString& daggy::providers::IProvider::session() const
+{
+    return session_;
+}
+
 void daggy::providers::IProvider::setState(DaggyProviderStates state)
 {
     if (state_ == state)
