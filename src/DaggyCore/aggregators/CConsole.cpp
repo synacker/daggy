@@ -179,7 +179,7 @@ void daggy::aggregators::CConsole::printMessage(const ConsoleMessageType& messag
     const char* message_type_string = console_message_type_.valueToKey(message_type);
     printf
     (
-           "%12s | %-9s | %-15s | %-15s | %s\n",
+           "%12s | %-9s | %-20s | %-30s | %s\n",
            qPrintable(currentConsoleTime()),
            message_type_string,
            qPrintable(provider_id),

@@ -27,6 +27,10 @@ endif()
 
 target_link_libraries(${TARGET} PRIVATE DaggyCore)
 
+
+find_package(PcapPlusPlus REQUIRED)
+target_link_libraries(${TARGET} PRIVATE PcapPlusPlus::PcapPlusPlus)
+
 if (CONAN_BUILD)
     find_package(kainjow_mustache REQUIRED)
     target_link_libraries(${TARGET} PRIVATE kainjow_mustache::kainjow_mustache)

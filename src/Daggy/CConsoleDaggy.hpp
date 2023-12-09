@@ -29,6 +29,12 @@ SOFTWARE.
 #include <DaggyCore/Types.hpp>
 
 
+namespace daggy {
+namespace aggregators {
+class CConsole;
+}
+}
+
 #include "ISystemSignalHandler.hpp"
 
 class QCoreApplication;
@@ -69,8 +75,10 @@ private:
         QString output_folder;
         QString data_sources_name;
         unsigned int timeout = 0;
+        bool fix_pcap = false;
     };
     Settings parse() const;
+    void fixPcaps() const;
 
     daggy::Core* daggyCore() const;
     QCoreApplication* application() const;
@@ -80,9 +88,12 @@ private:
 
     QString mustache(const QString& text, const QString& output_folder) const;
 
+    Settings settings_;
+    QString session_;
     QThread file_thread_;
 
     daggy::Core* daggy_core_;
+    daggy::aggregators::CConsole* console_aggreagator_;
     bool need_hard_stop_;
 
     QString error_message_;

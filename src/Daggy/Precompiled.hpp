@@ -11,6 +11,7 @@
 
 #include <QTimer>
 #include <QDir>
+#include <QDirIterator>
 
 #include <QProcessEnvironment>
 
@@ -29,3 +30,6 @@
 #else
 #include <signal.h>
 #endif
+
+#include <pcapplusplus/PcapFileDevice.h>
+#include <pcapplusplus/Logger.h>

@@ -36,6 +36,7 @@ using namespace daggy;
 CConsoleDaggy::CConsoleDaggy(QObject* parent)
     : QObject(parent)
     , daggy_core_(nullptr)
+    , console_aggreagator_(nullptr)
     , need_hard_stop_(false)
 {
     qApp->setApplicationName("daggy");
@@ -43,36 +44,37 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
     qApp->setOrganizationName(DAGGY_VENDOR);
 
     connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
+    connect(qApp, &QCoreApplication::aboutToQuit, this, &CConsoleDaggy::fixPcaps);
 }
 
 std::error_code CConsoleDaggy::prepare()
 {
     if (daggy_core_)
         return errors::success;
-    const auto settings = parse();
+    settings_ = parse();
     Sources sources;
-    switch (settings.data_source_text_type) {
+    switch (settings_.data_source_text_type) {
     case Json:
-        sources = std::move(*sources::convertors::json(settings.data_source_text));
+        sources = std::move(*sources::convertors::json(settings_.data_source_text));
         break;
     case Yaml:
-        sources = std::move(*sources::convertors::yaml(settings.data_source_text));
+        sources = std::move(*sources::convertors::yaml(settings_.data_source_text));
         break;
     }
 
-    const QString& session = QDateTime::currentDateTime().toString("dd-MM-yy_hh-mm-ss-zzz") + "_" + settings.data_sources_name;
+    session_ = QDateTime::currentDateTime().toString("dd-MM-yy_hh-mm-ss-zzz") + "_" + settings_.data_sources_name;
 
-    daggy_core_ = new Core(session, std::move(sources), this);
+    daggy_core_ = new Core(session_, std::move(sources), this);
 
     connect(daggy_core_, &Core::stateChanged, this, &CConsoleDaggy::onDaggyCoreStateChanged);
 
-    auto file_aggregator = new aggregators::CFile(settings.output_folder);
+    auto file_aggregator = new aggregators::CFile(settings_.output_folder);
     file_aggregator->moveToThread(&file_thread_);
     connect(this, &CConsoleDaggy::destroyed, file_aggregator, &aggregators::CFile::deleteLater);
-    auto console_aggregator = new aggregators::CConsole(session, daggy_core_);
+    console_aggreagator_ = new aggregators::CConsole(session_, this);
 
     daggy_core_->connectAggregator(file_aggregator);
-    daggy_core_->connectAggregator(console_aggregator);
+    daggy_core_->connectAggregator(console_aggreagator_);
 
     return daggy_core_->prepare();;
 }
@@ -155,11 +157,15 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     const QCommandLineOption input_from_stdin_option({"i", "stdin"},
                                                      "Read data aggregation sources from stdin");
 
+    const QCommandLineOption fix_pcap_option({"x", "fix-pcap"},
+                                             "Fix and convert pcap files to pcapng");
+
     QCommandLineParser command_line_parser;
     command_line_parser.addOption(output_folder_option);
     command_line_parser.addOption(input_format_option);
     command_line_parser.addOption(input_from_stdin_option);
     command_line_parser.addOption(auto_complete_timeout);
+    command_line_parser.addOption(fix_pcap_option);
     command_line_parser.addHelpOption();
     command_line_parser.addVersionOption();
     command_line_parser.addPositionalArgument("file", "data aggregation sources file", "*.yaml|*.yml|*.json");
@@ -200,6 +206,10 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
         result.data_source_text_type = textFormatType(source_file_name);
     }
 
+    if (command_line_parser.isSet(fix_pcap_option)) {
+        result.fix_pcap = true;
+    }
+
     if (command_line_parser.isSet(auto_complete_timeout)) {
         result.timeout = command_line_parser.value(auto_complete_timeout).toUInt();
     }
@@ -209,6 +219,40 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     result.data_source_text = mustache(result.data_source_text, result.output_folder);
 
     return result;
+}
+
+void CConsoleDaggy::fixPcaps() const
+{
+    if (!settings_.fix_pcap)
+        return;
+
+    auto output_folder = QDir(QDir::cleanPath(settings_.output_folder + QDir::separator() + session_));
+    QDirIterator pcap_files(output_folder.absolutePath(), {"*.pcap"});
+    while (pcap_files.hasNext())
+    {
+        const auto& pcap_file = pcap_files.next();
+        const QString& pcap_name = QFileInfo(pcap_file).baseName();
+        const auto& pcapng_file = QDir::cleanPath(output_folder.absolutePath() + QDir::separator() + pcap_name + ".pcapng");
+
+        std::unique_ptr<pcpp::IFileReaderDevice> reader(pcpp::IFileReaderDevice::getReader(qPrintable(pcap_file)));
+
+        pcpp::PcapNgFileWriterDevice pcapNgWriter(qPrintable(pcapng_file));
+
+        if (!reader || !reader->open() || !pcapNgWriter.open())
+        {
+            continue;
+        }
+
+        pcpp::RawPacket rawPacket;
+        while (reader->getNextPacket(rawPacket))
+        {
+            pcapNgWriter.writePacket(rawPacket);
+        }
+        reader->close();
+        pcapNgWriter.close();
+        output_folder.remove(pcap_file);
+        console_aggreagator_->printAppMessage(QString("fix pcap %1").arg(pcap_name));
+    }
 }
 
 daggy::Core* CConsoleDaggy::daggyCore() const

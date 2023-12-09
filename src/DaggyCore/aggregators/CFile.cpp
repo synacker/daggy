@@ -135,7 +135,7 @@ QString daggy::aggregators::CFile::name(const QString& session, const QString& p
         result = QString("%1/%2/%3-%4.%5").arg(output_folder_, session, provider_id, command_id, extension);
         break;
     case DaggyStreamError:
-        result = QString("%1/%2/%3-%4.%5.%6").arg(output_folder_, session, provider_id, command_id, "err", extension);
+        result = QString("%1/%2/%3-%4.%5.%6").arg(output_folder_, session, provider_id, command_id, extension, "err");
         break;
     }
     return result;
