@@ -50,19 +50,21 @@ const QString& CSsh::type() const noexcept
 
 const QString& CSsh::controlPath() const
 {
-    static const QString control_path = Settings::tempControlPath(session()) + "_" + host_;
+    static const QString control_path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.ssh/daggy/" + host_;
     return settings_.control.isEmpty() ? control_path : settings_.control;
 }
 
 QProcess* CSsh::startProcess(const sources::Command& command)
 {
     const auto& process_name = command.first;
-
     return CLocal::startProcess(process_name, "ssh", makeSlaveArguments(command));
 }
 
 void CSsh::terminate(QProcess* process)
 {
+    static char ctrlc = 0x003;
+    process->write(&ctrlc, 1);
+    process->waitForBytesWritten();
     process->kill();
 }
 
@@ -109,15 +111,15 @@ QStringList CSsh::makeMasterArguments() const
     if (!settings_.passphrase.isEmpty())
         result << "-p" << settings_.passphrase;
 
-    result << "-tt" << controlArguments()  << "-F" << settings_.config << "-M" << host_;
+    result << "-tt" << controlArguments(true)  << "-F" << settings_.config << "-M" << host_;
 
     return result;
 }
 
 QStringList CSsh::makeSlaveArguments(const sources::Command& command) const
 {
-    QStringList result({"-F", settings_.config});
-    result << controlArguments() << host_;
+    QStringList result({"-tt", "-F", settings_.config});
+    result << controlArguments(false) << host_;
 
     QString exec = command.second.exec;
     const auto& parameters = command.second.getParameters();
@@ -130,9 +132,11 @@ QStringList CSsh::makeSlaveArguments(const sources::Command& command) const
     return result;
 }
 
-QStringList CSsh::controlArguments() const
+QStringList CSsh::controlArguments(bool master) const
 {
-    return { "-o", "ControlMaster=auto", "-o", QString("ControlPath=%1").arg(controlPath())};
+    return (master ?
+            QStringList{ "-o", "ControlMaster=auto", "-o", QString("ControlPath=%1").arg(controlPath())} :
+            QStringList{ "-o", "ControlMaster=no", "-S", controlPath()});
 }
 
 const QString& CSsh::Settings::tempPath()

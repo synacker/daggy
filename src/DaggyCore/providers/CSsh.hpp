@@ -49,7 +49,7 @@ private:
     QStringList makeMasterArguments() const;
     QStringList makeSlaveArguments(const sources::Command& command) const;
 
-    QStringList controlArguments() const;
+    QStringList controlArguments(bool master) const;
 
     const QString host_;
     const Settings settings_;
