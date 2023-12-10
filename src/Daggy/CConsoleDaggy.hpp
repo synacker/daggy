@@ -49,6 +49,7 @@ class CConsoleDaggy : public QObject,
     Q_OBJECT
 public:
     CConsoleDaggy(QObject* parent = nullptr);
+    ~CConsoleDaggy();
 
     std::error_code prepare();
     std::error_code start();

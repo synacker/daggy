@@ -47,10 +47,17 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
     connect(qApp, &QCoreApplication::aboutToQuit, this, &CConsoleDaggy::fixPcaps);
 }
 
+CConsoleDaggy::~CConsoleDaggy()
+{
+    file_thread_.terminate();
+    file_thread_.wait();
+}
+
 std::error_code CConsoleDaggy::prepare()
 {
     if (daggy_core_)
         return errors::success;
+
     settings_ = parse();
     Sources sources;
     switch (settings_.data_source_text_type) {
@@ -88,15 +95,13 @@ std::error_code CConsoleDaggy::start()
 void CConsoleDaggy::stop()
 {
     if (need_hard_stop_) {
-        qWarning() << "HARD STOP";
+        console_aggreagator_->printAppMessage("HARD STOP");
         delete daggy_core_;
         qApp->exit();
     } else {
         daggy_core_->stop();
         need_hard_stop_ = true;
     }
-    file_thread_.quit();
-    file_thread_.wait();
 }
 
 bool CConsoleDaggy::handleSystemSignal(const int signal)
