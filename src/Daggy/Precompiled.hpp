@@ -25,11 +25,13 @@
 #include <mustache.hpp>
 #endif
 
+#include <pcapplusplus/PcapFileDevice.h>
+#include <pcapplusplus/Logger.h>
+
 #ifdef Q_OS_WIN
 #include <windows.h>
 #else
 #include <signal.h>
 #endif
 
-#include <pcapplusplus/PcapFileDevice.h>
-#include <pcapplusplus/Logger.h>
+
