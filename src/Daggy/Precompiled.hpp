@@ -11,6 +11,7 @@
 
 #include <QTimer>
 #include <QDir>
+#include <QDirIterator>
 
 #include <QProcessEnvironment>
 
@@ -24,8 +25,13 @@
 #include <mustache.hpp>
 #endif
 
+#include <pcapplusplus/PcapFileDevice.h>
+#include <pcapplusplus/Logger.h>
+
 #ifdef Q_OS_WIN
 #include <windows.h>
 #else
 #include <signal.h>
 #endif
+
+

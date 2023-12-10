@@ -86,7 +86,10 @@ class DaggyConan(ConanFile):
             self.requires("yaml-cpp/0.8.0")
 
         if self.options.with_ssh2:
-            self.requires("libssh2/1.11.0")        
+            self.requires("libssh2/1.11.0")
+
+        self.requires("pcapplusplus/23.09")
+
 
     def layout(self):
         self.folders.source = "src"

@@ -39,6 +39,10 @@ public:
              QObject* parent = nullptr);
 
     bool isReady() const override;
+    void printAppMessage
+    (
+        const QString& message
+    );
 
 public slots:
     void onDataProviderStateChanged(QString provider_id, DaggyProviderStates state) override;
@@ -52,11 +56,6 @@ private:
     QString stateName(DaggyProviderStates state) const;
     QString stateName(DaggyCommandStates state) const;
 
-
-    void printAppMessage
-    (
-        const QString& message
-    );
     void printProviderMessage
     (
         const ConsoleMessageType& message_type,
