@@ -1,5 +1,7 @@
 set(TARGET daggy)
 
+option(PCAPNG_SUPPORT "pcap to pcapng convertor" ON)
+
 find_package(Qt6 COMPONENTS Core REQUIRED)
 
 add_executable(${TARGET})
@@ -27,9 +29,11 @@ endif()
 
 target_link_libraries(${TARGET} PRIVATE DaggyCore)
 
-
-find_package(PcapPlusPlus REQUIRED)
-target_link_libraries(${TARGET} PRIVATE PcapPlusPlus::PcapPlusPlus)
+if (PCAPNG_SUPPORT)
+    add_compile_definitions(PCAPNG_SUPPORT)
+    find_package(PcapPlusPlus REQUIRED)
+    target_link_libraries(${TARGET} PRIVATE PcapPlusPlus::PcapPlusPlus)
+endif()
 
 if (CONAN_BUILD)
     find_package(kainjow_mustache REQUIRED)
