@@ -42,6 +42,8 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
     qApp->setApplicationName("daggy");
     qApp->setApplicationVersion(DAGGY_VERSION_STANDARD);
     qApp->setOrganizationName(DAGGY_VENDOR);
+    qApp->setApplicationVersion(DAGGY_VERSION_FULL);
+    qApp->setOrganizationDomain("daggy.dev");
 
     connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
     connect(qApp, &QCoreApplication::aboutToQuit, this, &CConsoleDaggy::fixPcaps);
