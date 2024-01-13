@@ -25,8 +25,10 @@
 #include <mustache.hpp>
 #endif
 
+#ifdef PCAPNG_SUPPORT
 #include <pcapplusplus/PcapFileDevice.h>
 #include <pcapplusplus/Logger.h>
+#endif
 
 #ifdef Q_OS_WIN
 #include <windows.h>

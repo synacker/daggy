@@ -42,6 +42,8 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
     qApp->setApplicationName("daggy");
     qApp->setApplicationVersion(DAGGY_VERSION_STANDARD);
     qApp->setOrganizationName(DAGGY_VENDOR);
+    qApp->setApplicationVersion(DAGGY_VERSION_FULL);
+    qApp->setOrganizationDomain("daggy.dev");
 
     connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
     connect(qApp, &QCoreApplication::aboutToQuit, this, &CConsoleDaggy::fixPcaps);
@@ -170,7 +172,11 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     command_line_parser.addOption(input_format_option);
     command_line_parser.addOption(input_from_stdin_option);
     command_line_parser.addOption(auto_complete_timeout);
+
+#ifdef PCAPNG_SUPPORT
     command_line_parser.addOption(fix_pcap_option);
+#endif
+
     command_line_parser.addHelpOption();
     command_line_parser.addVersionOption();
     command_line_parser.addPositionalArgument("file", "data aggregation sources file", "*.yaml|*.yml|*.json");
@@ -230,7 +236,7 @@ void CConsoleDaggy::fixPcaps() const
 {
     if (!settings_.fix_pcap)
         return;
-
+#ifdef PCAPNG_SUPPORT
     auto output_folder = QDir(QDir::cleanPath(settings_.output_folder + QDir::separator() + session_));
     QDirIterator pcap_files(output_folder.absolutePath(), {"*.pcap"});
     while (pcap_files.hasNext())
@@ -258,6 +264,7 @@ void CConsoleDaggy::fixPcaps() const
         output_folder.remove(pcap_file);
         console_aggreagator_->printAppMessage(QString("fix pcap %1").arg(pcap_name));
     }
+#endif
 }
 
 daggy::Core* CConsoleDaggy::daggyCore() const

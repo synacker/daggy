@@ -37,16 +37,10 @@ class DaggyConan(ConanFile):
     description = "Data Aggregation Utility and C/C++ developer library for data streams catching."
     settings = "os", "compiler", "build_type", "arch"
     options = {
-        "with_ssh2": [True, False],
-        "with_yaml": [True, False],
-        "with_console": [True, False],
         "shared": [True, False],
         "fPIC": [True, False]
     }
     default_options = {
-        "with_ssh2": True,
-        "with_yaml": True,
-        "with_console": True,
         "shared": True,
         "fPIC": False
     }
@@ -79,15 +73,10 @@ class DaggyConan(ConanFile):
         self.tool_requires("gtest/1.13.0")
 
     def requirements(self):
-        self.requires("qt/6.6.0")
+        self.requires("qt/6.6.1")
         self.requires("kainjow-mustache/4.1")
-
-        if self.options.with_yaml:
-            self.requires("yaml-cpp/0.8.0")
-
-        if self.options.with_ssh2:
-            self.requires("libssh2/1.11.0")
-
+        self.requires("yaml-cpp/0.8.0")
+        self.requires("libssh2/1.11.0")
         self.requires("pcapplusplus/23.09")
 
 
@@ -117,9 +106,10 @@ class DaggyConan(ConanFile):
 
         tc = CMakeToolchain(self)
         tc.cache_variables["CMAKE_INSTALL_LIBDIR"] = self.cpp.libdirs[0]
-        tc.cache_variables["SSH2_SUPPORT"] = self.options.with_ssh2
-        tc.cache_variables["YAML_SUPPORT"] = self.options.with_yaml
-        tc.cache_variables["CONSOLE"] = self.options.with_console
+        tc.cache_variables["SSH2_SUPPORT"] = True
+        tc.cache_variables["YAML_SUPPORT"] = True
+        tc.cache_variables["CONSOLE"] = True
+        tc.cache_variables["PCAPNG_SUPPORT"] = True
         tc.cache_variables["PACKAGE_DEPS"] = True
         tc.cache_variables["BUILD_TESTING"] = True
         tc.cache_variables["CONAN_BUILD"] = True
