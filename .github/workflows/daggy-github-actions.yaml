@@ -46,7 +46,6 @@ jobs:
                     libxaw7-dev \
                     libx11-xcb-dev \
                     libfontenc-dev \
-                    libxaw7-dev \
                     libxcomposite-dev \
                     libxcursor-dev \
                     libxdamage-dev \
@@ -80,7 +79,8 @@ jobs:
                     libxcb-present-dev \
                     libxcb-composite0-dev \
                     libxcb-ewmh-dev \
-                    libxcb-res0-dev
+                    libxcb-res0-dev \
+                    libxv-dev 
           version: 1.0
 
       - name: Conan install
