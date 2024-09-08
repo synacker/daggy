@@ -30,9 +30,6 @@ jobs:
       - run: conan --version
       - run: conan profile detect
 
-      - run: conan --version
-      - run: conan profile detect
-
       - name: Conan config
         run: conan config install CI/conan
 
