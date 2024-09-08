@@ -80,7 +80,9 @@ jobs:
                     libxcb-composite0-dev \
                     libxcb-ewmh-dev \
                     libxcb-res0-dev \
-                    libxv-dev 
+                    libxv-dev \
+                    libxcb-util-dev \
+                    libxcb-util0-dev
           version: 1.0
 
       - name: Conan install
