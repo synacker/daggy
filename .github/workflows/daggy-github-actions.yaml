@@ -83,7 +83,7 @@ jobs:
                     libxv-dev \
                     libxcb-util-dev \
                     libxcb-util0-dev
-          version: 1.0
+          version: syspackages
 
       - name: Conan install
         run: conan install . --build=missing --profile:build=linux-gcc12_x64 --profile:host=linux-gcc12_x64 --output-folder=.
@@ -149,9 +149,6 @@ jobs:
       - name: Make build dir
         run: mkdir build
 
-      - name: Move vc_redist
-        run: mv ~/downloads/vc_redist-x64.exe build/
-
       - name: Conan config
         run: conan config install CI/conan
 
@@ -166,7 +163,7 @@ jobs:
         run: git config --global --add safe.directory %GITHUB_WORKSPACE%
 
       - name: Conan build
-        run: conan build . --profile:build=win-msvc193_x64 --profile:host=win-msvc193_x64 --build=missing -of .
+        run: conan build . --build=missing -of .
 
       - name: Tests
         working-directory: build
@@ -217,7 +214,7 @@ jobs:
         run: conan config install CI/conan
 
       - name: Conan install
-        run: conan install . --build=missing --profile:build=macos-clang13_x64 --profile:host=macos-clang14_x64 -of .
+        run: conan install . --build=missing -of .
 
       - name: Conan remove build folders
         run: conan cache clean "*" --source --build --temp --download
