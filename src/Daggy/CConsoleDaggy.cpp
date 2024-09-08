@@ -40,10 +40,9 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
     , need_hard_stop_(false)
 {
     qApp->setApplicationName("daggy");
-    qApp->setApplicationVersion(DAGGY_VERSION_STANDARD);
     qApp->setOrganizationName(DAGGY_VENDOR);
     qApp->setApplicationVersion(DAGGY_VERSION_FULL);
-    qApp->setOrganizationDomain("daggy.dev");
+    qApp->setOrganizationDomain("https://github.com/synacker/daggy");
 
     connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);
     connect(qApp, &QCoreApplication::aboutToQuit, this, &CConsoleDaggy::fixPcaps);
