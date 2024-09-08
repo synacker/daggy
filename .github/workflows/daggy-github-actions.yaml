@@ -20,6 +20,16 @@ jobs:
           path: ~/.conan2/p
           key: conan-data-gcc12
 
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - run: pip install -r requirements.txt
+      - run: conan --version
+      - run: conan profile detect
+
       - run: conan --version
       - run: conan profile detect
 

@@ -1,5 +1,6 @@
 # This cmake only for developing daggy
-# Use ${PROJECT_SOURCE_DIR}/cmake/conan_provider.cmake for working from IDE.
+# Use ${PROJECT_SOURCE_DIR}/cmake/conan_provider.cmake for working from IDE (see https://github.com/conan-io/cmake-conan for details)
+
 cmake_minimum_required(VERSION 3.24.0)
 
 message(WARNING "This CMakeLists.txt only for developing")
