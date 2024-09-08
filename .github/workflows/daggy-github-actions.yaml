@@ -120,7 +120,7 @@ jobs:
             build/Release/*.rpm
             build/Release/*.zip
 
-  win-msvc193_x64:
+  win:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -153,7 +153,7 @@ jobs:
         run: conan config install CI/conan
 
       - name: Conan install
-        run: conan install . --build=missing -of .
+        run: conan install . --build=missing -s compiler.cppstd=17 -of .
 
       - name: Conan cache clean
         working-directory: build
@@ -186,7 +186,7 @@ jobs:
           path: |
             build/*.zip
 
-  macos-clang13_x64:
+  macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -214,7 +214,7 @@ jobs:
         run: conan config install CI/conan
 
       - name: Conan install
-        run: conan install . --build=missing -of .
+        run: conan install . --build=missing -s compiler.cppstd=17 -of .
 
       - name: Conan remove build folders
         run: conan cache clean "*" --source --build --temp --download
