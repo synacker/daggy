@@ -8,10 +8,6 @@ on:
 jobs:
   linux-gcc12_x64:
     runs-on: ubuntu-latest
-    container: 
-      image: docker.io/synacker2/daggy_gcc12
-      env:
-        NOT_ON_C3I: 1
     steps:
       - uses: actions/checkout@v4
         with:
@@ -81,13 +77,6 @@ jobs:
             c:\.conan2\
           key: conan-data-msvc
 
-      - name: Cache QtIFW
-        uses: actions/cache@v3
-        id: qt-ifw4
-        with:
-          path: C:\QtIFW
-          key: qt-ifw4
-
       - name: Cache vc_redist
         uses: actions/cache@v3
         id: vc_redist17
@@ -118,15 +107,6 @@ jobs:
 
       - name: Move vc_redist
         run: mv ~/downloads/vc_redist-x64.exe build/
-
-      - name: Install QtIFW
-        run: |
-              if ( -not(Test-Path C:\QtIFW) ) {
-                  $ProgressPreference = 'SilentlyContinue'
-                  Invoke-WebRequest -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.6.0/QtInstallerFramework-windows-x64-4.6.0.exe'
-                  ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
-              }
-              ls C:\QtIFW
 
       - name: Conan config
         run: conan config install CI/conan
@@ -163,7 +143,6 @@ jobs:
         with: 
           name: daggy_win_x64 
           path: |
-            build/*.exe
             build/*.zip
 
   macos-clang13_x64:
@@ -224,6 +203,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with: 
           name: daggy_macos_x64
-          path: |
-            build/Release/*.dmg
+          path:
             build/Release/*.zip
