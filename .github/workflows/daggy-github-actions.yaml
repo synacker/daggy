@@ -120,89 +120,74 @@ jobs:
             build/Release/*.rpm
             build/Release/*.zip
 
-  # win-msvc193_x64:
-  #   runs-on: windows-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
+  win-msvc193_x64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
-  #     - name: Cache conan packages
-  #       uses: actions/cache@v3
-  #       id: conan-data-msvc
-  #       with:
-  #         path: |
-  #           ~/.conan2/p
-  #           c:\.conan2\
-  #         key: conan-data-msvc
+      - name: Cache conan packages
+        uses: actions/cache@v3
+        id: conan-data-msvc
+        with:
+          path: |
+            ~/.conan2/p
+            c:\.conan2\
+          key: conan-data-msvc
 
-  #     - name: Cache vc_redist
-  #       uses: actions/cache@v3
-  #       id: vc_redist17
-  #       with:
-  #         path: ~/downloads
-  #         key: vc_redist17
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: pip
 
-  #     - name: Set up Python 3.11
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: '3.11'
-  #         cache: pip
+      - run: pip install -r requirements.txt
+      - run: conan --version
+      - run: conan profile detect
 
-  #     - run: pip install -r requirements.txt
-  #     - run: conan --version
-  #     - run: conan profile detect
+      - name: Make build dir
+        run: mkdir build
 
-  #     - name: Download vc_redist
-  #       run: |
-  #             if ( -not(Test-Path ~/downloads/vc_redist-x64.exe) ) {
-  #                 $ProgressPreference = 'SilentlyContinue'
-  #                 Invoke-WebRequest -UseBasicParsing -OutFile ~/downloads/vc_redist-x64.exe 'https://aka.ms/vs/17/release/vc_redist.x64.exe'
-  #             }
-  #             ls ~/downloads
+      - name: Move vc_redist
+        run: mv ~/downloads/vc_redist-x64.exe build/
 
-  #     - name: Make build dir
-  #       run: mkdir build
+      - name: Conan config
+        run: conan config install CI/conan
 
-  #     - name: Move vc_redist
-  #       run: mv ~/downloads/vc_redist-x64.exe build/
+      - name: Conan install
+        run: conan install . --build=missing -of .
 
-  #     - name: Conan config
-  #       run: conan config install CI/conan
+      - name: Conan cache clean
+        working-directory: build
+        run: conan cache clean "*" --source --build --temp --download
 
-  #     - name: Conan install
-  #       run: conan install . --build=missing --profile:build=win-msvc193_x64 --profile:host=win-msvc193_x64 -of .
+      - name: git add safe dir
+        run: git config --global --add safe.directory %GITHUB_WORKSPACE%
 
-  #     - name: Conan cache clean
-  #       working-directory: build
-  #       run: conan cache clean "*" --source --build --temp --download
+      - name: Conan build
+        run: conan build . --profile:build=win-msvc193_x64 --profile:host=win-msvc193_x64 --build=missing -of .
 
-  #     - name: git add safe dir
-  #       run: git config --global --add safe.directory %GITHUB_WORKSPACE%
+      - name: Tests
+        working-directory: build
+        run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
 
-  #     - name: Conan build
-  #       run: conan build . --profile:build=win-msvc193_x64 --profile:host=win-msvc193_x64 --build=missing -of .
+      - name: win-msvc193_x64 Tests Report
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: build/Release/tests/local_tests.xml
+          summary: win-msvc193_x64 Tests Report
 
-  #     - name: Tests
-  #       working-directory: build
-  #       run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+      - name: Packaging
+        working-directory: build
+        run: cpack
 
-  #     - name: win-msvc193_x64 Tests Report
-  #       uses: mikepenz/action-junit-report@v4
-  #       with:
-  #         report_paths: build/Release/tests/local_tests.xml
-  #         summary: win-msvc193_x64 Tests Report
-
-  #     - name: Packaging
-  #       working-directory: build
-  #       run: cpack
-
-  #     - name: Archive production artifacts
-  #       uses: actions/upload-artifact@v3
-  #       with: 
-  #         name: daggy_win_x64 
-  #         path: |
-  #           build/*.zip
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: daggy_win_x64 
+          path: |
+            build/*.zip
 
   # macos-clang13_x64:
   #   runs-on: macos-latest
