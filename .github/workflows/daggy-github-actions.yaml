@@ -15,7 +15,7 @@ jobs:
 
       - name: Setup environment
         run: sudo apt-get update && \
-             sudo apt-get install -y libgl-dev \
+             apt-get install -y libgl-dev \
                     libgl1-mesa-dev \
                     libx11-dev \
                     libx11-xcb-dev \
