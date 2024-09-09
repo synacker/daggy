@@ -13,29 +13,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Cache conan packages
-        uses: actions/cache@v3
-        id: conan-data-gcc12
-        with:
-          path: ~/.conan2/p
-          key: conan-data-gcc12
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: pip
-
-      - run: pip install -r requirements.txt
-      - run: conan --version
-      - run: conan profile detect
-
-      - name: Conan config
-        run: conan config install CI/conan
-
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: libgl-dev \
+      - name: Setup environment
+        run: apt-get install -y libgl-dev \
                     libgl1-mesa-dev \
                     libx11-dev \
                     libx11-xcb-dev \
@@ -83,8 +62,27 @@ jobs:
                     libxv-dev \
                     libxcb-util-dev \
                     libxcb-util0-dev
-          version: syspackages
+        shell: bash
 
+      - name: Cache conan packages
+        uses: actions/cache@v3
+        id: conan-data-gcc12
+        with:
+          path: ~/.conan2/p
+          key: conan-data-gcc12
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - run: pip install -r requirements.txt
+      - run: conan --version
+      - run: conan profile detect
+
+      - name: Conan config
+        run: conan config install CI/conan
 
       - name: Conan install
         run: conan install . --build=missing --profile:build=linux-gcc12_x64 --profile:host=linux-gcc12_x64 --output-folder=.
@@ -122,7 +120,7 @@ jobs:
             build/Release/*.zip
 
   win:
-    runs-on: windows-latest
+    runs-on: windows-latest-s compiler.cppstd=17
     steps:
       - uses: actions/checkout@v4
         with:
