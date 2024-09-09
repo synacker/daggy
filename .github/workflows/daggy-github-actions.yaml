@@ -13,6 +13,7 @@ jobs:
         with:
           fetch-depth: 0
 
+      - run: sudo apt-get update
       - name: Setup environment
         run: sudo apt-get install -y libgl-dev \
                     libgl1-mesa-dev \
@@ -120,7 +121,7 @@ jobs:
             build/Release/*.zip
 
   win:
-    runs-on: windows-latest-s compiler.cppstd=17
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
         with:
