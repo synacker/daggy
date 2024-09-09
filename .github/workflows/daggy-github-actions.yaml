@@ -164,7 +164,7 @@ jobs:
         run: git config --global --add safe.directory %GITHUB_WORKSPACE%
 
       - name: Conan build
-        run: conan build . --build=missing -of .
+        run: conan build . --build=missing -s compiler.cppstd=17 -of .
 
       - name: Tests
         working-directory: build
@@ -221,7 +221,7 @@ jobs:
         run: conan cache clean "*" --source --build --temp --download
 
       - name: Conan build
-        run: conan build . --build=missing -of .
+        run: conan build . --build=missing -s compiler.cppstd=17 -of .
 
       - name: daggy version
         working-directory: build/Release
