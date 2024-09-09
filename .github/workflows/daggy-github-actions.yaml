@@ -7,14 +7,14 @@ on:
 
 jobs:
   linux-gcc12_x64:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu:20.04
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup environment
-        run: sudo apt update && sudo apt-get install -y \
+        run: sudo apt update && sudo apt-get install -y libgl-dev \
                     libgl-dev \
                     libgl1-mesa-dev \
                     libx11-dev \
