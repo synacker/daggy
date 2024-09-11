@@ -41,7 +41,7 @@ jobs:
                     libxres-dev \
                     libxss-dev \
                     libxtst-dev \
-                    ibxv-dev \
+                    libxv-dev \
                     libxxf86vm-dev \
                     libxcb-glx0-dev \
                     libxcb-render-util0-dev \
