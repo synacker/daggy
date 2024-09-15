@@ -51,7 +51,7 @@ class DaggyConan(ConanFile):
     _cmake = None
 
     def set_version(self):
-        self.version = GitVersion().standard
+        self.version = GitVersion().version
 
     def validate(self):
         check_min_cppstd(self, "17")
@@ -69,11 +69,11 @@ class DaggyConan(ConanFile):
             self.options["libssh2"].shared = True
         
     def build_requirements(self):
-        self.tool_requires("cmake/3.27.7")
-        self.tool_requires("gtest/1.13.0")
+        self.tool_requires("cmake/3.30.1")
+        self.tool_requires("gtest/1.15.0")
 
     def requirements(self):
-        self.requires("qt/6.6.1")
+        self.requires("qt/6.7.1")
         self.requires("kainjow-mustache/4.1")
         self.requires("yaml-cpp/0.8.0")
         self.requires("libssh2/1.11.0")

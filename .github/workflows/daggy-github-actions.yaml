@@ -7,15 +7,65 @@ on:
 
 jobs:
   linux-gcc12_x64:
-    runs-on: ubuntu-latest
-    container: 
-      image: docker.io/synacker2/daggy_gcc12
-      env:
-        NOT_ON_C3I: 1
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Setup environment
+        run: | 
+            sudo apt-get update
+            sudo apt-get install -y libgl-dev \
+                    libgl-dev \
+                    libgl1-mesa-dev \
+                    libx11-dev \
+                    libx11-xcb-dev \
+                    libfontenc-dev \
+                    libice-dev \
+                    libsm-dev \
+                    libxau-dev \
+                    libxaw7-dev \
+                    libx11-xcb-dev \
+                    libfontenc-dev \
+                    libxcomposite-dev \
+                    libxcursor-dev \
+                    libxdamage-dev \
+                    libxfixes-dev \
+                    libxi-dev \
+                    libxinerama-dev \
+                    libxmu-dev \
+                    libxmuu-dev \
+                    libxpm-dev \
+                    libxrandr-dev \
+                    libxres-dev \
+                    libxss-dev \
+                    libxtst-dev \
+                    libxv-dev \
+                    libxxf86vm-dev \
+                    libxcb-glx0-dev \
+                    libxcb-render-util0-dev \
+                    libxcb-xkb-dev \
+                    libxcb-icccm4-dev \
+                    libxcb-image0-dev \
+                    libxcb-keysyms1-dev \
+                    libxcb-randr0-dev \
+                    libxcb-shape0-dev \
+                    libxcb-sync-dev \
+                    libxcb-xfixes0-dev \
+                    libxcb-xinerama0-dev \
+                    libxcb-dri3-dev \
+                    libxcb-cursor-dev \
+                    libxcb-dri2-0-dev \
+                    libxcb-dri3-dev \
+                    libxcb-present-dev \
+                    libxcb-composite0-dev \
+                    libxcb-ewmh-dev \
+                    libxcb-res0-dev \
+                    libxv-dev \
+                    libxcb-util-dev \
+                    libxcb-util0-dev
+        shell: bash
 
       - name: Cache conan packages
         uses: actions/cache@v3
@@ -24,6 +74,13 @@ jobs:
           path: ~/.conan2/p
           key: conan-data-gcc12
 
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - run: pip install -r requirements.txt
       - run: conan --version
       - run: conan profile detect
 
@@ -65,7 +122,7 @@ jobs:
             build/Release/*.rpm
             build/Release/*.zip
 
-  win-msvc193_x64:
+  win:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -81,20 +138,6 @@ jobs:
             c:\.conan2\
           key: conan-data-msvc
 
-      - name: Cache QtIFW
-        uses: actions/cache@v3
-        id: qt-ifw4
-        with:
-          path: C:\QtIFW
-          key: qt-ifw4
-
-      - name: Cache vc_redist
-        uses: actions/cache@v3
-        id: vc_redist17
-        with:
-          path: ~/downloads
-          key: vc_redist17
-
       - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
@@ -105,34 +148,14 @@ jobs:
       - run: conan --version
       - run: conan profile detect
 
-      - name: Download vc_redist
-        run: |
-              if ( -not(Test-Path ~/downloads/vc_redist-x64.exe) ) {
-                  $ProgressPreference = 'SilentlyContinue'
-                  Invoke-WebRequest -UseBasicParsing -OutFile ~/downloads/vc_redist-x64.exe 'https://aka.ms/vs/17/release/vc_redist.x64.exe'
-              }
-              ls ~/downloads
-
       - name: Make build dir
         run: mkdir build
-
-      - name: Move vc_redist
-        run: mv ~/downloads/vc_redist-x64.exe build/
-
-      - name: Install QtIFW
-        run: |
-              if ( -not(Test-Path C:\QtIFW) ) {
-                  $ProgressPreference = 'SilentlyContinue'
-                  Invoke-WebRequest -UseBasicParsing -OutFile ~/QtInstallerFramework-win-x86.exe 'https://download.qt.io/official_releases/qt-installer-framework/4.6.0/QtInstallerFramework-windows-x64-4.6.0.exe'
-                  ~/QtInstallerFramework-win-x86.exe --am --al -c --root C:\QtIFW install   
-              }
-              ls C:\QtIFW
 
       - name: Conan config
         run: conan config install CI/conan
 
       - name: Conan install
-        run: conan install . --build=missing --profile:build=win-msvc193_x64 --profile:host=win-msvc193_x64 -of .
+        run: conan install . --build=missing -s compiler.cppstd=17 -of .
 
       - name: Conan cache clean
         working-directory: build
@@ -142,7 +165,7 @@ jobs:
         run: git config --global --add safe.directory %GITHUB_WORKSPACE%
 
       - name: Conan build
-        run: conan build . --profile:build=win-msvc193_x64 --profile:host=win-msvc193_x64 --build=missing -of .
+        run: conan build . --build=missing -s compiler.cppstd=17 -of .
 
       - name: Tests
         working-directory: build
@@ -163,10 +186,9 @@ jobs:
         with: 
           name: daggy_win_x64 
           path: |
-            build/*.exe
             build/*.zip
 
-  macos-clang13_x64:
+  macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -194,13 +216,13 @@ jobs:
         run: conan config install CI/conan
 
       - name: Conan install
-        run: conan install . --build=missing --profile:build=macos-clang13_x64 --profile:host=macos-clang14_x64 -of .
+        run: conan install . --build=missing -s compiler.cppstd=17 -of .
 
       - name: Conan remove build folders
         run: conan cache clean "*" --source --build --temp --download
 
       - name: Conan build
-        run: conan build . --profile:build=macos-clang13_x64 --profile:host=macos-clang14_x64 --build=missing -of .
+        run: conan build . --build=missing -s compiler.cppstd=17 -of .
 
       - name: daggy version
         working-directory: build/Release
@@ -224,6 +246,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with: 
           name: daggy_macos_x64
-          path: |
-            build/Release/*.dmg
+          path:
             build/Release/*.zip
