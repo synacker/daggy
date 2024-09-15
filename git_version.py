@@ -56,7 +56,6 @@ class GitVersion():
     @property
     def branch(self):
         stream = os.popen("git branch --show-current")
-        
         return stream.read().strip()
     
     @property
