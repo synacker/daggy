@@ -51,7 +51,7 @@ class DaggyConan(ConanFile):
     _cmake = None
 
     def set_version(self):
-        self.version = GitVersion().standard
+        self.version = GitVersion().version
 
     def validate(self):
         check_min_cppstd(self, "17")
