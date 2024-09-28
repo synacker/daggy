@@ -214,7 +214,7 @@ jobs:
             build/*.zip
 
   macos-arm:
-    runs-on: macos-15-xlarge
+    runs-on: macos-14-xlarge
     permissions:
       id-token: write
       contents: read
