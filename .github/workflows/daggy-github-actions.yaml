@@ -114,7 +114,7 @@ jobs:
         uses: actions/attest-build-provenance@v1
         if: github.ref_type == 'tag' || startsWith(github.ref, 'refs/heads/release/')
         with:
-           subject-path: build/Release/**
+           subject-path: 'build/Release/bin/**, build/Release/lib/**'
 
       - name: linux-gcc12_x64 Tests Report
         uses: mikepenz/action-junit-report@v4
@@ -192,7 +192,7 @@ jobs:
         uses: actions/attest-build-provenance@v1
         if: github.ref_type == 'tag' || startsWith(github.ref, 'refs/heads/release/')
         with:
-           subject-path: build/Release/**
+           subject-path: 'build/Release/bin/**, build/Release/lib/**'
 
       - name: win-msvc193_x64 Tests Report
         uses: mikepenz/action-junit-report@v4
@@ -263,7 +263,7 @@ jobs:
         uses: actions/attest-build-provenance@v1
         if: github.ref_type == 'tag' || startsWith(github.ref, 'refs/heads/release/')
         with:
-           subject-path: build/Release/**
+           subject-path: 'build/Release/bin/**, build/Release/lib/**'
 
       - name: macos-clang13_x64 Tests Report
         uses: mikepenz/action-junit-report@v4
