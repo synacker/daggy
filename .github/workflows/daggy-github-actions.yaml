@@ -194,7 +194,7 @@ jobs:
         uses: actions/attest-build-provenance@v1
         if: github.ref_type == 'tag' || startsWith(github.ref, 'refs/heads/release/')
         with:
-           subject-path: 'build/Release/bin/**, build/Release/lib/**'
+           subject-path: build/bin/*
 
       - name: win-msvc193_x64 Tests Report
         uses: mikepenz/action-junit-report@v4
@@ -214,7 +214,7 @@ jobs:
             build/*.zip
 
   macos:
-    runs-on: macos-latest
+    runs-on: macos-15-arm64
     permissions:
       id-token: write
       contents: read
@@ -266,13 +266,85 @@ jobs:
         uses: actions/attest-build-provenance@v1
         if: github.ref_type == 'tag' || startsWith(github.ref, 'refs/heads/release/')
         with:
-           subject-path: build/bin/**
+           subject-path: 'build/Release/bin/**, build/Release/lib/**'
 
-      - name: macos-clang13_x64 Tests Report
+      - name: macos-arm64 Tests Report
         uses: mikepenz/action-junit-report@v4
         with:
           report_paths: build/Release/tests/local_tests.xml
-          summary: macos-clang13_x64 Tests Report
+          summary: macos-arm64 Tests Report
+
+      - name: Packaging
+        working-directory: build/Release
+        run: cpack
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with: 
+          name: daggy_macos_arm64
+          path:
+            build/Release/*.zip
+
+    macos:
+    runs-on: macos-15
+    permissions:
+      id-token: write
+      contents: read
+      checks: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Cache conan packages
+        uses: actions/cache@v3
+        id: conan-data-clang
+        with:
+          path: ~/.conan2/p
+          key: conan-data-clang
+      
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - run: pip install -r requirements.txt
+      - run: conan --version
+      - run: conan profile detect
+
+      - name: Conan config
+        run: conan config install CI/conan
+
+      - name: Conan install
+        run: conan install . --build=missing -s compiler.cppstd=17 -of .
+
+      - name: Conan remove build folders
+        run: conan cache clean "*" --source --build --temp --download
+
+      - name: Conan build
+        run: conan build . --build=missing -s compiler.cppstd=17 -of .
+
+      - name: daggy version
+        working-directory: build/Release
+        run: bin/daggy --version
+
+      - name: Tests
+        working-directory: build/Release
+        run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
+        if: github.ref_type == 'tag' || startsWith(github.ref, 'refs/heads/release/')
+        with:
+           subject-path: 'build/Release/bin/**, build/Release/lib/**'
+
+      - name: macos-x64 Tests Report
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: build/Release/tests/local_tests.xml
+          summary: macos-x64 Tests Report
 
       - name: Packaging
         working-directory: build/Release
