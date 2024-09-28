@@ -1,6 +1,6 @@
 set(TARGET daggy)
 
-option(PCAPNG_SUPPORT "pcap to pcapng convertor" ON)
+option(PCAPNG_SUPPORT "pcap to pcapng convertor" OFF)
 
 find_package(Qt6 COMPONENTS Core REQUIRED)
 

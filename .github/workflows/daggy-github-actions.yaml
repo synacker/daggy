@@ -76,14 +76,14 @@ jobs:
         shell: bash
 
       - name: Cache conan packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: conan-data-gcc12
         with:
           path: ~/.conan2/p
           key: conan-data-gcc12
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: pip
@@ -137,7 +137,7 @@ jobs:
             build/Release/*.zip
 
   win:
-    runs-on: windows-latest
+    runs-on: windows-2022
     permissions:
       id-token: write
       contents: read
@@ -149,7 +149,7 @@ jobs:
           fetch-depth: 0
       
       - name: Cache conan packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: conan-data-msvc
         with:
           path: |
@@ -158,7 +158,7 @@ jobs:
           key: conan-data-msvc
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: pip
@@ -214,7 +214,7 @@ jobs:
             build/*.zip
 
   macos-arm:
-    runs-on: macos-15-arm64
+    runs-on: macos-14-xlarge
     permissions:
       id-token: write
       contents: read
@@ -226,14 +226,14 @@ jobs:
           fetch-depth: 0
       
       - name: Cache conan packages
-        uses: actions/cache@v3
-        id: conan-data-clang
+        uses: actions/cache@v4
+        id: conan-data-clang-arm64
         with:
           path: ~/.conan2/p
-          key: conan-data-clang
+          key: conan-data-clang-arm64
       
       - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: pip
@@ -286,7 +286,7 @@ jobs:
             build/Release/*.zip
 
   macos-x64:
-    runs-on: macos-15
+    runs-on: macos-14-large
     permissions:
       id-token: write
       contents: read
@@ -298,14 +298,14 @@ jobs:
           fetch-depth: 0
       
       - name: Cache conan packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: conan-data-clang-x64
         with:
           path: ~/.conan2/p
           key: conan-data-clang-x64
       
       - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: pip
