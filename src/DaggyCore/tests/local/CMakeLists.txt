@@ -12,8 +12,6 @@ set(SOURCES
     main.cpp
 )
 
-
-
 qt6_add_executable(${TARGET} ${SOURCES})
 include(rpath_bin)
 add_test(NAME ${TARGET} COMMAND ${TARGET} WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})

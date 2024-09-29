@@ -2,7 +2,6 @@ set(TARGET DaggyCore)
 
 find_package(Qt6 COMPONENTS Core Network REQUIRED)
 add_library(${TARGET})
-
 include(rpath_lib)
 
 set_target_properties(${TARGET} PROPERTIES AUTOMOC ON)
@@ -115,3 +114,4 @@ else()
 endif()
 
 install(TARGETS ${TARGET} FILE_SET HEADERS)
+include(package_deps)
