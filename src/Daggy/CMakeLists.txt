@@ -1,6 +1,6 @@
 set(TARGET daggy)
 
-option(PCAPNG_SUPPORT "pcap to pcapng convertor" ON)
+option(PCAPNG_SUPPORT "pcap to pcapng convertor" OFF)
 
 find_package(Qt6 COMPONENTS Core REQUIRED)
 
@@ -50,3 +50,4 @@ target_link_libraries(${TARGET} PRIVATE ${LINK_LIBRARIES})
 target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
 
 install(TARGETS ${TARGET} RUNTIME)
+include(package_deps)

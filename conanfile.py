@@ -77,7 +77,6 @@ class DaggyConan(ConanFile):
         self.requires("kainjow-mustache/4.1")
         self.requires("yaml-cpp/0.8.0")
         self.requires("libssh2/1.11.0")
-        self.requires("pcapplusplus/23.09")
 
 
     def layout(self):
@@ -109,7 +108,7 @@ class DaggyConan(ConanFile):
         tc.cache_variables["SSH2_SUPPORT"] = True
         tc.cache_variables["YAML_SUPPORT"] = True
         tc.cache_variables["CONSOLE"] = True
-        tc.cache_variables["PCAPNG_SUPPORT"] = True
+        tc.cache_variables["PCAPNG_SUPPORT"] = False
         tc.cache_variables["PACKAGE_DEPS"] = True
         tc.cache_variables["BUILD_TESTING"] = True
         tc.cache_variables["CONAN_BUILD"] = True
