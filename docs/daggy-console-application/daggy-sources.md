@@ -42,6 +42,8 @@ Each config conatins map of hosts. Host (data source) parameters is next:
 
 ### Local type
 
+Data aggregation via local processes
+
 {% tabs %}
 {% tab title="YAML" %}
 ```yaml
@@ -56,7 +58,34 @@ sources:
 {% endtab %}
 {% endtabs %}
 
+### SSH type
+
+Data aggregation via ssh process
+
+```yaml
+remotehost:
+    type: ssh2
+    host: 192.168.1.9
+    restart: false
+    parameters:
+      config: ~/.ssh/config
+      control: /tmp/ssh-%r@%h:%p
+      passphrase: {{env_PASSWORD}}
+    commands:
+      pingYa:
+        command: ping ya.ru
+        extension: log
+```
+
+#### SSH parameters
+
+* **config**  - ssh config. By default is \~/.ssh/config
+* c**ontrol** - ssh master control path. If not setted new master connection wiil created
+* **passphrase** - password for ssh connection if needed
+
 ### SSH2 type
+
+Data aggregation via ssh2 lib
 
 {% tabs %}
 {% tab title="YAML" %}
