@@ -73,10 +73,10 @@ class DaggyConan(ConanFile):
         self.tool_requires("gtest/1.15.0")
 
     def requirements(self):
-        self.requires("qt/6.7.1")
+        self.requires("qt/6.7.3")
         self.requires("kainjow-mustache/4.1")
         self.requires("yaml-cpp/0.8.0")
-        self.requires("libssh2/1.11.0")
+        self.requires("libssh2/1.11.1")
 
 
     def layout(self):
