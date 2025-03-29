@@ -24,32 +24,17 @@ sources:
     
 ```
 {% endtab %}
-
-{% tab title="JSON" %}
-```javascript
-{
-    "sources": {
-        "host1" : {
-        },
-        "host2" : {
-        },
-        "hostN" : {
-        }
-    }
-}
-```
-{% endtab %}
 {% endtabs %}
 
 Each config conatins map of hosts. Host (data source) parameters is next:
 
-|    Parameter   |   Type  | Description                                                                                                                              | Is Requiered                             |
-| :------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-|    **type**    |  string | <p></p><p>Type of connection to host. <strong>Daggy</strong> supportes <code>local</code> and <code>ssh</code> host connection types</p> | Yes                                      |
-|  **commands**  |  array  | Array of commands for simultaneous launch                                                                                                | Yes                                      |
-| **parameters** |   map   | Connection parameters                                                                                                                    | Required for **ssh2** **type**           |
-|    **host**    |  string | Host address                                                                                                                             | No. For **ssh2** is 127.0.0.1 by default |
-|  **reconnect** | boolean | true, if need reconnect connection                                                                                                       | No                                       |
+|    Parameter   |   Type  | Description                                                                             | Is Requiered                             |
+| :------------: | :-----: | --------------------------------------------------------------------------------------- | ---------------------------------------- |
+|    **type**    |  string | Type of connection to host. **Daggy** supportes `local` and `ssh` host connection types | Yes                                      |
+|  **commands**  |  array  | Array of commands for simultaneous launch                                               | Yes                                      |
+| **parameters** |   map   | Connection parameters                                                                   | Required for **ssh2** **type**           |
+|    **host**    |  string | Host address                                                                            | No. For **ssh2** is 127.0.0.1 by default |
+|  **reconnect** | boolean | true, if need reconnect connection                                                      | No                                       |
 
 ## Daggy Sources Types
 
@@ -67,24 +52,6 @@ sources:
             pingYa:
                 exec: ping ya.ru
                 extension: log
-```
-{% endtab %}
-
-{% tab title="JSON" %}
-```javascript
- {
-    "sources": {
-        "localhost": {
-            "commands": {
-                "pingYa": {
-                    "extension": "log",
-                    "exec": "ping ya.ru"
-                }
-            },
-            "type": "local"
-        }
-    }
-}
 ```
 {% endtab %}
 {% endtabs %}
@@ -107,30 +74,6 @@ remotehost:
         extension: log
 ```
 {% endtab %}
-
-{% tab title="JSON" %}
-
-
-```javascript
-{
-    "localhost": {
-        "type": "ssh",
-        "host": "192.169.1.9",
-        "restart": false,
-        "parameters": {
-            "user": "muxa",
-            "key": "/home/muxa/.ssh/id_rsa"
-        },
-        "commands": {
-            "pingYa": {
-                "command": "ping ya.ru",
-                "extension": "log"
-            }
-        }
-    }
-}
-```
-{% endtab %}
 {% endtabs %}
 
 #### SSH2 type additional parameters
@@ -138,14 +81,14 @@ remotehost:
 * **host** - remote host ip address or url
 * **connection** - map of ssh connection parameters. Includes next parameters
 
-| Connection Parameter |   Type  | Description                                                                                                                                                                | Default value   |
-| :------------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-|       **user**       |  string | _ssh2_ connection login                                                                                                                                                    | Current user    |
-|    **passphrase**    |  string | _ssh2_ connection password. If field is not empty, then will be used password authentication for _ssh2_ connection. In other case, will be used public key authentication  |                 |
-|        **key**       |  string | path to private key for _ssh2_ connection                                                                                                                                  | `~/.ssh/id_rsa` |
-|     **keyphrase**    |  string | passphrase for private key file                                                                                                                                            |                 |
-|       **port**       | integer | _ssh2_ connection port                                                                                                                                                     | 22              |
-|      **timeout**     | integer | limit to establish _ssh2_ connection, in milliseconds                                                                                                                      | 1000            |
+| Connection Parameter |   Type  | Description                                                                                                                                                               | Default value   |
+| :------------------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+|       **user**       |  string | _ssh2_ connection login                                                                                                                                                   | Current user    |
+|    **passphrase**    |  string | _ssh2_ connection password. If field is not empty, then will be used password authentication for _ssh2_ connection. In other case, will be used public key authentication |                 |
+|        **key**       |  string | path to private key for _ssh2_ connection                                                                                                                                 | `~/.ssh/id_rsa` |
+|     **keyphrase**    |  string | passphrase for private key file                                                                                                                                           |                 |
+|       **port**       | integer | _ssh2_ connection port                                                                                                                                                    | 22              |
+|      **timeout**     | integer | limit to establish _ssh2_ connection, in milliseconds                                                                                                                     | 1000            |
 
 ### Commands
 
@@ -157,17 +100,6 @@ commands:
         exec: ping ya.ru
         extension: log
         restart: false
-```
-{% endtab %}
-
-{% tab title="JSON" %}
-```javascript
-"commands": {
-            "pingYa": {
-                "command": "ping ya.ru",
-                "extension": "log"
-            }
-        }
 ```
 {% endtab %}
 {% endtabs %}
@@ -227,82 +159,4 @@ sources:
         commands: *my_commands
 ```
 {% endtab %}
-
-{% tab title="JSON" %}
-```javascript
-{
-  "sources": {
-    "remotehost3": {
-      "host": "192.168.1.9", 
-      "type": "ssh2", 
-      "commands": {
-        "pingYa": {
-          "extension": "log", 
-          "exec": "ping ya.ru"
-        }, 
-        "pingGoo": {
-          "extension": "log", 
-          "exec": "ping goo.gl"
-        }
-      }, 
-      "parameters": {
-        "user": "{{env_USER}}", 
-        "passphrase": "{{env_PASSWORD}}"
-      }
-    }, 
-    "remotehost2": {
-      "host": "192.168.1.9", 
-      "type": "ssh2", 
-      "commands": {
-        "pingYa": {
-          "extension": "log", 
-          "exec": "ping ya.ru"
-        }, 
-        "pingGoo": {
-          "extension": "log", 
-          "exec": "ping goo.gl"
-        }
-      }, 
-      "parameters": {
-        "user": "{{env_USER}}", 
-        "passphrase": "{{env_PASSWORD}}"
-      }
-    }, 
-    "remotehost": {
-      "host": "192.168.1.9", 
-      "type": "ssh2", 
-      "commands": {
-        "pingYa": {
-          "extension": "log", 
-          "exec": "ping ya.ru"
-        }, 
-        "pingGoo": {
-          "extension": "log", 
-          "exec": "ping goo.gl"
-        }
-      }, 
-      "parameters": {
-        "user": "{{env_USER}}", 
-        "passphrase": "{{env_PASSWORD}}"
-      }
-    }, 
-    "localhost": {
-      "commands": {
-        "pingYa": {
-          "extension": "log", 
-          "exec": "ping ya.ru"
-        }, 
-        "pingGoo": {
-          "extension": "log", 
-          "exec": "ping goo.gl"
-        }
-      }, 
-      "type": "local"
-    }
-  }
-}
-```
-{% endtab %}
 {% endtabs %}
-
-&#x20;&#x20;
