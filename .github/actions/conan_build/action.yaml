@@ -1,0 +1,26 @@
+name: Conan build
+description: Build project using conan
+inputs:
+  profile:
+    description: conan-profile
+    required: true
+    default: default
+
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/enable_conan
+      with:
+        profile: ${{inputs.profile}}
+
+    - name: git add safe dir
+      shell: bash
+      run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
+    - name: Install profiles
+      shell: bash
+      run: conan config install CI/conan
+
+    - name: Conan build
+      shell: bash
+      run: conan build . --profile:build=${{inputs.profile}} --profile:host=${{inputs.profile}} --build=missing --output-folder=.

@@ -1,0 +1,66 @@
+name: Check cache deps
+on: 
+  workflow_call:
+    inputs:
+        linux_x64_profile:
+            description: profile for linux x64
+            required: true
+            default: linux-gcc12_x64
+            type: string
+
+        win_x64_profile:
+            description: profile for win x64
+            required: true
+            default: win-msvc194_x64
+            type: string
+
+        macos_arm_profile:
+            description: profile for macos arm
+            required: true
+            default: macos-clang15_arm
+            type: string
+
+        macos_x64_profile:
+            description: profile for macos x64
+            required: true
+            default: macos-clang15_x64
+            type: string
+
+    outputs:
+        linux_x64_hit:
+            value: ${{jobs.check-cache.outputs.linux-x64}}
+        macos_arm_hit:
+            value: ${{jobs.check-cache.outputs.macos-arm}}
+        macos_x64_hit:
+            value: ${{jobs.check-cache.outputs.macos-x64}}
+        win_x64_hit:
+            value: ${{jobs.check-cache.outputs.win-x64}}
+
+jobs:
+    check-cache:
+        runs-on: ubuntu-latest
+        outputs:
+            linux-x64: ${{steps.check-linux-x64.outputs.exists}}
+            macos-arm: ${{steps.check-macos-arm.outputs.exists}}
+            macos-x64: ${{steps.check-macos-x64.outputs.exists}}
+            win-x64: ${{steps.check-win-x64.outputs.exists}}
+        steps:
+            - uses: actions/checkout@v4
+            - uses: ./.github/actions/check_cache
+              id: check-linux-x64
+              with:
+                profile: ${{inputs.linux_x64_profile}}
+            - uses: ./.github/actions/check_cache
+              id: check-macos-arm
+              with:
+                profile: ${{inputs.macos_arm_profile}}
+
+            - uses: ./.github/actions/check_cache
+              id: check-macos-x64
+              with:
+                profile: ${{inputs.macos_x64_profile}}
+
+            - uses: ./.github/actions/check_cache
+              id: check-win-x64
+              with:
+                profile: ${{inputs.win_x64_profile}}

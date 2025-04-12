@@ -37,7 +37,7 @@ Rel(core, aggregator_user, "All Streams", "", $tags="session")
 
 Rel(aggregator_file, aggregator, "Streams", "files")
 Rel(aggregator_console, aggregator, "Streams", "console output")
-Rel(aggregator_user, aggregator, "Streams", "user artefact")
+Rel(aggregator_user, aggregator, "Streams", "user artifact")
 Rel_R(core, viewer, "All Streams", "", $tags="session")
 
 SHOW_LEGEND()

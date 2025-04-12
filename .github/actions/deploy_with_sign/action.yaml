@@ -1,0 +1,61 @@
+name: Test, Sign and Attestation
+description: Test, sign and attestation artifacts
+inputs:
+  sign:
+    description: sign policy
+    type: string
+    default: test-signing
+
+  builddir:
+    description: build directory
+    required: true
+
+  signeddir:
+    description: directory for signed artifacts
+    reguired: true
+
+  artifact:
+    description: artifact name
+    required: true
+
+  token:
+    description: token for sign api
+    required: true
+
+runs:
+  using: composite
+  steps:
+      - uses: ./.github/actions/tests
+        with:
+          testdir: ${{inputs.builddir}}
+          name: ${{inputs.artifact}} tests
+
+      - uses: ./.github/actions/pack
+        id: pack
+        with:
+          packdir: ${{inputs.builddir}}
+          artifact: ${{inputs.artifact}}
+
+      - uses: ./.github/actions/sign
+        id: sign
+        with:
+          artifactid: ${{steps.pack.outputs.artifactid}}
+          output: ${{inputs.signeddir}}
+          policy: ${{inputs.sign}}
+          token: ${{inputs.token}}
+      
+      - name: Attest
+        if: ${{inputs.sign != ''}}
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: "${{inputs.signeddir}}/**"
+
+      - name: Upload Signed artifacts
+        if: ${{inputs.sign != ''}}
+        id: upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: ${{inputs.artifact}}-signed
+          path: ${{inputs.signeddir}}
+
+      

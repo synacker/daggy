@@ -1,0 +1,27 @@
+name: Check cache 
+description: Check is cache exists
+inputs:
+  profile:
+    description: conan-profile
+    required: true
+    default: default
+
+outputs:
+  exists:  
+    value: ${{steps.check-cache.outputs.cache_hit}}
+
+runs:
+  using: composite
+  steps:
+      - name: Cache conan packages
+        id: check-cache
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh extension install actions/gh-actions-cache
+          KEY=${{ inputs.profile }}
+          CACHE_HIT=$(gh actions-cache list --key $KEY | grep -q $KEY && echo 'true' || echo 'false')
+          echo "cache_hit=$CACHE_HIT" >> $GITHUB_OUTPUT
+          echo "Cache for profile ${{inputs.profile}}: ${CACHE_HIT}"
+
