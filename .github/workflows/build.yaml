@@ -30,6 +30,7 @@ on:
         description: test or release sign
         type: string
         required: true
+        default: none
   
 jobs:
   cache:
@@ -59,7 +60,13 @@ jobs:
         with:
           profile: ${{inputs.linux_x64_profile}}
 
+      - uses: ./.github/actions/tests
+        with:
+          testdir: build/Release
+          name: ${{inputs.linux_x64_profile}} tests
+
       - uses: ./.github/actions/deploy
+        if: inputs.sign != 'none'
         with:
           builddir: build/Release
           artifact: ${{inputs.linux_x64_profile}}
@@ -83,7 +90,13 @@ jobs:
         with:
           profile: ${{inputs.macos_arm_profile}}
 
+      - uses: ./.github/actions/tests
+        with:
+          testdir: build/Release
+          name: ${{inputs.macos_arm_profile}} tests
+
       - uses: ./.github/actions/deploy
+        if: inputs.sign != 'none'
         with:
           builddir: build/Release
           artifact: ${{inputs.macos_arm_profile}}
@@ -106,8 +119,14 @@ jobs:
       - uses: ./.github/actions/conan_build
         with:
           profile: ${{inputs.macos_x64_profile}}
+
+      - uses: ./.github/actions/tests
+        with:
+          testdir: build/Release
+          name: ${{inputs.macos_x64_profile}} tests
     
       - uses: ./.github/actions/deploy
+        if: inputs.sign != 'none'
         with:
           builddir: build/Release
           artifact: ${{inputs.macos_x64_profile}}
@@ -130,8 +149,14 @@ jobs:
       - uses: ./.github/actions/conan_build
         with:
           profile: ${{inputs.win_x64_profile}}
+      
+      - uses: ./.github/actions/tests
+        with:
+          testdir: build
+          name: ${{inputs.win_x64_profile}} tests
    
       - uses: ./.github/actions/deploy_with_sign
+        if: inputs.sign != 'none'
         with:
           builddir: build
           artifact: ${{inputs.win_x64_profile}}

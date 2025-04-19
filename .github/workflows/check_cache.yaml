@@ -28,39 +28,57 @@ on:
 
     outputs:
         linux_x64_hit:
-            value: ${{jobs.check-cache.outputs.linux-x64}}
+            value: ${{jobs.linux-x64-check-cache.outputs.exists}}
         macos_arm_hit:
-            value: ${{jobs.check-cache.outputs.macos-arm}}
+            value: ${{jobs.macos-arm-check-cache.outputs.exists}}
         macos_x64_hit:
-            value: ${{jobs.check-cache.outputs.macos-x64}}
+            value: ${{jobs.macos-x64-check-cache.outputs.exists}}
         win_x64_hit:
-            value: ${{jobs.check-cache.outputs.win-x64}}
+            value: ${{jobs.win-x64-check-cache.outputs.exists}}
 
 jobs:
-    check-cache:
-        runs-on: ubuntu-latest
-        outputs:
-            linux-x64: ${{steps.check-linux-x64.outputs.exists}}
-            macos-arm: ${{steps.check-macos-arm.outputs.exists}}
-            macos-x64: ${{steps.check-macos-x64.outputs.exists}}
-            win-x64: ${{steps.check-win-x64.outputs.exists}}
-        steps:
-            - uses: actions/checkout@v4
-            - uses: ./.github/actions/check_cache
-              id: check-linux-x64
-              with:
-                profile: ${{inputs.linux_x64_profile}}
-            - uses: ./.github/actions/check_cache
-              id: check-macos-arm
-              with:
-                profile: ${{inputs.macos_arm_profile}}
+  linux-x64-check-cache:
+    runs-on: ubuntu-22.04
+    outputs:
+        exists: ${{steps.check-cache.outputs.exists}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/check_cache
+        id: check-cache
+        with:
+            profile:  ${{inputs.linux_x64_profile}}
 
-            - uses: ./.github/actions/check_cache
-              id: check-macos-x64
-              with:
-                profile: ${{inputs.macos_x64_profile}}
+  macos-arm-check-cache:
+    runs-on: macos-14
+    outputs:
+        exists: ${{steps.check-cache.outputs.exists}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/check_cache
+        id: check-cache
+        with:
+            profile: ${{inputs.macos_arm_profile}}
 
-            - uses: ./.github/actions/check_cache
-              id: check-win-x64
-              with:
-                profile: ${{inputs.win_x64_profile}}
+  macos-x64-check-cache:
+    runs-on: macos-13
+    outputs:
+        exists: ${{steps.check-cache.outputs.exists}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/check_cache
+        id: check-cache
+        with:
+            profile: ${{inputs.macos_x64_profile}}
+          
+  win-x64-check-cache:
+    runs-on: windows-2022
+    outputs:
+        exists: ${{steps.check-cache.outputs.exists}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/check_cache
+        id: check-cache
+        with:
+            profile: ${{inputs.win_x64_profile}}
+
+    
