@@ -1,0 +1,38 @@
+name: Pack artifacts
+description: Pack project artifacts for deploy
+inputs:
+  packdir:
+    description: directory for packaging
+    required: true
+    default: build
+  artifact:
+    description: artifacts name
+    required: true
+  sign:
+    description: test or release sign
+    type: string
+    required: true
+    default: test-signing
+
+outputs:
+  artifactid:
+    description: artifactid for uploaded package
+    value: ${{steps.upload.outputs.artifact-id}}
+
+runs:
+  using: composite
+  steps:
+    - name: Packaging
+      working-directory: ${{inputs.packdir}}
+      shell: bash
+      run: cpack
+
+    - name: Archive production artifacts
+      id: upload
+      uses: actions/upload-artifact@v4
+      with: 
+        name: ${{inputs.artifact}}
+        path: |
+          ${{inputs.packdir}}/*.zip
+          ${{inputs.packdir}}/*.rpm
+          ${{inputs.packdir}}/*.deb

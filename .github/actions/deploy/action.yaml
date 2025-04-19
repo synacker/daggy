@@ -1,0 +1,38 @@
+name: Test, Sign and Attestation
+description: Test, sign and attestation artifacts
+inputs:
+  builddir:
+    description: build directory
+    required: true
+
+  artifact:
+    description: artifact name
+    required: true
+
+  attestation:
+    description: need attestation
+    type: boolean
+    default: false
+
+runs:
+  using: composite
+  steps:
+      - uses: ./.github/actions/tests
+        with:
+          testdir: ${{inputs.builddir}}
+          name: ${{inputs.artifact}} tests
+
+      - uses: ./.github/actions/pack
+        id: pack
+        with:
+          packdir: ${{inputs.builddir}}
+          artifact: ${{inputs.artifact}}
+      
+      - name: Attest
+        if: ${{inputs.attestation == 'true'}}
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: |
+            ${{inputs.builddir}}/*.zip
+            ${{inputs.builddir}}/*.rpm
+            ${{inputs.builddir}}/*.deb

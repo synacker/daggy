@@ -1,0 +1,31 @@
+name: Conan build
+description: Build project using conan
+inputs:
+  testdir:
+    description: directory for run ctest
+    required: true
+    default: build/Release
+  name:
+    description: tests name
+    require: true
+    default: Tests Result 
+
+runs:
+  using: "composite"
+  steps:
+    - name: Tests
+      working-directory: ${{inputs.testdir}}
+      shell: bash
+      run: ctest -C Release --output-on-failure --output-junit tests/local_tests.xml
+
+    - name: daggy version
+      working-directory: ${{inputs.testdir}}
+      shell: bash
+      run: bin/daggy --version
+
+    - uses: mikepenz/action-junit-report@v5
+      with:
+        report_paths: ${{inputs.testdir}}/tests/local_tests.xml
+        detailed_summary: true
+        include_passed: true
+        check_name: ${{inputs.name}}

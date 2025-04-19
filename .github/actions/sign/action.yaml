@@ -1,0 +1,33 @@
+name: Sign
+description: Sign distributed package
+inputs:
+  artifactid:
+    description: artifact upload id
+    required: true
+  output:
+    description: signed artifacts dir
+    required: true
+    default: .
+  policy:
+    description: sign policy
+    type: string
+    required: true
+    default: test-signing
+  token:
+    description: sign api token
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: signpath/github-action-submit-signing-request@v1.1
+      with:
+        api-token: '${{ inputs.token }}'
+        organization-id: 458e74d2-1c0a-4e3a-b1e7-9bc24caf673e
+        project-slug: daggy
+        artifact-configuration-slug: win
+        signing-policy-slug: ${{inputs.policy}}
+        github-artifact-id: ${{inputs.artifactid}}
+        wait-for-completion: true
+        output-artifact-directory: ${{inputs.output}}
+
