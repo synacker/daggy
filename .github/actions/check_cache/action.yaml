@@ -15,13 +15,9 @@ runs:
   steps:
       - name: Cache conan packages
         id: check-cache
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          gh extension install actions/gh-actions-cache
-          KEY=${{ inputs.profile }}
-          CACHE_HIT=$(gh actions-cache list --key $KEY | grep -q $KEY && echo 'true' || echo 'false')
-          echo "cache_hit=$CACHE_HIT" >> $GITHUB_OUTPUT
-          echo "Cache for profile ${{inputs.profile}}: ${CACHE_HIT}"
+        uses: actions/cache@v4
+        with:
+          path: ~/.conan2/p
+          key: ${{inputs.profile}}
+          lookup-only: true
 
