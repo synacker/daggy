@@ -44,12 +44,10 @@ SOFTWARE.
 
 #include <QDebug>
 
-#include <atomic>
-#include <limits>
+#include <QBuffer>
 
 #ifdef SSH2_SUPPORT
 #include <libssh2.h>
-#include <errno.h>
 #endif
 
 #ifdef YAML_SUPPORT

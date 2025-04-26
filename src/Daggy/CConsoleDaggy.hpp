@@ -87,7 +87,7 @@ private:
     QString getTextFromFile(QString file_path) const;
     QString homeFolder() const;
 
-    QString mustache(const QString& text, const QString& output_folder) const;
+    QString mustache(const QString& text, const QString& output_folder, const QMap<QString, QString> &env_parameters) const;
 
     Settings settings_;
     QString session_;

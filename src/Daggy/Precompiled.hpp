@@ -18,6 +18,7 @@
 #include <iostream>
 #include <ostream>
 #include <set>
+#include <utility>
 
 #ifdef CONAN_BUILD
 #include <kainjow/mustache.hpp>

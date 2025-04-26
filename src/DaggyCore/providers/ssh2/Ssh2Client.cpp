@@ -95,6 +95,7 @@ Ssh2Client::~Ssh2Client()
     if (state() == ConnectedState)
         waitForDisconnected();
     freeSsh2();
+    disconnect(this);
 }
 
 Ssh2Client::SessionStates Ssh2Client::sessionState() const
@@ -104,7 +105,7 @@ Ssh2Client::SessionStates Ssh2Client::sessionState() const
 
 void Ssh2Client::closeChannels()
 {
-    for (Ssh2Channel* ssh2_channel : getChannels()) {
+    foreach (Ssh2Channel* ssh2_channel, getChannels()) {
         ssh2_channel->close();
     }
 }
@@ -167,8 +168,8 @@ std::error_code Ssh2Client::startSshSession()
         return error_code;
     }
 
-    int ssh2_method_result = libssh2_session_startup(ssh2_session_,
-                                                     socket_descriptor);
+    int ssh2_method_result = libssh2_session_handshake(ssh2_session_,
+                                                       socket_descriptor);
     switch (ssh2_method_result) {
     case LIBSSH2_ERROR_EAGAIN:
         setSsh2SessionState(SessionStates::StartingSession);
@@ -204,10 +205,6 @@ void Ssh2Client::onReadyRead()
         error_code = authenticate();
         break;
     case SessionStates::Established:
-    case SessionStates::Closing:
-        for (Ssh2Channel* ssh2_channel : getChannels()) {
-            ssh2_channel->checkIncomingData();
-        }
         break;
     default:;
     }
@@ -250,7 +247,6 @@ void Ssh2Client::onSocketStateChanged(const QAbstractSocket::SocketState& state)
 
 void Ssh2Client::addChannel(Ssh2Channel* channel)
 {
-    disconnect(channel);
     emit channelsCountChanged(channelsCount());
     connect(channel, &Ssh2Channel::channelStateChanged, this, &Ssh2Client::onChannelStateChanged);
     connect(channel, &Ssh2Channel::destroyed, channel, [this](QObject*){
@@ -265,8 +261,9 @@ QList<Ssh2Channel*> Ssh2Client::getChannels() const
 
 void Ssh2Client::destroySsh2Objects()
 {
-    for (Ssh2Channel* channel : getChannels())
+    foreach (Ssh2Channel* channel, getChannels()) {
         delete channel;
+    }
 
     if (known_hosts_)
         libssh2_knownhost_free(known_hosts_);
@@ -293,8 +290,8 @@ std::error_code Ssh2Client::createSsh2Objects()
     if (ssh2_session_ == nullptr)
         return Ssh2Error::UnexpectedError;
 
-    libssh2_session_callback_set(ssh2_session_, LIBSSH2_CALLBACK_RECV, reinterpret_cast<void*>(&libssh_recv));
-    libssh2_session_callback_set(ssh2_session_, LIBSSH2_CALLBACK_SEND, reinterpret_cast<void*>(&libssh_send));
+    libssh2_session_callback_set2(ssh2_session_, LIBSSH2_CALLBACK_RECV, (libssh2_cb_generic*)(libssh_recv));
+    libssh2_session_callback_set2(ssh2_session_, LIBSSH2_CALLBACK_SEND, (libssh2_cb_generic*)(libssh_send));
 
     known_hosts_ = libssh2_knownhost_init(ssh2_session_);
     if (known_hosts_ == nullptr)
@@ -482,7 +479,7 @@ int Ssh2Client::channelsCount() const
 int Ssh2Client::openChannelsCount() const
 {
     int result = 0;
-    for (Ssh2Channel* channel : getChannels()) {
+    foreach (Ssh2Channel* channel, getChannels()) {
         if (channel->isOpen())
             result++;
     }
@@ -492,6 +489,8 @@ int Ssh2Client::openChannelsCount() const
 void Ssh2Client::setSsh2SessionState(const Ssh2Client::SessionStates& new_state)
 {
     if (ssh2_state_ != new_state) {
+        ssh2_state_ = new_state;
+        emit sessionStateChanged(new_state);
         switch (new_state) {
         case Closing:
             closeChannels();
@@ -503,8 +502,6 @@ void Ssh2Client::setSsh2SessionState(const Ssh2Client::SessionStates& new_state)
             break;
         default:;
         }
-        ssh2_state_ = new_state;
-        emit sessionStateChanged(new_state);
     }
 }
 

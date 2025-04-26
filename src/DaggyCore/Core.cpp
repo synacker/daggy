@@ -116,7 +116,7 @@ bool Core::isActiveProvider(const providers::IProvider* const provider) const
 
 void Core::deleteAllProviders()
 {
-    auto providers = getProviders();
+    const auto& providers = getProviders();
     for (auto provider : providers)
         delete provider;
 }
@@ -134,7 +134,7 @@ try
     }
 
     setState(DaggyStarted);
-    for (providers::IProvider* provider : providers) {
+    foreach (providers::IProvider* provider, providers) {
         provider->start();
     }
 

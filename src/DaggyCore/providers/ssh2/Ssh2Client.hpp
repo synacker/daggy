@@ -67,8 +67,6 @@ public:
 
     void disconnectFromHost() override;
 
-    Ssh2Process* createSshProcess(const QString& cmd);
-
     LIBSSH2_SESSION* ssh2Session() const;
 
     QPointer<Ssh2Process> createProcess(const QString& command);

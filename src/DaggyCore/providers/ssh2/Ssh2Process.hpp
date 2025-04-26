@@ -44,28 +44,28 @@ public:
         Finished
     };
 
+    Ssh2Process() = delete;
+    Ssh2Process(const QString& command,
+                Ssh2Client* ssh2_client);
 
     ProcessStates processState() const;
-    void checkIncomingData() override;
 
 signals:
     void processStateChanged(ProcessStates processState);
 
 protected:
-    Ssh2Process(const QString& command,
-                Ssh2Client* ssh2_client);
+
+    void checkIncomingData() override;
 
 private slots:
-    void onSsh2ChannelStateChanged(const ChannelStates& state);
+    void onSsh2ChannelStateChanged(ChannelStates state);
 
 private:
-    void setSsh2ProcessState(ProcessStates ssh2_process_state);
+    bool setSsh2ProcessState(ProcessStates ssh2_process_state);
     std::error_code execSsh2Process();
 
     const QString command_;
     ProcessStates ssh2_process_state_;
-
-    friend class Ssh2Client;
 };
 
 }
