@@ -118,23 +118,10 @@ const QString& daggy::providers::CSsh2::type() const noexcept
 
 void daggy::providers::CSsh2::disconnectAll()
 {
-    if (ssh2Process(kill_command_id) != nullptr || state() != DaggyProviderStarted)
+    if (ssh2_client_->sessionState() == Ssh2Client::Closing)
         return;
 
-    auto terminate_process = ssh2_client_->createProcess(kill_command_global);
-    terminate_process->setObjectName(kill_command_id);
-    connect(terminate_process, &Ssh2Process::processStateChanged, ssh2_client_,
-         [this](const Ssh2Process::ProcessStates state)
-    {
-      switch (state) {
-      case Ssh2Process::ProcessStates::Finished:
-      case Ssh2Process::ProcessStates::FailedToStart:
-           ssh2_client_->disconnectFromHost();
-           break;
-      default:;
-      }
-    });
-    terminate_process->open();
+    ssh2_client_->disconnectFromHost();
 }
 
 Ssh2Process* daggy::providers::CSsh2::ssh2Process(const QString& id) const
@@ -231,13 +218,13 @@ void daggy::providers::CSsh2::onSsh2ProcessStateChanged(const int process_state)
     }
 }
 
-void daggy::providers::CSsh2::onSsh2ProcessNewDataChannel(QByteArray data, const int stream_id)
+void daggy::providers::CSsh2::onSsh2ProcessNewDataChannel(QByteArray data, const int stream_type)
 {
     Ssh2Process* ssh2_process = qobject_cast<Ssh2Process*>(sender());
     const auto& command_id = ssh2_process->objectName();
     const auto& command_properties = getCommandProperties(command_id);
     DaggyStreamTypes command_stream_type = DaggyStreamStandard;
-    switch (static_cast<Ssh2Channel::ChannelStream>(stream_id)) {
+    switch (static_cast<Ssh2Channel::ChannelStream>(stream_type)) {
     case Ssh2Channel::Out:
         command_stream_type = DaggyStreamTypes::DaggyStreamStandard;
         break;

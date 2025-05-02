@@ -32,6 +32,7 @@ using namespace qtssh2;
 Ssh2Process::Ssh2Process(const QString& command, Ssh2Client* ssh2_client)
     : Ssh2Channel(ssh2_client)
     , command_(command)
+    , ssh2_process_state_(NotStarted)
 {
     connect(this, &Ssh2Channel::channelStateChanged, this, &Ssh2Process::onSsh2ChannelStateChanged);
 }
@@ -41,29 +42,26 @@ Ssh2Process::ProcessStates Ssh2Process::processState() const
     return ssh2_process_state_;
 }
 
-void Ssh2Process::checkIncomingData()
-{
-    Ssh2Channel::checkIncomingData();
-    if (processState() == Starting) {
-        setLastError(execSsh2Process());
-    }
-}
-
-void Ssh2Process::setSsh2ProcessState(ProcessStates ssh2_process_state)
+bool Ssh2Process::setSsh2ProcessState(ProcessStates ssh2_process_state)
 {
     if (ssh2_process_state_ == ssh2_process_state)
-        return;
+        return false;
 
     ssh2_process_state_ = ssh2_process_state;
     emit processStateChanged(ssh2_process_state_);
+    return true;
 }
 
-void Ssh2Process::onSsh2ChannelStateChanged(const ChannelStates& state)
+void Ssh2Process::onSsh2ChannelStateChanged(ChannelStates state)
 {
     std::error_code error_code = ssh2_success;
     switch (state) {
     case ChannelStates::Opened:
-        error_code = execSsh2Process();
+        setSsh2ProcessState(Starting);
+        if (!checkSsh2Error(execSsh2Process()))
+        {
+            setSsh2ProcessState(FailedToStart);
+        }
         break;
     case ChannelStates::Closing:
         if (ssh2_process_state_ != FailedToStart)
@@ -75,11 +73,27 @@ void Ssh2Process::onSsh2ChannelStateChanged(const ChannelStates& state)
         break;
     case ChannelStates::FailedToOpen:
         setSsh2ProcessState(FailedToStart);
-        error_code = Ssh2Error::ProcessFailedToStart;
         break;
     default:;
     }
-    setLastError(error_code);
+}
+
+void Ssh2Process::checkIncomingData()
+{
+    switch (ssh2_process_state_) {
+    case NotStarted:
+        if (isOpen())
+            Ssh2Channel::checkIncomingData();
+        break;
+    case Starting:
+        execSsh2Process();
+        break;
+    case Started:
+    case Finishing:
+        Ssh2Channel::checkIncomingData();
+        break;
+    default:;
+    }
 }
 
 std::error_code Ssh2Process::execSsh2Process()
@@ -88,7 +102,6 @@ std::error_code Ssh2Process::execSsh2Process()
     const int ssh2_method_result = libssh2_channel_exec(ssh2Channel(), qPrintable(command_));
     switch (ssh2_method_result) {
     case LIBSSH2_ERROR_EAGAIN:
-        setSsh2ProcessState(Starting);
         error_code = Ssh2Error::TryAgain;
         break;
     case 0:

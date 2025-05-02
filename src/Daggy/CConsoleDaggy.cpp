@@ -84,13 +84,17 @@ std::error_code CConsoleDaggy::prepare()
     daggy_core_->connectAggregator(file_aggregator);
     daggy_core_->connectAggregator(console_aggreagator_);
 
-    return daggy_core_->prepare();;
+    return daggy_core_->prepare();
 }
 
 std::error_code CConsoleDaggy::start()
 {
     file_thread_.start();
-    return daggy_core_->start();
+    auto start_error = daggy_core_->start();
+    if (!start_error && settings_.timeout > 0) {
+        QTimer::singleShot(std::chrono::seconds(settings_.timeout), this, &CConsoleDaggy::stop);
+    }
+    return start_error;
 }
 
 void CConsoleDaggy::stop()
@@ -163,16 +167,19 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
     const QCommandLineOption input_from_stdin_option({"i", "stdin"},
                                                      "Read data aggregation sources from stdin");
 
-    const QCommandLineOption fix_pcap_option({"x", "fix-pcap"},
-                                             "Fix and convert pcap files to pcapng");
+    const QCommandLineOption env_variable_option({"e", "env-variable"},
+                                                 "Set environment varaible for sources", "NAME=VALUE");
 
     QCommandLineParser command_line_parser;
     command_line_parser.addOption(output_folder_option);
     command_line_parser.addOption(input_format_option);
     command_line_parser.addOption(input_from_stdin_option);
     command_line_parser.addOption(auto_complete_timeout);
+    command_line_parser.addOption(env_variable_option);
 
 #ifdef PCAPNG_SUPPORT
+    const QCommandLineOption fix_pcap_option({"x", "fix-pcap"},
+                                             "Fix and convert pcap files to pcapng");
     command_line_parser.addOption(fix_pcap_option);
 #endif
 
@@ -216,9 +223,11 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
         result.data_source_text_type = textFormatType(source_file_name);
     }
 
+#ifdef PCAPNG_SUPPORT
     if (command_line_parser.isSet(fix_pcap_option)) {
         result.fix_pcap = true;
     }
+#endif
 
     if (command_line_parser.isSet(auto_complete_timeout)) {
         result.timeout = command_line_parser.value(auto_complete_timeout).toUInt();
@@ -226,8 +235,15 @@ CConsoleDaggy::Settings CConsoleDaggy::parse() const
 
     if (result.output_folder.isEmpty())
         result.output_folder = QDir::currentPath();
-    result.data_source_text = mustache(result.data_source_text, result.output_folder);
 
+    QMap<QString, QString> env_parameters;
+    foreach (const auto& env_parameter, command_line_parser.values(env_variable_option)) {
+        const auto& input = env_parameter.split("=");
+        if (input.size() > 1)
+            env_parameters[input[0]] = input[1];
+    }
+
+    result.data_source_text = mustache(result.data_source_text, result.output_folder, env_parameters);
     return result;
 }
 
@@ -303,15 +319,23 @@ QString CConsoleDaggy::homeFolder() const
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 }
 
-QString CConsoleDaggy::mustache(const QString& text, const QString& output_folder) const
+QString CConsoleDaggy::mustache(const QString& text, const QString& output_folder, const QMap<QString, QString>& env_parameters) const
 {
     QProcessEnvironment process_environment = QProcessEnvironment::systemEnvironment();
     kainjow::mustache::mustache tmpl(qUtf8Printable(text));
     kainjow::mustache::data variables;
-    for (const auto& key : process_environment.keys()) {
+    const auto& keys = process_environment.keys();
+
+    for (const auto& key : keys) {
         variables.set(qPrintable(QString("env_%1").arg(key)),
                       qUtf8Printable(process_environment.value(key)));
     }
+
+    for (auto [key, value] : env_parameters.asKeyValueRange()) {
+        variables.set(qPrintable(QString("env_%1").arg(key)),
+                      qUtf8Printable(value));
+    }
+
     variables.set("output_folder", qUtf8Printable(output_folder));
     return QString::fromStdString(tmpl.render(variables));
 }

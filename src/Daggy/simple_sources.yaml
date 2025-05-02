@@ -11,7 +11,7 @@ aliases:
 
   - &my_commands
     pingYa:
-        exec: ping ya.ru
+        exec: ping -c 4 ya.ru 
         extension: log
     pingGoo:
         exec: ping goo.gl
@@ -23,11 +23,16 @@ aliases:
 
 sources:
   localhost:
-    type: local
-    commands:
-      *my_commands
+     type: local
+     commands:
+       *my_commands
   remotehost:
-    host: 127.0.0.1
+     host: {{env_USER}}
+     type: ssh
+     commands:
+       *my_commands
+  remotehost2:
+    host: {{env_HOST}}
     parameters:
       *ssh_auth
     type: ssh2

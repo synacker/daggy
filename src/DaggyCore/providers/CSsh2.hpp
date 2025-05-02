@@ -65,7 +65,7 @@ private:
     void onSsh2ChannelsCountChanged(const int channels_count);
 
     void onSsh2ProcessStateChanged(const int process_state);
-    void onSsh2ProcessNewDataChannel(QByteArray data, const int stream_id);
+    void onSsh2ProcessNewDataChannel(QByteArray data, const int stream_type);
     void onSsh2ProcessError(const std::error_code& error_code);
 
     void startCommands();

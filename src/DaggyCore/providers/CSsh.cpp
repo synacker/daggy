@@ -1,6 +1,4 @@
-#include "../Precompiled.hpp"
 #include "CSsh.hpp"
-#include "../Errors.hpp"
 
 namespace daggy {
 namespace providers {
@@ -85,6 +83,7 @@ void CSsh::onMasterProcessError(QProcess::ProcessError error)
 
 void CSsh::startMaster()
 {
+#ifndef Q_OS_WIN32
     if (!ssh_master_ && settings_.control.isEmpty())
     {
         ssh_master_.reset(new QProcess());
@@ -93,6 +92,7 @@ void CSsh::startMaster()
         ssh_master_->waitForStarted();
         ssh_master_->waitForReadyRead();
     }
+#endif
 }
 
 void CSsh::stopMaster()
@@ -134,6 +134,9 @@ QStringList CSsh::makeSlaveArguments(const sources::Command& command) const
 
 QStringList CSsh::controlArguments(bool master) const
 {
+    if (!ssh_master_)
+        return {};
+
     return (master ?
             QStringList{ "-o", "ControlMaster=auto", "-o", QString("ControlPath=%1").arg(controlPath())} :
             QStringList{ "-o", "ControlMaster=no", "-S", controlPath()});

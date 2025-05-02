@@ -49,7 +49,7 @@ public slots:
     void onDataProviderError(QString provider_id, std::error_code error_code) override;
     void onCommandStateChanged(QString provider_id, QString command_id, DaggyCommandStates state, int exit_code) override;
     void onCommandError(QString provider_id, QString command_id, std::error_code error_code) override;
-    void onCommandStream(QString provider_id, QString command_id, sources::commands::Stream stream) override;
+    void onCommandStream(QString provider_id, QString command_id, daggy::sources::commands::Stream stream) override;
     void onDaggyStateChanged(DaggyStates state) override;
 
 private:

@@ -25,6 +25,7 @@ SOFTWARE.
 
 #include <QIODevice>
 
+#include "DaggyCore/providers/ssh2/Ssh2Client.hpp"
 #include "Ssh2Types.hpp"
 
 namespace qtssh2 {
@@ -58,18 +59,13 @@ public:
     bool isSequential() const override;
 
     bool open(OpenMode mode = QIODevice::ReadWrite) override;
-    void close() override;
 
     Ssh2Client* ssh2Client() const;
     LIBSSH2_CHANNEL* ssh2Channel() const;
 
-    virtual void checkIncomingData();
-
     int exitStatus() const;
 
     ChannelStates channelState() const;
-
-    QString exitSignal() const;
 
 signals:
     void ssh2Error(std::error_code ssh2_error);
@@ -81,21 +77,27 @@ signals:
 protected:
     Ssh2Channel(Ssh2Client* ssh2_client);
 
-    std::error_code setLastError(const std::error_code& error_code);
+protected:
+    virtual void checkIncomingData();
+
+private slots:
+    void onAboutToClose();
+    void onSshReadyRead();
 
 private:
-    void setSsh2ChannelState(const ChannelStates& state);
+    bool setSsh2ChannelState(ChannelStates state);
     std::error_code openSession();
     std::error_code closeSession();
     void destroyChannel();
     void checkChannelData(const ChannelStream& stream_id);
+    void checkChannelData();
+    void readErrStream();
+
 
     ChannelStates ssh2_channel_state_;
     LIBSSH2_CHANNEL* ssh2_channel_;
     int exit_status_;
     QString exit_signal_;
-    std::error_code last_error_;
-    void checkChannelData();
 };
 
 }
