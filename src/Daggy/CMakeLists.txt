@@ -14,19 +14,6 @@ target_sources(${TARGET}
         CConsoleDaggy.cpp
 )
 
-if (WIN32)
-    target_sources(${TARGET}
-        PRIVATE
-            ISystemSignalHandlerWin32.cpp
-    )
-else()
-    target_sources(${TARGET}
-        PRIVATE
-            ISystemSignalHandlerUnix.cpp
-    )
-
-endif()
-
 target_link_libraries(${TARGET} PRIVATE DaggyCore)
 
 if (PCAPNG_SUPPORT)

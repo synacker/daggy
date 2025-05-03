@@ -14,10 +14,6 @@ public:
         QString config;
         QString passphrase;
         QString control;
-
-        static const QString& tempPath();
-        static QString tempConfigPath(const QString& session);
-        static QString tempControlPath(const QString& session);
     };
 
     CSsh(const QString& session,
@@ -31,7 +27,7 @@ public:
     std::error_code stop() noexcept override;
     const QString& type() const noexcept override;
 
-    const QString& controlPath() const;
+    QString controlPath() const;
 
     static const QString provider_type;
 
@@ -43,8 +39,10 @@ private slots:
     void onMasterProcessError(QProcess::ProcessError error);
 
 private:
-    void startMaster();
+    std::error_code startMaster();
     void stopMaster();
+
+    QString masterErrorFile() const;
 
     QStringList makeMasterArguments() const;
     QStringList makeSlaveArguments(const sources::Command& command) const;

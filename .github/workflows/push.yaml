@@ -4,10 +4,12 @@ on:
     tags-ignore:
       - '**'
     branches:
-      - '**'
+      - master
+      - develop
 
 jobs:
   build:
+    if: github.event_name != 'pull_request'
     uses: ./.github/workflows/build.yaml
     with:
       linux_x64_profile: linux-gcc12_x64

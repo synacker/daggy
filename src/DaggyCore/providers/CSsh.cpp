@@ -1,4 +1,9 @@
 #include "CSsh.hpp"
+#include "../Errors.hpp"
+
+namespace {
+std::chrono::milliseconds check_master_connection_timeout(100);
+}
 
 namespace daggy {
 namespace providers {
@@ -30,8 +35,11 @@ CSsh::~CSsh()
 
 std::error_code CSsh::start() noexcept
 {
-    startMaster();
+#ifndef Q_OS_WIN
+    return startMaster();
+#else
     return CLocal::start();
+#endif
 }
 
 std::error_code CSsh::stop() noexcept
@@ -46,9 +54,10 @@ const QString& CSsh::type() const noexcept
     return provider_type;
 }
 
-const QString& CSsh::controlPath() const
+QString CSsh::controlPath() const
 {
-    static const QString control_path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.ssh/daggy/" + host_;
+    const uint control_hash = qHash(session() + host_);
+    const QString control_path = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QString("/%1.socket").arg(control_hash);
     return settings_.control.isEmpty() ? control_path : settings_.control;
 }
 
@@ -60,9 +69,6 @@ QProcess* CSsh::startProcess(const sources::Command& command)
 
 void CSsh::terminate(QProcess* process)
 {
-    static char ctrlc = 0x003;
-    process->write(&ctrlc, 1);
-    process->waitForBytesWritten();
     process->kill();
 }
 
@@ -81,28 +87,65 @@ void CSsh::onMasterProcessError(QProcess::ProcessError error)
     }
 }
 
-void CSsh::startMaster()
+std::error_code CSsh::startMaster()
 {
-#ifndef Q_OS_WIN32
     if (!ssh_master_ && settings_.control.isEmpty())
     {
         ssh_master_.reset(new QProcess());
 
+        ssh_master_->setStandardErrorFile(masterErrorFile(), QIODeviceBase::Append);
         ssh_master_->start("ssh", makeMasterArguments());
         ssh_master_->waitForStarted();
-        ssh_master_->waitForReadyRead();
+        if (ssh_master_->state() != QProcess::Running) {
+            return daggy::errors::make_error_code(DaggyErrorProviderFailedToStart);
+        }
+
+        auto* timer = new QTimer(this);
+        connect(timer, &QTimer::timeout, [timer, this](){
+            QProcess check_process;
+            check_process.setStandardErrorFile(masterErrorFile(), QIODeviceBase::Append);
+            check_process.start("ssh", {"-o", QString("ControlPath=%1").arg(controlPath()), "-O", "check", host_});
+            check_process.waitForFinished();
+
+            const int failed_check = 255;
+            auto code = check_process.exitCode();
+            if (code != failed_check) {
+                QProcess check_connection;
+                check_connection.setStandardErrorFile(masterErrorFile(), QIODeviceBase::Append);
+                QStringList check_arguments = controlArguments(false);
+                check_arguments += {"-q", host_, "exit"};
+                check_connection.start("ssh", check_arguments);
+                check_connection.waitForFinished();
+                if (check_connection.exitCode() == 0) {
+                    CLocal::start();
+                    timer->stop();
+                    timer->deleteLater();
+                }
+            }
+        });
+        timer->start(check_master_connection_timeout);
     }
-#endif
+    return errors::success;
 }
 
 void CSsh::stopMaster()
 {
     if (ssh_master_) {
-        QProcess::execute("ssh", {"-S", controlPath(), "-O", "exit", host_});
+        if (QFile::exists(controlPath())) {
+            QProcess terminate_process;
+            terminate_process.setStandardErrorFile(masterErrorFile(), QIODeviceBase::Append);
+            terminate_process.start("ssh", {"-S", controlPath(), "-O", "exit", host_});
+            terminate_process.waitForFinished();
+        }
         ssh_master_->terminate();
         ssh_master_->waitForFinished();
         ssh_master_.reset();
     }
+}
+
+QString CSsh::masterErrorFile() const
+{
+    return controlPath() + ".log";
 }
 
 QStringList CSsh::makeMasterArguments() const
@@ -118,7 +161,7 @@ QStringList CSsh::makeMasterArguments() const
 
 QStringList CSsh::makeSlaveArguments(const sources::Command& command) const
 {
-    QStringList result({"-tt", "-F", settings_.config});
+    QStringList result({"-F", settings_.config});
     result << controlArguments(false) << host_;
 
     QString exec = command.second.exec;
@@ -134,31 +177,12 @@ QStringList CSsh::makeSlaveArguments(const sources::Command& command) const
 
 QStringList CSsh::controlArguments(bool master) const
 {
-    if (!ssh_master_)
+    if (!ssh_master_ && settings_.control.isEmpty())
         return {};
 
     return (master ?
             QStringList{ "-o", "ControlMaster=auto", "-o", QString("ControlPath=%1").arg(controlPath())} :
             QStringList{ "-o", "ControlMaster=no", "-S", controlPath()});
-}
-
-const QString& CSsh::Settings::tempPath()
-{
-    static const QString temp_path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.ssh/daggy";
-    QDir temp_dir(temp_path);
-    if (!temp_dir.exists())
-        temp_dir.mkpath(".");
-    return temp_path;
-}
-
-QString CSsh::Settings::tempConfigPath(const QString& session)
-{
-    return tempPath() + "/ssh_config_" + session;
-}
-
-QString CSsh::Settings::tempControlPath(const QString& session)
-{
-    return tempPath() + "/ssh_mux_" + session;
 }
 
 }
