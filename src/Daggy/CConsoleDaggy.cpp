@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "Precompiled.hpp"
 #include "CConsoleDaggy.hpp"
 
 #include <DaggyCore/Core.hpp>
@@ -32,6 +31,10 @@ SOFTWARE.
 #include <DaggyCore/version.h>
 
 using namespace daggy;
+
+namespace {
+std::chrono::milliseconds check_shutdown_timeout(100);
+}
 
 CConsoleDaggy::CConsoleDaggy(QObject* parent)
     : QObject(parent)
@@ -50,7 +53,7 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
 
 CConsoleDaggy::~CConsoleDaggy()
 {
-    file_thread_.terminate();
+    file_thread_.quit();
     file_thread_.wait();
 }
 
@@ -89,6 +92,14 @@ std::error_code CConsoleDaggy::prepare()
 
 std::error_code CConsoleDaggy::start()
 {
+    if (registrateSignalsHandler()) {
+        QTimer *timer = new QTimer(this);
+        connect(timer, &QTimer::timeout, this, &CConsoleDaggy::checkSignalStatus);
+        timer->start(check_shutdown_timeout);
+    } else {
+        return std::make_error_code(std::errc::operation_not_permitted);
+    }
+
     file_thread_.start();
     auto start_error = daggy_core_->start();
     if (!start_error && settings_.timeout > 0) {
@@ -99,6 +110,11 @@ std::error_code CConsoleDaggy::start()
 
 void CConsoleDaggy::stop()
 {
+    if (daggy_core_ == nullptr) {
+        qApp->quit();
+        return;
+    }
+
     if (need_hard_stop_) {
         console_aggreagator_->printAppMessage("HARD STOP");
         delete daggy_core_;
@@ -107,15 +123,6 @@ void CConsoleDaggy::stop()
         daggy_core_->stop();
         need_hard_stop_ = true;
     }
-}
-
-bool CConsoleDaggy::handleSystemSignal(const int signal)
-{
-    if (signal & DEFAULT_SIGNALS) {
-        emit interrupt(signal);
-        return true;
-    }
-    return false;
 }
 
 const QVector<QString>& CConsoleDaggy::supportedConvertors() const
@@ -251,6 +258,7 @@ void CConsoleDaggy::fixPcaps() const
 {
     if (!settings_.fix_pcap)
         return;
+
 #ifdef PCAPNG_SUPPORT
     auto output_folder = QDir(QDir::cleanPath(settings_.output_folder + QDir::separator() + session_));
     QDirIterator pcap_files(output_folder.absolutePath(), {"*.pcap"});
@@ -353,4 +361,28 @@ void CConsoleDaggy::onDaggyCoreStateChanged(DaggyStates state)
         qApp->exit();
         break;
     }
+}
+
+namespace {
+volatile std::sig_atomic_t signal_status;
+
+void signal_handler(int signal)
+{
+    signal_status = signal;
+}
+
+}
+
+void CConsoleDaggy::checkSignalStatus()
+{
+    if (signal_status != 0) {
+        stop();
+    }
+
+    signal_status = 0;
+}
+
+bool CConsoleDaggy::registrateSignalsHandler()
+{
+    return std::signal(SIGINT, signal_handler) != SIG_ERR;
 }

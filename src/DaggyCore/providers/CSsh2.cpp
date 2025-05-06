@@ -21,24 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "../Precompiled.hpp"
 #include "CSsh2.hpp"
 #include "ssh2/Ssh2Client.hpp"
 #include "ssh2/Ssh2Process.hpp"
 #include "../Errors.hpp"
-
-namespace  {
-constexpr const char* kill_command_global =
-          "pids=$(pstree -p $PPID | grep -oP \"\\d+\" | grep -v $PPID | grep -v $$ | tac);"
-          "for pid in $pids; do "
-          "while kill -0 $pid; do "
-          "kill -9 $pid;"
-          "sleep 0.1;"
-          "done "
-          "done ";
-
-const char* kill_command_id = "15397cd1-e80e-4584-9611-5398705fbd8e";
-}
 
 const QString daggy::providers::CSsh2::provider_type("ssh2");
 

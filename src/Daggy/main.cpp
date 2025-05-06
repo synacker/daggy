@@ -6,7 +6,7 @@ using namespace daggy;
 int main(int argc, char** argv) 
 try {
     QCoreApplication app(argc, argv);
-    CConsoleDaggy* console_daggy = new CConsoleDaggy(&app);
+    auto* console_daggy = new CConsoleDaggy(&app);
     auto error = console_daggy->prepare();
     if (error)
         throw std::system_error(error);

@@ -204,6 +204,7 @@ std::error_code Ssh2Channel::openSession()
         error_code = Ssh2Error::TryAgain;
         break;
     case 0:
+        libssh2_channel_set_blocking(ssh2_channel_, 0);
         setSsh2ChannelState(Opened);
         error_code = ssh2_success;
         break;

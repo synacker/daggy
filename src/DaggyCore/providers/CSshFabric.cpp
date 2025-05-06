@@ -75,9 +75,12 @@ daggy::Result<IProvider*> CSshFabric::createProvider(const QString& session, con
     }
 
     const auto& properties = source.second;
+    QString host = properties.host;
+    if (host.isEmpty())
+        host = source.first;
 
     return new CSsh(session,
-                    properties.host,
+                    host,
                     std::move(*parameters),
                     properties.commands,
                     parent);

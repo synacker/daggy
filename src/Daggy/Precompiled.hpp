@@ -20,6 +20,8 @@
 #include <set>
 #include <utility>
 
+#include <csignal>
+
 #ifdef CONAN_BUILD
 #include <kainjow/mustache.hpp>
 #else
@@ -33,8 +35,6 @@
 
 #ifdef Q_OS_WIN
 #include <windows.h>
-#else
-#include <signal.h>
+#include <QWinEventNotifier>
 #endif
-
 

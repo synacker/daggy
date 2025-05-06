@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "../Precompiled.hpp"
 #include "CLocal.hpp"
 #include "../Errors.hpp"
 
@@ -36,11 +35,11 @@ daggy::providers::CLocal::CLocal(const QString& session, sources::Commands comma
 
 daggy::providers::CLocal::~CLocal()
 {
-    for (auto process : processes()) {
+    foreach (auto process, processes()) {
         process->kill();
     }
 
-    for (auto process : processes()) {
+    foreach (auto process, processes()) {
         process->waitForFinished();
     }
 }
@@ -230,11 +229,7 @@ QProcess* daggy::providers::CLocal::startProcess(const sources::Command& command
 
 void daggy::providers::CLocal::terminate(QProcess* process)
 {
-#ifdef Q_OS_WIN
     process->kill();
-#else
-    process->terminate();
-#endif
 }
 
 bool daggy::providers::CLocal::onProcessStop(QProcess* process)

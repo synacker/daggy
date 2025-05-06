@@ -97,7 +97,7 @@ void on_command_state_changed(DaggyCore core, const char* provider_id, const cha
 
 void on_command_stream(DaggyCore core, const char* provider_id, const char* command_id, DaggyStream stream)
 {
-    printf("Command %s in provider %s has stream from session %s: %li\n", command_id, provider_id, stream.session, stream.seq_num);
+    printf("Command %s in provider %s has stream from session %s: %llu\n", command_id, provider_id, stream.session, stream.seq_num);
 }
 
 void on_command_error(DaggyCore core, const char* provider_id, const char* command_id, DaggyError error)

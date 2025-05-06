@@ -107,7 +107,7 @@ void daggy::aggregators::CFile::write()
         if (file->open(QIODevice::Append)) {
             auto bytes_written = file->write(bytes_to_write);
             if (bytes_written > 0 &&
-                bytes_to_write.erase(bytes_to_write.cbegin(), bytes_to_write.cbegin() + bytes_written) == bytes_to_write.cend())
+                bytes_to_write.erase(bytes_to_write.cbegin(), bytes_to_write.cbegin() + bytes_written) == bytes_to_write.end())
             {
                 stream = streams_.erase(stream);
             }

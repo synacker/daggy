@@ -28,14 +28,11 @@ SOFTWARE.
 
 #include <DaggyCore/Types.hpp>
 
-
 namespace daggy {
 namespace aggregators {
 class CConsole;
 }
 }
-
-#include "ISystemSignalHandler.hpp"
 
 class QCoreApplication;
 
@@ -43,8 +40,7 @@ namespace daggy {
 class Core;
 }
 
-class CConsoleDaggy : public QObject,
-                      public ISystemSignalHandler
+class CConsoleDaggy : public QObject
 {
     Q_OBJECT
 public:
@@ -63,9 +59,10 @@ signals:
 
 private slots:
     void onDaggyCoreStateChanged(DaggyStates state);
+    void checkSignalStatus();
 
 private:
-    bool handleSystemSignal(const int signal);
+    bool registrateSignalsHandler();
 
     const QVector<QString>& supportedConvertors() const;
     DaggySourcesTextTypes textFormatType(const QString& file_name) const;
