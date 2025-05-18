@@ -1,7 +1,7 @@
 # Table of contents
 
 * [About Daggy](README.md)
-* [Download and install](https://github.com/synacker/daggy/releases/tag/2.1.1)
+* [Download and install](https://github.com/synacker/daggy/releases/tag/2.2.0)
 * [Daggy Core](daggy-core/README.md)
   * [C++17/20 interface](daggy-core/c++20-interface.md)
   * [ANSI C11 interface](daggy-core/ansi-c11-interface.md)
