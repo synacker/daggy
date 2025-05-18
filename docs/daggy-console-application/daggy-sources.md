@@ -64,13 +64,10 @@ Data aggregation via ssh process
 
 ```yaml
 remotehost:
-    type: ssh2
-    host: 192.168.1.9
-    restart: false
+    type: ssh
+    host: hostname # hostname from config
     parameters:
-      config: ~/.ssh/config
-      control: /tmp/ssh-%r@%h:%p
-      passphrase: {{env_PASSWORD}}
+      config: ~/.ssh/config # default path
     commands:
       pingYa:
         command: ping ya.ru
@@ -80,7 +77,7 @@ remotehost:
 #### SSH parameters
 
 * **config**  - ssh config. By default is \~/.ssh/config
-* c**ontrol** - ssh master control path. If not setted new master connection wiil created
+* c**ontrol** - ssh master control path. If not setted new master connection wiil created in Linux/Macos. Windows ignored this parameter
 * **passphrase** - password for ssh connection if needed
 
 ### SSH2 type
@@ -93,7 +90,6 @@ Data aggregation via ssh2 lib
 remotehost:
     type: ssh2
     host: 192.168.1.9
-    restart: false
     parameters:
       user: muxa
       key: /home/muxa/.ssh/id_rsa

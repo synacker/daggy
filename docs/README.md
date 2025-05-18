@@ -6,7 +6,7 @@ description: Common information about Daggy and Getting Started
 
 ![Daggy Workflow](https://github.com/synacker/daggy/actions/workflows/daggy-github-actions.yaml/badge.svg)
 
-![Daggy](daggy\_logo.svg)
+![Daggy](daggy_logo.svg)
 
 **Daggy - Data Aggregation Utility and C/C++ developer library for data streams catching**
 
@@ -22,26 +22,26 @@ In short terms, daggy run local or remote processes at the same time, simultaneo
 Daggy Screencast
 {% endembed %}
 
-- [Introduction and goal concepts](#introduction-and-goal-concepts)
-  * [Daggy High Level Design](#daggy-high-level-design)
-  * [Basic terms](#basic-terms)
-- [Getting Started](#getting-started)
-  * [Getting Daggy](#getting-daggy)
-    + [Fedora](#fedora)
-    + [Windows](#windows)
-    + [Linux](#linux)
-    + [MacOS](#macos)
-    + [Install from source with conan](#install-from-source-with-conan)
-    + [Install from source with cmake (choose for maintainers)](#--install-from-source-with-cmake--choose-for-maintainers---)
-    + [Add as conan package dependency](#add-as-conan-package-dependency)
-  * [Check installation of Daggy Core C++17/20 interface](#check-installation-of-daggy-core-c--17-20-interface)
-  * [Check installation of Daggy Core C11 interface](#check-installation-of-daggy-core-c11-interface)
-  * [Check installation of Daggy Console application](#check-installation-of-daggy-console-application)
-- [Getting Started data aggregation and streaming with Daggy Console Application](#getting-started-data-aggregation-and-streaming-with-daggy-console-application)
-  * [Simple Sources](#simple-sources)
-    + [Example of Data Aggregation Sources with multiple commands and remote data aggregation and streaming](#example-of-data-aggregation-sources-with-multiple-commands-and-remote-data-aggregation-and-streaming)
+* [Introduction and goal concepts](./#introduction-and-goal-concepts)
+  * [Daggy High Level Design](./#daggy-high-level-design)
+  * [Basic terms](./#basic-terms)
+* [Getting Started](./#getting-started)
+  * [Getting Daggy](./#getting-daggy)
+    * [Fedora](./#fedora)
+    * [Windows](./#windows)
+    * [Linux](./#linux)
+    * [MacOS](./#macos)
+    * [Install from source with conan](./#install-from-source-with-conan)
+    * [Install from source with cmake (choose for maintainers)](./#--install-from-source-with-cmake--choose-for-maintainers---)
+    * [Add as conan package dependency](./#add-as-conan-package-dependency)
+  * [Check installation of Daggy Core C++17/20 interface](./#check-installation-of-daggy-core-c--17-20-interface)
+  * [Check installation of Daggy Core C11 interface](./#check-installation-of-daggy-core-c11-interface)
+  * [Check installation of Daggy Console application](./#check-installation-of-daggy-console-application)
+* [Getting Started data aggregation and streaming with Daggy Console Application](./#getting-started-data-aggregation-and-streaming-with-daggy-console-application)
+  * [Simple Sources](./#simple-sources)
+    * [Example of Data Aggregation Sources with multiple commands and remote data aggregation and streaming](./#example-of-data-aggregation-sources-with-multiple-commands-and-remote-data-aggregation-and-streaming)
 
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+[_Table of contents generated with markdown-toc_](http://ecotrust-canada.github.io/markdown-toc/)
 
 ## Introduction and goal concepts
 
@@ -52,7 +52,7 @@ The **Daggy Project** consist of:
 
 ### Daggy High Level Design
 
-![](daggy\_hld.svg)\
+![](daggy_hld.svg)\
 **Daggy High Level Design**
 
 ### Basic terms
@@ -131,8 +131,7 @@ Download rpm/deb or portable version from [releases page](https://github.com/syn
 Download portable version from [releases page](https://github.com/synacker/daggy/releases) or install via homebrew:
 
 ```shell
-brew tap synacker/daggy
-brew install --build-from-source daggy
+brew install --build-from-source synacker/daggy/daggy
 ```
 
 #### Install from source with conan
@@ -159,7 +158,7 @@ conan build ../daggy
 git clone https://github.com/synacker/daggy.git
 mkdir build
 cd build
-cmake -DVERSION=2.1.3 ../daggy/src -DBUILD_SHARED_LIBS=ON
+cmake -DVERSION=2.2.0 ../daggy/src -DBUILD_SHARED_LIBS=ON
 cmake --build .
 ```
 
@@ -170,7 +169,7 @@ Get daggy [from conan-center](https://conan.io/center/daggy).
 {% code title="conanfile.py" %}
 ```python
 def requirements(self):
-    self.requires("daggy/2.1.2")
+    self.requires("daggy/2.2.0")
 ```
 {% endcode %}
 
