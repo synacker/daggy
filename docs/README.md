@@ -4,7 +4,7 @@ description: Common information about Daggy and Getting Started
 
 # About Daggy
 
-![Daggy Workflow](https://github.com/synacker/daggy/actions/workflows/daggy-github-actions.yaml/badge.svg)
+![Daggy Workflow](https://github.com/synacker/daggy/actions/workflows/push.yaml/badge.svg)
 
 ![Daggy](daggy_logo.svg)
 
