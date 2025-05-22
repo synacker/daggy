@@ -375,11 +375,10 @@ void signal_handler(int signal)
 
 void CConsoleDaggy::checkSignalStatus()
 {
-    if (signal_status != 0) {
+    if (signal_status == SIGINT) {
+        signal_status = 0;
         stop();
     }
-
-    signal_status = 0;
 }
 
 bool CConsoleDaggy::registrateSignalsHandler()
