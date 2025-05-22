@@ -8,6 +8,7 @@ namespace providers {
 
 class CSsh : public CLocal
 {
+    Q_OBJECT
 public:
     struct Settings
     {
@@ -48,6 +49,7 @@ private:
     QStringList makeSlaveArguments(const sources::Command& command) const;
 
     QStringList controlArguments(bool master) const;
+    void controlTerminate() const;
 
     const QString host_;
     const Settings settings_;

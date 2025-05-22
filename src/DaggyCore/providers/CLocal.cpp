@@ -203,7 +203,7 @@ void daggy::providers::CLocal::terminateAll()
 
     if (activeProcessesCount() > 0) {
         setState(DaggyProviderFinishing);
-        for (QProcess* process : processes()) {
+        foreach (QProcess* process, processes()) {
             switch (process->state()) {
             case QProcess::Running:
             {

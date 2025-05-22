@@ -25,12 +25,7 @@ CSsh::CSsh(const QString& session,
 
 CSsh::~CSsh()
 {
-    if (ssh_master_)
-    {
-        ssh_master_->kill();
-        ssh_master_->waitForFinished();
-        ssh_master_.reset();
-    }
+    CSsh::stop();
 }
 
 std::error_code CSsh::start() noexcept
@@ -44,9 +39,8 @@ std::error_code CSsh::start() noexcept
 
 std::error_code CSsh::stop() noexcept
 {
-    auto result = CLocal::stop();
     stopMaster();
-    return result;
+    return CLocal::stop();
 }
 
 const QString& CSsh::type() const noexcept
@@ -94,14 +88,19 @@ std::error_code CSsh::startMaster()
         ssh_master_.reset(new QProcess());
 
         ssh_master_->setStandardErrorFile(masterErrorFile(), QIODeviceBase::Append);
+        connect(ssh_master_.get(), &QProcess::finished, this, &CSsh::controlTerminate);
+
+
         ssh_master_->start("ssh", makeMasterArguments());
         ssh_master_->waitForStarted();
+
+
         if (ssh_master_->state() != QProcess::Running) {
             return daggy::errors::make_error_code(DaggyErrorProviderFailedToStart);
         }
 
         auto* timer = new QTimer(this);
-        connect(timer, &QTimer::timeout, [timer, this](){
+        connect(timer, &QTimer::timeout, timer, [timer, this](){
             QProcess check_process;
             check_process.setStandardErrorFile(masterErrorFile(), QIODeviceBase::Append);
             check_process.start("ssh", {"-o", QString("ControlPath=%1").arg(controlPath()), "-O", "check", host_});
@@ -128,15 +127,20 @@ std::error_code CSsh::startMaster()
     return errors::success;
 }
 
+void daggy::providers::CSsh::controlTerminate() const
+{
+    if (QFile::exists(controlPath())) {
+        QProcess terminate_process;
+        terminate_process.setStandardErrorFile(masterErrorFile(), QIODeviceBase::Append);
+        terminate_process.start("ssh", {"-S", controlPath(), "-O", "exit", host_});
+        terminate_process.waitForFinished();
+    }
+}
+
 void CSsh::stopMaster()
 {
     if (ssh_master_) {
-        if (QFile::exists(controlPath())) {
-            QProcess terminate_process;
-            terminate_process.setStandardErrorFile(masterErrorFile(), QIODeviceBase::Append);
-            terminate_process.start("ssh", {"-S", controlPath(), "-O", "exit", host_});
-            terminate_process.waitForFinished();
-        }
+        controlTerminate();
         ssh_master_->terminate();
         ssh_master_->waitForFinished();
         ssh_master_.reset();

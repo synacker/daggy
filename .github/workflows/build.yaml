@@ -155,11 +155,9 @@ jobs:
           testdir: build
           name: ${{inputs.win_x64_profile}} tests
    
-      - uses: ./.github/actions/deploy_with_sign
+      - uses: ./.github/actions/deploy
         if: inputs.sign != 'none'
         with:
           builddir: build
           artifact: ${{inputs.win_x64_profile}}
-          sign: ${{inputs.sign}}
-          signeddir: build/signed
-          token: ${{secrets.SIGNPATH_API_TOKEN}}
+          attestation: ${{inputs.sign != ''}}
