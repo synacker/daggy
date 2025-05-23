@@ -44,7 +44,7 @@ CConsoleDaggy::CConsoleDaggy(QObject* parent)
 {
     qApp->setApplicationName("daggy");
     qApp->setOrganizationName(DAGGY_VENDOR);
-    qApp->setApplicationVersion(DAGGY_VERSION);
+    qApp->setApplicationVersion(DAGGY_VERSION_EXTENDED);
     qApp->setOrganizationDomain("https://github.com/synacker/daggy");
 
     connect(this, &CConsoleDaggy::interrupt, this, &CConsoleDaggy::stop, Qt::QueuedConnection);

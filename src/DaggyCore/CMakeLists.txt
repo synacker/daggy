@@ -84,18 +84,18 @@ endif()
 
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
-configure_file(version.h.in ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/version.h @ONLY)
+configure_file(version.h.in ${CMAKE_CURRENT_LIST_DIR}/version.h @ONLY)
 
 include(GenerateExportHeader)
-generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/daggycore_export.h)
+generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_CURRENT_LIST_DIR}/daggycore_export.h)
 target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
 
 target_sources(${TARGET}
     PUBLIC FILE_SET HEADERS
-    BASE_DIRS ${CMAKE_BINARY_EXPORTS_DIR}
+    BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/..
     FILES
-        ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/version.h
-        ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/daggycore_export.h
+        version.h
+        daggycore_export.h
 )
 
 if (BUILD_TESTING)
