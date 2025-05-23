@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.24)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(version)
-SET_GIT_VERSION()
+SET_VERSION()
 
 project(daggy
         DESCRIPTION "Data Aggregation Utility"
@@ -16,7 +16,7 @@ set(CMAKE_BINARY_EXPORTS_DIR ${CMAKE_BINARY_DIR}/exports/)
 include_directories(${CMAKE_BINARY_EXPORTS_DIR})
 
 set(PROJECT_VENDOR synacker)
-set(PROJECT_COPYRIGTH "Copyright \\251 2024 Mikhail Milovidov. Some Rights Reserved")
+set(PROJECT_COPYRIGTH "Copyright \\251 2025 Mikhail Milovidov. Some Rights Reserved")
 
 option(SSH2_SUPPORT "ssh2 data provider support" ON)
 option(YAML_SUPPORT "yaml data sources support" ON)
