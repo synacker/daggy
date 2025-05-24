@@ -75,7 +75,8 @@ DaggyVersion Core::version() const noexcept
         DAGGY_VERSION_TWEAK,
         DAGGY_VERSION_BRANCH,
         DAGGY_VENDOR,
-        DAGGY_VERSION_COMMIT
+        DAGGY_VERSION_COMMIT,
+        DAGGY_VERSION_EXTENDED
     };
 }
 

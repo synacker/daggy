@@ -14,6 +14,12 @@ on:
         default: win-msvc194_x64
         type: string
 
+      win_x64_apponly_profile:
+        description: profile for win x64
+        required: true
+        default: win-msvc194_x64_static
+        type: string
+
       macos_arm_profile:
         description: profile for macos arm
         required: true
@@ -38,6 +44,7 @@ jobs:
     with:
       linux_x64_profile: ${{inputs.linux_x64_profile}}
       win_x64_profile: ${{inputs.win_x64_profile}}
+      win_x64_apponly_profile: ${{inputs.win_x64_apponly_profile}}
       macos_arm_profile: ${{inputs.macos_arm_profile}}
       macos_x64_profile: ${{inputs.macos_x64_profile}}
 
@@ -137,8 +144,6 @@ jobs:
     needs: [cache]
     permissions:
       id-token: write
-      contents: read
-      checks: write
       attestations: write
     steps:
       - uses: actions/checkout@v4
@@ -160,4 +165,35 @@ jobs:
         with:
           builddir: build
           artifact: ${{inputs.win_x64_profile}}
+          attestation: ${{inputs.sign != ''}}
+    
+  win-x64-apponly-build:
+    runs-on: windows-2022
+    needs: [cache]
+    permissions:
+      id-token: write
+      contents: read
+      checks: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/enable_python
+      - uses: ./.github/actions/conan_build
+        with:
+          profile: ${{inputs.win_x64_apponly_profile}}
+          args: -o daggy/*:apponly=True
+      
+      - uses: ./.github/actions/tests
+        with:
+          testdir: build
+          name: ${{inputs.win_x64_profile}} tests
+   
+      - uses: ./.github/actions/deploy
+        if: inputs.sign != 'none'
+        with:
+          builddir: build
+          artifact: ${{inputs.win_x64_apponly_profile}}
           attestation: ${{inputs.sign != ''}}

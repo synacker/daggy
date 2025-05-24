@@ -5,6 +5,10 @@ inputs:
     description: conan-profile
     required: true
     default: default
+  args:
+    description: conan build apponly option
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -25,5 +29,5 @@ runs:
       shell: bash
       run: | 
         conan config install CI/conan
-        conan install . --build=missing --profile:build=${{inputs.profile}} --profile:host=${{inputs.profile}} --output-folder=.
+        conan install . --build=missing --profile:build=${{inputs.profile}} --profile:host=${{inputs.profile}} --output-folder=. ${{inputs.args}}
         conan cache clean "*" --source --build --temp --download

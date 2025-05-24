@@ -14,6 +14,13 @@ on:
               default: win-msvc194_x64
               type: string
 
+          win_x64_apponly_profile:
+              description: profile for win x64 static build
+              required: true
+              default: win-msvc194_x64_static
+              type: string
+
+
           macos_arm_profile:
               description: profile for macos arm
               required: true
@@ -32,13 +39,14 @@ jobs:
     with:
       linux_x64_profile: ${{inputs.linux_x64_profile}}
       win_x64_profile: ${{inputs.win_x64_profile}}
+      win_x64_apponly_profile: ${{inputs.win_x64_apponly_profile}}
       macos_arm_profile: ${{inputs.macos_arm_profile}}
       macos_x64_profile: ${{inputs.macos_x64_profile}}
 
   linux-x64-make-cache:
     runs-on: ubuntu-22.04
     needs: [check-cache]
-    if: ${{needs.check-cache.outputs.linux_x64_hit != 'true'}}
+    if: ${{ needs.check-cache.outputs.linux_x64_hit == false }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_ubuntu_env
@@ -50,7 +58,7 @@ jobs:
   macos-arm-make-cache:
     runs-on: macos-14
     needs: [check-cache]
-    if: ${{needs.check-cache.outputs.macos_arm_hit != 'true'}}
+    if: ${{ needs.check-cache.outputs.macos_arm_hit == false }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/enable_python_macos
@@ -61,7 +69,7 @@ jobs:
   macos-x64-make-cache:
     runs-on: macos-13
     needs: [check-cache]
-    if: ${{needs.check-cache.outputs.macos_x64_hit != 'true'}}
+    if: ${{ needs.check-cache.outputs.macos_x64_hit == false }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/enable_python_macos
@@ -72,12 +80,24 @@ jobs:
   win-x64-make-cache:
     runs-on: windows-2022
     needs: [check-cache]
-    if: ${{needs.check-cache.outputs.win_x64_hit != 'true'}}
+    if: ${{ needs.check-cache.outputs.win_x64_hit == false }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/enable_conan
         with:
           profile: ${{inputs.win_x64_profile}}
+
+  win-x64-apponly-make-cache:
+    runs-on: windows-2022
+    needs: [check-cache]
+    if: ${{ needs.check-cache.outputs.win_x64_apponly_hit == false }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/enable_python
+      - uses: ./.github/actions/enable_conan
+        with:
+          profile: ${{inputs.win_x64_apponly_profile}}
+          args: -o daggy/*:apponly=True
 
     

@@ -1,6 +1,6 @@
 include (CMakeParseArguments)
 
-macro(SET_GIT_VERSION)
+macro(SET_VERSION)
     cmake_parse_arguments(GIT_VERSION
                           ""
                           ""
@@ -60,13 +60,25 @@ macro(SET_GIT_VERSION)
             set(GIT_DEFAULT_BRANCH master)
         endif()
 
+        execute_process(COMMAND
+                "${GIT_EXECUTABLE}"
+                rev-parse
+                --short=6
+                HEAD
+                WORKING_DIRECTORY
+                "${CMAKE_CURRENT_SOURCE_DIR}"
+                OUTPUT_VARIABLE
+                VERSION_COMMIT_SHORT
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+
         string(REGEX REPLACE "^v" "" VERSION ${VERSION_TAG})
         set(VERSION ${VERSION}.${VERSION_BUILD})
-        set(VERSION_FULL ${VERSION}-${VERSION_BRANCH})
-        if (VERSION_BRANCH STREQUAL ${GIT_DEFAULT_BRANCH} OR VERSION_BRANCH MATCHES "release/.*")
-            set(VERSION_STANDARD ${VERSION})
+        set(VERSION_FULL ${VERSION}-${VERSION_COMMIT_SHORT})
+        if (${VERSION_BUILD} EQUAL 0)
+            set(VERSION_EXTENDED ${VERSION})
         else()
-            set(VERSION_STANDARD ${VERSION_FULL})
+            set(VERSION_EXTENDED ${VERSION_FULL})
         endif()
 
         execute_process(COMMAND
@@ -79,7 +91,12 @@ macro(SET_GIT_VERSION)
                 VERSION_COMMIT
                 OUTPUT_STRIP_TRAILING_WHITESPACE
         )
+    else()
+        if(NOT DEFINED VERSION_EXTENDED)
+            set(VERSION_EXTENDED ${VERSION})
+        endif()
     endif()
+
     message(STATUS
         "Version was set:\n"
         "Tag: ${VERSION_TAG}\n"
@@ -87,7 +104,7 @@ macro(SET_GIT_VERSION)
         "Full: ${VERSION_FULL}\n"
         "Branch: ${VERSION_BRANCH}\n"
         "Build: ${VERSION_BUILD}\n"
-        "Standard: ${VERSION_STANDARD}\n"
+        "Extended: ${VERSION_EXTENDED}\n"
         "Commit: ${VERSION_COMMIT}"
     )
 endmacro()
