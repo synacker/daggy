@@ -3,7 +3,6 @@ set(TARGET DaggyCore)
 find_package(Qt6 COMPONENTS Core Network REQUIRED)
 add_library(${TARGET})
 include(rpath_lib)
-
 set_target_properties(${TARGET} PROPERTIES AUTOMOC ON)
 
 target_sources(${TARGET}
