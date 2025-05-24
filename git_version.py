@@ -59,15 +59,22 @@ class GitVersion():
         return stream.read().strip()
     
     @property
-    def full(self):
-        return f"{self.version}-{self.branch}"
+    def short(self):
+        stream = os.popen("git rev-parse --short=6 HEAD")
+        return stream.read().strip()
     
     @property
-    def standard(self):
-        standard = f"{self.version}-{self.branch}"
-        if self.branch == self.default_branch or re.match("release/.*", self.branch):
-            standard = f"{self.version}"
-        return standard
+    def full(self):
+        return f"{self.version}-{self.short}"
+
+    
+    @property
+    def extended(self):
+        if self.build == 0:
+            extended = f"{self.version}"
+        else:
+            extended = f"{self.version}-{self.short}"
+        return extended
     
     @property
     def commit(self):
@@ -82,7 +89,7 @@ class GitVersion():
         Full: {self.full}
         Branch: {self.branch}
         Build: {self.build}
-        Standard: {self.standard}
+        Extended: {self.extended}
         Commit: {self.commit}
         """
 

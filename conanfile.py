@@ -63,10 +63,9 @@ class DaggyConan(ConanFile):
         if self.settings.os == "Windows":
             del self.options.fPIC
 
-        self.options["qt"].shared = True
-        
-        if self.settings.os == "Windows":
-            self.options["libssh2"].shared = True
+        self.options["qt"].shared = self.options.shared
+        self.options["libssh2"].shared = self.options.shared
+        self.options["yaml-cpp"].shared = self.options.shared
         
     def build_requirements(self):
         self.tool_requires("cmake/3.30.1")
@@ -109,10 +108,11 @@ class DaggyConan(ConanFile):
         tc.cache_variables["YAML_SUPPORT"] = True
         tc.cache_variables["CONSOLE"] = True
         tc.cache_variables["PCAPNG_SUPPORT"] = False
-        tc.cache_variables["PACKAGE_DEPS"] = True
+        tc.cache_variables["PORTABLE_BUILD"] = True
         tc.cache_variables["BUILD_TESTING"] = True
         tc.cache_variables["CONAN_BUILD"] = True
         tc.cache_variables["VERSION"] = GitVersion().version
+        tc.cache_variables["VERSION_EXTENDED"] = GitVersion().extended
         
         if self.options.shared:
             tc.cache_variables["CMAKE_C_VISIBILITY_PRESET"] = "hidden"

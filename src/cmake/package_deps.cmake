@@ -1,4 +1,4 @@
-if (PACKAGE_DEPS)
+if (PORTABLE_BUILD AND CONAN_BUILD)
     install(TARGETS ${TARGET}
             RUNTIME_DEPENDENCY_SET ${TARGET}_deps
     )
@@ -13,5 +13,6 @@ if (PACKAGE_DEPS)
                 [=[.*system32\/.*\.dll]=]
                 [=[^\/(lib|usr\/lib|usr\/local\/lib\/lib64)]=]
             DIRECTORIES ${CONAN_RUNTIME_LIB_DIRS} ${CONAN_LIB_DIRS}
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
     )
 endif()

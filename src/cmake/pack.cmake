@@ -60,9 +60,8 @@ set(CPACK_IFW_PACKAGE_STYLE_SHEET ${CMAKE_CURRENT_LIST_DIR}/installer.qss)
 set(CPACK_IFW_PACKAGE_TITLE_COLOR "#007A5C")
 set(CPACK_IFW_PACKAGE_NAME ${CPACK_PACKAGE_NAME})
 
-if(PACKAGE_DEPS)
-    include(package_deps)
-endif()
+
+include(package_deps)
 
 IF(${CPACK_SYSTEM_NAME} MATCHES Windows)
     IF(CMAKE_CL_64)
