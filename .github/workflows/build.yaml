@@ -144,6 +144,8 @@ jobs:
     needs: [cache]
     permissions:
       id-token: write
+      contents: read
+      checks: write
       attestations: write
     steps:
       - uses: actions/checkout@v4
