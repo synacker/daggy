@@ -46,7 +46,7 @@ jobs:
   linux-x64-make-cache:
     runs-on: ubuntu-22.04
     needs: [check-cache]
-    if: !needs.check-cache.outputs.linux_x64_hit
+    if: ${{ needs.check-cache.outputs.linux_x64_hit == false }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_ubuntu_env
@@ -58,7 +58,7 @@ jobs:
   macos-arm-make-cache:
     runs-on: macos-14
     needs: [check-cache]
-    if: !needs.check-cache.outputs.macos_arm_hit
+    if: ${{ needs.check-cache.outputs.macos_arm_hit == false }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/enable_python_macos
@@ -69,7 +69,7 @@ jobs:
   macos-x64-make-cache:
     runs-on: macos-13
     needs: [check-cache]
-    if: !needs.check-cache.outputs.macos_x64_hit
+    if: ${{ needs.check-cache.outputs.macos_x64_hit == false }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/enable_python_macos
@@ -80,7 +80,7 @@ jobs:
   win-x64-make-cache:
     runs-on: windows-2022
     needs: [check-cache]
-    if: !needs.check-cache.outputs.win_x64_hit
+    if: ${{ needs.check-cache.outputs.win_x64_hit == false }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/enable_python
@@ -91,7 +91,7 @@ jobs:
   win-x64-apponly-make-cache:
     runs-on: windows-2022
     needs: [check-cache]
-    if: !needs.check-cache.outputs.win_x64_apponly_hit
+    if: ${{ needs.check-cache.outputs.win_x64_apponly_hit == false }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/enable_python
