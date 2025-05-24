@@ -198,7 +198,7 @@ jobs:
       - uses: ./.github/actions/tests
         with:
           testdir: build
-          name: ${{inputs.win_x64_profile}} tests
+          name: ${{inputs.win_x64_apponly_profile}} tests
    
       - uses: ./.github/actions/deploy
         if: inputs.sign != 'none'
