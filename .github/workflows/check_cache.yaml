@@ -14,6 +14,12 @@ on:
             default: win-msvc194_x64
             type: string
 
+        win_x64_apponly_profile:
+            description: profile for win x64 static
+            required: true
+            default: win-msvc194_x64_static
+            type: string
+
         macos_arm_profile:
             description: profile for macos arm
             required: true
@@ -35,6 +41,8 @@ on:
             value: ${{jobs.macos-x64-check-cache.outputs.exists}}
         win_x64_hit:
             value: ${{jobs.win-x64-check-cache.outputs.exists}}
+        win_x64_apponly_hit:
+            value: ${{jobs.win-x64-apponly-check-cache.outputs.exists}}
 
 jobs:
   linux-x64-check-cache:
@@ -80,5 +88,16 @@ jobs:
         id: check-cache
         with:
             profile: ${{inputs.win_x64_profile}}
+
+  win-x64-apponly-check-cache:
+    runs-on: windows-2022
+    outputs:
+        exists: ${{steps.check-cache.outputs.exists}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/check_cache
+        id: check-cache
+        with:
+            profile: ${{inputs.win_x64_apponly_profile}}
 
     
