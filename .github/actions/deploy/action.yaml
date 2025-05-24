@@ -31,3 +31,4 @@ runs:
             ${{inputs.builddir}}/*.zip
             ${{inputs.builddir}}/*.rpm
             ${{inputs.builddir}}/*.deb
+            ${{inputs.builddir}}/*.msi

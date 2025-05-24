@@ -5,6 +5,10 @@ add_library(${TARGET})
 include(rpath_lib)
 set_target_properties(${TARGET} PROPERTIES AUTOMOC ON)
 
+if (BUILD_SHARED_LIBS)
+    include(versionmeta)
+endif()
+
 target_sources(${TARGET}
     PRIVATE
         Core.cpp
@@ -103,14 +107,17 @@ if (BUILD_TESTING)
     add_subdirectory(tests/interface)
 endif()
 
-if(UNIX)
-    install(TARGETS ${TARGET} LIBRARY)
-else()
-    install(TARGETS ${TARGET} ARCHIVE)
+if(NOT APPONLY_BUILD)
+    if(UNIX)
+        install(TARGETS ${TARGET} LIBRARY)
+    else()
+        install(TARGETS ${TARGET} ARCHIVE)
+    endif()
+
     if (BUILD_SHARED_LIBS)
         install(TARGETS ${TARGET} RUNTIME)
     endif()
-endif()
 
-install(TARGETS ${TARGET} FILE_SET HEADERS)
-include(package_deps)
+    install(TARGETS ${TARGET} FILE_SET HEADERS)
+    include(package_deps)
+endif()
