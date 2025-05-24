@@ -180,6 +180,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Install WiX
+        run: dotnet tool install --global wix
+      
+      - name: Install WiX UI extension
+        run: wix extension add --global WixToolset.UI.wixext
+
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/conan_build
         with:

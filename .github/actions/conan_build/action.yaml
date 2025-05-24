@@ -27,4 +27,4 @@ runs:
 
     - name: Conan build
       shell: bash
-      run: conan build . --profile:build=${{inputs.profile}} --profile:host=${{inputs.profile}} --build=missing --output-folder=. ${{inputs.args}
+      run: conan build . --profile:build=${{inputs.profile}} --profile:host=${{inputs.profile}} --build=missing --output-folder=. ${{inputs.args}}
