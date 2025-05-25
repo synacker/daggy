@@ -40,7 +40,7 @@ runs:
           output: ${{inputs.signeddir}}
           policy: ${{inputs.sign}}
           token: ${{inputs.token}}
-          sign: ${{inputs.sign-slug}}
+          slug: ${{inputs.sign-slug}}
       
       - name: Attest
         if: ${{inputs.sign != ''}}
