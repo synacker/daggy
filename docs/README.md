@@ -154,11 +154,13 @@ conan build ../daggy
 **System dependencies:** qt6 (Core and Network), libssh2, libyaml-cpp, kainjow-mustache
 {% endhint %}
 
+The tweak number must set to zero. It means, if you get version 2.2.1 you need to set ```-DVERSION=2.2.1.0```.
+
 ```bash
 git clone https://github.com/synacker/daggy.git
 mkdir build
 cd build
-cmake -DVERSION=2.2.0 ../daggy/src -DBUILD_SHARED_LIBS=ON
+cmake -DVERSION=2.2.0.0 ../daggy/src -DBUILD_SHARED_LIBS=ON
 cmake --build .
 ```
 
