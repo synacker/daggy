@@ -13,11 +13,13 @@ inputs:
   signeddir:
     description: directory for signed artifacts
     reguired: true
-
   artifact:
     description: artifact name
     required: true
-
+  sign-slug:
+    description: slug name for sign
+    required: true
+    defualt: msi
   token:
     description: token for sign api
     required: true
@@ -38,6 +40,7 @@ runs:
           output: ${{inputs.signeddir}}
           policy: ${{inputs.sign}}
           token: ${{inputs.token}}
+          sign: ${{inputs.sign-slug}}
       
       - name: Attest
         if: ${{inputs.sign != ''}}
