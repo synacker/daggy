@@ -107,17 +107,31 @@ if (BUILD_TESTING)
     add_subdirectory(tests/interface)
 endif()
 
-if(NOT APPONLY_BUILD)
+if (NOT APPONLY_BUILD)
     if(UNIX)
-        install(TARGETS ${TARGET} LIBRARY)
+        install(TARGETS ${TARGET}
+                EXPORT ${TARGET}Targets
+                PUBLIC_HEADER FILE_SET HEADERS
+                LIBRARY)
+        install(EXPORT ${TARGET}Targets
+            FILE ${TARGET}Targets.cmake
+            NAMESPACE "${PROJECT_NAME}::"
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
+
+        include(CMakePackageConfigHelpers)
+        configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+                                       "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake"
+                                       INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake
+                DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
+
     else()
-        install(TARGETS ${TARGET} ARCHIVE)
+        install(TARGETS ${TARGET}
+                PUBLIC_HEADER FILE_SET HEADERS
+                ARCHIVE
+                RUNTIME)
     endif()
-
-    if (BUILD_SHARED_LIBS)
-        install(TARGETS ${TARGET} RUNTIME)
-    endif()
-
-    install(TARGETS ${TARGET} FILE_SET HEADERS)
     include(package_deps)
 endif()
+
+
