@@ -1,0 +1,6 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/@TARGET@Targets.cmake")
+
+check_requred_compinents(@TARGET@)
+include(CMakeFindDependencyMacro)
