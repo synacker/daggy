@@ -1,48 +1,11 @@
 name: Make cache deps
 on: 
-  workflow_call:
-      inputs:
-          linux_x64_profile:
-              description: profile for linux x64
-              required: true
-              default: linux-gcc12_x64
-              type: string
-
-          win_x64_profile:
-              description: profile for win x64
-              required: true
-              default: win-msvc194_x64
-              type: string
-
-          win_x64_apponly_profile:
-              description: profile for win x64 static build
-              required: true
-              default: win-msvc194_x64_static
-              type: string
-
-
-          macos_arm_profile:
-              description: profile for macos arm
-              required: true
-              default: macos-clang15_arm
-              type: string
-
-          macos_x64_profile:
-              description: profile for macos x64
-              required: true
-              default: macos-clang15_x64
-              type: string
+  workflow_call:   
 
 jobs:
   check-cache:
     uses: ./.github/workflows/check_cache.yaml
-    with:
-      linux_x64_profile: ${{inputs.linux_x64_profile}}
-      win_x64_profile: ${{inputs.win_x64_profile}}
-      win_x64_apponly_profile: ${{inputs.win_x64_apponly_profile}}
-      macos_arm_profile: ${{inputs.macos_arm_profile}}
-      macos_x64_profile: ${{inputs.macos_x64_profile}}
-
+    
   linux-x64-make-cache:
     runs-on: ubuntu-22.04
     needs: [check-cache]
@@ -53,7 +16,7 @@ jobs:
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/enable_conan
         with:
-          profile: ${{inputs.linux_x64_profile}}
+          profile: ${{vars.LINUX_X64_PROFILE}}
 
   macos-arm-make-cache:
     runs-on: macos-14
@@ -64,7 +27,7 @@ jobs:
       - uses: ./.github/actions/enable_python_macos
       - uses: ./.github/actions/enable_conan
         with:
-          profile: ${{inputs.macos_arm_profile}}
+          profile: ${{vars.MACOS_ARM_PROFILE}}
 
   macos-x64-make-cache:
     runs-on: macos-13
@@ -75,7 +38,7 @@ jobs:
       - uses: ./.github/actions/enable_python_macos
       - uses: ./.github/actions/enable_conan
         with:
-          profile: ${{inputs.macos_x64_profile}}
+          profile: ${{vars.MACOS_X64_PROFILE}}
           
   win-x64-make-cache:
     runs-on: windows-2022
@@ -86,18 +49,4 @@ jobs:
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/enable_conan
         with:
-          profile: ${{inputs.win_x64_profile}}
-
-  win-x64-apponly-make-cache:
-    runs-on: windows-2022
-    needs: [check-cache]
-    if: ${{ needs.check-cache.outputs.win_x64_apponly_hit == false }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/enable_python
-      - uses: ./.github/actions/enable_conan
-        with:
-          profile: ${{inputs.win_x64_apponly_profile}}
-          args: -o daggy/*:apponly=True
-
-    
+          profile: ${{vars.WIN_X64_PROFILE}}

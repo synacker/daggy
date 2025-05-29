@@ -1,37 +1,6 @@
 name: Check cache deps
 on: 
   workflow_call:
-    inputs:
-        linux_x64_profile:
-            description: profile for linux x64
-            required: true
-            default: linux-gcc12_x64
-            type: string
-
-        win_x64_profile:
-            description: profile for win x64
-            required: true
-            default: win-msvc194_x64
-            type: string
-
-        win_x64_apponly_profile:
-            description: profile for win x64 static
-            required: true
-            default: win-msvc194_x64_static
-            type: string
-
-        macos_arm_profile:
-            description: profile for macos arm
-            required: true
-            default: macos-clang15_arm
-            type: string
-
-        macos_x64_profile:
-            description: profile for macos x64
-            required: true
-            default: macos-clang15_x64
-            type: string
-
     outputs:
         linux_x64_hit:
             value: ${{jobs.linux-x64-check-cache.outputs.exists}}
@@ -41,8 +10,6 @@ on:
             value: ${{jobs.macos-x64-check-cache.outputs.exists}}
         win_x64_hit:
             value: ${{jobs.win-x64-check-cache.outputs.exists}}
-        win_x64_apponly_hit:
-            value: ${{jobs.win-x64-apponly-check-cache.outputs.exists}}
 
 jobs:
   linux-x64-check-cache:
@@ -54,7 +21,7 @@ jobs:
       - uses: ./.github/actions/check_cache
         id: check-cache
         with:
-            profile:  ${{inputs.linux_x64_profile}}
+            profile:  ${{ vars.LINUX_X64_PROFILE }}
 
   macos-arm-check-cache:
     runs-on: macos-14
@@ -65,7 +32,7 @@ jobs:
       - uses: ./.github/actions/check_cache
         id: check-cache
         with:
-            profile: ${{inputs.macos_arm_profile}}
+            profile: ${{ vars.MACOS_ARM_PROFILE }}
 
   macos-x64-check-cache:
     runs-on: macos-13
@@ -76,7 +43,7 @@ jobs:
       - uses: ./.github/actions/check_cache
         id: check-cache
         with:
-            profile: ${{inputs.macos_x64_profile}}
+            profile: ${{ vars.MACOS_X64_PROFILE }}
           
   win-x64-check-cache:
     runs-on: windows-2022
@@ -87,17 +54,4 @@ jobs:
       - uses: ./.github/actions/check_cache
         id: check-cache
         with:
-            profile: ${{inputs.win_x64_profile}}
-
-  win-x64-apponly-check-cache:
-    runs-on: windows-2022
-    outputs:
-        exists: ${{steps.check-cache.outputs.exists}}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/check_cache
-        id: check-cache
-        with:
-            profile: ${{inputs.win_x64_apponly_profile}}
-
-    
+            profile: ${{ vars.WIN_X64_PROFILE }}
