@@ -90,6 +90,7 @@ struct {
     const char* postfix;
     const char* vendor;
     const char* commit;
+    const char* extended;
 } typedef DaggyVersion;
 
 typedef void* DaggyCore;

@@ -11,9 +11,7 @@ endif()
 
 project(daggy_dev)
 
-option(CONAN_BUILD "build with conan" ON)
-add_definitions(-DCONAN_BUILD)
-option(PACKAGE_DEPS "include daggy deps into package" ON)
+set(PORTABLE_BUILD ON)
 
 include(CTest)
 add_subdirectory(src)

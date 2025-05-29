@@ -1,0 +1,13 @@
+name: Sign release
+on: 
+  push:
+    tags:
+        - v*
+
+jobs:
+  build:
+    uses: ./.github/workflows/sign_build.yaml
+    with:
+      sign: 'release-signing'
+    secrets: inherit
+    

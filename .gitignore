@@ -35,3 +35,5 @@ src/inline_umlgraph_cache_all.pu
 CMakeUserPresets.json
 
 Release/
+
+src/DaggyCore/version.h

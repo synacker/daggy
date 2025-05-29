@@ -13,11 +13,13 @@ inputs:
   signeddir:
     description: directory for signed artifacts
     reguired: true
-
   artifact:
     description: artifact name
     required: true
-
+  sign-slug:
+    description: slug name for sign
+    required: true
+    defualt: msi
   token:
     description: token for sign api
     required: true
@@ -38,9 +40,10 @@ runs:
           output: ${{inputs.signeddir}}
           policy: ${{inputs.sign}}
           token: ${{inputs.token}}
+          slug: ${{inputs.sign-slug}}
       
       - name: Attest
-        if: ${{inputs.sign != ''}}
+        if: inputs.sign != ''
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: "${{inputs.signeddir}}/**"
@@ -50,7 +53,7 @@ runs:
         id: upload
         uses: actions/upload-artifact@v4
         with: 
-          name: ${{inputs.artifact}}-signed
+          name: "${{inputs.artifact}}-signed"
           path: ${{inputs.signeddir}}
 
       

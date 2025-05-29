@@ -1,0 +1,10 @@
+include(win-msvc194_x64)
+
+[settings]
+compiler.runtime=static
+
+[tool_requires]
+!cmake/*: cmake/[>=3 <4]
+
+[options]
+*:shared=False

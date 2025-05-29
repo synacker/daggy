@@ -12,10 +12,7 @@ jobs:
     if: github.event_name != 'pull_request'
     uses: ./.github/workflows/build.yaml
     with:
-      linux_x64_profile: linux-gcc12_x64
-      win_x64_profile: win-msvc194_x64
-      macos_arm_profile: macos-clang15_arm
-      macos_x64_profile: macos-clang15_x64
-      sign: none
+      deploy: false
+      attestation: false
     secrets: inherit
     

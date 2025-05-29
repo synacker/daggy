@@ -7,6 +7,7 @@ find_package(Qt6 COMPONENTS Core REQUIRED)
 add_executable(${TARGET})
 include(rpath_bin)
 set_target_properties(${TARGET} PROPERTIES AUTOMOC ON)
+include(versionmeta)
 
 target_sources(${TARGET}
     PRIVATE

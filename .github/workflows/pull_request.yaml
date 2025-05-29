@@ -1,14 +1,11 @@
-name: Develop build
+name: Pull request build
 on: pull_request
 
 jobs:
   build:
     uses: ./.github/workflows/build.yaml
     with:
-      linux_x64_profile: linux-gcc12_x64
-      win_x64_profile: win-msvc194_x64
-      macos_arm_profile: macos-clang15_arm
-      macos_x64_profile: macos-clang15_x64
-      sign: test-signing
+      deploy: true
+      attestation: true
     secrets: inherit
     

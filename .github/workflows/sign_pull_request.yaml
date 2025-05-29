@@ -1,0 +1,10 @@
+name: Sign pull request
+on: pull_request
+
+jobs:
+  build:
+    uses: ./.github/workflows/sign_build.yaml
+    with:
+      sign: 'test-signing'
+    secrets: inherit
+    

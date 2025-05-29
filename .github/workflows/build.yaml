@@ -2,44 +2,18 @@ name: Build project
 on: 
   workflow_call:
     inputs:
-      linux_x64_profile:
-        description: profile for linux x64
+      deploy:
+        description: 'need deploy'
         required: true
-        default: linux-gcc12_x64
-        type: string
+        type: boolean  
+      attestation:
+        description: 'need attestation'
+        required: true
+        type: boolean
 
-      win_x64_profile:
-        description: profile for win x64
-        required: true
-        default: win-msvc194_x64
-        type: string
-
-      macos_arm_profile:
-        description: profile for macos arm
-        required: true
-        default: macos-clang15_arm
-        type: string
-
-      macos_x64_profile:
-        description: profile for macos x64
-        required: true
-        default: macos-clang15_x64
-        type: string
-
-      sign:
-        description: test or release sign
-        type: string
-        required: true
-        default: none
-  
 jobs:
   cache:
     uses: ./.github/workflows/make_cache.yaml
-    with:
-      linux_x64_profile: ${{inputs.linux_x64_profile}}
-      win_x64_profile: ${{inputs.win_x64_profile}}
-      macos_arm_profile: ${{inputs.macos_arm_profile}}
-      macos_x64_profile: ${{inputs.macos_x64_profile}}
 
   linux-x64-build:
     runs-on: ubuntu-22.04
@@ -58,19 +32,19 @@ jobs:
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/conan_build
         with:
-          profile: ${{inputs.linux_x64_profile}}
+          profile: ${{ vars.LINUX_X64_PROFILE }}
 
       - uses: ./.github/actions/tests
         with:
           testdir: build/Release
-          name: ${{inputs.linux_x64_profile}} tests
+          name: ${{ vars.LINUX_X64_PROFILE }} tests
 
       - uses: ./.github/actions/deploy
-        if: inputs.sign != 'none'
+        if: inputs.deploy
         with:
           builddir: build/Release
-          artifact: ${{inputs.linux_x64_profile}}
-          attestation: ${{inputs.sign != ''}}
+          artifact: ${{ vars.LINUX_X64_PROFILE }}
+          attestation: ${{inputs.attestation}}
 
   macos-arm-build:
     runs-on: macos-14
@@ -88,19 +62,19 @@ jobs:
       - uses: ./.github/actions/enable_python_macos
       - uses: ./.github/actions/conan_build
         with:
-          profile: ${{inputs.macos_arm_profile}}
+          profile: ${{vars.MACOS_ARM_PROFILE}}
 
       - uses: ./.github/actions/tests
         with:
           testdir: build/Release
-          name: ${{inputs.macos_arm_profile}} tests
+          name: ${{vars.MACOS_ARM_PROFILE}} tests
 
       - uses: ./.github/actions/deploy
-        if: inputs.sign != 'none'
+        if: inputs.deploy
         with:
           builddir: build/Release
-          artifact: ${{inputs.macos_arm_profile}}
-          attestation: ${{inputs.sign != ''}}
+          artifact: ${{vars.MACOS_ARM_PROFILE}}
+          attestation: ${{inputs.attestation}}
 
   macos-x64-build:
     runs-on: macos-13
@@ -118,19 +92,18 @@ jobs:
       - uses: ./.github/actions/enable_python_macos
       - uses: ./.github/actions/conan_build
         with:
-          profile: ${{inputs.macos_x64_profile}}
+          profile: ${{vars.MACOS_X64_PROFILE}}
 
       - uses: ./.github/actions/tests
         with:
           testdir: build/Release
-          name: ${{inputs.macos_x64_profile}} tests
+          name: ${{vars.MACOS_X64_PROFILE}} tests
     
       - uses: ./.github/actions/deploy
-        if: inputs.sign != 'none'
         with:
           builddir: build/Release
-          artifact: ${{inputs.macos_x64_profile}}
-          attestation: ${{inputs.sign != ''}}
+          artifact: ${{vars.MACOS_X64_PROFILE}}
+          attestation: ${{inputs.attestation}}
 
   win-x64-build:
     runs-on: windows-2022
@@ -148,16 +121,16 @@ jobs:
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/conan_build
         with:
-          profile: ${{inputs.win_x64_profile}}
+          profile: ${{vars.WIN_X64_PROFILE}}
       
       - uses: ./.github/actions/tests
         with:
           testdir: build
-          name: ${{inputs.win_x64_profile}} tests
+          name: ${{vars.WIN_X64_PROFILE}} tests
    
       - uses: ./.github/actions/deploy
-        if: inputs.sign != 'none'
+        if: inputs.deploy
         with:
           builddir: build
-          artifact: ${{inputs.win_x64_profile}}
-          attestation: ${{inputs.sign != ''}}
+          artifact: ${{vars.WIN_X64_PROFILE}}
+          attestation: ${{inputs.attestation}}
