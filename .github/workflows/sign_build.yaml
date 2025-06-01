@@ -1,0 +1,49 @@
+name: Build signing artefacts
+on: 
+  workflow_call:
+    inputs:
+      sign:
+        description: 'sign policy'
+        type: string
+        required: true
+
+jobs:   
+  win-x64-apponly-build:
+    runs-on: windows-2022
+    permissions:
+      id-token: write
+      contents: read
+      checks: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Install WiX
+        run: dotnet tool install --global wix
+      
+      - name: Install WiX UI extension
+        run: wix extension add --global WixToolset.UI.wixext
+
+      - uses: ./.github/actions/enable_python
+      - uses: ./.github/actions/conan_build
+        with:
+          profile: ${{vars.WIN_X64_APPONLY_PROFILE}}
+          args: -o daggy/*:apponly=True
+      
+      - uses: ./.github/actions/tests
+        with:
+          testdir: build
+          name: ${{vars.WIN_X64_APPONLY_PROFILE}} tests
+   
+      - uses: ./.github/actions/deploy_with_sign
+        with:
+          builddir: build
+          artifact: ${{vars.WIN_X64_APPONLY_PROFILE}}
+          sign: ${{inputs.sign}}
+          signeddir: build/signed
+          token: ${{secrets.SIGNPATH_API_TOKEN}}

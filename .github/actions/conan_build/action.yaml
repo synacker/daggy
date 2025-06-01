@@ -5,6 +5,10 @@ inputs:
     description: conan-profile
     required: true
     default: default
+  args:
+    description: conan build apponly option
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -23,4 +27,4 @@ runs:
 
     - name: Conan build
       shell: bash
-      run: conan build . --profile:build=${{inputs.profile}} --profile:host=${{inputs.profile}} --build=missing --output-folder=.
+      run: conan build . --profile:build=${{inputs.profile}} --profile:host=${{inputs.profile}} --build=missing --output-folder=. ${{inputs.args}}

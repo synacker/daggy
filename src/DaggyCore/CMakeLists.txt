@@ -3,8 +3,11 @@ set(TARGET DaggyCore)
 find_package(Qt6 COMPONENTS Core Network REQUIRED)
 add_library(${TARGET})
 include(rpath_lib)
-
 set_target_properties(${TARGET} PROPERTIES AUTOMOC ON)
+
+if (BUILD_SHARED_LIBS)
+    include(versionmeta)
+endif()
 
 target_sources(${TARGET}
     PRIVATE
@@ -84,18 +87,18 @@ endif()
 
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
-configure_file(version.h.in ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/version.h @ONLY)
+configure_file(version.h.in ${CMAKE_CURRENT_LIST_DIR}/version.h @ONLY)
 
 include(GenerateExportHeader)
-generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/daggycore_export.h)
+generate_export_header(${TARGET} EXPORT_FILE_NAME ${CMAKE_CURRENT_LIST_DIR}/daggycore_export.h)
 target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
 
 target_sources(${TARGET}
     PUBLIC FILE_SET HEADERS
-    BASE_DIRS ${CMAKE_BINARY_EXPORTS_DIR}
+    BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/..
     FILES
-        ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/version.h
-        ${CMAKE_BINARY_EXPORTS_DIR}/${TARGET}/daggycore_export.h
+        version.h
+        daggycore_export.h
 )
 
 if (BUILD_TESTING)
@@ -104,14 +107,17 @@ if (BUILD_TESTING)
     add_subdirectory(tests/interface)
 endif()
 
-if(UNIX)
-    install(TARGETS ${TARGET} LIBRARY)
-else()
-    install(TARGETS ${TARGET} ARCHIVE)
+if(NOT APPONLY_BUILD)
+    if(UNIX)
+        install(TARGETS ${TARGET} LIBRARY)
+    else()
+        install(TARGETS ${TARGET} ARCHIVE)
+    endif()
+
     if (BUILD_SHARED_LIBS)
         install(TARGETS ${TARGET} RUNTIME)
     endif()
-endif()
 
-install(TARGETS ${TARGET} FILE_SET HEADERS)
-include(package_deps)
+    install(TARGETS ${TARGET} FILE_SET HEADERS)
+    include(package_deps)
+endif()

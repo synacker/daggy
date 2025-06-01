@@ -36,3 +36,5 @@ runs:
           ${{inputs.packdir}}/*.zip
           ${{inputs.packdir}}/*.rpm
           ${{inputs.packdir}}/*.deb
+          ${{inputs.packdir}}/*.msi
+

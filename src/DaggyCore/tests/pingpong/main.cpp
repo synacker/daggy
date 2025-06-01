@@ -28,7 +28,7 @@ SOFTWARE.
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
-    app.setApplicationVersion(DAGGY_VERSION_FULL);
+    app.setApplicationVersion(DAGGY_VERSION_EXTENDED);
 
     const QCommandLineOption count_argument({"c", "count"}, "Count operations", "count");
 
