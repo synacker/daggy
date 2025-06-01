@@ -1,0 +1,19 @@
+name: Sign build
+on:
+  workflow_dispatch:
+    inputs:
+      sign-policy:
+        type: choice
+        required: true
+        default: test-signing
+        options:
+          - test-signing
+          - release-signing
+
+jobs:
+  build:
+    uses: ./.github/workflows/sign_build.yaml
+    with:
+      sign: $${{inputs.sign-policy}}
+    secrets: inherit
+    
