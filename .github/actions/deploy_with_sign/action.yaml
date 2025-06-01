@@ -43,13 +43,11 @@ runs:
           slug: ${{inputs.sign-slug}}
       
       - name: Attest
-        if: inputs.sign != ''
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: "${{inputs.signeddir}}/**"
 
       - name: Upload Signed artifacts
-        if: ${{inputs.sign != ''}}
         id: upload
         uses: actions/upload-artifact@v4
         with: 
