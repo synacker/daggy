@@ -1,12 +1,12 @@
 ---
 description: Common information about Daggy and Getting Started
 ---
-> [!NOTE]
 > Free code signing on Windows povided by [SignPath.io](SignPath.io), certificate by [SignPath Foundation](https://signpath.org/)
 
 # About Daggy
 
 ![Daggy Workflow](https://github.com/synacker/daggy/actions/workflows/push.yaml/badge.svg)
+[![GitBook](https://img.shields.io/static/v1?message=Documented%20on%20GitBook&logo=gitbook&logoColor=ffffff&label=%20&labelColor=5c5c5c&color=3F89A1)](https://daggy.gitbook.io/docs)
 
 ![Daggy](daggy_logo.svg)
 
