@@ -1,6 +1,8 @@
 ---
 description: Common information about Daggy and Getting Started
 ---
+> [!NOTE]
+> Free code signing on Windows povided by [SignPath.io](SignPath.io), certificate by [SignPath Foundation](https://signpath.org/)
 
 # About Daggy
 
