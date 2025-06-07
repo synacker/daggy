@@ -107,30 +107,30 @@ if (BUILD_TESTING)
 endif()
 
 if (NOT APPONLY_BUILD)
-    if(UNIX)
-        if (NOT PORTABLE_BUILD)
-            install(TARGETS ${TARGET}
-                    EXPORT ${TARGET}Targets
-                    PUBLIC_HEADER FILE_SET HEADERS
-                    LIBRARY)
-            install(EXPORT ${TARGET}Targets
-                FILE ${TARGET}Targets.cmake
-                NAMESPACE "${PROJECT_NAME}::"
-                DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
+    if (NOT PORTABLE_BUILD)
+        install(TARGETS ${TARGET}
+                EXPORT ${TARGET}Targets
+                PUBLIC_HEADER FILE_SET HEADERS
+                LIBRARY)
+        install(TARGETS ${TARGET}
+                EXPORT ${TARGET}Targets
+                PUBLIC_HEADER FILE_SET HEADERS
+                LIBRARY)
+        install(EXPORT ${TARGET}Targets
+            FILE ${TARGET}Targets.cmake
+            NAMESPACE "${PROJECT_NAME}::"
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
 
-            include(CMakePackageConfigHelpers)
-            configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
-                                           "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake"
-                                           INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
-            install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake
-                    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
-        else()
-            install(TARGETS ${TARGET}
-                    LIBRARY)
-        endif()
+        include(CMakePackageConfigHelpers)
+        configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+                                       "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake"
+                                       INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake
+                DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
     else()
         install(TARGETS ${TARGET}
-                RUNTIME)
+                PUBLIC_HEADER FILE_SET HEADERS
+                LIBRARY)
     endif()
     include(package_deps)
 endif()
