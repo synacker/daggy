@@ -48,8 +48,7 @@ target_sources(${TARGET}
         aggregators/CConsole.hpp
 )
 
-target_link_libraries(${TARGET} PUBLIC Qt6::Core Qt6::Network)
-
+target_link_libraries(${TARGET} PUBLIC Qt6::Core)
 
 if (SSH2_SUPPORT)
     if(CONAN_BUILD)
@@ -58,6 +57,7 @@ if (SSH2_SUPPORT)
     else()
         target_link_libraries(${TARGET} PUBLIC ssh2 crypto)
     endif()
+    target_link_libraries(${TARGET} PUBLIC Qt6::Network)
 
     target_sources(${TARGET}
         PRIVATE
@@ -82,9 +82,8 @@ endif()
 
 if(YAML_SUPPORT)
     find_package(yaml-cpp REQUIRED)
-    target_link_libraries(${TARGET} PUBLIC yaml-cpp)
+    target_link_libraries(${TARGET} PUBLIC yaml-cpp::yaml-cpp)
 endif()
-
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 configure_file(version.h.in ${CMAKE_CURRENT_LIST_DIR}/version.h @ONLY)
@@ -109,29 +108,29 @@ endif()
 
 if (NOT APPONLY_BUILD)
     if(UNIX)
-        install(TARGETS ${TARGET}
-                EXPORT ${TARGET}Targets
-                PUBLIC_HEADER FILE_SET HEADERS
-                LIBRARY)
-        install(EXPORT ${TARGET}Targets
-            FILE ${TARGET}Targets.cmake
-            NAMESPACE "${PROJECT_NAME}::"
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
-
-        include(CMakePackageConfigHelpers)
-        configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
-                                       "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake"
-                                       INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
-        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake
+        if (NOT PORTABLE_BUILD)
+            install(TARGETS ${TARGET}
+                    EXPORT ${TARGET}Targets
+                    PUBLIC_HEADER FILE_SET HEADERS
+                    LIBRARY)
+            install(EXPORT ${TARGET}Targets
+                FILE ${TARGET}Targets.cmake
+                NAMESPACE "${PROJECT_NAME}::"
                 DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
 
+            include(CMakePackageConfigHelpers)
+            configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+                                           "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake"
+                                           INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
+            install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake
+                    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
+        else()
+            install(TARGETS ${TARGET}
+                    LIBRARY)
+        endif()
     else()
         install(TARGETS ${TARGET}
-                PUBLIC_HEADER FILE_SET HEADERS
-                ARCHIVE
                 RUNTIME)
     endif()
     include(package_deps)
 endif()
-
-
