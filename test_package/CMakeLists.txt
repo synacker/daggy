@@ -1,9 +1,9 @@
+cmake_minimum_required(VERSION 3.31)
 project(DaggyPackageTest)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
-
-find_package(daggy REQUIRED)
+find_package(Qt6 COMPONENTS Core Network REQUIRED)
+find_package(yaml-cpp REQUIRED)
+find_package(DaggyCore REQUIRED)
 
 add_subdirectory(testcpp)
 add_subdirectory(testc)

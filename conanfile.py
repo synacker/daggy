@@ -110,7 +110,6 @@ class DaggyConan(ConanFile):
                     copy(self, "*.dylib", dep.cpp_info.libdirs[0], libdir)
 
         tc = CMakeToolchain(self)
-        tc.cache_variables["CMAKE_INSTALL_LIBDIR"] = self.cpp.libdirs[0]
         tc.cache_variables["SSH2_SUPPORT"] = True
         tc.cache_variables["YAML_SUPPORT"] = True
         tc.cache_variables["CONSOLE"] = True
@@ -134,7 +133,3 @@ class DaggyConan(ConanFile):
         cmake = CMake(self)
         cmake.configure()
         cmake.install()
-
-    def package_info(self):
-        self.cpp_info.libs = ["DaggyCore"]
-        self.cpp_info.libdirs = [self._libdir()]

@@ -100,6 +100,7 @@ jobs:
           name: ${{vars.MACOS_X64_PROFILE}} tests
     
       - uses: ./.github/actions/deploy
+        if: inputs.deploy
         with:
           builddir: build/Release
           artifact: ${{vars.MACOS_X64_PROFILE}}

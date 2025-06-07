@@ -2,5 +2,5 @@
 
 include("${CMAKE_CURRENT_LIST_DIR}/@TARGET@Targets.cmake")
 
-check_requred_compinents(@TARGET@)
+check_required_components(@TARGET@)
 include(CMakeFindDependencyMacro)
