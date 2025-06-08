@@ -112,10 +112,6 @@ if (NOT APPONLY_BUILD)
                 EXPORT ${TARGET}Targets
                 PUBLIC_HEADER FILE_SET HEADERS
                 LIBRARY)
-        install(TARGETS ${TARGET}
-                EXPORT ${TARGET}Targets
-                PUBLIC_HEADER FILE_SET HEADERS
-                LIBRARY)
         install(EXPORT ${TARGET}Targets
             FILE ${TARGET}Targets.cmake
             NAMESPACE "${PROJECT_NAME}::"
