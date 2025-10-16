@@ -48,7 +48,7 @@ target_sources(${TARGET}
         aggregators/CConsole.hpp
 )
 
-target_link_libraries(${TARGET} PUBLIC Qt6::Core)
+target_link_libraries(${TARGET} PUBLIC Qt6::Core Qt6::Network CONFIG REQUIRED)
 
 if (SSH2_SUPPORT)
     if(CONAN_BUILD)
@@ -57,7 +57,6 @@ if (SSH2_SUPPORT)
     else()
         target_link_libraries(${TARGET} PUBLIC ssh2 crypto)
     endif()
-    target_link_libraries(${TARGET} PUBLIC Qt6::Network)
 
     target_sources(${TARGET}
         PRIVATE
