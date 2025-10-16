@@ -48,7 +48,7 @@ target_sources(${TARGET}
         aggregators/CConsole.hpp
 )
 
-target_link_libraries(${TARGET} PUBLIC Qt6::Core Qt6::Network CONFIG REQUIRED)
+target_link_libraries(${TARGET} PUBLIC Qt6::Core Qt6::Network)
 
 if (SSH2_SUPPORT)
     if(CONAN_BUILD)
