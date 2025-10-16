@@ -408,7 +408,7 @@ catch (const std::exception& exception) {
 }
 
 #else
-std::optional<daggy::Sources> daggy::sources::convertors::yaml(const QString& data, QString& error)
+std::optional<daggy::Sources> daggy::sources::convertors::yaml(const QString& data, QString& error) noexcept
 {
     error = "yaml not supported";
     return {};
