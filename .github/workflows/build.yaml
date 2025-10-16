@@ -32,18 +32,18 @@ jobs:
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/conan_build
         with:
-          profile: ${{ vars.LINUX_X64_PROFILE }}
+          profile: linux-gcc12_x64
 
       - uses: ./.github/actions/tests
         with:
           testdir: build/Release
-          name: ${{ vars.LINUX_X64_PROFILE }} tests
+          name: linux-gcc12_x64 tests
 
       - uses: ./.github/actions/deploy
         if: inputs.deploy
         with:
           builddir: build/Release
-          artifact: ${{ vars.LINUX_X64_PROFILE }}
+          artifact: linux-gcc12_x64
           attestation: ${{inputs.attestation}}
 
   macos-arm-build:
@@ -62,18 +62,18 @@ jobs:
       - uses: ./.github/actions/enable_python_macos
       - uses: ./.github/actions/conan_build
         with:
-          profile: ${{vars.MACOS_ARM_PROFILE}}
+          profile: macos-clang15_arm
 
       - uses: ./.github/actions/tests
         with:
           testdir: build/Release
-          name: ${{vars.MACOS_ARM_PROFILE}} tests
+          name: macos-clang15_arm tests
 
       - uses: ./.github/actions/deploy
         if: inputs.deploy
         with:
           builddir: build/Release
-          artifact: ${{vars.MACOS_ARM_PROFILE}}
+          artifact: macos-clang15_arm
           attestation: ${{inputs.attestation}}
 
   macos-x64-build:
@@ -92,18 +92,18 @@ jobs:
       - uses: ./.github/actions/enable_python_macos
       - uses: ./.github/actions/conan_build
         with:
-          profile: ${{vars.MACOS_X64_PROFILE}}
+          profile: macos-clang15_x64
 
       - uses: ./.github/actions/tests
         with:
           testdir: build/Release
-          name: ${{vars.MACOS_X64_PROFILE}} tests
+          name: macos-clang15_x64 tests
     
       - uses: ./.github/actions/deploy
         if: inputs.deploy
         with:
           builddir: build/Release
-          artifact: ${{vars.MACOS_X64_PROFILE}}
+          artifact: macos-clang15_x64
           attestation: ${{inputs.attestation}}
 
   win-x64-build:
@@ -122,16 +122,16 @@ jobs:
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/conan_build
         with:
-          profile: ${{vars.WIN_X64_PROFILE}}
+          profile: win-msvc194_x64
       
       - uses: ./.github/actions/tests
         with:
           testdir: build
-          name: ${{vars.WIN_X64_PROFILE}} tests
+          name: win-msvc194_x64 tests
    
       - uses: ./.github/actions/deploy
         if: inputs.deploy
         with:
           builddir: build
-          artifact: ${{vars.WIN_X64_PROFILE}}
+          artifact: win-msvc194_x64
           attestation: ${{inputs.attestation}}
