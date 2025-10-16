@@ -16,7 +16,7 @@ jobs:
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/enable_conan
         with:
-          profile: ${{vars.LINUX_X64_PROFILE}}
+          profile: linux-gcc12_x64
 
   macos-arm-make-cache:
     runs-on: macos-14
@@ -27,7 +27,7 @@ jobs:
       - uses: ./.github/actions/enable_python_macos
       - uses: ./.github/actions/enable_conan
         with:
-          profile: ${{vars.MACOS_ARM_PROFILE}}
+          profile: macos-clang15_arm
 
   macos-x64-make-cache:
     runs-on: macos-13
@@ -38,7 +38,7 @@ jobs:
       - uses: ./.github/actions/enable_python_macos
       - uses: ./.github/actions/enable_conan
         with:
-          profile: ${{vars.MACOS_X64_PROFILE}}
+          profile: macos-clang15_x64
           
   win-x64-make-cache:
     runs-on: windows-2022
@@ -49,4 +49,4 @@ jobs:
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/enable_conan
         with:
-          profile: ${{vars.WIN_X64_PROFILE}}
+          profile: win-msvc194_x64
