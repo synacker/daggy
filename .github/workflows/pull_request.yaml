@@ -6,6 +6,6 @@ jobs:
     uses: ./.github/workflows/build.yaml
     with:
       deploy: true
-      attestation: true
+      attestation: false
     secrets: inherit
     
