@@ -21,7 +21,7 @@ jobs:
       - uses: ./.github/actions/check_cache
         id: check-cache
         with:
-            profile:  ${{ vars.LINUX_X64_PROFILE }}
+            profile:  linux-gcc12_x64
 
   macos-arm-check-cache:
     runs-on: macos-14
@@ -32,7 +32,7 @@ jobs:
       - uses: ./.github/actions/check_cache
         id: check-cache
         with:
-            profile: ${{ vars.MACOS_ARM_PROFILE }}
+            profile: macos-clang15_arm
 
   macos-x64-check-cache:
     runs-on: macos-13
@@ -43,7 +43,7 @@ jobs:
       - uses: ./.github/actions/check_cache
         id: check-cache
         with:
-            profile: ${{ vars.MACOS_X64_PROFILE }}
+            profile: macos-clang15_x64
           
   win-x64-check-cache:
     runs-on: windows-2022
@@ -54,4 +54,4 @@ jobs:
       - uses: ./.github/actions/check_cache
         id: check-cache
         with:
-            profile: ${{ vars.WIN_X64_PROFILE }}
+            profile: win-msvc194_x64

@@ -32,18 +32,18 @@ jobs:
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/conan_build
         with:
-          profile: ${{vars.WIN_X64_APPONLY_PROFILE}}
+          profile: win-msvc194_x64_static
           args: -o daggy/*:apponly=True
       
       - uses: ./.github/actions/tests
         with:
           testdir: build
-          name: ${{vars.WIN_X64_APPONLY_PROFILE}} tests
+          name: win-msvc194_x64_static tests
    
       - uses: ./.github/actions/deploy_with_sign
         with:
           builddir: build
-          artifact: ${{vars.WIN_X64_APPONLY_PROFILE}}
+          artifact: win-msvc194_x64_static
           sign: ${{inputs.sign}}
           signeddir: build/signed
           token: ${{secrets.SIGNPATH_API_TOKEN}}

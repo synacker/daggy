@@ -5,8 +5,9 @@ description: Common information about Daggy and Getting Started
 
 # About Daggy
 
-![Daggy Workflow](https://github.com/synacker/daggy/actions/workflows/push.yaml/badge.svg)
+[![Develop build](https://github.com/synacker/daggy/actions/workflows/push.yaml/badge.svg)](https://github.com/synacker/daggy/actions/workflows/push.yaml)
 [![GitBook](https://img.shields.io/static/v1?message=Documented%20on%20GitBook&logo=gitbook&logoColor=ffffff&label=%20&labelColor=5c5c5c&color=3F89A1)](https://daggy.gitbook.io/docs)
+[![Conan Center](https://img.shields.io/conan/v/daggy)](https://conan.io/center/recipes/daggy)
 
 ![Daggy](daggy_logo.svg)
 

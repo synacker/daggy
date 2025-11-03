@@ -50,7 +50,6 @@ target_sources(${TARGET}
 
 target_link_libraries(${TARGET} PUBLIC Qt6::Core Qt6::Network)
 
-
 if (SSH2_SUPPORT)
     if(CONAN_BUILD)
         find_package(Libssh2 REQUIRED)
@@ -82,9 +81,8 @@ endif()
 
 if(YAML_SUPPORT)
     find_package(yaml-cpp REQUIRED)
-    target_link_libraries(${TARGET} PUBLIC yaml-cpp)
+    target_link_libraries(${TARGET} PUBLIC yaml-cpp::yaml-cpp)
 endif()
-
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 configure_file(version.h.in ${CMAKE_CURRENT_LIST_DIR}/version.h @ONLY)
@@ -108,7 +106,7 @@ if (BUILD_TESTING)
 endif()
 
 if (NOT APPONLY_BUILD)
-    if(UNIX)
+    if (NOT PORTABLE_BUILD)
         install(TARGETS ${TARGET}
                 EXPORT ${TARGET}Targets
                 PUBLIC_HEADER FILE_SET HEADERS
@@ -124,14 +122,10 @@ if (NOT APPONLY_BUILD)
                                        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake
                 DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET})
-
     else()
         install(TARGETS ${TARGET}
                 PUBLIC_HEADER FILE_SET HEADERS
-                ARCHIVE
-                RUNTIME)
+                LIBRARY)
     endif()
     include(package_deps)
 endif()
-
-

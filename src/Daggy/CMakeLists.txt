@@ -2,7 +2,7 @@ set(TARGET daggy)
 
 option(PCAPNG_SUPPORT "pcap to pcapng convertor" OFF)
 
-find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(Qt6 COMPONENTS Core Network CONFIG REQUIRED)
 
 add_executable(${TARGET})
 include(rpath_bin)
@@ -15,7 +15,7 @@ target_sources(${TARGET}
         CConsoleDaggy.cpp
 )
 
-target_link_libraries(${TARGET} PRIVATE DaggyCore)
+target_link_libraries(${TARGET} PRIVATE DaggyCore Qt6::Core Qt6::Network)
 
 if (PCAPNG_SUPPORT)
     add_compile_definitions(PCAPNG_SUPPORT)
