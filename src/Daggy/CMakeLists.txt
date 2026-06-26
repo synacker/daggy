@@ -2,9 +2,11 @@ set(TARGET daggy)
 
 option(PCAPNG_SUPPORT "pcap to pcapng convertor" OFF)
 
-find_package(Qt6 COMPONENTS Core Network CONFIG REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Core Network CONFIG REQUIRED)
 
-add_executable(${TARGET})
+qt_standard_project_setup()
+
+qt_add_executable(${TARGET})
 include(rpath_bin)
 set_target_properties(${TARGET} PROPERTIES AUTOMOC ON)
 include(versionmeta)
@@ -37,5 +39,10 @@ add_definitions(-DAPP_ICON="${CMAKE_CURRENT_LIST_DIR}/../icons/daggy.ico")
 target_link_libraries(${TARGET} PRIVATE ${LINK_LIBRARIES})
 target_precompile_headers(${TARGET} PRIVATE Precompiled.hpp)
 
+if(WIN32)
+    target_sources(${TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/app.manifest)
+endif()
+
 install(TARGETS ${TARGET} RUNTIME)
+
 include(package_deps)

@@ -126,6 +126,6 @@ if (NOT APPONLY_BUILD)
         install(TARGETS ${TARGET}
                 PUBLIC_HEADER FILE_SET HEADERS
                 LIBRARY)
+        include(package_deps)
     endif()
-    include(package_deps)
 endif()

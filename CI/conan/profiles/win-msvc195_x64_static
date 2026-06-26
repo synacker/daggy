@@ -1,0 +1,7 @@
+include(win-msvc195_x64)
+
+[settings]
+compiler.runtime=static
+
+[options]
+*:shared=False

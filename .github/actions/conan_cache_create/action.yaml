@@ -1,0 +1,48 @@
+name: Conan Cache create
+description: Create conan cache
+inputs:
+  profile:
+    description: conan-profile
+    required: true
+    default: default
+  args:
+    description: conan build apponly option
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Conan install
+      shell: bash
+      id: conan-install
+      run: conan install . --profile:build=${{inputs.profile}} --profile:host=${{inputs.profile}} --lockfile=conan.lock --build=missing --output-folder=. ${{inputs.args}}
+
+    - name: Conan cache clear
+      shell: bash
+      run: conan cache clean "*" --source --build --temp --download
+    
+    - name: Conan graph
+      shell: bash
+      run: conan graph info . --profile:build=${{inputs.profile}} --profile:host=${{inputs.profile}} --lockfile=conan.lock --format=json > graph.json
+
+    - name: Conan pkg list
+      shell: bash
+      run: conan list --graph graph.json --format=json > pkglist.json
+
+    - name: Conan cache create
+      shell: bash
+      run: conan cache save -l pkglist.json --no-source --file conan-cache-${{inputs.profile}}.tzst -c core.gzip:compresslevel=1
+
+    - name: Copy conan.lock to cache path
+      shell: bash
+      run: cp -f conan.lock conan-${{inputs.profile}}.lock
+
+    - name: Conan cache save
+      id: cache-save
+      uses: actions/cache/save@v6
+      with:
+        path: |
+          conan-cache-${{inputs.profile}}.tzst
+          conan-${{inputs.profile}}.lock
+        key: ${{inputs.profile}}

@@ -25,7 +25,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: signpath/github-action-submit-signing-request@v1.2
+    - uses: signpath/github-action-submit-signing-request@v2
       with:
         api-token: '${{ inputs.token }}'
         organization-id: '458e74d2-1c0a-4e3a-b1e7-9bc24caf673e'

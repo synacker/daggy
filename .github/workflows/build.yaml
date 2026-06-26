@@ -12,19 +12,15 @@ on:
         type: boolean
 
 jobs:
-  cache:
-    uses: ./.github/workflows/make_cache.yaml
-
   linux-x64-build:
-    runs-on: ubuntu-22.04
-    needs: [cache]
+    runs-on: ubuntu-26.04
     permissions:
       id-token: write
       contents: read
       checks: write
       attestations: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -32,106 +28,74 @@ jobs:
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/conan_build
         with:
-          profile: linux-gcc12_x64
+          profile: linux-gcc15_x64
 
       - uses: ./.github/actions/tests
         with:
           testdir: build/Release
-          name: linux-gcc12_x64 tests
+          name: linux-gcc15_x64 tests
 
       - uses: ./.github/actions/deploy
         if: inputs.deploy
         with:
           builddir: build/Release
-          artifact: linux-gcc12_x64
+          artifact: linux-gcc15_x64
           attestation: ${{inputs.attestation}}
 
   macos-arm-build:
-    runs-on: macos-14
-    needs: [cache]
+    runs-on: macos-26
     permissions:
       id-token: write
       contents: read
       checks: write
       attestations: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - uses: ./.github/actions/enable_python_macos
       - uses: ./.github/actions/conan_build
         with:
-          profile: macos-clang15_arm
+          profile: macos-clang17_arm
 
       - uses: ./.github/actions/tests
         with:
           testdir: build/Release
-          name: macos-clang15_arm tests
+          name: macos-clang17_arm tests
 
       - uses: ./.github/actions/deploy
         if: inputs.deploy
         with:
           builddir: build/Release
-          artifact: macos-clang15_arm
-          attestation: ${{inputs.attestation}}
-
-  macos-x64-build:
-    runs-on: macos-13
-    needs: [cache]
-    permissions:
-      id-token: write
-      contents: read
-      checks: write
-      attestations: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - uses: ./.github/actions/enable_python_macos
-      - uses: ./.github/actions/conan_build
-        with:
-          profile: macos-clang15_x64
-
-      - uses: ./.github/actions/tests
-        with:
-          testdir: build/Release
-          name: macos-clang15_x64 tests
-    
-      - uses: ./.github/actions/deploy
-        if: inputs.deploy
-        with:
-          builddir: build/Release
-          artifact: macos-clang15_x64
+          artifact: macos-clang17_arm
           attestation: ${{inputs.attestation}}
 
   win-x64-build:
-    runs-on: windows-2022
-    needs: [cache]
+    runs-on: windows-2025-vs2026
     permissions:
       id-token: write
       contents: read
       checks: write
       attestations: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/conan_build
         with:
-          profile: win-msvc194_x64
+          profile: win-msvc195_x64
       
       - uses: ./.github/actions/tests
         with:
           testdir: build
-          name: win-msvc194_x64 tests
+          name: win-msvc195_x64 tests
    
       - uses: ./.github/actions/deploy
         if: inputs.deploy
         with:
           builddir: build
-          artifact: win-msvc194_x64
+          artifact: win-msvc195_x64
           attestation: ${{inputs.attestation}}

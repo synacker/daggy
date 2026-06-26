@@ -23,7 +23,7 @@ runs:
       shell: bash
       run: bin/daggy --version
 
-    - uses: mikepenz/action-junit-report@v5
+    - uses: mikepenz/action-junit-report@v6
       with:
         report_paths: ${{inputs.testdir}}/tests/local_tests.xml
         detailed_summary: true
