@@ -47,10 +47,12 @@ class DaggyConan(ConanFile):
         "fPIC": True
     }
     generators = "CMakeDeps"
-    exports = ["git_version.py", "src/*"]
+    exports = ["src/*"]
+    _gv = GitVersion()
+
 
     def set_version(self):
-        self.version = GitVersion().version
+        self.version = self._gv.full
 
     def validate(self):
         check_min_cppstd(self, "17")
@@ -61,27 +63,43 @@ class DaggyConan(ConanFile):
 
         if self.options.apponly:
             self.options.shared = False
-        
-        self.options["qt/*"].shared = self.options.shared
-        self.options["libssh2/*"].shared = self.options.shared
-        self.options["yaml-cpp/*"].shared = self.options.shared
 
     def configure(self):
         if self.options.shared:
             self.options.rm_safe("fPIC")
 
         if self.options.apponly:
-            self.options.rm_safe("shared")        
+            self.options.rm_safe("shared")
+
+        if not self.options.apponly:
+            self.options["qt/*"].shared = self.options.shared
+            self.options["libssh2/*"].shared = self.options.shared
+            self.options["yaml-cpp/*"].shared = self.options.shared
+
+        self.options["qt/*"].gui = False
+        self.options["qt/*"].widgets = False
         
+        self.options["qt/*"].with_libpng = False
+        self.options["qt/*"].with_libjpeg = False
+        self.options["qt/*"].with_freetype = False
+        self.options["qt/*"].with_harfbuzz = False
+        self.options["qt/*"].with_fontconfig = False
+        self.options["qt/*"].with_icu = False
+
+        # Completely disable SQL drivers
+        self.options["qt/*"].with_sqlite3 = False
+        self.options["qt/*"].with_mysql = False
+        self.options["qt/*"].with_pq = False
+        self.options["qt/*"].with_odbc = False      
         
     def build_requirements(self):
-        self.tool_requires("cmake/3.30.1")
-        self.tool_requires("gtest/1.15.0")
+        self.tool_requires("cmake/4.3.2")
+        self.tool_requires("gtest/1.17.0")
 
     def requirements(self):
-        self.requires("qt/6.7.3")
+        self.requires("qt/6.11.1")
         self.requires("kainjow-mustache/4.1")
-        self.requires("yaml-cpp/0.8.0")
+        self.requires("yaml-cpp/0.9.0")
         self.requires("libssh2/1.11.1")
 
 
@@ -118,8 +136,8 @@ class DaggyConan(ConanFile):
         tc.cache_variables["PORTABLE_BUILD"] = not self.options.apponly
         tc.cache_variables["BUILD_TESTING"] = True
         tc.cache_variables["CONAN_BUILD"] = True
-        tc.cache_variables["VERSION"] = GitVersion().version
-        tc.cache_variables["VERSION_EXTENDED"] = GitVersion().extended
+        tc.cache_variables["VERSION"] = self._gv.version
+        tc.cache_variables["VERSION_EXTENDED"] = self._gv.extended
         
         tc.generate()    
 

@@ -1,8 +1,10 @@
+include(common)
+
 [settings]
 os=Linux
 arch=x86_64
 compiler=gcc
-compiler.version=12
-compiler.cppstd=17
+compiler.version=15
 compiler.libcxx=libstdc++
+compiler.cppstd=gnu23
 build_type=Release

@@ -1,0 +1,10 @@
+include(common)
+
+[settings]
+arch=x86_64
+compiler=msvc
+compiler.runtime=dynamic
+compiler.version=195
+compiler.cppstd=23
+build_type=Release
+os=Windows

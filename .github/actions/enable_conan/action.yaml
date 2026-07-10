@@ -13,29 +13,58 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set storage path
+    - name: Conan defaiult profile detect
       shell: bash
-      run: echo "CONAN_STORAGE=$(conan config home)/p" >> $GITHUB_ENV
+      run: conan profile detect --force
 
-    - name: Cache conan packages
+    - name: Conan profiles install
+      shell: bash
+      run: conan config install CI/conan
+
+    - name: Conan lock create
+      shell: bash
+      run: conan lock create . --profile:build=${{inputs.profile}} --profile:host=${{inputs.profile}} --lockfile-out=conan.lock
+      
+    - name: Conan cache download
       id: cache
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v6
       with:
-        path: ${{env.CONAN_STORAGE}}
+        path: |
+          conan-cache-${{inputs.profile}}.tzst
+          conan-${{inputs.profile}}.lock
         key: ${{inputs.profile}}
 
-    - if: ${{steps.cache.outputs.cache-hit != 'true'}}
-      name: Conan install
+    - name: Check cache hit
+      id: cache-hit
       shell: bash
-      run: | 
-        conan config install CI/conan
-        conan install . --build=missing --profile:build=${{inputs.profile}} --profile:host=${{inputs.profile}} --output-folder=. ${{inputs.args}}
-        conan cache clean "*" --source --build --temp --download
+      run: |
+        if [ -f "conan-cache-${{inputs.profile}}.tzst" ]; then
+          echo "cache_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "cache_exists=false" >> $GITHUB_OUTPUT
+        fi
 
-    - name: Always Save Cache
-      id: cache-save
-      if: always() && steps.cache.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
+    - name: Conan cache restore
+      if: steps.cache-hit.outputs.cache_exists == 'true'
+      shell: bash
+      run: conan cache restore conan-cache-${{inputs.profile}}.tzst
+
+    - name: Check cache is out of date
+      if: steps.cache-hit.outputs.cache_exists == 'true'
+      id: cache-out-of-date
+      shell: bash
+      run: |
+        if  [ -f "conan-${{inputs.profile}}.lock" ] && cmp -s conan.lock conan-${{inputs.profile}}.lock; then
+          echo "cache_out_of_date=false" >> $GITHUB_OUTPUT
+        else
+          echo "cache_out_of_date=true" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Conan cache create
+      if: steps.cache-hit.outputs.cache_exists == 'false' || steps.cache-out-of-date.outputs.cache_out_of_date == 'true'
+      uses: ./.github/actions/conan_cache_create
       with:
-        path: ${{env.CONAN_STORAGE}}
-        key: ${{inputs.profile}}
+        profile: ${{inputs.profile}}
+        args: ${{inputs.args}}
+
+      

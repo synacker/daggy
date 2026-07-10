@@ -1,1 +1,2 @@
-conan>=2.0
+conan>=2.29
+git-version-utils>=0.2.1.0

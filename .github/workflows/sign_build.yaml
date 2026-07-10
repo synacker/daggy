@@ -9,22 +9,25 @@ on:
 
 jobs:   
   win-x64-apponly-build:
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     permissions:
       id-token: write
       contents: read
       checks: write
       attestations: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
 
       - name: Install WiX
         run: dotnet tool install --global wix
+
+      - name: Accept eula for WiX
+        run: wix eula accept wix7
       
       - name: Install WiX UI extension
         run: wix extension add --global WixToolset.UI.wixext
@@ -32,18 +35,18 @@ jobs:
       - uses: ./.github/actions/enable_python
       - uses: ./.github/actions/conan_build
         with:
-          profile: win-msvc194_x64_static
+          profile: win-msvc195_x64_static
           args: -o daggy/*:apponly=True
       
       - uses: ./.github/actions/tests
         with:
           testdir: build
-          name: win-msvc194_x64_static tests
+          name: win-msvc195_x64_static tests
    
       - uses: ./.github/actions/deploy_with_sign
         with:
           builddir: build
-          artifact: win-msvc194_x64_static
+          artifact: win-msvc195_x64_static
           sign: ${{inputs.sign}}
           signeddir: build/signed
           token: ${{secrets.SIGNPATH_API_TOKEN}}

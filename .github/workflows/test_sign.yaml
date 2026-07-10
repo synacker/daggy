@@ -1,12 +1,11 @@
-name: Sign build
-on:
-  workflow_dispatch:
+name: Test sign build
+on: pull_request
 
 
 jobs:
   build:
     uses: ./.github/workflows/sign_build.yaml
     with:
-      sign: release-signing
+      sign: test-signing
     secrets: inherit
     
