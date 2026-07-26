@@ -57,28 +57,25 @@ daggy::Result<daggy::sources::Commands> getCommands(const QVariantMap& commands_
     const auto& keys = commands_map.keys();
     for (const QString& command_id : keys) {
         if (commands_map[command_id].metaType() != QMetaType(QMetaType::QVariantMap))
-            return
-            {
+            return std::unexpected(daggy::ResultError{
                 daggy::errors::make_error_code(DaggyErrorSourceConvertion),
                 QString("%1 command is not a map").arg(command_id)
-            };
+            });
         const QVariantMap& command_map = commands_map[command_id].toMap();
         static const auto& requeried_fields = required_commands_field.keys();
         for (const auto& field : requeried_fields) {
             if (!command_map.contains(field)) {
-                return
-                {
+                return std::unexpected(daggy::ResultError{
                     daggy::errors::make_error_code(DaggyErrorSourceConvertion),
                     QString("%1 command don't have required %2 field").arg(command_id, field)
-                };
+                });
             }
             if (command_map[field].metaType() != QMetaType(required_commands_field.value(field)))
             {
-                return
-                {
+                return std::unexpected(daggy::ResultError{
                     daggy::errors::make_error_code(DaggyErrorSourceConvertion),
                     QString("%1 command have incorrect type for %2 field").arg(command_id, field)
-                };
+                });
             }
         }
         daggy::sources::Command command{command_id,
@@ -90,7 +87,7 @@ daggy::Result<daggy::sources::Commands> getCommands(const QVariantMap& commands_
         }};
         commands[command.first] = command.second;
     }
-    return {std::move(commands)};
+    return commands;
 }
 }
 
@@ -244,7 +241,7 @@ struct convert<daggy::Sources>
 
             const auto& commands = getCommands(source_fields[g_commandsField].as<QVariantMap>());
             if (!commands) {
-                throw std::runtime_error(commands.error.message());
+                throw std::runtime_error(commands.error().message.toStdString());
                 return false;
             }
 
@@ -360,7 +357,7 @@ std::optional<daggy::Sources> daggy::sources::convertors::json(const QString& da
         if (!commands)
         {
             error = QString("%1 data source have incorrect commands. %2")
-                    .arg(source_id, std::move(commands.message));
+                    .arg(source_id, commands.error().message);
             return
             {};
         }

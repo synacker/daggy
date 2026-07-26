@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+#include <expected>
 #include <system_error>
 #include <utility>
-#include <optional>
 #include <QString>
 
 #include <DaggyCore/daggycore_export.h>
@@ -32,61 +32,12 @@ SOFTWARE.
 
 namespace daggy {
 
-template<typename Data>
-class Result
-{
-public:
-    Result() = delete;
-    Result(Data data)
-        : data_(std::move(data))
-        , error(errors::success)
-    {}
-
-    Result(std::error_code error,
-           QString message = QString())
-        : data_{}
-        , error(std::move(error))
-        , message(std::move(message))
-    {}
-
-    Result(const Result&) = delete;
-    Result(Result&&) = default;
-
-    operator bool() const
-    {
-        return !error;
-    }
-
-    Data&& operator*() {
-        return std::move(data_.operator*());
-    }
-
-    const Data& operator *() const {
-        return data_.operator*();
-    }
-
-    const Data* operator->() const {
-        return data_.operator->();
-    }
-
-    Data* operator->() {
-        return data_.operator->();
-    }
-
-    const Data* data() const {
-        return &data_.value();
-    }
-
-    Data* data() {
-        return &data_.value();
-    }
-
-    const std::error_code error;
-    const QString message;
-
-private:
-    std::optional<Data> data_;
+struct ResultError {
+    std::error_code error;
+    QString message;
 };
 
+template<typename Data>
+using Result = std::expected<Data, ResultError>;
 
 }
