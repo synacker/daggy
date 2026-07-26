@@ -311,8 +311,8 @@ try {
 
         auto provider = fabric->second->create(session_, {source_id, properties}, this);
         if (!provider) {
-            throw std::system_error(provider.error,
-                                    provider.message.toStdString());
+            throw std::system_error(provider.error().error,
+                                    provider.error().message.toStdString());
         }
 
         connect(*provider, &providers::IProvider::stateChanged, this, &Core::onDataProviderStateChanged);

@@ -57,10 +57,10 @@ daggy::Result<Ssh2Settings> convert(const QVariantMap& parameters)
 
     for (const auto& field : parameters_field) {
         if (parameters.contains(field.first) && parameters[field.first].metaType() != QMetaType(field.second))
-            return {
+            return std::unexpected(daggy::ResultError{
                 daggy::errors::make_error_code(DaggyErrorSourceConvertion),
                 QString("Parameters field '%1' has invalid type").arg(field.first)
-            };
+            });
     }
 
     if (parameters.contains(g_userField))
@@ -107,10 +107,7 @@ daggy::Result<daggy::providers::IProvider*> daggy::providers::CSsh2Fabric::creat
 {
     const auto parameters = convert(source.second.parameters);
     if (!parameters)
-        return
-        {
-            parameters.error, parameters.message
-        };
+        return std::unexpected(parameters.error());
 
     const auto& properties = source.second;
 
@@ -120,9 +117,9 @@ daggy::Result<daggy::providers::IProvider*> daggy::providers::CSsh2Fabric::creat
     else
         host = QHostAddress(properties.host);
 
-    return new CSsh2(session,
+    return Result<daggy::providers::IProvider*>(new CSsh2(session,
                      std::move(host),
                      std::move(*parameters),
                      properties.commands,
-                     parent);
+                     parent));
 }

@@ -29,10 +29,10 @@ daggy::Result<daggy::providers::CSsh::Settings> convert(const QVariantMap& param
 
     for (const auto& field : parameters_field) {
         if (parameters.contains(field.first) && parameters[field.first].metaType() != QMetaType(field.second))
-            return {
+            return std::unexpected(daggy::ResultError{
                 daggy::errors::make_error_code(DaggyErrorSourceConvertion),
                 QString("Parameters field '%1' has invalid type").arg(field.first)
-            };
+            });
     }
 
     if (parameters.contains(g_configField))
@@ -68,10 +68,7 @@ daggy::Result<IProvider*> CSshFabric::createProvider(const QString& session, con
 {
     auto parameters = convert(source.second.parameters);
     if (!parameters) {
-        return
-            {
-                parameters.error, parameters.message
-            };
+        return std::unexpected(parameters.error());
     }
 
     const auto& properties = source.second;
@@ -79,11 +76,11 @@ daggy::Result<IProvider*> CSshFabric::createProvider(const QString& session, con
     if (host.isEmpty())
         host = source.first;
 
-    return new CSsh(session,
+    return Result<IProvider*>(new CSsh(session,
                     host,
                     std::move(*parameters),
                     properties.commands,
-                    parent);
+                    parent));
 }
 }
 }

@@ -41,11 +41,10 @@ daggy::Result<daggy::providers::IProvider*> daggy::providers::IFabric::create(co
 {
     const auto& properties = source.second;
     if (properties.type != type()) {
-        return
-        {
+        return std::unexpected(daggy::ResultError{
             errors::make_error_code(DaggyErrorSourceIncorrectProviderType),
             QString("Source %1 has incorrect provider type %2 - type %3 is required").arg(source.first, properties.type, type())
-        };
+        });
     }
     return createProvider(session, source, parent);
 }
